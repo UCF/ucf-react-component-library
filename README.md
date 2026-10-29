@@ -163,61 +163,137 @@ import degreeFinder from '@ucf/components/degree-finder/puck';
 const config = { components: { Stat: stat, DegreeFinder: degreeFinder } };
 ```
 
-## Adding a component
+## Anatomy of a component
 
-**1. Decide its kind and name.** This decides what its core may do and how its block is built
-([architecture.md](docs/architecture.md), "Two kinds of component" and "Naming").
-
-| Kind                     | Its HTML                          | The core may                       | Example         |
-| ------------------------ | --------------------------------- | ---------------------------------- | --------------- |
-| **Content (server)**     | Must exist before JavaScript runs | Take props and return markup, only | `stat`          |
-| **Interactive (client)** | Built in the browser              | Hold state, run effects, fetch     | `degree-finder` |
-
-Content is a plain noun (Quote, Card); interactive is subject plus task (Tuition Calculator).
-One name everywhere: folder `quote`, React `Quote`, CSS `ucf-c-quote`, block `ucf-content/quote`.
-Block names are permanent once a site uses them, so settle them first.
-
-**2. Create `components/{name}/`.** Copy the closer of the two existing components:
+A component is one folder, `components/{name}/`. One file in it is the component itself, the
+**core**. Every other file either feeds the core from somewhere (a **host**) or ships it to an
+output. Nothing outside the folder needs to change except two lists (step 4 below).
 
 ```
 components/{name}/
-  {Name}.tsx            the core. Content: no runtime imports. Interactive: 'use client' first.
-  index.ts              what the npm package exports
-  style.css             colors as var(--ucf-c-{role}) only
-  {Name}.stories.tsx    title 'Content (Server)/{Name}' or 'Interactive (Client)/{Name}',
-                        tags [ 'server' ] or [ 'client' ], first story `Default`
-  example.json          content: sample props, shared by the story, the test and the inserter
-  {Name}.test.tsx       content: the markup contract (copy Stat.test.tsx)
-  defaults.ts           interactive: default props
-  client.ts             interactive: the only file that knows its API's response shape
-  client.test.ts        interactive: what it requests and keeps, with a fake fetch
-  sample-client.ts      interactive: the same interface with no network, for stories
-  hosts/puck/config.tsx a plain object in Puck's shape (see components/shared/puck.ts)
-  hosts/wp/             block.json, index.tsx, edit.tsx, then
-                        content:     save.tsx
-                        interactive: render.php, view.tsx, settings.ts
+  {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
+   the core               ├─► hosts/puck/ ───────► npm: @ucf/components/{name}/puck
+                          ├─► hosts/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
+                          └─► {Name}.stories.tsx ► Storybook
+  style.css ──────────────┬─► npm: concatenated into ucf.css
+                          └─► WordPress: imported by hosts/wp/, built into the block's CSS
 ```
 
-**3. Make it follow the section colors.** Put one class on its outer element, beside its own:
+### The core
 
-- `ucf-c` if it sits on the section (a stat, a quote).
-- `ucf-c-panel` if it paints its own background (a finder, a boxed card). On Bold Gold it then
-  looks as it does on Light Alt.
+`{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
+HTML is the same everywhere. What it may do depends on its kind:
 
-Then read colors only as `var(--ucf-c-accent)`, `var(--ucf-c-body)` and so on, plus
-`var(--ucf-c-bar-*)` for a control bar. Never a hex value, never a fallback chain.
+|                 | **Content (server)**: `stat`               | **Interactive (client)**: `degree-finder`      |
+| --------------- | ------------------------------------------ | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs          | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                  | `react` and its own files                      |
+| First line      | Nothing special                            | `'use client';`                                |
+| Extra files     | `example.json`: sample props               | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
-**4. Wire it in.**
+Anything that differs between hosts comes in as a prop, a **slot**: Stat's `linkAs` takes
+`next/link` in Next and defaults to `<a>` elsewhere; its `statement` takes a string when saved
+and a text field in the WordPress editor. A core never imports a host or checks which one it
+is in. If it needs something a host has, add a slot.
 
-- `package.json` `exports`: add `./{name}` and `./{name}/puck` (and `./{name}/example.json`
-  for a content component).
-- One `plugins/*/plugin.json`: add the name to `blocks`, and name the block after that plugin
-  (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two.
-- Interactive blocks with site settings: a settings function in that plugin's main PHP file,
-  like `ucf_degrees_degree_finder_settings()`.
+### Hosts
 
-**5. Check it.** In Storybook, open it on every composition from the toolbar. Then run
-everything below. New tests must be shown to fail: break the code, watch it go red, restore.
+A host is a thin adapter: it takes content from wherever that platform keeps it and passes it
+to the core as props. A platform gets a folder in `hosts/` only when it needs files besides
+props.
+
+- **`hosts/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
+  **UCF** inserter category) and declares the attributes WordPress stores. `index.tsx`
+  registers it. `edit.tsx` renders the core in the editor, with fields in its slots. Then,
+  by kind:
+    - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
+      in the post, which is why a content component's markup is frozen once a site uses it.
+    - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
+      props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
+      the core into it in the browser. `settings.ts` reads that JSON.
+- **`hosts/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
+  ([components/shared/puck.ts](components/shared/puck.ts)): `fields` for the editor,
+  `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
+  library needs no Puck dependency.
+- **Next and other React sites have no host folder.** They render the core directly from
+  `@ucf/components/{name}` and pass their pieces in through slots.
+
+Keep the props each host stores as plain strings with the same names (block attributes, Puck
+fields), so content can move between hosts as-is.
+
+### Section colors (compositions)
+
+A component never picks its colors. The **section** it sits in has a composition (Light -
+Default, Light Alt, Dark, Dark Alt, Bold Gold), and the composition sets **roles**: what the
+accent, body text, muted text, line and so on are on that background. The component only
+reads roles, so it fits whatever section it lands in.
+
+The component's part:
+
+- Put one class on its outer element, beside its own `ucf-c-{name}`:
+    - `ucf-c` if it sits on the section (a stat, a quote): it uses the section's roles.
+    - `ucf-c-panel` if it paints its own background (a finder, a boxed card): it uses the
+      section's panel roles, so on Bold Gold it looks as it does on Light Alt.
+- In `style.css`, read colors only as `var(--ucf-c-{role})` (`--ucf-c-accent`, `--ucf-c-body`,
+  `--ucf-c-muted`…), plus `var(--ucf-c-bar-{role})` for a control bar. Never a hex value or a
+  fallback chain; `npm test` fails on a role `tokens.json` doesn't define.
+
+Who sets the section, per host. The slugs are `light`, `alt`, `dark`, `dark-alt` and `gold`:
+
+| Host          | How a section gets its composition                                   |
+| ------------- | -------------------------------------------------------------------- |
+| Next, Puck, … | A wrapper with `ucf-composition-{slug}`; none means Light - Default  |
+| WordPress     | The block theme: an editor picks a section style (`is-style-{slug}`) |
+| Storybook     | The **Composition** toolbar menu                                     |
+
+The roles themselves live in `tokens/tokens.json`. See "Tokens, roles and fonts" in
+[architecture.md](docs/architecture.md).
+
+## Adding a component
+
+**1. Decide its kind and name.** Kind is the table above: does its HTML need to exist before
+JavaScript runs? Content is a plain noun (Quote, Card); interactive is subject plus task
+(Tuition Calculator). One name everywhere: folder `quote`, React `Quote`, CSS `ucf-c-quote`,
+block `ucf-content/quote`. Block names and a content block's attribute names are stored in
+posts, so they are permanent once a site uses them. Settle them first
+([architecture.md](docs/architecture.md), "Two kinds of component" and "Naming").
+
+**2. Copy the closer of the two existing components** (`stat` or `degree-finder`) and rename.
+Every component has:
+
+```
+{Name}.tsx            the core
+index.ts              what the npm package exports
+style.css             colors as var(--ucf-c-{role}) only
+{Name}.stories.tsx    title 'Content (Server)/{Name}' or 'Interactive (Client)/{Name}',
+                      tags [ 'server' ] or [ 'client' ], first story `Default`
+hosts/puck/config.tsx
+hosts/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
+```
+
+Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
+`{Name}.test.tsx`, the markup contract (copy `Stat.test.tsx`). For interactive: `defaults.ts`,
+`client.ts` (the only file that knows its API's response shape), `client.test.ts` (with a fake
+`fetch`) and `sample-client.ts` (the same interface with no network, for stories).
+
+**3. Apply the section colors:** `ucf-c` or `ucf-c-panel` on the outer element, roles only in
+`style.css` (see "Section colors" above).
+
+**4. Add it to the two lists.** Storybook and the package build find it on their own; these
+don't:
+
+- **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
+  for content). This is what makes it importable from `@ucf/components`.
+- **One `plugins/*/plugin.json`:** add the name to `blocks`, and name the block after that
+  plugin (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two. An
+  interactive block with site settings also gets a settings function in that plugin's main PHP
+  file, like `ucf_degrees_degree_finder_settings()`.
+
+**5. Check it.** In Storybook, open it on every composition from the toolbar. Run
+`npm run release:temp` and try the block in WordPress's editor (never judge a block from the
+front end). Then run everything below. New tests must be shown to fail: break the code, watch
+it go red, restore.
 
 ## Before committing
 
