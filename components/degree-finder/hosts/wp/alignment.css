@@ -1,0 +1,11 @@
+/*
+ * CONTEXT: WordPress only. At full width, the finder's color bands run edge to edge and its
+ * content stays in the theme's content column, centered.
+ *
+ * WHY here and not in style.css: it reads a WordPress layout variable and the block's own
+ * wrapper class, neither of which exists in other hosts.
+ * SYNC: the block name in block.json (`ucf-degrees/degree-finder` gives this class).
+ */
+.wp-block-ucf-degrees-degree-finder.alignfull .ucf-c-degree-finder {
+	--udf-content-width: var(--wp--style--global--content-size, 1140px);
+}

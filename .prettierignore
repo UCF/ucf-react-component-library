@@ -1,0 +1,13 @@
+node_modules/
+vendor/
+dist/
+plugins/*/build/
+storybook-static/
+package-lock.json
+composer.lock
+
+# Jest writes these; reformatting them would fail the snapshot comparison.
+__snapshots__/
+
+# PHP is formatted to WordPress standards by PHPCS, not Prettier.
+*.php

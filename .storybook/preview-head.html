@@ -1,0 +1,24 @@
+<!--
+	The UCF fonts, for Storybook only.
+
+	WHY here: the library never loads fonts. The page it is used on does: the block theme in
+	WordPress, the app's layout in Next or Puck. Who owns this list is an open question in
+	docs/todo.md.
+	SYNC: the families in tokens/tokens.json `font-family`.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Oswald:wght@500;600&family=Roboto+Mono:wght@400;500&display=swap"
+/>
+
+<!--
+	The page's base font, as a host page sets it. WHY: content components such as Stat inherit
+	their body text font rather than setting it, so they fit whatever page they are placed on.
+-->
+<style>
+	body {
+		font-family: var( --ucf-font-family-body );
+	}
+</style>

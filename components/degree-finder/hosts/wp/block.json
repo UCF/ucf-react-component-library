@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-degrees/degree-finder",
+	"title": "Degree Finder",
+	"category": "ucf",
+	"icon": "welcome-learn-more",
+	"description": "Helps visitors find a degree by degree type and interests.",
+	"keywords": [ "degree", "program", "major", "interests" ],
+	"textdomain": "ucf-degrees",
+	"attributes": {
+		"programType": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"spacing": {
+			"margin": true
+		}
+	},
+	"editorScript": "file:./index.tsx",
+	"viewScript": "file:./view.tsx",
+	"style": [ "file:./style-view.css", "file:./view.css" ],
+	"render": "file:./render.php"
+}

@@ -1,0 +1,37 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/stat",
+	"title": "Stat",
+	"category": "ucf",
+	"description": "A fact written as a complete statement, with one supporting sentence and its source. Never a big number over small words.",
+	"keywords": [ "stat", "fact", "number", "source" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"statement": {
+			"type": "string",
+			"default": ""
+		},
+		"detail": {
+			"type": "string",
+			"default": ""
+		},
+		"source": {
+			"type": "string",
+			"default": ""
+		},
+		"sourceUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"asOf": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

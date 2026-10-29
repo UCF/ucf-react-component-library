@@ -1,0 +1,21 @@
+{
+	"name": "ucf/components",
+	"description": "PHP linting for the UCF component plugins.",
+	"license": "GPL-2.0-or-later",
+	"require-dev": {
+		"wp-coding-standards/wpcs": "^3.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+	},
+	"scripts": {
+		"lint": "phpcs",
+		"lint:fix": "phpcbf"
+	},
+	"config": {
+		"platform": {
+			"php": "8.1"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}

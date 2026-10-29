@@ -1,0 +1,21 @@
+{
+	// Emits the npm package to dist/: JavaScript, type files, and (via resolveJsonModule) the
+	// example data. Run by scripts/build-package.mjs.
+	// WHY hosts/wp is left out: it imports @wordpress/*, which only exists inside WordPress, and
+	// wp-scripts builds it into the plugins instead.
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"allowImportingTsExtensions": false,
+		"rewriteRelativeImportExtensions": true,
+		"declaration": true,
+		"rootDir": "components",
+		"outDir": "dist"
+	},
+	"include": [ "components/**/*.ts", "components/**/*.tsx" ],
+	"exclude": [
+		"components/*/hosts/wp/**",
+		"components/**/*.test.*",
+		"components/**/*.stories.*"
+	]
+}

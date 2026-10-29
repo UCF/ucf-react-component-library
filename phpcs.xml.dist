@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<ruleset name="UCF Components">
+	<description>WordPress coding standards for the UCF component plugins.</description>
+
+	<!-- The PHP sources: each plugin's main file, the shared file, and block render files. -->
+	<file>plugins</file>
+	<file>components</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+
+	<!-- Generated copies of the sources above. -->
+	<exclude-pattern>/plugins/*/build/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/vendor/</exclude-pattern>
+
+	<!-- SYNC: "Requires at least" in each plugin header. -->
+	<config name="minimum_supported_wp_version" value="6.6"/>
+
+	<rule ref="WordPress"/>
+
+	<!--
+	One text domain per plugin, plus `ucf-components` for plugins/shared/shared.php, which
+	every plugin carries.
+	-->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="ucf-content"/>
+				<element value="ucf-degrees"/>
+				<element value="ucf-components"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!--
+	WHY a prefix per plugin rather than one `ucf_components`: a site runs any mix of these
+	plugins, and a function named for its plugin says where to look for it.
+	-->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="ucf_components"/>
+				<element value="ucf_content"/>
+				<element value="ucf_degrees"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

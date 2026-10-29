@@ -1,0 +1,35 @@
+{
+	// Type-checks everything: components, their hosts, stories and tests. `npm run typecheck`.
+	// UPSTREAM: Babel (wp-scripts, Jest) and Vite (Storybook) strip types without checking them,
+	// so this is the only thing that does.
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": [ "ES2022", "DOM", "DOM.Iterable" ],
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"jsx": "react-jsx",
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"noEmit": true,
+		"types": [],
+
+		// UPSTREAM: @wordpress/block-editor ships its type files but does not list them in its
+		// package.json, so TypeScript has to be pointed at them.
+		"paths": {
+			"@wordpress/block-editor": [
+				"./node_modules/@wordpress/block-editor/build-types/index.d.ts"
+			]
+		}
+	},
+	"include": [
+		"components/**/*.ts",
+		"components/**/*.tsx",
+		".storybook/*.ts",
+		"vitest.config.mts",
+		"vitest.shims.d.ts"
+	]
+}

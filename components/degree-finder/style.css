@@ -1,0 +1,666 @@
+/*
+ * CONTEXT: the Degree Finder's styles, for every host. Ported from Jim's styles.css (see the
+ * header of DegreeFinder.tsx); the rules are his.
+ *
+ * SPEC: the UCF brand (https://www.ucf.edu/brand/): black as the foundation, Bold Gold for
+ * emphasis and action, Horizon Blue only for links on dark backgrounds, square corners
+ * throughout. Gold never sits behind white text or on white as text; it appears only behind
+ * black text, or as text and accents on black.
+ *
+ * Colors come only from the component layer (the component layer in dist/tokens/base.css). The root carries
+ * `ucf-c-panel`, so every element inside reads `--ucf-c-{role}` and `--ucf-c-bar-{role}`:
+ *
+ *   question band   (heading, choices, search, chips, results) reads `--ucf-c-*`: the
+ *                   section's panel roles, then its roles, then the light default. On Dark it
+ *                   turns dark; on Bold Gold, whose panels are Light Alt, it looks exactly as on
+ *                   Light Alt. `raised` is the band, `field` the cards and inputs.
+ *   footer          (buttons, escape link, progress) reads `--ucf-c-bar-*`: the section's bar
+ *                   composition. Dark (black) on light and gold sections, as Jim drew it; Light
+ *                   Alt (gray-050) on Dark and Dark Alt, where a black bar had no edge against
+ *                   the dark band. The gold button keeps its black label on both.
+ *
+ * Every color pair it uses is one scripts/tokens.test.mjs checks for contrast. Its own
+ * `--udf-*` properties are layout, type and motion only.
+ *
+ * WHY "inverse" for selection (a selected card, a chip, a hovered result): the body color as
+ * the fill and the field color as the text. That is black on white in a light section, white
+ * on black in a dark one and black on gold in a gold one, all already-checked pairs.
+ * SPEC: one change from Jim's light design follows: a selected card's detail line is the
+ * card's own text color, not gold, because gold on the inverse fill fails in dark and gold
+ * sections.
+ *
+ * SPEC: four values moved to the nearest token, all still AA. Jim's #f2f2f2 band is gray-050
+ * (#f4f4f4); his #4d4d4d muted text is gray-600 (#595959, 6.37:1 on the band); his #c7c7c7
+ * muted text on black is gray-300 (#b3b3b3, 10.02:1 on black); his #3d3d3d is gray-800
+ * (#3a3a3a). The rest are exact.
+ *
+ * UPSTREAM: mobile-first, and laid out by its own width through a container query, so it
+ * needs a width from its parent (Jim's README, "Layout").
+ */
+
+.ucf-c-degree-finder {
+	/* WHY fixed: the gold button and its black label read on a black bar and a white one. */
+	--udf-black: var(--ucf-color-black);
+	--udf-gold: var(--ucf-color-gold);
+	--udf-font-heading: var(--ucf-font-family-display);
+	--udf-font-body: var(--ucf-font-family-body);
+	--udf-font-data: var(--ucf-font-family-mono);
+	--udf-space: 1.25rem;
+
+	/*
+	 * The width of the centered column that holds the content. The background bands always
+	 * fill the finder, so a narrower column gives full-bleed color with the content centered.
+	 */
+	--udf-content-width: 100%;
+
+	/* A11Y: the 44px minimum touch target. */
+	--udf-target: var(--ucf-custom-tap-target);
+
+	/* SYNC: --udf-exit-duration must match EXIT_MS in utils/motion.ts. */
+	--udf-shift: 8px;
+	--udf-enter-duration: 200ms;
+	--udf-exit-duration: 160ms;
+	--udf-fill-duration: 300ms;
+	--udf-select-duration: 200ms;
+
+	color: var(--ucf-c-body);
+	font-family: var(--udf-font-body);
+	font-size: 1rem;
+	line-height: 1.5;
+	container: ucf-c-degree-finder / inline-size;
+}
+
+.ucf-c-degree-finder *,
+.ucf-c-degree-finder *::before,
+.ucf-c-degree-finder *::after {
+	box-sizing: border-box;
+	border-radius: 0;
+}
+
+.ucf-c-degree-finder__visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+
+	/* FIX: clip-path, not the deprecated clip, which stylelint rejects. Same result. */
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Question band: the current question and its choices, on the section's raised color */
+
+.ucf-c-degree-finder__heading {
+	margin: 0;
+	padding: var(--udf-space) var(--udf-space) 0;
+	padding-inline: max(
+		var(--udf-space),
+		(100% - var(--udf-content-width)) / 2
+	);
+	background: var(--ucf-c-raised);
+	font-family: var(--udf-font-heading);
+	font-size: 1.625rem;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.ucf-c-degree-finder__heading:focus {
+	outline: none;
+}
+
+.ucf-c-degree-finder__heading:focus-visible {
+	outline: 3px solid var(--ucf-c-focus);
+	outline-offset: -3px;
+}
+
+.ucf-c-degree-finder__body {
+	padding: var(--udf-space);
+	padding-inline: max(
+		var(--udf-space),
+		(100% - var(--udf-content-width)) / 2
+	);
+	background: var(--ucf-c-raised);
+}
+
+/* Step 1: choice cards (native radio buttons) */
+
+.ucf-c-degree-finder__choices {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: 1fr;
+}
+
+.ucf-c-degree-finder__option {
+	display: block;
+	cursor: pointer;
+}
+
+.ucf-c-degree-finder__card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	height: 100%;
+	min-height: var(--udf-target);
+	padding: 1rem 1.25rem;
+	border: 2px solid var(--ucf-c-line-strong);
+	background: var(--ucf-c-field);
+	color: var(--ucf-c-body);
+}
+
+.ucf-c-degree-finder__choice-card {
+	position: relative;
+	overflow: hidden;
+
+	/*
+	 * A11Y: the text flips quickly at the halfway point, when the background is
+	 * mid-gray, so it stays readable in both directions.
+	 */
+	transition:
+		background-color var(--udf-select-duration) linear,
+		border-color var(--udf-select-duration) linear,
+		color 60ms linear calc(var(--udf-select-duration) / 2 - 30ms);
+}
+
+.ucf-c-degree-finder__choices--large .ucf-c-degree-finder__choice-card {
+	padding: 1.5rem;
+}
+
+.ucf-c-degree-finder__choice-title {
+	font-weight: 700;
+}
+
+.ucf-c-degree-finder__choices--large .ucf-c-degree-finder__choice-title {
+	font-size: 1.25rem;
+}
+
+.ucf-c-degree-finder__choice-detail {
+	color: var(--ucf-c-muted);
+	font-family: var(--udf-font-data);
+	font-size: 0.8125rem;
+	transition: color 60ms linear calc(var(--udf-select-duration) / 2 - 30ms);
+}
+
+.ucf-c-degree-finder__option:hover .ucf-c-degree-finder__choice-card {
+	border-color: var(--ucf-c-body);
+}
+
+/*
+ * SPEC: selecting a card crossfades it from the field color to the inverse, and the accent bar
+ * rises from the bottom edge just after. Deselecting reverses both.
+ */
+.ucf-c-degree-finder__choice-card::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: 0.375rem;
+	background: var(--ucf-c-accent);
+	transform: scaleY(0);
+	transform-origin: bottom;
+	transition: transform var(--udf-select-duration) ease-out;
+}
+
+/* Selected: the inverse card with an accent bar (black with gold in a light section). */
+.ucf-c-degree-finder__option input:checked + .ucf-c-degree-finder__choice-card {
+	border-color: var(--ucf-c-body);
+	background-color: var(--ucf-c-body);
+	color: var(--ucf-c-field);
+}
+
+.ucf-c-degree-finder__option
+	input:checked
+	+ .ucf-c-degree-finder__choice-card::after {
+	transform: scaleY(1);
+	transition-delay: 80ms;
+}
+
+.ucf-c-degree-finder__option
+	input:checked
+	+ .ucf-c-degree-finder__choice-card
+	.ucf-c-degree-finder__choice-detail {
+	color: inherit;
+}
+
+.ucf-c-degree-finder__option
+	input:focus-visible
+	+ .ucf-c-degree-finder__choice-card {
+	outline: 3px solid var(--ucf-c-focus);
+	outline-offset: 3px;
+}
+
+/* Step 2: interest typeahead and chips */
+
+/*
+ * FIX: the entrance animation gives this wrapper its own stacking layer,
+ * which would trap the dropdown's z-index inside it and let the
+ * animated footer paint on top. Lifting the wrapper keeps the open
+ * list above everything that follows it.
+ */
+.ucf-c-degree-finder__combobox-layer {
+	position: relative;
+	z-index: 2;
+}
+
+.ucf-c-degree-finder__combobox {
+	position: relative;
+	max-width: 40rem;
+}
+
+.ucf-c-degree-finder__label {
+	display: block;
+	margin-bottom: 0.375rem;
+	font-weight: 700;
+}
+
+.ucf-c-degree-finder__input {
+	width: 100%;
+	min-height: var(--udf-target);
+	padding: 0.625rem 0.75rem;
+	border: 2px solid var(--ucf-c-body);
+	background: var(--ucf-c-field);
+	color: var(--ucf-c-body);
+	font: inherit;
+}
+
+.ucf-c-degree-finder__input::placeholder {
+	color: var(--ucf-c-muted);
+	opacity: 1;
+}
+
+.ucf-c-degree-finder__input:focus-visible {
+	outline: 3px solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+.ucf-c-degree-finder__listbox {
+	position: absolute;
+	z-index: 10;
+	right: 0;
+	left: 0;
+	max-height: 17rem;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	border: 2px solid var(--ucf-c-body);
+	border-top: 0;
+	background: var(--ucf-c-field);
+	list-style: none;
+}
+
+.ucf-c-degree-finder__listbox[hidden] {
+	display: none;
+}
+
+.ucf-c-degree-finder__listbox-option,
+.ucf-c-degree-finder__listbox-empty {
+	display: flex;
+	align-items: center;
+	min-height: var(--udf-target);
+	padding: 0.5rem 0.75rem;
+}
+
+.ucf-c-degree-finder__listbox-option {
+	cursor: pointer;
+}
+
+.ucf-c-degree-finder__listbox-option:hover {
+	background: var(--ucf-c-raised);
+}
+
+/* The keyboard-highlighted option: on-accent text on the accent (black on gold, in light). */
+.ucf-c-degree-finder__listbox-option[aria-selected="true"] {
+	background: var(--ucf-c-accent);
+	color: var(--ucf-c-on-accent);
+}
+
+.ucf-c-degree-finder__listbox-empty {
+	color: var(--ucf-c-muted);
+}
+
+.ucf-c-degree-finder__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 1rem 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ucf-c-degree-finder__chip {
+	display: inline-flex;
+	align-items: center;
+	min-height: var(--udf-target);
+	padding-left: 0.875rem;
+	background: var(--ucf-c-body);
+	color: var(--ucf-c-field);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.ucf-c-degree-finder__chip-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--udf-target);
+	height: var(--udf-target);
+	margin-left: 0.25rem;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font-size: 1.25rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.ucf-c-degree-finder__chip-remove:hover {
+	background: var(--ucf-c-accent);
+	color: var(--ucf-c-on-accent);
+}
+
+.ucf-c-degree-finder__chip-remove:focus-visible {
+	outline: 3px solid var(--ucf-c-field);
+	outline-offset: -3px;
+}
+
+/* Step 3: degree cards */
+
+.ucf-c-degree-finder__result-count {
+	margin: 0 0 1rem;
+	color: var(--ucf-c-muted);
+	font-family: var(--udf-font-data);
+	font-size: 0.875rem;
+}
+
+.ucf-c-degree-finder__degree-list {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: 1fr;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ucf-c-degree-finder__degree-card {
+	justify-content: center;
+	border-left: 0.375rem solid var(--ucf-c-accent);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ucf-c-degree-finder__degree-card:hover {
+	border-color: var(--ucf-c-body);
+	border-left-color: var(--ucf-c-accent);
+	background: var(--ucf-c-body);
+	color: var(--ucf-c-field);
+}
+
+.ucf-c-degree-finder__degree-card:focus-visible {
+	outline: 3px solid var(--ucf-c-focus);
+	outline-offset: 3px;
+}
+
+/* Status messages */
+
+.ucf-c-degree-finder__status {
+	margin: 0;
+	color: var(--ucf-c-muted);
+}
+
+.ucf-c-degree-finder__status--error {
+	color: var(--ucf-c-body);
+}
+
+.ucf-c-degree-finder__status--error p {
+	margin: 0 0 0.75rem;
+}
+
+/* Footer: the section's bar (black, or gray-050 on dark sections) with navigation,
+ * the escape link and progress */
+
+.ucf-c-degree-finder__footer {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: var(--udf-space);
+	padding-inline: max(
+		var(--udf-space),
+		(100% - var(--udf-content-width)) / 2
+	);
+	background: var(--ucf-c-bar-surface);
+	color: var(--ucf-c-bar-body);
+}
+
+.ucf-c-degree-finder__nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.ucf-c-degree-finder__button {
+	min-height: var(--udf-target);
+	padding: 0.625rem 1.5rem;
+	border: 2px solid var(--udf-gold);
+	background: var(--udf-gold);
+	color: var(--udf-black);
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ucf-c-degree-finder__button:hover {
+	border-color: var(--ucf-c-bar-body);
+	background: var(--ucf-c-bar-body);
+	color: var(--ucf-c-bar-surface);
+}
+
+.ucf-c-degree-finder__button:focus-visible {
+	outline: 3px solid var(--ucf-c-bar-body);
+	outline-offset: 3px;
+}
+
+.ucf-c-degree-finder__button--secondary {
+	border-color: var(--ucf-c-bar-body);
+	background: transparent;
+	color: var(--ucf-c-bar-body);
+}
+
+.ucf-c-degree-finder__button--secondary:hover {
+	background: var(--ucf-c-bar-body);
+	color: var(--ucf-c-bar-surface);
+}
+
+.ucf-c-degree-finder__button[aria-disabled="true"],
+.ucf-c-degree-finder__button[aria-disabled="true"]:hover {
+	border-color: var(--ucf-c-bar-line);
+	background: var(--ucf-c-bar-line);
+	color: var(--ucf-c-bar-muted);
+	cursor: not-allowed;
+}
+
+.ucf-c-degree-finder__hint {
+	margin: 0;
+	color: var(--ucf-c-bar-muted);
+	font-size: 0.875rem;
+}
+
+.ucf-c-degree-finder__explore {
+	align-self: flex-start;
+	color: var(--ucf-c-bar-link);
+	font-weight: 600;
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
+.ucf-c-degree-finder__explore:hover {
+	color: var(--ucf-c-bar-body);
+}
+
+.ucf-c-degree-finder__explore:focus-visible {
+	outline: 3px solid var(--ucf-c-bar-body);
+	outline-offset: 3px;
+}
+
+/* WHY after the footer buttons: same specificity order stylelint checks, and the error
+ * button must win over the base button it restyles. */
+.ucf-c-degree-finder__status--error .ucf-c-degree-finder__button {
+	border-color: var(--ucf-c-body);
+	background: var(--ucf-c-body);
+	color: var(--ucf-c-field);
+}
+
+/* Progress bar: gold segments on the bar's track */
+
+.ucf-c-degree-finder__progress {
+	display: flex;
+	gap: 0.25rem;
+	width: 100%;
+}
+
+.ucf-c-degree-finder__progress-segment {
+	position: relative;
+	flex: 1;
+	height: 0.375rem;
+	overflow: hidden;
+	background: var(--ucf-c-bar-line);
+}
+
+/*
+ * SPEC: the fill grows from the segment's left edge: moving forward it
+ * fills left to right, and going back it empties right to left.
+ */
+.ucf-c-degree-finder__progress-fill {
+	position: absolute;
+	inset: 0;
+	background: var(--udf-gold);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform var(--udf-fill-duration) ease-out;
+}
+
+.ucf-c-degree-finder__progress-fill--filled {
+	transform: scaleX(1);
+}
+
+/*
+ * SPEC: motion. Everything that appears slides in from the right and fades
+ * in; everything that leaves keeps moving left and fades out. Groups
+ * of cards stagger their entrance with --udf-delay.
+ */
+
+@keyframes ucf-c-degree-finder-enter {
+	from {
+		opacity: 0;
+		transform: translateX(var(--udf-shift));
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes ucf-c-degree-finder-exit {
+	from {
+		opacity: 1;
+		transform: none;
+	}
+
+	to {
+		opacity: 0;
+		transform: translateX(calc(var(--udf-shift) * -1));
+	}
+}
+
+.ucf-c-degree-finder__motion {
+	animation: ucf-c-degree-finder-enter var(--udf-enter-duration) ease-out
+		var(--udf-delay, 0ms) both;
+}
+
+/* Leaving: a single element, or the whole step while moving to the next. */
+.ucf-c-degree-finder__motion--exit,
+.ucf-c-degree-finder--leaving
+	.ucf-c-degree-finder__heading
+	.ucf-c-degree-finder__motion,
+.ucf-c-degree-finder--leaving
+	.ucf-c-degree-finder__body
+	.ucf-c-degree-finder__motion {
+	animation: ucf-c-degree-finder-exit var(--udf-exit-duration) ease-in 0ms
+		both;
+	pointer-events: none;
+}
+
+.ucf-c-degree-finder__heading-text {
+	display: inline-block;
+}
+
+/* Wraps buttons and hints that come and go, without changing layout. */
+.ucf-c-degree-finder__presence {
+	display: inline-flex;
+}
+
+/*
+ * WHY: wider finders put cards in a grid, and this responds to the finder's own
+ * width rather than the window's, so it lays out the same in a narrow
+ * content column, a wide block or a sidebar.
+ */
+
+@container ucf-c-degree-finder (min-width: 36rem) {
+	.ucf-c-degree-finder > * {
+		--udf-space: 2rem;
+	}
+
+	.ucf-c-degree-finder__heading {
+		font-size: 2rem;
+	}
+
+	.ucf-c-degree-finder__choices--small {
+		grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+	}
+
+	.ucf-c-degree-finder__choices--large {
+		/* SPEC: narrow enough for three cards in a 645px content column. */
+		grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+	}
+
+	.ucf-c-degree-finder__degree-list {
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	}
+
+	.ucf-c-degree-finder__footer {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.ucf-c-degree-finder__explore {
+		align-self: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ucf-c-degree-finder__motion,
+	.ucf-c-degree-finder__motion--exit,
+	.ucf-c-degree-finder--leaving
+		.ucf-c-degree-finder__heading
+		.ucf-c-degree-finder__motion,
+	.ucf-c-degree-finder--leaving
+		.ucf-c-degree-finder__body
+		.ucf-c-degree-finder__motion {
+		animation: none;
+	}
+
+	.ucf-c-degree-finder__progress-fill,
+	.ucf-c-degree-finder__choice-card,
+	.ucf-c-degree-finder__choice-card::after,
+	.ucf-c-degree-finder__choice-detail {
+		transition: none;
+	}
+}

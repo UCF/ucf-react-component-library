@@ -1,0 +1,83 @@
+{
+	"name": "@ucf/components",
+	"version": "0.1.0",
+	"description": "A framework-agnostic, React-based component library and testbench for UCF websites and applications",
+	"private": true,
+	"license": "GPL-2.0-or-later",
+	"engines": {
+		"node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+	},
+	"exports": {
+		"./ucf.css": "./dist/ucf.css",
+		"./theme/*": "./dist/theme/*",
+		"./stat": {
+			"types": "./dist/stat/index.d.ts",
+			"default": "./dist/stat/index.js"
+		},
+		"./stat/puck": {
+			"types": "./dist/stat/hosts/puck/config.d.ts",
+			"default": "./dist/stat/hosts/puck/config.js"
+		},
+		"./stat/example.json": "./dist/stat/example.json",
+		"./degree-finder": {
+			"types": "./dist/degree-finder/index.d.ts",
+			"default": "./dist/degree-finder/index.js"
+		},
+		"./degree-finder/puck": {
+			"types": "./dist/degree-finder/hosts/puck/config.d.ts",
+			"default": "./dist/degree-finder/hosts/puck/config.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"sideEffects": [
+		"*.css"
+	],
+	"peerDependencies": {
+		"react": ">=18.3"
+	},
+	"scripts": {
+		"build": "npm run build:tokens && npm run build:package && npm run build:plugins",
+		"build:tokens": "node scripts/build-tokens.mjs",
+		"build:package": "node scripts/build-package.mjs",
+		"build:plugins": "npm run build:tokens && wp-scripts build",
+		"start": "npm run build:tokens && wp-scripts start",
+		"package:plugins": "npm run build:plugins && node scripts/package-plugins.mjs",
+		"deploy:local": "npm run build:plugins && node scripts/deploy-local.mjs",
+		"storybook": "npm run build:tokens && storybook dev -p 6006",
+		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
+		"test": "wp-scripts test-unit-js --project=unit",
+		"test:stories": "wp-scripts test-unit-js --project=storybook",
+		"typecheck": "tsc -p tsconfig.json",
+		"lint:js": "wp-scripts lint-js components scripts .storybook webpack.config.js",
+		"lint:css": "wp-scripts lint-style \"components/**/*.css\"",
+		"lint:php": "composer lint",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"devDependencies": {
+		"@storybook/addon-a11y": "^10.6.5",
+		"@storybook/addon-vitest": "^10.6.5",
+		"@storybook/react-vite": "^10.6.5",
+		"@types/react": "^18.3.31",
+		"@types/react-dom": "^18.3.7",
+		"@vitest/browser-playwright": "^5.0.5",
+		"@vitest/coverage-v8": "^5.0.5",
+		"@wordpress/block-editor": "^19.0.0",
+		"@wordpress/blocks": "^17.0.0",
+		"@wordpress/components": "^43.0.0",
+		"@wordpress/element": "^10.0.0",
+		"@wordpress/i18n": "^7.0.0",
+		"@wordpress/scripts": "^37.0.0",
+		"copy-webpack-plugin": "^10.2.4",
+		"playwright": "^1.64.1",
+		"prettier": "npm:wp-prettier@^3.9.6",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"storybook": "^10.6.5",
+		"typescript": "^5.9.3",
+		"vite": "^8.3.5",
+		"vitest": "^5.0.5"
+	}
+}

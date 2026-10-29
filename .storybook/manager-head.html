@@ -1,0 +1,86 @@
+<!--
+	The Storybook interface's head: its fonts and browser-tab icon.
+
+	WHY a second font link, beside preview-head.html's: the interface and the stories are
+	separate pages, and each loads its own fonts.
+	SYNC: the families in tokens/tokens.json `font-family`, and the weights the interface uses.
+-->
+<link rel="icon" type="image/png" href="./ucf-logo.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Oswald:wght@500;600&family=Roboto+Mono:wght@400;500&display=swap"
+/>
+
+<!--
+	The sidebar's brand: the logo at 30 by 30, then the name.
+
+	SYNC: the markup is `brandTitle` in manager.ts.
+	WHY object-fit: the image is 250 by 200, so `contain` keeps its shape inside the square.
+	The large source stays sharp on high-density screens.
+-->
+<style>
+	.ucf-brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.ucf-brand img {
+		display: block;
+		flex: none;
+		width: 30px;
+		height: 30px;
+		object-fit: contain;
+	}
+
+	.ucf-brand__text {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.15;
+	}
+
+	.ucf-brand__name {
+		font-size: 17px;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+	}
+
+	.ucf-brand__tag {
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+</style>
+
+<!--
+	The browser tab says "UCF Storybook" instead of "Storybook".
+
+	UPSTREAM: Storybook writes the tab title itself on every navigation, ending in
+	"⋅ Storybook", and has no option for it; the theme's brandTitle is not used there. So this
+	rewrites the ending each time the title changes.
+	FIX: the new name also ends in "Storybook", so a title already ending in "UCF Storybook" is
+	left alone. Without that check, each rewrite would match again and add "UCF" forever.
+	SYNC: the name in `brandTitle` in manager.ts.
+-->
+<script>
+	( function () {
+		var NAME = 'UCF Storybook';
+
+		function rename() {
+			var title = document.title;
+			if ( /Storybook$/.test( title ) && ! title.endsWith( NAME ) ) {
+				document.title = title.replace( /Storybook$/, NAME );
+			}
+		}
+		new MutationObserver( rename ).observe( document.head, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+		} );
+		rename();
+	} )();
+</script>

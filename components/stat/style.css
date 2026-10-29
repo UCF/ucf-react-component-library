@@ -1,0 +1,52 @@
+/*
+ * CONTEXT: the Stat's styles, for every host.
+ *
+ * Reads only `--ucf-*` names. Colors come from the component layer (the component layer in dist/tokens/base.css):
+ * the root carries `ucf-c`, a component that sits on the section, so `--ucf-c-accent`,
+ * `--ucf-c-body` and `--ucf-c-muted` are the section's roles, or the light default with no
+ * section. That is what lets the same stat sit on a dark section in any host. Spacing, type and
+ * rule widths are tokens, from the same file (base-wp.css in WordPress).
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`, which
+ * is why this is not `stat.css`.
+ *
+ * SPEC: a fact written as a complete statement, never a giant number over small words.
+ */
+.ucf-c-stat {
+	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
+	display: grid;
+	gap: var(--ucf-spacing-30);
+	padding-top: var(--ucf-spacing-50);
+}
+
+.ucf-c-stat > * {
+	margin: 0;
+}
+
+.ucf-c-stat__statement {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-display);
+	font-size: clamp(1.625rem, 1.45rem + 0.75vw, 2.125rem);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.08;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.ucf-c-stat__detail {
+	color: var(--ucf-c-body);
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.6;
+}
+
+.ucf-c-stat__source {
+	color: var(--ucf-c-muted);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	line-height: 1.55;
+}
+
+.ucf-c-stat__source a {
+	color: inherit;
+}
