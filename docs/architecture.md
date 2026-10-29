@@ -324,6 +324,9 @@ committing.
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`client.test.ts`): what it requests and what it keeps, with a fake
   `fetch`. Every interactive component's client needs one.
+- **Puck configs** (`shared/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
+  (checked by `npm run typecheck`), and its `render` gives the same markup with Puck's extra
+  props (`id`, `puck`, `editMode`) as without. Add every new config to the file's list.
 - **Every story is a test** (`@storybook/addon-vitest`). It must render without error and with
   no accessibility violation, because preview.ts sets the a11y add-on to `error`. A story that
   needs the network is tagged `!test` (the Degree Finder's Live Data). Every component needs

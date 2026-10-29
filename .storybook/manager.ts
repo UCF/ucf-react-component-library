@@ -54,8 +54,10 @@ addons.setConfig( {
 		// SYNC: the image is in .storybook/public/, served at the root by `staticDirs` in
 		// main.ts; its size and the layout are in manager-head.html (`.ucf-brand`).
 		brandTitle: brand,
-		brandUrl: 'https://www.ucf.edu/',
-		brandTarget: '_blank',
+		// WHY './' and not '/': the logo returns to the catalog's start page, and a relative URL
+		// keeps working when the static build is hosted under a subpath.
+		brandUrl: './',
+		brandTarget: '_self',
 
 		colorPrimary: c( 'gold' ),
 		colorSecondary: c( 'horizon' ),

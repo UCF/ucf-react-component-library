@@ -6,9 +6,9 @@
  * own `config.components`. Puck stores the props as JSON and calls `render` on every request,
  * so a Puck host has none of WordPress's saved-markup limits.
  *
- * UPSTREAM: follows `@measured/puck`'s `ComponentConfig` (0.20) for the parts used here. Nothing
- * runs these configs against Puck yet, so a mismatch would only show up in a Puck site. A Puck
- * playground that renders every config is on the to-do list (docs/todo.md).
+ * UPSTREAM: follows `@puckeditor/core`'s `ComponentConfig` (0.24) for the parts used here.
+ * Puck needs a field for every prop and complete `defaultProps`. shared/puck.test.tsx checks
+ * every config against the real Puck types, so a change in Puck fails `npm run typecheck`.
  */
 import type { ReactElement } from 'react';
 
@@ -18,9 +18,21 @@ export type PuckField =
 	| { type: 'text' | 'textarea'; label?: string }
 	| { type: 'select' | 'radio'; label?: string; options: Option[] };
 
+/**
+ * What Puck passes to `render` besides the component's own props.
+ *
+ * WHY listed: `render` must not hand these to the component. A component that spreads its
+ * other props onto its root element (Stat does) would put them in the markup.
+ */
+export type PuckRenderProps = {
+	id?: string;
+	puck?: unknown;
+	editMode?: boolean;
+};
+
 export type PuckComponentConfig< Props > = {
 	label?: string;
-	fields: { [ Key in keyof Props ]?: PuckField };
-	defaultProps?: Partial< Props >;
-	render: ( props: Props ) => ReactElement;
+	fields: { [ Key in keyof Props ]: PuckField };
+	defaultProps: Props;
+	render: ( props: Props & PuckRenderProps ) => ReactElement;
 };

@@ -1,8 +1,8 @@
 /**
  * Vitest, through `wp-scripts test-unit-js`. Two projects, each with its own command:
  *
- *   unit        `npm test`. The markup contract, the data clients and the token checks, in
- *               Node.
+ *   unit        `npm test`. The markup contract, the data clients, the Puck configs and the
+ *               token checks, in Node.
  *   storybook   `npm run test:stories`. Every story, rendered in headless Chromium by @storybook/addon-vitest. A story
  *               passes if it renders without error and, because preview.ts sets the a11y
  *               add-on's `test: 'error'`, with no accessibility violation.

@@ -86,7 +86,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | `npm start`               | Rebuild the plugins on every change                               |
 | `npm run release:temp`    | Build, then collect every output into `temp-release/` (see below) |
 | `npm run build:storybook` | The catalog as a static site in `storybook-static/`               |
-| `npm test`                | Unit tests: markup, data clients, tokens and contrast (Node)      |
+| `npm test`                | Unit tests: markup, data clients, Puck configs, tokens (Node)     |
 | `npm run test:stories`    | Every story in headless Chromium, with accessibility checks       |
 | `npm run typecheck`       | TypeScript over everything                                        |
 | `npm run lint:js`         | ESLint                                                            |
@@ -215,7 +215,8 @@ props.
 - **`hosts/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
   ([components/shared/puck.ts](components/shared/puck.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
-  library needs no Puck dependency.
+  library needs no Puck dependency. `render` passes the core only its own props: Puck also
+  sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.
 - **Next and other React sites have no host folder.** They render the core directly from
   `@ucf/components/{name}` and pass their pieces in through slots.
 
@@ -268,7 +269,7 @@ index.ts              what the npm package exports
 style.css             colors as var(--ucf-c-{role}) only
 {Name}.stories.tsx    title 'Content (Server)/{Name}' or 'Interactive (Client)/{Name}',
                       tags [ 'server' ] or [ 'client' ], first story `Default`
-hosts/puck/config.tsx
+hosts/puck/config.tsx also add it to CONFIGS in components/shared/puck.test.tsx
 hosts/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
 ```
 

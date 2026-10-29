@@ -26,17 +26,16 @@ The playground first, then the schema, which is easiest to verify once the playg
 
 ### 1. A Puck playground
 
-The Puck configs (`hosts/puck/config.tsx`) are checked only by TypeScript, against a
-hand-written copy of Puck's shape (`components/shared/puck.ts`). Nothing renders them.
+The Puck configs (`hosts/puck/config.tsx`) are checked against Puck's own types, and their
+`render` against Puck's extra props (`components/shared/puck.test.tsx`). Nothing renders them
+in the real Puck editor yet.
 
-- **A small app in `playground/`,** with Vite and `@measured/puck` as dev dependencies only, so
+- **A small app in `playground/`,** with Vite and `@puckeditor/core` as dev dependencies only, so
   the library itself stays free of Puck. It loads every `hosts/puck/config.tsx`, opens the real
   Puck editor on a saved sample page, and loads `dist/ucf.css` and the compositions so
   sections can be tried.
 - **A check:** a test renders each config through Puck's `<Render>` with sample data, so a
   config that no longer fits Puck's current shape fails, not just one that fails TypeScript.
-- **Optionally,** a type test that `PuckComponentConfig` is assignable to Puck's own
-  `ComponentConfig`, so `shared/puck.ts` cannot drift either.
 
 ### Done: the block theme builds from `tokens.json`
 

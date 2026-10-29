@@ -28,7 +28,17 @@ const config: PuckComponentConfig< Props > = {
 		asOf: { type: 'text', label: 'As of' },
 	},
 	defaultProps: example,
-	render: ( props ) => <Stat { ...props } />,
+	// FIX: pass only Stat's own props. Stat spreads the rest onto its <div>, so Puck's `id`,
+	// `puck` and `editMode` ended up in the markup (see PuckRenderProps in shared/puck.ts).
+	render: ( { statement, detail, source, sourceUrl, asOf } ) => (
+		<Stat
+			statement={ statement }
+			detail={ detail }
+			source={ source }
+			sourceUrl={ sourceUrl }
+			asOf={ asOf }
+		/>
+	),
 };
 
 export default config;
