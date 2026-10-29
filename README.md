@@ -10,10 +10,6 @@ Components are written once in React and shipped to every place UCF builds pages
 - **The UCF block theme:** as a token kit, so its sections share the same colors and roles.
 - **Storybook:** the catalog where every component can be seen on every section color.
 
-It replaces `ucf-components`. **Read [docs/architecture.md](docs/architecture.md)** for how it
-works and why; [docs/todo.md](docs/todo.md) lists what's next. The package is private (version
-0.1.0) and nothing is published yet.
-
 ## Quick start
 
 Node 22.22, 24.15 or 26+ (`.nvmrc` pins 24).
