@@ -41,7 +41,7 @@ tokens/tokens.json ──► npm run build:tokens ──► dist/tokens/base.css
 components/{name}/ ──┬► npm run build:package ──► dist/{name}/ + dist/ucf.css   npm package
                      │                                 └─► Next, Puck: import from @ucf/components
                      ├► npm run build:plugins ──► plugins/{plugin}/build/       WordPress plugins
-                     │                                 └─► deploy:local, or package:plugins (zip)
+                     │                                 └─► npm run release:temp: temp-release/wordpress/*.zip
                      └► npm run storybook ──────► the catalog
 ```
 
@@ -65,7 +65,7 @@ plugins/           one WordPress plugin per content type
   ucf-content/     plugin.json lists its blocks: stat
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
-scripts/           the token, package, deploy and zip scripts, and the token tests
+scripts/           the token, package and release scripts, and the token tests
 .storybook/        the catalog: theme, toolbar, logo
 docs/              architecture.md (how and why), todo.md (what's next)
 ```
@@ -80,8 +80,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | `npm run build:package`   | The npm package and its one stylesheet, `dist/ucf.css`            |
 | `npm run build:plugins`   | Only the WordPress plugins, into `plugins/*/build/`               |
 | `npm start`               | Rebuild the plugins on every change                               |
-| `npm run deploy:local`    | Build, then copy each plugin into the local WordPress             |
-| `npm run package:plugins` | Build, then zip each plugin into `dist/plugins/`                  |
+| `npm run release:temp`    | Build, then collect every output into `temp-release/` (see below) |
 | `npm run build:storybook` | The catalog as a static site in `storybook-static/`               |
 | `npm test`                | Unit tests: markup, data clients, tokens and contrast (Node)      |
 | `npm run test:stories`    | Every story in headless Chromium, with accessibility checks       |
@@ -93,41 +92,49 @@ docs/              architecture.md (how and why), todo.md (what's next)
 
 ## Using it
 
+```sh
+npm run release:temp
+```
+
+That builds everything and collects it into `temp-release/`, one folder for each kind of site, with
+a README that explains each. Hand over the folder, or the part someone needs.
+
+**These builds are temporary.** They stand in for a real release until we decide how the plugins
+and package are published (docs/todo.md). They are generated and never committed, and the "temp"
+names go away when a release pipeline replaces them.
+
+| Folder                                            | For                              |
+| ------------------------------------------------- | -------------------------------- |
+| `temp-release/wordpress/{plugin}.zip`             | WordPress: one zip per plugin    |
+| `temp-release/react/ucf-components-{version}.tgz` | Next, Puck or another React site |
+| `temp-release/theme/`                             | The block theme's token kit      |
+
 ### In WordPress
 
-```sh
-npm run deploy:local
-```
+Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
+activate, then add blocks from the **UCF** category of the inserter.
 
-That builds both plugins and copies them into `../wp-multisite/www/wp-content/plugins`
-(override with `WP_PLUGINS_DIR`). Activate them in **Plugins**, then add blocks from the **UCF**
-category of the inserter. For a live edit loop, symlink the plugin folders into WordPress once
-and leave `npm start` running:
-
-```sh
-ln -s "$PWD/plugins/ucf-content" ../wp-multisite/www/wp-content/plugins/ucf-content
-ln -s "$PWD/plugins/ucf-degrees" ../wp-multisite/www/wp-content/plugins/ucf-degrees
-```
-
-For another site, `npm run package:plugins` writes zips to `dist/plugins/` to upload under
-**Plugins → Add New → Upload**.
+To work on a block, copy or symlink `plugins/{plugin}` into a development WordPress's
+`wp-content/plugins/` and leave `npm start` running. If WordPress runs in a container, a symlink
+to a folder outside what the container mounts won't resolve; copy instead.
 
 Check a block in the editor, never on the front end, where an invalid block still renders:
 `wp.data.select( 'core/block-editor' ).getBlocks()` in the console, and watch for "Updated Block".
 
 ### In the block theme
 
-The theme takes its section colors from this repo. After changing `tokens.json`:
-
-```sh
-npm run build:tokens                  # here
-cd ../wp-multisite/www/wp-content/themes/ucf-wordpress-block-theme
-npm run sync:tokens && npm run build  # there: copies dist/theme/ into its tokens/
-```
-
-Its `npm run check:tokens` fails while its `theme.json` presets disagree with the kit.
+The theme takes its section colors from this repo. After changing `tokens.json`, run
+`npm run release:temp` and copy `temp-release/theme/` into the theme's `tokens/` folder, then run the
+theme's `npm run build`. Its `npm run check:tokens` fails while its `theme.json` presets
+disagree with the kit.
 
 ### In Next, Puck or another React site
+
+Copy the `.tgz` into the site and install it:
+
+```sh
+npm install ./ucf-components-0.1.0.tgz
+```
 
 ```tsx
 import Link from 'next/link';
@@ -144,8 +151,7 @@ import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, 
 
 The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). Puck sites add
 `@ucf/components/stat/puck` and `@ucf/components/degree-finder/puck` to their
-`config.components`. Until the package is published, install it from a local path or with
-`npm link`.
+`config.components`.
 
 ## Adding a component
 

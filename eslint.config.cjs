@@ -6,7 +6,12 @@ const wpConfig = require( '@wordpress/scripts/config/eslint.config.cjs' );
 module.exports = [
 	...wpConfig,
 	{
-		ignores: [ 'dist/**', 'plugins/*/build/**', 'storybook-static/**' ],
+		ignores: [
+			'dist/**',
+			'temp-release/**',
+			'plugins/*/build/**',
+			'storybook-static/**',
+		],
 	},
 	{
 		// WHY: command-line scripts whose job is to print. Nothing in scripts/ ships.

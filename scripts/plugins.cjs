@@ -5,7 +5,7 @@
  * the components it carries. The plugin owns the list rather than each block naming its plugin,
  * so a plugin's contents can be read in one place.
  *
- * Read by webpack.config.js (what to build where) and by the package and deploy scripts.
+ * Read by webpack.config.js (what to build where) and by scripts/release-temp.mjs.
  * CommonJS because webpack.config.js is.
  */
 const { existsSync, readdirSync, readFileSync } = require( 'node:fs' );

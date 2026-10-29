@@ -3,15 +3,6 @@
 The single source for this repo's conventions and the reasoning behind them. `README.md` and
 `CLAUDE.md` point here rather than restating it.
 
-This repo is the successor to `ucf-components`, reworked after comparing it with the degree
-picker in UCF-Degree-Search-Plugin (branches `component` and `wp-block`). What came from each:
-
-- **From `ucf-components`:** content components with a pure core, slots for host pieces, the
-  markup contract test, tokens built per host.
-- **From the degree picker:** interactive components that share their whole React tree, a dynamic
-  block with a no-JavaScript fallback, a data client passed in as a prop, sample data for
-  previews, one defaults file, a Puck config with no Puck dependency, strict TypeScript.
-
 ---
 
 ## One source, two outputs
@@ -125,9 +116,6 @@ One name per component, spelled the same way in every layer:
   block's attribute names are stored in every post** that uses the block, so once a site uses
   them they are permanent. Settle them before the first deploy.
 
-**Renamed on arrival:** the Degree Finder was Jim's Degree Picker (`ucf-degree-picker`, `--udp-*`).
-The header of `DegreeFinder.tsx` maps each of his files and names to this repo's.
-
 ## A component's folder
 
 ```
@@ -206,8 +194,8 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 - **Every plugin carries `base.css`** (tokens pointing at the theme, and the component layer)
   under one style handle, so it loads once.
 
-Installed by zip for now (`npm run package:plugins`). How sites will get them through Composer
-is in `docs/todo.md`.
+Installed by zip for now (`npm run release:temp` writes them to `temp-release/wordpress/`). How
+sites will get them through Composer is in `docs/todo.md`.
 
 ## Tokens, roles and fonts
 
@@ -234,8 +222,7 @@ primitives it has two role groups, both references to colors and never values:
   optional `raised` override. Each Alt shares its treatment with its base but not its
   background, and overrides `raised` so a panel still shows on it.
 - **The slug `alt` stays `alt`,** not `light-alt`: the block theme saves it in posts as the
-  `is-style-alt` class. Only its display name changed. `dark-alt` is this repo's and is not in
-  the theme yet (`docs/todo.md`).
+  `is-style-alt` class.
 - **A composition names other compositions for the surfaces inside it** (in `$extensions`).
   One mechanism, two surfaces:
 
@@ -278,9 +265,9 @@ sync, a Sass map for the theme).
 
 ### The component layer: one class, every role
 
-Components never read `--ucf-accent` and its fallbacks directly. The build writes
-the component layer (part of `ucf.css`, and of WordPress's `base.css`), which sets `--ucf-c-{role}` for every role on one class, each already resolved
-with its fallback. A component puts that class on its outer element, and every element inside
+Components never read `--ucf-accent` and its fallbacks directly. The build writes the component
+layer (part of `ucf.css`, and of WordPress's `base.css`), which sets `--ucf-c-{role}` for every
+role on one class, each already resolved with its fallback. A component puts that class on its outer element, and every element inside
 inherits the roles: the section's, unless the component is a panel.
 
 | Class          | For                                                    | `--ucf-c-accent` is                                |
@@ -323,17 +310,15 @@ it makes those blocks invalid. So:
 `npm test` fails on any markup change so this can't happen by accident. Interactive components have
 no such rule: nothing is saved.
 
-**Before the first release, the steps don't apply.** Stat gained the `ucf-c` class at 0.1.0,
-when nothing had been published and neither plugin had been installed on any site (checked
-in the local WordPress and the Pantheon checkout), so no post held its old markup and a
-deprecation would have had nothing to migrate. The snapshot was updated directly. From the
-first release on, follow the steps above.
+**Before the first release, the steps don't apply:** no site has saved the markup yet, so a
+deprecation would have nothing to migrate. Update the snapshot directly until then.
 
 ## Tests
 
 Vitest runs two projects (`vitest.config.mts`): `npm test` runs `unit`, in Node, and
 `npm run test:stories` runs `storybook`, every story in headless Chromium. They are separate
-because the browser is slow to start and the story checks are narrower; CI runs both.
+because the browser is slow to start and the story checks are narrower. Run both before
+committing.
 
 - **Markup contract** (`Stat.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
