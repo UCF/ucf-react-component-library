@@ -10,6 +10,9 @@ Components are written once in React and shipped to every place UCF builds pages
 - **The UCF block theme:** as a token kit, so its sections share the same colors and roles.
 - **Storybook:** the catalog where every component can be seen on every section color.
 
+How it works and why: [docs/architecture.md](docs/architecture.md). What's next:
+[docs/todo.md](docs/todo.md).
+
 ## Quick start
 
 Node 22.22, 24.15 or 26+ (`.nvmrc` pins 24).
@@ -36,7 +39,7 @@ tokens/tokens.json ──► npm run build:tokens ──► dist/tokens/base.css
         │                                        ├► dist/tokens/base-wp.css  the same for WordPress
         │                                        └► dist/theme/              the block theme's kit
         │                                                │
-        │                                                └──► block theme: npm run sync:tokens
+        │                                                └──► block theme: its tokens/ folder
         ▼
 components/{name}/ ──┬► npm run build:package ──► dist/{name}/ + dist/ucf.css   npm package
                      │                                 └─► Next, Puck: import from @ucf/components
@@ -45,8 +48,9 @@ components/{name}/ ──┬► npm run build:package ──► dist/{name}/ + d
                      └► npm run storybook ──────► the catalog
 ```
 
-`npm run build` runs tokens, then the package, then the plugins. Everything it writes
-(`dist/`, `plugins/*/build/`, `storybook-static/`) is generated: never edit or commit it.
+`npm run build` runs tokens, then the package, then the plugins. Everything the scripts write
+(`dist/`, `plugins/*/build/`, `temp-release/`, `storybook-static/`) is generated: never edit or
+commit it.
 
 **Colors never live in a component.** A component reads roles such as `--ucf-c-accent`, and the
 section it sits in decides what they are. Change a color or role in `tokens.json`, run
@@ -96,8 +100,8 @@ docs/              architecture.md (how and why), todo.md (what's next)
 npm run release:temp
 ```
 
-That builds everything and collects it into `temp-release/`, one folder for each kind of site, with
-a README that explains each. Hand over the folder, or the part someone needs.
+That builds everything and collects it into `temp-release/`, one folder for each kind of site,
+with a README that explains each. Hand over the folder, or the part someone needs.
 
 **These builds are temporary.** They stand in for a real release until we decide how the plugins
 and package are published (docs/todo.md). They are generated and never committed, and the "temp"
@@ -124,16 +128,16 @@ Check a block in the editor, never on the front end, where an invalid block stil
 ### In the block theme
 
 The theme takes its section colors from this repo. After changing `tokens.json`, run
-`npm run release:temp` and copy `temp-release/theme/` into the theme's `tokens/` folder, then run the
-theme's `npm run build`. Its `npm run check:tokens` fails while its `theme.json` presets
-disagree with the kit.
+`npm run release:temp`, copy the files in `temp-release/theme/` into the theme's `tokens/`
+folder, then run the theme's `npm run build`. Its `npm run check:tokens` fails while its
+`theme.json` presets disagree with the kit.
 
 ### In Next, Puck or another React site
 
 Copy the `.tgz` into the site and install it:
 
 ```sh
-npm install ./ucf-components-0.1.0.tgz
+npm install ./ucf-components-{version}.tgz
 ```
 
 ```tsx
@@ -149,9 +153,15 @@ import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, 
 <DegreeFinder programType="master" />
 ```
 
-The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). Puck sites add
-`@ucf/components/stat/puck` and `@ucf/components/degree-finder/puck` to their
-`config.components`.
+The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). In Puck, each component's
+config is the default export of `@ucf/components/{name}/puck`:
+
+```tsx
+import stat from '@ucf/components/stat/puck';
+import degreeFinder from '@ucf/components/degree-finder/puck';
+
+const config = { components: { Stat: stat, DegreeFinder: degreeFinder } };
+```
 
 ## Adding a component
 
@@ -199,7 +209,8 @@ Then read colors only as `var(--ucf-c-accent)`, `var(--ucf-c-body)` and so on, p
 
 **4. Wire it in.**
 
-- `package.json` `exports`: add `./{name}` and `./{name}/puck`.
+- `package.json` `exports`: add `./{name}` and `./{name}/puck` (and `./{name}/example.json`
+  for a content component).
 - One `plugins/*/plugin.json`: add the name to `blocks`, and name the block after that plugin
   (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two.
 - Interactive blocks with site settings: a settings function in that plugin's main PHP file,
