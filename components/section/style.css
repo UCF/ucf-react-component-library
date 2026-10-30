@@ -1,0 +1,57 @@
+/*
+ * CONTEXT: the Section band, for every host: in ucf.css for React, and in the ucf-content
+ * plugin for the Section block.
+ *
+ * SYNC: the padding and widths are shared tokens; the gap between blocks is not yet
+ * (docs/todo.md). While the block theme keeps its own `.ucf-section` band
+ * (src/scss/_section.scss), its rules match this block too; they use the same tokens.
+ *
+ * The background and roles come from the composition class beside it
+ * (`.ucf-composition-{slug}`, in the token layer), not from here.
+ */
+
+/* SPEC: 64px on phones to 96px on desktop, fluid, as the theme's band. */
+.ucf-section {
+	padding-block: var(--ucf-custom-section-y);
+	padding-inline: var(--ucf-custom-gutter);
+}
+
+/* SPEC: the cozy band, 48px: the block theme's tight band. */
+.ucf-section--cozy {
+	padding-block: var(--ucf-spacing-70);
+}
+
+/* SPEC: the compact band, 32px, the least. New here: the block theme has no step below tight. */
+.ucf-section--compact {
+	padding-block: var(--ucf-spacing-60);
+}
+
+/* SYNC: the theme's blockGap (`styles.spacing.blockGap` in its theme.json). */
+.ucf-section__inner {
+	display: grid;
+	gap: var(--ucf-spacing-40);
+	margin-inline: auto;
+}
+
+/*
+ * The block theme's two layout widths (tokens.json `layout`). In WordPress they are the active
+ * theme's own contentSize and wideSize; the theme's bands use exactly these two.
+ * WHY the default reads `--ucf-layout-wide`: it is the theme's wideSize, which most of its
+ * bands use. The option named `wide` here is the edge-to-edge one, below.
+ */
+.ucf-section__inner--default {
+	max-width: var(--ucf-layout-wide);
+}
+
+/*
+ * The reading width, for a band of text. WHY `constrained` against the token `content`: the
+ * token keeps the theme's own name (contentSize).
+ */
+.ucf-section__inner--constrained {
+	max-width: var(--ucf-layout-content);
+}
+
+/* Edge to edge, inside the band's gutter. */
+.ucf-section__inner--wide {
+	max-width: none;
+}

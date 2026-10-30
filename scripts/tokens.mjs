@@ -150,3 +150,33 @@ export const compositions = ( tokens ) =>
 				.map( ( [ role, token ] ) => [ role, token.$value ] )
 		),
 	} ) );
+
+// SYNC: WordPress's preset prefixes, keyed by group in tokens.json. `custom` is not a preset;
+// WordPress writes it as --wp--custom--{key}.
+const WP_PRESET = {
+	color: 'color',
+	'font-family': 'font-family',
+	'font-size': 'font-size',
+	spacing: 'spacing',
+	shadow: 'shadow',
+};
+
+/**
+ * The WordPress custom property a token points at in WordPress, so the theme's value wins.
+ *
+ * WHY `layout` maps to --wp--style--global--{slug}-size: WordPress writes theme.json's
+ * `settings.layout` (contentSize, wideSize) as those two properties, and no others.
+ *
+ * @param {string} group The token's group in tokens.json.
+ * @param {string} slug  Its key in that group.
+ * @return {string} The WordPress property name.
+ */
+export function wpName( group, slug ) {
+	if ( group === 'custom' ) {
+		return `--wp--custom--${ slug }`;
+	}
+	if ( group === 'layout' ) {
+		return `--wp--style--global--${ slug }-size`;
+	}
+	return `--wp--preset--${ WP_PRESET[ group ] }--${ slug }`;
+}

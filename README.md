@@ -62,11 +62,12 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ```
 components/        one self-contained folder per component
   shared/          the Puck config shape, written out so the library needs no Puck dependency
+  section/         the band other components sit in: sets their composition
   stat/            a content component: works without JavaScript, saved as HTML
   degree-finder/   an interactive component: built in the browser
 plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
-  ucf-content/     plugin.json lists its blocks: stat
+  ucf-content/     plugin.json lists its blocks: section, stat
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
@@ -148,25 +149,32 @@ npm install ./ucf-components-{version}.tgz
 
 ```tsx
 import Link from 'next/link';
+import { Section } from '@ucf/components/section';
 import { Stat } from '@ucf/components/stat';
 import { DegreeFinder } from '@ucf/components/degree-finder';
 import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, every component
+import '@ucf/components/elements.css'; // optional: the block theme's headings and copy, in a Section
 
-<Stat linkAs={ Link } statement="…" />
-<section className="ucf-composition-dark">
+<Section composition="dark">
 	<Stat linkAs={ Link } statement="…" />
-</section>
-<DegreeFinder programType="master" />
+</Section>
+<Section composition="light" width="wide">
+	<DegreeFinder programType="master" />
+</Section>
 ```
 
 The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). In Puck, each component's
 config is the default export of `@ucf/components/{name}/puck`:
 
 ```tsx
+import section from '@ucf/components/section/puck';
 import stat from '@ucf/components/stat/puck';
 import degreeFinder from '@ucf/components/degree-finder/puck';
 
-const config = { components: { Stat: stat, DegreeFinder: degreeFinder } };
+const config = {
+	components: { Section: section, Stat: stat, DegreeFinder: degreeFinder },
+};
+// Section has a slot: other components are dropped inside it and take on its composition.
 ```
 
 ## Working against local sites
@@ -284,11 +292,11 @@ The component's part:
 
 Who sets the section, per host. The slugs are `light`, `alt`, `dark`, `dark-alt` and `gold`:
 
-| Host          | How a section gets its composition                                   |
-| ------------- | -------------------------------------------------------------------- |
-| Next, Puck, … | A wrapper with `ucf-composition-{slug}`; none means Light - Default  |
-| WordPress     | The block theme: an editor picks a section style (`is-style-{slug}`) |
-| Storybook     | The **Composition** toolbar menu                                     |
+| Host          | How a section gets its composition                                           |
+| ------------- | ---------------------------------------------------------------------------- |
+| Next, Puck, … | The Section component (`ucf-composition-{slug}`); none means Light - Default |
+| WordPress     | The Section block, in the same way; its classes ship in the plugin           |
+| Storybook     | Every story sits in a real Section, set by the **Composition** toolbar menu  |
 
 The roles themselves live in `tokens/tokens.json`. See "Tokens, roles and fonts" in
 [architecture.md](docs/architecture.md).

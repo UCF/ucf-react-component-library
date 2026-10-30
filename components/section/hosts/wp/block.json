@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/section",
+	"title": "Section",
+	"category": "ucf",
+	"icon": "align-full-width",
+	"description": "A full-width band with its own background. Every block inside it takes on its colors.",
+	"keywords": [ "band", "row", "container", "composition" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"composition": {
+			"type": "string",
+			"default": "light"
+		},
+		"width": {
+			"type": "string",
+			"default": "default"
+		},
+		"spacing": {
+			"type": "string",
+			"default": "default"
+		},
+		"align": {
+			"type": "string",
+			"default": "full"
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "full" ]
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

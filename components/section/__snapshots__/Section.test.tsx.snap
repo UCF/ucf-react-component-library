@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Section > renders its markup: compact 1`] = `"<section class="ucf-section ucf-composition-light ucf-section--compact"><div class="ucf-section__inner ucf-section__inner--default"><p>Content</p></div></section>"`;
+
+exports[`Section > renders its markup: dark, constrained, cozy 1`] = `"<section class="ucf-section ucf-composition-dark ucf-section--cozy"><div class="ucf-section__inner ucf-section__inner--constrained"><p>Content</p></div></section>"`;
+
+exports[`Section > renders its markup: defaults 1`] = `"<section class="ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"><p>Content</p></div></section>"`;
+
+exports[`Section > renders its markup: with an id and a class 1`] = `"<section id="programs" class="is-featured ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"><p>Content</p></div></section>"`;

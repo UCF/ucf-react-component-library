@@ -11,8 +11,8 @@
  *                               package's single `ucf.css`.
  *   dist/tokens/base-wp.css     For WordPress: every primitive pointing at the theme's preset
  *                               (`var(--wp--preset--color--gold, #EDB80D)`, so the active
- *                               theme.json wins), and the component layer. Plugins ship it as
- *                               build/base.css.
+ *                               theme.json wins), the `.ucf-composition-*` classes, and the
+ *                               component layer. Plugins ship it as build/base.css.
  *   dist/theme/                 The block theme's kit, copied there by its `npm run sync:tokens`:
  *                               _tokens.scss (,  as slugs), compositions.json
  *                               (names and labels for its block-style registration) and
@@ -26,10 +26,12 @@
  * Component CSS reads only `--ucf-*` names, never `--wp--preset--*`, which is what lets one
  * stylesheet work in every host. How tokens.json is read is in tokens.mjs.
  *
- * WHY no roles in the WordPress files: in WordPress the block theme sets every role, per
- * section (`.is-style-dark`), and its src/scss/_compositions.scss says it is the only file
- * allowed to. A plugin setting them too would be a second source. Until the theme builds its
- * compositions from this file, components there fall back from the role to a token.
+ * WHY the composition classes in the WordPress file too: the Section block (ucf-content) is the
+ * library's own section, on any theme, and saves `ucf-composition-{slug}` as it does in Puck
+ * and Next. Its classes have to work in WordPress without the block theme.
+ * WHY not the light roles on :root there: outside a Section, the theme decides what the page
+ * is (its own `.is-style-*` sections set roles too). Components outside any section fall back
+ * from the role to a token.
  *
  * WHY no staleness check, unlike ucf-components: dist/ is not committed here. Everything that
  * reads these files (the plugin build, Storybook, the npm package) runs this script first.
@@ -46,29 +48,16 @@ import {
 	target,
 	treatments,
 	ucfExtension,
+	wpName,
 } from './tokens.mjs';
 
 const tokens = loadTokens();
 const entries = primitives( tokens );
 
-// SYNC: WordPress's preset prefixes, keyed by group in tokens.json. `custom` is not a preset;
-// WordPress writes it as --wp--custom--{key}.
-const WP_PRESET = {
-	color: 'color',
-	'font-family': 'font-family',
-	'font-size': 'font-size',
-	spacing: 'spacing',
-	shadow: 'shadow',
-};
-
 // WHY: what a page is outside any composition. The theme's role-default() is the same row.
 const DEFAULT_COMPOSITION = 'light';
 
 const ucfName = ( group, slug ) => `--ucf-${ group }-${ slug }`;
-const wpName = ( group, slug ) =>
-	group === 'custom'
-		? `--wp--custom--${ slug }`
-		: `--wp--preset--${ WP_PRESET[ group ] }--${ slug }`;
 
 // ── Roles ────────────────────────────────────────────────────────────────────
 
@@ -295,6 +284,12 @@ const themeJson = {
 			.filter( ( t ) => t.group === 'custom' )
 			.map( ( t ) => [ t.slug, t.value ] )
 	),
+	// UPSTREAM: theme.json's own keys for the two layout widths.
+	layout: Object.fromEntries(
+		entries
+			.filter( ( t ) => t.group === 'layout' )
+			.map( ( t ) => [ `${ t.slug }Size`, t.value ] )
+	),
 };
 
 // ── Theme kit ────────────────────────────────────────────────────────────────
@@ -431,6 +426,8 @@ const out = {
 		banner +
 		part( "Tokens, each pointing at the theme's preset" ) +
 		tokensWpRoot +
+		part( 'Compositions: .ucf-composition-*' ) +
+		compositionsCss +
 		part( 'Component layer: .ucf-c, .ucf-c-panel' ) +
 		rolesCss(),
 	'dist/theme/_tokens.scss': themeSass(),

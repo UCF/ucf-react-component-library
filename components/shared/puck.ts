@@ -10,13 +10,33 @@
  * Puck needs a field for every prop and complete `defaultProps`. shared/puck.test.tsx checks
  * every config against the real Puck types, so a change in Puck fails `npm run typecheck`.
  */
-import type { ReactElement } from 'react';
+import type { ElementType, ReactElement } from 'react';
 
 type Option = { label: string; value: string };
 
 export type PuckField =
 	| { type: 'text' | 'textarea'; label?: string }
-	| { type: 'select' | 'radio'; label?: string; options: Option[] };
+	| { type: 'select' | 'radio'; label?: string; options: Option[] }
+	| { type: 'slot'; label?: string; allow?: string[] };
+
+/**
+ * A slot prop as Puck stores it: the components dropped into it. `render` receives a
+ * component that draws them instead (PuckRenderInput).
+ *
+ * SYNC: `Slot` in `@puckeditor/core`. Puck turns a prop into a slot only when its type matches
+ * Puck's own, which shared/puck.test.tsx checks.
+ */
+export type PuckSlot = {
+	type: string;
+	props: { id?: string; [ key: string ]: unknown };
+}[];
+
+/** The props `render` gets: each slot prop arrives as a component that draws its contents. */
+export type PuckRenderInput< Props > = {
+	[ Key in keyof Props ]: Props[ Key ] extends PuckSlot
+		? ElementType
+		: Props[ Key ];
+};
 
 /**
  * What Puck passes to `render` besides the component's own props.
@@ -34,5 +54,7 @@ export type PuckComponentConfig< Props > = {
 	label?: string;
 	fields: { [ Key in keyof Props ]: PuckField };
 	defaultProps: Props;
-	render: ( props: Props & PuckRenderProps ) => ReactElement;
+	render: (
+		props: PuckRenderInput< Props > & PuckRenderProps
+	) => ReactElement;
 };

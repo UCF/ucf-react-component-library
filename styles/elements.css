@@ -1,0 +1,114 @@
+/*
+ * CONTEXT: the UCF block theme's styles for plain elements (headings, body copy, links,
+ * captions), for React hosts. Opt-in: `@ucf/components/elements.css`, separate from ucf.css,
+ * so a site with its own typography keeps it. Storybook and the Puck demo load it.
+ *
+ * In WordPress the theme supplies these itself (theme.json `styles.elements` and
+ * src/scss/_typography.scss there), so the plugins never ship this file.
+ *
+ * WHY scoped to a Section or `.ucf-elements`, not the whole page: a host page has chrome of its
+ * own (a header, navigation, the Puck editor's interface) that these must not restyle. Put
+ * `ucf-elements` on any other container, or on <body> to apply them everywhere.
+ * WHY `:where()` throughout: zero specificity, so a component's own class always wins, as in
+ * the theme, where theme.json's element styles sit under every block's styles.
+ *
+ * SYNC: the UCF WordPress block theme's theme.json `styles` (typography, elements) and
+ * src/scss/_typography.scss. Measured against dev-ucf-main.pantheonsite.io on 2026-10-30: an
+ * h2 is Oswald 600, uppercase, 48px at 1440px wide and 32px at 390px. The values come from the
+ * same tokens; only these rules are copied (docs/todo.md, "Element styles").
+ */
+
+:where(.ucf-section, .ucf-elements) {
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-body);
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizelegibility;
+}
+
+/* WHY a role: copy follows the composition it sits in, as headings and links do. */
+:where(.ucf-section, .ucf-elements) :where(p, li) {
+	color: var(--ucf-body);
+}
+
+:where(.ucf-section, .ucf-elements) :where(li) {
+	margin-bottom: 2px;
+}
+
+/* A11Y: a role, so a heading in a Dark section is white, not black on black. */
+:where(.ucf-section, .ucf-elements) :where(h1, h2, h3, h4, h5, h6) {
+	color: var(--ucf-heading);
+	font-family: var(--ucf-font-family-display);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h1) {
+	font-size: var(--ucf-font-size-heading-1);
+	font-weight: 700;
+	line-height: 0.98;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h2) {
+	font-size: var(--ucf-font-size-heading-2);
+	line-height: 1.04;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h3) {
+	font-size: var(--ucf-font-size-heading-3);
+	line-height: 1.1;
+}
+
+/* SPEC: h4 to h6 are body type, not display: sentence case, heavier. */
+:where(.ucf-section, .ucf-elements) :where(h4, h5, h6) {
+	font-family: var(--ucf-font-family-body);
+	text-transform: none;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h4) {
+	font-size: var(--ucf-font-size-heading-4);
+	font-weight: 800;
+	letter-spacing: 0;
+	line-height: 1.3;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h5) {
+	font-size: var(--ucf-font-size-heading-5);
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.4;
+}
+
+:where(.ucf-section, .ucf-elements) :where(h6) {
+	font-size: var(--ucf-font-size-heading-6);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+/*
+ * WHY `ucf-` links left out: a component that styles its own links does so with its class,
+ * and the hover rule here would otherwise reach it. Same exclusion as the theme.
+ */
+:where(.ucf-section, .ucf-elements) :where(a:not([class*="ucf-"])) {
+	color: var(--ucf-link);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition: color 0.15s ease;
+}
+
+/* SPEC: hover thickens the underline as well as changing color, so it never relies on hue. */
+:where(.ucf-section, .ucf-elements) :where(a:not([class*="ucf-"])):hover {
+	color: var(--ucf-link-hover);
+	text-decoration-thickness: 2px;
+}
+
+:where(.ucf-section, .ucf-elements) :where(figcaption) {
+	color: var(--ucf-muted);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	line-height: 1.55;
+}

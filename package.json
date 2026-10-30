@@ -9,6 +9,7 @@
 	},
 	"exports": {
 		"./ucf.css": "./dist/ucf.css",
+		"./elements.css": "./dist/elements.css",
 		"./theme/*": "./dist/theme/*",
 		"./stat": {
 			"types": "./dist/stat/index.d.ts",
@@ -19,6 +20,14 @@
 			"default": "./dist/stat/hosts/puck/config.js"
 		},
 		"./stat/example.json": "./dist/stat/example.json",
+		"./section": {
+			"types": "./dist/section/index.d.ts",
+			"default": "./dist/section/index.js"
+		},
+		"./section/puck": {
+			"types": "./dist/section/hosts/puck/config.d.ts",
+			"default": "./dist/section/hosts/puck/config.js"
+		},
 		"./degree-finder": {
 			"types": "./dist/degree-finder/index.d.ts",
 			"default": "./dist/degree-finder/index.js"
@@ -53,7 +62,7 @@
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
 		"lint:js": "wp-scripts lint-js components scripts .storybook webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"components/**/*.css\"",
+		"lint:css": "wp-scripts lint-style \"components/**/*.css\" \"styles/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

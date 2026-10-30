@@ -139,15 +139,63 @@ would use the schema for attributes only. Verify the generated Puck fields in th
     - Per-section defaults for a component ("on gold, show as Light Alt") without an editor
       setting, through CSS style queries once browsers support them.
 
+## Element styles
+
+`styles/elements.css` (`@ucf/components/elements.css`, opt-in) gives React hosts the block
+theme's headings, body copy, links and captions, inside a Section or `.ucf-elements`. Storybook
+and the Puck demo load it. It matches dev-ucf-main.pantheonsite.io (an h2: Oswald 600,
+uppercase, 48px at 1440px wide, 32px at 390px), but its rules are copied by hand from the
+theme's theme.json `styles.elements` and src/scss/_typography.scss, so they can drift.
+
+- **One source for both.** Move the element styles into `tokens.json` as data, and generate
+  this stylesheet and the theme's theme.json `styles.elements` from it, as the compositions
+  already are. Needs the theme's sync updated, and Jim's agreement.
+- **Or a different approach: Tailwind.** Generate a Tailwind preset from `tokens.json` (colors,
+  roles, fonts, sizes, spacing, layout widths), so React sites style pages and their own
+  markup with the same values, and headings come from a typography preset rather than global
+  element rules. Worth weighing before the element styles grow:
+    - For: one vocabulary for site builders in Next; utilities compose without new CSS files;
+      Tailwind's typography plugin (`prose`) is a known way to style copy a site doesn't
+      control (a CMS's body text).
+    - Against: WordPress doesn't use Tailwind, so the theme and plugins would still need the
+      plain CSS; components would carry two styling systems or stay on plain CSS; the role
+      model (a composition re-pointing `--ucf-*` for everything inside) has to survive the
+      translation, as CSS variables in the preset rather than fixed colors.
+    - A middle way: keep components and the element styles in plain CSS, and ship a Tailwind
+      preset only as a convenience for sites, reading the same `--ucf-*` variables.
+
+## Section
+
+Built: `components/section`, with a WordPress block (`ucf-content/section`, inner blocks), a
+Puck config (a slot) and its composition classes in the plugins' `base.css`.
+
+**On hold (2026-10-30): don't extend the Section further yet.** UCF will likely build on
+Pantheon's P1 starter kit (`pnpm create @pantheon-systems/p1-starter-kit`: Next.js 16, Puck
+^0.21, Tailwind v4, a shadcn-style block library at components.p1.pantheon.io), and keep this
+Section at parity with its base layout blocks. Compare the two before adding settings. Also
+check there: our configs against Puck 0.21 (the type test pins 0.24), and that Tailwind's
+layered reset doesn't override `ucf.css` and `elements.css`.
+
+Still to do:
+
+- **Remove the block theme's Section** (its core/group variation and `src/scss/_section.scss`)
+  once sites use this one, and let the theme take its section layout from here. Until then its
+  `.ucf-section` rules also match this block; they read the same tokens.
+- **The gap between blocks is copied, not a token:** the theme's `blockGap` (spacing 40). The
+  two widths are tokens now (`tokens.json` `layout`, following the theme's `settings.layout` in
+  WordPress); make the gap one too.
+- **The theme's `check:tokens` doesn't compare `layout` yet.** The kit's `theme-json.json` now
+  has `layout` (contentSize, wideSize), but the theme's tools/sync-tokens.js only checks the
+  keys it knows. Add it there, so the theme fails while its `theme.json` widths disagree.
+- **What may go inside.** Any block can today. Decide whether a Section may hold another
+  Section, and whether to limit it to UCF blocks (`allowedBlocks`, and Puck's `allow`).
+
 ## Considered, not decided
 
 From reviewing whether this works equally well for WordPress and Puck:
 
 - **A Card component.** An image, nested content and a link: the cases Stat avoids, and
   where WordPress and Puck differ most.
-- **A Section component** that applies a composition (`.ucf-composition-dark`), so Puck and
-  Next editors can choose dark sections the way theme editors do. The classes exist; nothing
-  offers them in an editor yet.
 
 ## Open questions for Jim
 

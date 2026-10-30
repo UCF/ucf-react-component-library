@@ -1,5 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`a Section holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/section {"composition":"dark"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-dark"><div class="ucf-section__inner ucf-section__inner--default"><!-- wp:ucf-content/stat {"statement":"Inside a section"} -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">Inside a section</p></div>
+<!-- /wp:ucf-content/stat -->
+
+<!-- wp:ucf-content/stat {"statement":"And another"} -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">And another</p></div>
+<!-- /wp:ucf-content/stat --></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
+exports[`ucf-content/section > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/section -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
+exports[`ucf-content/section > example > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/section {"composition":"dark","width":"constrained"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-dark"><div class="ucf-section__inner ucf-section__inner--constrained"></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
 exports[`ucf-content/stat > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/stat -->
 <div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement"></p></div>

@@ -20,6 +20,7 @@ import {
 	resolve,
 	root,
 	treatments,
+	wpName,
 } from './tokens.mjs';
 
 const tokens = loadTokens();
@@ -174,11 +175,12 @@ describe( 'roles contract', () => {
 		...roles.map( ( role ) => `c-bar-${ role }` ),
 	] );
 
-	const cssFiles = readdirSync( path.join( root, 'components' ), {
-		recursive: true,
-	} )
-		.filter( ( file ) => file.endsWith( '.css' ) )
-		.map( ( file ) => path.join( 'components', file ) );
+	// The components' CSS and the opt-in element styles (styles/elements.css).
+	const cssFiles = [ 'components', 'styles' ].flatMap( ( dir ) =>
+		readdirSync( path.join( root, dir ), { recursive: true } )
+			.filter( ( file ) => file.endsWith( '.css' ) )
+			.map( ( file ) => path.join( dir, file ) )
+	);
 
 	const read = cssFiles.flatMap( ( file ) =>
 		[
@@ -245,4 +247,24 @@ describe( 'component layer', () => {
 			expect( source ).toMatch( /['"`\s]ucf-c(-panel)?['"`\s]/ );
 		}
 	);
+} );
+
+describe( 'layout widths', () => {
+	const layout = primitives( tokens ).filter( ( t ) => t.group === 'layout' );
+
+	// FIX: WordPress writes only these two from theme.json `settings.layout`. Any other slug
+	// would point at a property that never exists, and quietly use its fallback forever.
+	test( 'are exactly the two WordPress has: content and wide', () => {
+		expect( layout.map( ( t ) => t.slug ).sort() ).toEqual( [
+			'content',
+			'wide',
+		] );
+	} );
+
+	test.each( [
+		[ 'content', '--wp--style--global--content-size' ],
+		[ 'wide', '--wp--style--global--wide-size' ],
+	] )( 'in WordPress, %s follows the theme’s %s', ( slug, property ) => {
+		expect( wpName( 'layout', slug ) ).toBe( property );
+	} );
 } );

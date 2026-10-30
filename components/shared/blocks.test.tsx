@@ -66,6 +66,7 @@ const blocks = Object.entries( blockJsons ).map( ( [ file, json ] ) => {
 test( 'finds every block', () => {
 	expect( blocks.map( ( block ) => block.component ).sort() ).toEqual( [
 		'degree-finder',
+		'section',
 		'stat',
 	] );
 } );
@@ -97,7 +98,9 @@ describe.each( blocks )(
 					.trim();
 
 			test.runIf( ! dynamic )( 'stores its markup', () => {
-				expect( savedMarkup() ).toContain( `ucf-c-${ component }` );
+				expect( savedMarkup() ).toMatch(
+					new RegExp( `ucf-(c-)?${ component }\\b` )
+				);
 			} );
 
 			test.runIf( dynamic )( 'stores only its attributes', () => {
@@ -128,3 +131,45 @@ describe.each( blocks )(
 		} );
 	}
 );
+
+// WHY its own test: a Section is only useful with blocks inside it, and a block that holds
+// others can save and parse its own markup correctly while losing what it holds.
+describe( 'a Section holding other blocks', () => {
+	const build = () =>
+		createBlock( 'ucf-content/section', { composition: 'dark' }, [
+			createBlock( 'ucf-content/stat', {
+				statement: 'Inside a section',
+			} ),
+			createBlock( 'ucf-content/stat', { statement: 'And another' } ),
+		] );
+
+	test( 'reads back with the same blocks inside, in order', () => {
+		const [ parsed ] = parse( serialize( [ build() ] ) );
+		expect(
+			parsed?.innerBlocks.map( ( inner ) => [
+				inner.name,
+				inner.attributes.statement,
+			] )
+		).toEqual( [
+			[ 'ucf-content/stat', 'Inside a section' ],
+			[ 'ucf-content/stat', 'And another' ],
+		] );
+	} );
+
+	test( 'saves them inside its inner element', () => {
+		expect( serialize( [ build() ] ) ).toMatchSnapshot();
+	} );
+
+	test( 'every block in it is valid against today’s save()', () => {
+		const [ parsed ] = parse( serialize( [ build() ] ) );
+		for ( const block of [ parsed, ...( parsed?.innerBlocks ?? [] ) ] ) {
+			expect(
+				isValidBlockContent(
+					block?.name ?? '',
+					block?.attributes ?? {},
+					block?.originalContent ?? ''
+				)
+			).toBe( true );
+		}
+	} );
+} );

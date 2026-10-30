@@ -5,13 +5,15 @@
  *      example data, rewriting `./Stat.tsx` imports to `./Stat.js`.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every component's style.css; tsc ignores CSS.
- *   3. dist/package.json marks the output as ES modules.
+ *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
+ *   4. dist/package.json marks the output as ES modules.
  *
  * WHY step 3 rather than `"type": "module"` in the root package.json: the root holds the
  * webpack, ESLint and Jest configs, which wp-scripts loads as CommonJS.
  */
 import { execFileSync } from 'node:child_process';
 import {
+	copyFileSync,
 	existsSync,
 	readFileSync,
 	readdirSync,
@@ -57,6 +59,13 @@ for ( const name of readdirSync( componentsDir ).sort() ) {
 	}
 }
 writeFileSync( path.join( dist, 'ucf.css' ), parts.join( '' ) );
+
+// WHY separate from ucf.css: opt-in. It styles plain elements, which a site with its own
+// typography must be able to leave out (styles/elements.css).
+copyFileSync(
+	path.join( root, 'styles/elements.css' ),
+	path.join( dist, 'elements.css' )
+);
 
 writeFileSync(
 	path.join( dist, 'package.json' ),

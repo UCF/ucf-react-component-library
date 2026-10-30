@@ -179,10 +179,10 @@ catalog. Until then, keep every component folder self-contained so the split is 
 `plugins/{plugin}/` is a plugin: its main PHP file, and `plugin.json` listing the components
 whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/`.
 
-| Plugin        | Blocks                      |
-| ------------- | --------------------------- |
-| `ucf-content` | `ucf-content/stat`          |
-| `ucf-degrees` | `ucf-degrees/degree-finder` |
+| Plugin        | Blocks                                    |
+| ------------- | ----------------------------------------- |
+| `ucf-content` | `ucf-content/section`, `ucf-content/stat` |
+| `ucf-degrees` | `ucf-degrees/degree-finder`               |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
   fails if a component with a `hosts/wp/` is in no plugin or in two.
@@ -205,6 +205,18 @@ against local sites" in the README. How sites will get them through Composer is 
 
 **Component CSS reads `--ucf-*` names only, never `--wp--preset--*`.** That is what lets one
 stylesheet work in every host.
+
+**Plain elements are the host's, with one opt-in.** Components style only their own classes;
+headings, body copy and links are styled by the host (the block theme in WordPress). For React
+hosts, `@ucf/components/elements.css` (`styles/elements.css`) copies the theme's element styles,
+scoped to a Section or `.ucf-elements` and at zero specificity, so it never restyles a site's own
+chrome or beats a component. Storybook and the Puck demo load it.
+
+**Layout widths are tokens too** (`tokens.json` `layout`: `content` 720px, `wide` 1240px, read as
+`--ucf-layout-content` and `--ucf-layout-wide`). In WordPress they point at the active theme's
+own `--wp--style--global--content-size` and `wide-size`, from its theme.json `settings.layout`,
+so the Section's Default (wideSize) and Constrained (contentSize) widths are always the theme's. Elsewhere they are the token
+values, which match the UCF block theme.
 
 - **Tokens** (`--ucf-color-gold`) hold values. React hosts get the values in `ucf.css`. WordPress
   gets `base.css`, in which each token points at the theme's preset
@@ -246,17 +258,23 @@ primitives it has two role groups, both references to colors and never values:
 
 Who sets the roles:
 
-| Host          | Outside a section                       | On a section                         |
-| ------------- | --------------------------------------- | ------------------------------------ |
-| Next, Puck, … | `ucf.css` sets the light roles          | `ucf.css`: `.ucf-composition-dark` … |
-| WordPress     | Unset; components use the light default | The block theme: `.is-style-dark` …  |
+| Host          | Outside a section                       | On a section                                                                                           |
+| ------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Next, Puck, … | `ucf.css` sets the light roles          | `ucf.css`: `.ucf-composition-dark` …                                                                   |
+| WordPress     | Unset; components use the light default | The Section block: `base.css`'s `.ucf-composition-dark` …; or the block theme's own `.is-style-dark` … |
 
-**WHY no roles in the WordPress files:** the block theme sets them, and its
-`_compositions.scss` says it is the only file allowed to. It sets them from this file: the
-build writes `dist/theme/` (the role and composition maps as Sass, the composition labels as
-JSON, the presets its `theme.json` must hold), and the theme's `npm run sync:tokens` copies it
-into its `tokens/`. So a change here reaches WordPress through one sync in the theme, and its
-`npm run check:tokens` fails while its `theme.json` disagrees.
+**The Section owns sections** in every host. In WordPress it is the `ucf-content/section` block,
+which saves `ucf-composition-{slug}` exactly as Puck and Next render it, and the plugins'
+`base.css` carries those classes, so it works on any theme. WHY not the block theme's Section
+(a core/group variation): this library manages the section so its markup and settings match
+in every host; the theme's is expected to go.
+
+**The light roles stay off `:root` in WordPress:** outside a Section the theme decides what the
+page is. The block theme also still sets roles for its own `.is-style-*` sections, from this
+file: the build writes `dist/theme/` (the role and composition maps as Sass, the composition
+labels as JSON, the presets its `theme.json` must hold), and the theme's `npm run sync:tokens`
+copies it into its `tokens/`, so both read the same values. Its `npm run check:tokens` fails
+while its `theme.json` disagrees.
 
 **`npm test` checks the roles,** in `scripts/tokens.test.mjs`: every text role clears 4.5:1
 on its field and on a raised panel, every label on its fill, every control edge 3:1; and every

@@ -16,6 +16,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import degreeFinder from '../degree-finder/hosts/puck/config.tsx';
+import section from '../section/hosts/puck/config.tsx';
 import stat from '../stat/hosts/puck/config.tsx';
 import type { PuckComponentConfig } from './puck.ts';
 
@@ -25,12 +26,14 @@ type PropsOf< Config > =
 const CONFIGS = {
 	Stat: stat,
 	'Degree Finder': degreeFinder,
+	Section: section,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
 // the config that broke.
 stat satisfies ComponentConfig< PropsOf< typeof stat > >;
 degreeFinder satisfies ComponentConfig< PropsOf< typeof degreeFinder > >;
+section satisfies ComponentConfig< PropsOf< typeof section > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {
@@ -48,7 +51,20 @@ describe.each( Object.entries( CONFIGS ) )(
 	'the %s Puck config',
 	( _, config ) => {
 		it( 'renders the same markup with or without Puck’s own props', () => {
-			const props = config.defaultProps;
+			// UPSTREAM: Puck hands `render` a component for each slot prop, not the stored list.
+			const Slot = ( slotProps: object ) => <div { ...slotProps } />;
+			const props = Object.fromEntries(
+				Object.entries( config.defaultProps ).map(
+					( [ key, value ] ) => [
+						key,
+						( config.fields as Record< string, { type: string } > )[
+							key
+						]?.type === 'slot'
+							? Slot
+							: value,
+					]
+				)
+			);
 			const plain = renderToStaticMarkup(
 				config.render( props as never )
 			);
