@@ -44,6 +44,7 @@
 		"build:plugins": "npm run build:tokens && wp-scripts build",
 		"start": "npm run build:tokens && wp-scripts start",
 		"release:temp": "npm run build && node scripts/release-temp.mjs",
+		"deploy:plugins": "npm run build:plugins && node --env-file-if-exists=.env scripts/deploy-plugins.mjs",
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",

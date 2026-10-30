@@ -194,8 +194,10 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 - **Every plugin carries `base.css`** (tokens pointing at the theme, and the component layer)
   under one style handle, so it loads once.
 
-Installed by zip for now (`npm run release:temp` writes them to `temp-release/wordpress/`). How
-sites will get them through Composer is in `docs/todo.md`.
+Installed by zip for now (`npm run release:temp` writes them to `temp-release/wordpress/`), or
+copied into a development WordPress by `npm run deploy:plugins`, which reads the folder from a
+local `.env` (template: `.env.example`). How sites will get them through Composer is in
+`docs/todo.md`.
 
 ## Tokens, roles and fonts
 

@@ -2,6 +2,11 @@ node_modules/
 vendor/
 .DS_Store
 
+# Local settings for this machine; .env.example is the template.
+.env
+.env.*
+!.env.example
+
 # Generated. Nothing here is deployed from git yet: the npm package and plugin zips are built
 # from source, and the release pipeline that will do that is on the to-do list (docs/todo.md).
 # temp-release/ is what `npm run release:temp` collects for other sites to use.

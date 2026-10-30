@@ -69,7 +69,7 @@ plugins/           one WordPress plugin per content type
   ucf-content/     plugin.json lists its blocks: stat
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
-scripts/           the token, package and release scripts, and the token tests
+scripts/           the token, package, release and deploy scripts, and their tests
 .storybook/        the catalog: theme, toolbar, logo
 docs/              architecture.md (how and why), todo.md (what's next)
 ```
@@ -85,6 +85,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | `npm run build:plugins`   | Only the WordPress plugins, into `plugins/*/build/`               |
 | `npm start`               | Rebuild the plugins on every change                               |
 | `npm run release:temp`    | Build, then collect every output into `temp-release/` (see below) |
+| `npm run deploy:plugins`  | Build, then copy the plugins into `WP_PLUGINS_DIR` (see below)    |
 | `npm run build:storybook` | The catalog as a static site in `storybook-static/`               |
 | `npm test`                | Unit tests: markup, data clients, Puck configs, tokens (Node)     |
 | `npm run test:stories`    | Every story in headless Chromium, with accessibility checks       |
@@ -118,9 +119,20 @@ names go away when a release pipeline replaces them.
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
 activate, then add blocks from the **UCF** category of the inserter.
 
-To work on a block, copy or symlink `plugins/{plugin}` into a development WordPress's
-`wp-content/plugins/` and leave `npm start` running. If WordPress runs in a container, a symlink
-to a folder outside what the container mounts won't resolve; copy instead.
+To work on a block in a development WordPress, point this repo at its plugins folder once:
+
+```sh
+cp .env.example .env   # then set WP_PLUGINS_DIR to that install's wp-content/plugins
+npm run deploy:plugins
+```
+
+`.env` is never committed, so each person sets their own path. The script builds the plugins,
+then replaces each one in that folder, and nothing else there. It refuses a folder that isn't
+named `plugins` with a `themes` folder beside it, so a wrong path fails instead of deleting
+something. Run it again after each change, or for a live loop symlink `plugins/{plugin}` into
+the folder and leave `npm start` running (the script skips a symlinked plugin). If WordPress
+runs in a container, a symlink to a folder outside what the container mounts won't resolve;
+deploy instead.
 
 Check a block in the editor, never on the front end, where an invalid block still renders:
 `wp.data.select( 'core/block-editor' ).getBlocks()` in the console, and watch for "Updated Block".
