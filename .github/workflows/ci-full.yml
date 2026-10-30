@@ -1,0 +1,58 @@
+# The browser tier: pull requests and main only. Modeled on the UCF block themes' ci-full.yml.
+#
+# Every story, in headless Chromium, on every composition at three widths, with axe. It starts
+# a browser and runs 15 projects, so it does not run on every commit; ci.yml covers each push.
+#
+# Deliberately NOT a superset: it does not re-run the unit suite or the build, which ci.yml has
+# already run on the same commit.
+#
+#   pull_request     opened, and every push to the branch afterwards, so a PR is fully tested
+#                    before review and stays tested as it changes.
+#   push to main     the merge itself, plus anything committed straight to main.
+#
+# WHY blocking: a contrast or labeling failure is a defect with a measured value, not a style
+# preference. To make it advisory, add `continue-on-error: true` to the job.
+
+name: CI (full)
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    stories:
+        name: Accessibility (stories × compositions × widths)
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Set up Node
+              uses: actions/setup-node@v7.1.0
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            # SYNC: .storybook/preview.ts imports dist/tokens/base.css, which `npm run
+            # storybook` builds first but test:stories does not.
+            - name: Build tokens
+              run: npm run build:tokens
+
+            - name: Install Chromium
+              run: npx playwright install --with-deps chromium
+
+            - name: Story tests
+              run: npm run test:stories

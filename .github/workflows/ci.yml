@@ -1,0 +1,123 @@
+# Fast checks: every commit, every branch. Modeled on the UCF block themes' ci.yml.
+#
+# `branches: ['**']` is every branch but no tags; a tag push re-tests a commit that has
+# already been tested.
+#
+# The jobs split along the themes' line: does a check prove the library still **works**, or
+# that the code is **tidy**?
+#
+#   Blocking   test    the unit suite (markup contracts, block round-trips, WordPress and Puck
+#                      parity, data clients, Puck configs, token contrast) and the typecheck.
+#              build   the tokens, the npm package and both plugins compile.
+#
+#   Advisory   quality ESLint, Stylelint, PHPCS and Prettier. Reported on every commit, never
+#                      gating: a style finding is worth fixing, but it is not the same claim as
+#                      "this is broken". To make it blocking, remove `continue-on-error`.
+#
+# The story accessibility checks start a browser and take longer; they are in ci-full.yml,
+# which runs on pull requests and main.
+#
+# UPSTREAM: GitHub's own actions only. PHP and Composer come preinstalled on ubuntu-latest,
+# which is enough for PHPCS, so no third-party setup action runs here.
+
+name: CI
+
+on:
+    push:
+        branches: ['**']
+
+# A new push supersedes whatever was already running for the same branch.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    test:
+        name: Tests and types
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Set up Node
+              uses: actions/setup-node@v7.1.0
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Unit tests
+              run: npm test
+
+            - name: Typecheck
+              run: npm run typecheck
+
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Set up Node
+              uses: actions/setup-node@v7.1.0
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            # The tokens, the npm package and both plugins. Nothing built is committed here,
+            # so this only proves it compiles; there is no drift check as in the themes.
+            - name: Build
+              run: npm run build
+
+    quality:
+        name: Code quality (advisory)
+        runs-on: ubuntu-latest
+
+        # Never gates a merge. See the note at the top of this file.
+        continue-on-error: true
+
+        steps:
+            - uses: actions/checkout@v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Set up Node
+              uses: actions/setup-node@v7.1.0
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+
+            - name: Install dependencies
+              run: |
+                  composer install --prefer-dist --no-interaction --no-progress
+                  npm ci
+
+            # Each step keeps going so one failure does not hide the others.
+            - name: PHP coding standards
+              if: ${{ always() }}
+              run: npm run lint:php
+
+            - name: JavaScript
+              if: ${{ always() }}
+              run: npm run lint:js
+
+            - name: CSS
+              if: ${{ always() }}
+              run: npm run lint:css
+
+            - name: Formatting
+              if: ${{ always() }}
+              run: npm run format:check

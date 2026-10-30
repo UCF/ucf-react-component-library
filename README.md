@@ -348,6 +348,8 @@ npm run check
 npm run test:stories   # when a story or a component's markup changed
 ```
 
-All are clean now; keep them that way. Never update a content component's markup snapshot
+GitHub Actions runs the same checks: `ci.yml` on every push (tests, typecheck and build block;
+lint and formatting are advisory), and `ci-full.yml` on pull requests and `main` (the story
+accessibility checks). All are clean now; keep them that way. Never update a content component's markup snapshot
 casually: every saved post with that block changes. Follow "Changing a content component's
 markup" in [architecture.md](docs/architecture.md).

@@ -1,33 +1,56 @@
 # To do
 
-The current goal is a correct development process, not a pipeline. Nothing here is started.
+The current goal is a correct development process, not a pipeline.
 
 ## To do
 
-- **CI.** Tests, lint (JS, CSS, PHP, format), typecheck, a check that built output isn't
-  stale, and a release job that publishes the npm package and the plugin builds. Mirror the
-  block themes: `npm run check` on every push, `test:stories` and the tiers below on pull
-  requests, with the accessibility report as a PR comment.
-- **Puck at runtime.** Render each config through Puck's own `<Render>`, and a Playwright smoke
-  test of the editor (insert each component, change each field, switch a section's composition,
-  no console errors). Needs the playground (below).
-- **A real-WordPress tier,** as the block themes have: wp-env with the built plugins and the
-  block theme, a seeded page per block per composition, axe at three widths, and the editor
-  checked for invalid blocks (the `getBlocks()` check, automated). Covers render.php and the
-  plugins' PHP, which nothing tests today.
-- **Behavior tests for interactive components.** Keyboard use and screen reader announcements for
-  the Degree Finder (its interest combobox, step focus, the progress bar), as `play` functions
-  on its stories. The storybook test project already runs every story in headless Chromium, so
-  these run in a real browser with no jsdom. Today only each story's rendered state is checked.
-- **Story accessibility checks miss the Degree Finder's colors.** Its entrance animations
-  start text transparent, and the check skips text it can't see. With white text forced on
-  every section, only the first story failed. Tried and not working: waiting on each
-  animation's `finished` (some never settle), polling `playState`, `finish()` in `play`, and
-  reduced motion on the test browser (which stopped the check entirely). Structural checks
-  (alt text, labels) do work. Its color pairs are covered by scripts/tokens.test.mjs.
+- **A release job.** CI checks every push (`.github/workflows/ci.yml`) and every pull request
+  (`ci-full.yml`), but nothing publishes the npm package or the plugin builds yet;
+  `npm run release:temp` stands in.
 - **Fonts: reconcile with the block theme.** The library never loads fonts; the host does.
   Today Storybook loads them from Google Fonts and the theme loads its own. Decide who owns
   the list of families and files, and how the theme, Next and Storybook share it.
+
+## Testing: what's left to match the brand block theme
+
+Good enough to build components on today: CI on every push and pull request, block round-trips
+with `isValidBlockContent()` and stored-markup snapshots, WordPress and Puck parity, and axe on
+every story on every composition at three widths, with guards against checking the wrong thing
+(docs/architecture.md, "Tests"). What the UCF Brand Block Theme has, or both lack, that this
+doesn't yet, roughly in the order worth doing:
+
+1. **A version check.** The theme's CI fails when `style.css` and `package.json` disagree. Here,
+   each plugin's `Version:` header and `package.json` are kept in step by hand. Small; catches
+   a release that reports the wrong version.
+2. **Behavior tests for interactive components.** Keyboard use and screen reader announcements
+   for the Degree Finder (its interest combobox, step focus, the progress bar), as `play`
+   functions on its stories, so they run in the same real browser. Neither theme has these;
+   today only each story's rendered state is checked.
+3. **Story accessibility checks miss the Degree Finder's colors.** Its entrance animations
+   start text transparent, and the check skips text it can't see. With white text forced on
+   every section, only the first story failed. Tried and not working: waiting on each
+   animation's `finished` (some never settle), polling `playState`, `finish()` in `play`, and
+   reduced motion on the test browser (which stopped the check entirely). Structural checks
+   (alt text, labels) do work. Its color pairs are covered by scripts/tokens.test.mjs.
+4. **Puck at runtime.** Render each config through Puck's own `<Render>`, and a Playwright smoke
+   test of the editor (insert each component, change each field, switch a section's
+   composition, no console errors). Needs the playground (below).
+5. **A real-WordPress tier,** as the block themes have: wp-env with the built plugins and the
+   block theme, a seeded page per block per composition, axe at three widths, the theme's
+   guards (HTTP status, the composition class present, zero tests is a failure), and the editor
+   checked for invalid blocks (the `getBlocks()` check, automated). Catches theme CSS
+   interacting with a block, which stories can't. Worth it once more blocks render on the
+   server.
+6. **PHP tests.** `render.php` and the plugins' PHP are only linted. The theme has a fast unit
+   tier (PHPUnit with stubs, no WordPress) and an integration tier under wp-env; start with the
+   unit tier for `render.php`'s output and the settings functions.
+7. **An accessibility report on pull requests.** The theme posts axe's results as a PR comment,
+   and records axe's `incomplete` results ("a human has to look at this") as notes instead of
+   dropping them. Here a failure shows only in the job log.
+8. **Visual regression.** Neither theme has it. Screenshot comparisons per story and
+   composition would catch a layout or spacing change that passes every other check, at the
+   cost of approving new screenshots on every intended design change. Worth it once there are
+   more components.
 
 ## Planned next
 
