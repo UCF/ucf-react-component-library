@@ -24,11 +24,13 @@ import { fileURLToPath } from 'node:url';
 const root = path.dirname( path.dirname( fileURLToPath( import.meta.url ) ) );
 const dist = path.join( root, 'dist' );
 
-// WHY keep dist/tokens: build:tokens writes it, and running this alone should not delete it.
+// WHY keep these: build:tokens writes them, and running this alone should not delete them.
+// FIX: keeping only tokens/ deleted the theme kit, which `npm run build` then shipped without.
+const FROM_TOKENS = new Set( [ 'tokens', 'theme' ] );
 for ( const entry of existsSync( dist )
 	? readdirSync( dist, { withFileTypes: true } )
 	: [] ) {
-	if ( entry.name !== 'tokens' ) {
+	if ( ! FROM_TOKENS.has( entry.name ) ) {
 		rmSync( path.join( dist, entry.name ), { recursive: true } );
 	}
 }

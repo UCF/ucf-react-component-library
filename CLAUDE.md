@@ -37,10 +37,9 @@ restate them. Read `README.md` first for what the repo is and where each file li
 - **Never verify a block through the front end.** Invalid blocks still render there. Check
   `wp.data.select( 'core/block-editor' ).getBlocks()` in the editor, and watch the console
   for "Updated Block".
-- **Run everything before committing:** `npm test`, `npm run typecheck`, `npm run lint:js`,
-  `npm run lint:css`, `npm run lint:php`, `npm run format:check`, and `npm run test:stories`
-  when a story or a component's markup changed. All are clean now; keep
-  them that way, and don't silence a rule without writing down why.
+- **Run everything before committing:** `npm run check` (tests, typecheck, all three linters,
+  format), and `npm run test:stories` when a story or a component's markup changed. All are
+  clean now; keep them that way, and don't silence a rule without writing down why.
 - **Generated output is never committed or hand-edited:** `dist/`, `plugins/*/build/`,
   `storybook-static/`.
 - **Comments say why, and are tagged.** The vocabulary is in the architecture doc. Keep a

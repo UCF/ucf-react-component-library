@@ -15,7 +15,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
-import { checkTarget, deployPlugins } from './deploy-plugins.mjs';
+import { checkPluginsTarget, deployPlugins } from './deploy-plugins.mjs';
 
 let tmp;
 let wpContent;
@@ -49,9 +49,9 @@ afterEach( () => {
 	rmSync( tmp, { recursive: true, force: true } );
 } );
 
-describe( 'checkTarget', () => {
+describe( 'checkPluginsTarget', () => {
 	test( 'accepts a wp-content/plugins folder', () => {
-		expect( checkTarget( target ) ).toBe( target );
+		expect( checkPluginsTarget( target ) ).toBe( target );
 	} );
 
 	test.each( [
@@ -60,12 +60,14 @@ describe( 'checkTarget', () => {
 		[ 'missing', () => path.join( tmp, 'nowhere' ), /not a folder/ ],
 		[ 'not named plugins', () => wpContent, /doesn’t look like/ ],
 	] )( 'refuses a folder that is %s', ( _, dir, message ) => {
-		expect( () => checkTarget( dir() ) ).toThrow( message );
+		expect( () => checkPluginsTarget( dir() ) ).toThrow( message );
 	} );
 
 	test( 'refuses a plugins folder with no themes folder beside it', () => {
 		rmSync( path.join( wpContent, 'themes' ), { recursive: true } );
-		expect( () => checkTarget( target ) ).toThrow( /doesn’t look like/ );
+		expect( () => checkPluginsTarget( target ) ).toThrow(
+			/doesn’t look like/
+		);
 	} );
 } );
 

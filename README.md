@@ -76,24 +76,30 @@ docs/              architecture.md (how and why), todo.md (what's next)
 
 ## Commands
 
-| Command                   | Does                                                              |
+| Develop                | Does                                                           |
+| ---------------------- | -------------------------------------------------------------- |
+| `npm run storybook`    | The catalog at http://localhost:6006                           |
+| `npm run deploy:watch` | Rebuild on every change and copy into your local sites (below) |
+| `npm run deploy`       | Build once and copy into your local sites (below)              |
+| `npm start`            | Rebuild the plugins on every change, without copying them      |
+
+| Build                     | Does                                                              |
 | ------------------------- | ----------------------------------------------------------------- |
-| `npm run storybook`       | The catalog at http://localhost:6006                              |
 | `npm run build`           | Tokens, then the npm package, then the plugins                    |
 | `npm run build:tokens`    | `tokens.json` into `dist/tokens/` and the theme kit `dist/theme/` |
 | `npm run build:package`   | The npm package and its one stylesheet, `dist/ucf.css`            |
 | `npm run build:plugins`   | Only the WordPress plugins, into `plugins/*/build/`               |
-| `npm start`               | Rebuild the plugins on every change                               |
-| `npm run release:temp`    | Build, then collect every output into `temp-release/` (see below) |
-| `npm run deploy:plugins`  | Build, then copy the plugins into `WP_PLUGINS_DIR` (see below)    |
 | `npm run build:storybook` | The catalog as a static site in `storybook-static/`               |
-| `npm test`                | Unit tests: markup, data clients, Puck configs, tokens (Node)     |
-| `npm run test:stories`    | Every story in headless Chromium, with accessibility checks       |
-| `npm run typecheck`       | TypeScript over everything                                        |
-| `npm run lint:js`         | ESLint                                                            |
-| `npm run lint:css`        | Stylelint                                                         |
-| `npm run lint:php`        | PHPCS, WordPress standard                                         |
-| `npm run format:check`    | Prettier                                                          |
+| `npm run release:temp`    | Build, then collect every output into `temp-release/` (see below) |
+
+| Check                  | Does                                                                              |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `npm run check`        | Everything below except `test:stories`: run before committing                     |
+| `npm test`             | Unit tests: markup, data clients, Puck configs, tokens (Node)                     |
+| `npm run test:stories` | Every story in headless Chromium, with accessibility checks                       |
+| `npm run typecheck`    | TypeScript over everything                                                        |
+| `npm run lint`         | All three linters: `lint:js` (ESLint), `lint:css` (Stylelint), `lint:php` (PHPCS) |
+| `npm run format:check` | Prettier                                                                          |
 
 ## Using it
 
@@ -119,20 +125,7 @@ names go away when a release pipeline replaces them.
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
 activate, then add blocks from the **UCF** category of the inserter.
 
-To work on a block in a development WordPress, point this repo at its plugins folder once:
-
-```sh
-cp .env.example .env   # then set WP_PLUGINS_DIR to that install's wp-content/plugins
-npm run deploy:plugins
-```
-
-`.env` is never committed, so each person sets their own path. The script builds the plugins,
-then replaces each one in that folder, and nothing else there. It refuses a folder that isn't
-named `plugins` with a `themes` folder beside it, so a wrong path fails instead of deleting
-something. Run it again after each change, or for a live loop symlink `plugins/{plugin}` into
-the folder and leave `npm start` running (the script skips a symlinked plugin). If WordPress
-runs in a container, a symlink to a folder outside what the container mounts won't resolve;
-deploy instead.
+To work on blocks in a development WordPress, see "Working against local sites" below.
 
 Check a block in the editor, never on the front end, where an invalid block still renders:
 `wp.data.select( 'core/block-editor' ).getBlocks()` in the console, and watch for "Updated Block".
@@ -146,7 +139,8 @@ folder, then run the theme's `npm run build`. Its `npm run check:tokens` fails w
 
 ### In Next, Puck or another React site
 
-Copy the `.tgz` into the site and install it:
+To work against a local React site as you change components, see "Working against local
+sites" below. Otherwise, copy the `.tgz` into the site and install it:
 
 ```sh
 npm install ./ucf-components-{version}.tgz
@@ -174,6 +168,42 @@ import degreeFinder from '@ucf/components/degree-finder/puck';
 
 const config = { components: { Stat: stat, DegreeFinder: degreeFinder } };
 ```
+
+## Working against local sites
+
+To see changes in a local WordPress or React site while you work, tell this repo where they
+are once:
+
+```sh
+cp .env.example .env   # then set WP_PLUGINS_DIR, PACKAGE_DIR, or both
+npm run deploy:watch   # leave running; Ctrl-C stops it
+```
+
+| Setting          | Points at                                              | Gets                                      |
+| ---------------- | ------------------------------------------------------ | ----------------------------------------- |
+| `WP_PLUGINS_DIR` | A WordPress install's `wp-content/plugins`             | The plugins, replaced in place            |
+| `PACKAGE_DIR`    | A folder in a React site, e.g. `vendor/ucf-components` | The npm package (`package.json`, `dist/`) |
+
+`npm run deploy:watch` rebuilds on every change to `components/` and copies the result to each,
+usually a couple of seconds after you save. A Next dev server picks up the package without a
+reload; reload the WordPress editor to see block changes. `npm run deploy` does the same once.
+Restart it after changing `tokens/tokens.json`, which it doesn't watch.
+
+**A React site installs from that folder,** so list it in the site's `package.json` and run
+`npm install` once:
+
+```json
+"@ucf/components": "file:./vendor/ucf-components"
+```
+
+WHY a copy inside the site, not a link to this repo: a link would load React from this repo's
+`node_modules`, and two copies of React break every hook. The copied `package.json` also leaves
+out `devDependencies`, which npm would otherwise install for a local folder.
+
+**It refuses a wrong path** rather than delete something: `WP_PLUGINS_DIR` must be named `plugins`
+with a `themes` folder beside it, and `PACKAGE_DIR` must be new or hold an earlier copy of this
+package. In WordPress it replaces only this repo's plugins, and skips one that is symlinked in.
+`.env` is never committed, so each person sets their own paths.
 
 ## Anatomy of a component
 
@@ -311,8 +341,7 @@ it go red, restore.
 ## Before committing
 
 ```sh
-npm test && npm run typecheck && npm run lint:js && npm run lint:css \
-  && npm run lint:php && npm run format:check
+npm run check
 npm run test:stories   # when a story or a component's markup changed
 ```
 

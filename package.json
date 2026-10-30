@@ -38,23 +38,26 @@
 		"react": ">=18.3"
 	},
 	"scripts": {
-		"build": "npm run build:tokens && npm run build:package && npm run build:plugins",
+		"build": "npm run build:tokens && node scripts/build-package.mjs && wp-scripts build",
 		"build:tokens": "node scripts/build-tokens.mjs",
 		"build:package": "node scripts/build-package.mjs",
 		"build:plugins": "npm run build:tokens && wp-scripts build",
 		"start": "npm run build:tokens && wp-scripts start",
 		"release:temp": "npm run build && node scripts/release-temp.mjs",
-		"deploy:plugins": "npm run build:plugins && node --env-file-if-exists=.env scripts/deploy-plugins.mjs",
+		"deploy": "npm run build && node --env-file-if-exists=.env scripts/deploy.mjs",
+		"deploy:watch": "node --env-file-if-exists=.env scripts/deploy.mjs --watch",
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",
 		"test:stories": "wp-scripts test-unit-js --project=storybook",
 		"typecheck": "tsc -p tsconfig.json",
+		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
 		"lint:js": "wp-scripts lint-js components scripts .storybook webpack.config.js",
 		"lint:css": "wp-scripts lint-style \"components/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
-		"format:check": "prettier --check ."
+		"format:check": "prettier --check .",
+		"check": "npm test && npm run typecheck && npm run lint && npm run format:check"
 	},
 	"devDependencies": {
 		"@puckeditor/core": "^0.24.0",
