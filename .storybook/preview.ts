@@ -49,7 +49,11 @@ const preview: Preview = {
 			},
 		},
 	},
-	initialGlobals: { composition: 'light' },
+	// WHY from the environment: the story tests run once per composition (vitest.config.mts).
+	// In Storybook itself it is unset, so stories open on Light.
+	initialGlobals: {
+		composition: import.meta.env.VITE_UCF_COMPOSITION ?? 'light',
+	},
 	decorators: [ withComposition ],
 	parameters: {
 		// WHY: content before interactive, the order the architecture doc explains them in.

@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ucf-content/stat > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/stat -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement"></p></div>
+<!-- /wp:ucf-content/stat -->"
+`;
+
+exports[`ucf-content/stat > example > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/stat {"statement":"Florida’s largest university, with 70,674 students","detail":"One sentence saying why the number matters.","source":"UCF Facts","sourceUrl":"https://www.ucf.edu/about-ucf/facts/","asOf":"fall 2025"} -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">Florida’s largest university, with 70,674 students</p><p class="ucf-c-stat__detail">One sentence saying why the number matters.</p><p class="ucf-c-stat__source">Source: <a href="https://www.ucf.edu/about-ucf/facts/">UCF Facts</a>, fall 2025</p></div>
+<!-- /wp:ucf-content/stat -->"
+`;
+
+exports[`ucf-degrees/degree-finder > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-finder /-->"`;

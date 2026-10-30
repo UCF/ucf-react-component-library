@@ -49,7 +49,7 @@
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",
-		"test:stories": "wp-scripts test-unit-js --project=storybook",
+		"test:stories": "wp-scripts test-unit-js --project='storybook:*'",
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
 		"lint:js": "wp-scripts lint-js components scripts .storybook webpack.config.js",

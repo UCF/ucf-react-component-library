@@ -96,7 +96,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | ---------------------- | --------------------------------------------------------------------------------- |
 | `npm run check`        | Everything below except `test:stories`: run before committing                     |
 | `npm test`             | Unit tests: markup, data clients, Puck configs, tokens (Node)                     |
-| `npm run test:stories` | Every story in headless Chromium, with accessibility checks                       |
+| `npm run test:stories` | Every story, on every composition at three widths, with accessibility checks      |
 | `npm run typecheck`    | TypeScript over everything                                                        |
 | `npm run lint`         | All three linters: `lint:js` (ESLint), `lint:css` (Stylelint), `lint:php` (PHPCS) |
 | `npm run format:check` | Prettier                                                                          |
@@ -333,7 +333,10 @@ don't:
   interactive block with site settings also gets a settings function in that plugin's main PHP
   file, like `ucf_degrees_degree_finder_settings()`.
 
-**5. Check it.** In Storybook, open it on every composition from the toolbar. Run
+**5. Check it.** The shared tests pick it up on their own: the block round-trip, WordPress and
+Puck parity, and its stories on every composition and width. Review the new snapshot in
+`components/shared/__snapshots__/`: it is what every post using the block will store. In
+Storybook, open it on every composition from the toolbar. Run
 `npm run release:temp` and try the block in WordPress's editor (never judge a block from the
 front end). Then run everything below. New tests must be shown to fail: break the code, watch
 it go red, restore.

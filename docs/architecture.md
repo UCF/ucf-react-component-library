@@ -319,11 +319,22 @@ deprecation would have nothing to migrate. Update the snapshot directly until th
 
 ## Tests
 
-Vitest runs two projects (`vitest.config.mts`): `npm test` runs `unit`, in Node, and
-`npm run test:stories` runs `storybook`, every story in headless Chromium. They are separate
-because the browser is slow to start and the story checks are narrower. Run both before
-committing.
+Vitest runs two kinds of project (`vitest.config.mts`): `npm test` runs `unit`, in Node, and
+`npm run test:stories` runs `storybook:*`, every story in headless Chromium on every
+composition at three widths. They are separate because the browser is slow to start. Run both
+before committing a change to a story, markup or CSS.
 
+The shared tests in `components/shared/` find every component on their own, so a new one is
+covered with nothing to add. They are modeled on the UCF Brand Block Theme's suites.
+
+- **Block round-trip** (`shared/blocks.test.tsx`): every block is created, serialized as a post
+  stores it, parsed back and checked with `isValidBlockContent()`, the editor's own test, plus a
+  snapshot of what a post stores. WHY not the parsed block's `isValid`: `parse()` quietly
+  migrates mismatched markup through `deprecated` and reports it valid. WHY the snapshot: a
+  renamed class passes the round-trip while invalidating every saved post.
+- **WordPress and Puck parity** (`shared/parity.test.tsx`): every component has a block, a Puck
+  config and stories; the block attributes, Puck fields and Puck defaults name the same props;
+  and a content block saves the same markup Puck renders.
 - **Markup contract** (`Stat.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`client.test.ts`): what it requests and what it keeps, with a fake
@@ -331,18 +342,23 @@ committing.
 - **Puck configs** (`shared/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
   (checked by `npm run typecheck`), and its `render` gives the same markup with Puck's extra
   props (`id`, `puck`, `editMode`) as without. Add every new config to the file's list.
-- **Every story is a test** (`@storybook/addon-vitest`). It must render without error and with
-  no accessibility violation, because preview.ts sets the a11y add-on to `error`. A story that
-  needs the network is tagged `!test` (the Degree Finder's Live Data). Every component needs
-  stories that cover its states.
+- **Every story is a test, on every composition and width** (`@storybook/addon-vitest`): five
+  compositions (from `tokens.json`) at 1280, 780 and 360 pixels wide, as the block themes test.
+  It must render without error and with no accessibility violation, because preview.ts sets the
+  a11y add-on to `error`. WHY every composition: the same component reads different colors on
+  each, so passing on Light proves nothing about Dark. `.storybook/vitest.setup.ts` fails a story
+  that didn't render inside its project's composition, since a check on the wrong section
+  passes. A story that needs the network is tagged `!test` (the Degree Finder's Live Data).
+  Every component needs stories that cover its states.
 - **Prove a new test can fail.** Break the code it covers, watch it go red, restore.
 
 The accessibility check reads each story's rendered state, not what happens after a click or a
 key. Behavior tests (keyboard, focus, announcements) are on the to-do list, as story `play`
 functions so they run in the same real browser.
 
-WordPress blocks are checked in WordPress by hand. Never verify a block through the front end:
-an invalid block still renders there. Ask the editor's store
+The block round-trip covers what the editor would flag on a saved post. A block's behavior in a
+running WordPress (render.php, the plugin's PHP) is still checked by hand. Never verify a block
+through the front end: an invalid block still renders there. Ask the editor's store
 (`wp.data.select( 'core/block-editor' ).getBlocks()`).
 
 ## Gotchas that have already bitten

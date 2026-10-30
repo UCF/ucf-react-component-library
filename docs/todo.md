@@ -5,7 +5,16 @@ The current goal is a correct development process, not a pipeline. Nothing here 
 ## To do
 
 - **CI.** Tests, lint (JS, CSS, PHP, format), typecheck, a check that built output isn't
-  stale, and a release job that publishes the npm package and the plugin builds.
+  stale, and a release job that publishes the npm package and the plugin builds. Mirror the
+  block themes: `npm run check` on every push, `test:stories` and the tiers below on pull
+  requests, with the accessibility report as a PR comment.
+- **Puck at runtime.** Render each config through Puck's own `<Render>`, and a Playwright smoke
+  test of the editor (insert each component, change each field, switch a section's composition,
+  no console errors). Needs the playground (below).
+- **A real-WordPress tier,** as the block themes have: wp-env with the built plugins and the
+  block theme, a seeded page per block per composition, axe at three widths, and the editor
+  checked for invalid blocks (the `getBlocks()` check, automated). Covers render.php and the
+  plugins' PHP, which nothing tests today.
 - **Behavior tests for interactive components.** Keyboard use and screen reader announcements for
   the Degree Finder (its interest combobox, step focus, the progress bar), as `play` functions
   on its stories. The storybook test project already runs every story in headless Chromium, so
