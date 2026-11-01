@@ -18,7 +18,7 @@ import Stat, { type StatProps } from './Stat.tsx';
 import example from './example.json';
 
 // What `useBlockProps.save()` adds for this block.
-// SYNC: the block name in hosts/wp/block.json.
+// SYNC: the block name in adapters/wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-ucf-content-stat' };
 
 const cases: Record< string, StatProps > = {

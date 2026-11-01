@@ -58,12 +58,12 @@ The playground first, then the schema, which is easiest to verify once the playg
 
 ### 1. A Puck playground
 
-The Puck configs (`hosts/puck/config.tsx`) are checked against Puck's own types, and their
-`render` against Puck's extra props (`components/shared/puck.test.tsx`). Nothing renders them
+The Puck configs (`adapters/puck/config.tsx`) are checked against Puck's own types, and their
+`render` against Puck's extra props (`components/_config/puck.test.tsx`). Nothing renders them
 in the real Puck editor yet.
 
 - **A small app in `playground/`,** with Vite and `@puckeditor/core` as dev dependencies only, so
-  the library itself stays free of Puck. It loads every `hosts/puck/config.tsx`, opens the real
+  the library itself stays free of Puck. It loads every `adapters/puck/config.tsx`, opens the real
   Puck editor on a saved sample page, and loads `dist/ucf.css` and the compositions so
   sections can be tried.
 - **A check:** a test renders each config through Puck's `<Render>` with sample data, so a
@@ -111,7 +111,7 @@ export const schema = {
 
 - **`block.json` attributes,** filled in at build time by the webpack copy step (`block.json`
   itself must stay plain JSON).
-- **Puck `fields` and `defaultProps`,** built from it in `hosts/puck/config.tsx` at runtime.
+- **Puck `fields` and `defaultProps`,** built from it in `adapters/puck/config.tsx` at runtime.
 - **The editor's settings panel** in `edit.tsx`, as select and text controls.
 - **The TypeScript prop type,** inferred from it.
 
@@ -138,6 +138,27 @@ would use the schema for attributes only. Verify the generated Puck fields in th
       with the component layer honoring it, so the section applies unless the component overrides it.
     - Per-section defaults for a component ("on gold, show as Light Alt") without an editor
       setting, through CSS style queries once browsers support them.
+
+## Primitives to build
+
+Per docs/architecture.md, "Core blocks and our primitives": we own every block that needs
+structure; core is used for plain text only. Roughly in order of need:
+
+1. **Button**, with a Buttons group: variants from the hero screenshots (gold fill, outline on
+   dark, a trailing arrow). `RichText` for the label and `LinkControl` for the link in the
+   editor; one markup in every host. Unblocks the hero, cards and the theme patterns with
+   buttons.
+2. **Image** (and Figure, with a caption): `MediaUpload` and the media library in WordPress,
+   saving the attachment ID with `wp-image-{id}` on the `<img>`; the host's image component
+   (`next/image`) through a slot in React. Unblocks the photo patterns.
+3. **Columns and Column:** a column count, ratio, gap and the width at which they stack; a
+   Puck slot per column. Match P1's Columns setting names (2–4 columns, ratio, gap, vertical
+   alignment) for parity.
+4. **Cover / Hero frame:** see the hero write-up (media, scrim, height, split, patterns inside).
+5. **Lock core down** in the plugin: the allowed block list and core's design controls off.
+   Do it alongside the first primitive so editors meet ours, not core's.
+
+The Section already exists (frozen until compared with P1's Container, below).
 
 ## Element styles
 

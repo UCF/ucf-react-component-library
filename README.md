@@ -61,7 +61,8 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 
 ```
 components/        one self-contained folder per component
-  shared/          the Puck config shape, written out so the library needs no Puck dependency
+  _config/         the tests every component must pass, and the Puck config shape (written
+                   out so the library needs no Puck dependency)
   section/         the band other components sit in: sets their composition
   stat/            a content component: works without JavaScript, saved as HTML
   degree-finder/   an interactive component: built in the browser
@@ -77,12 +78,13 @@ docs/              architecture.md (how and why), todo.md (what's next)
 
 ## Commands
 
-| Develop                | Does                                                           |
-| ---------------------- | -------------------------------------------------------------- |
-| `npm run storybook`    | The catalog at http://localhost:6006                           |
-| `npm run deploy:watch` | Rebuild on every change and copy into your local sites (below) |
-| `npm run deploy`       | Build once and copy into your local sites (below)              |
-| `npm start`            | Rebuild the plugins on every change, without copying them      |
+| Develop                 | Does                                                           |
+| ----------------------- | -------------------------------------------------------------- |
+| `npm run storybook`     | The catalog at http://localhost:6006                           |
+| `npm run deploy:watch`  | Rebuild on every change and copy into your local sites (below) |
+| `npm run deploy`        | Build once and copy into your local sites (below)              |
+| `npm start`             | Rebuild the plugins on every change, without copying them      |
+| `npm run new:component` | Start a component: its folder, and every list that names it    |
 
 | Build                     | Does                                                              |
 | ------------------------- | ----------------------------------------------------------------- |
@@ -216,17 +218,17 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 ## Anatomy of a component
 
 A component is one folder, `components/{name}/`. One file in it is the component itself, the
-**core**. Every other file either feeds the core from somewhere (a **host**) or ships it to an
-output. Nothing outside the folder needs to change except two lists (step 4 below).
+**core**. Every other file either connects the core to a platform (an **adapter**, for a
+**host** such as WordPress or Puck) or ships it to an output. Nothing outside the folder needs to change except two lists (step 4 below).
 
 ```
 components/{name}/
   {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
-   the core               ├─► hosts/puck/ ───────► npm: @ucf/components/{name}/puck
-                          ├─► hosts/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
+   the core               ├─► adapters/puck/ ───────► npm: @ucf/components/{name}/puck
+                          ├─► adapters/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
                           └─► {Name}.stories.tsx ► Storybook
   style.css ──────────────┬─► npm: concatenated into ucf.css
-                          └─► WordPress: imported by hosts/wp/, built into the block's CSS
+                          └─► WordPress: imported by adapters/wp/, built into the block's CSS
 ```
 
 ### The core
@@ -247,13 +249,14 @@ Anything that differs between hosts comes in as a prop, a **slot**: Stat's `link
 and a text field in the WordPress editor. A core never imports a host or checks which one it
 is in. If it needs something a host has, add a slot.
 
-### Hosts
+### Adapters
 
-A host is a thin adapter: it takes content from wherever that platform keeps it and passes it
-to the core as props. A platform gets a folder in `hosts/` only when it needs files besides
-props.
+A **host** is a platform that renders components: WordPress, Puck, Next. An **adapter** is the
+thin layer between a host and the core: it takes content from wherever that host keeps it and
+passes it to the core as props. A host gets a folder in `adapters/` only when it needs files
+besides props.
 
-- **`hosts/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
+- **`adapters/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
   **UCF** inserter category) and declares the attributes WordPress stores. `index.tsx`
   registers it. `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
@@ -262,12 +265,12 @@ props.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
-- **`hosts/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([components/shared/puck.ts](components/shared/puck.ts)): `fields` for the editor,
+- **`adapters/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
+  ([components/_config/puck.ts](components/_config/puck.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.
-- **Next and other React sites have no host folder.** They render the core directly from
+- **Next and other React sites have no adapter.** They render the core directly from
   `@ucf/components/{name}` and pass their pieces in through slots.
 
 Keep the props each host stores as plain strings with the same names (block attributes, Puck
@@ -310,8 +313,17 @@ block `ucf-content/quote`. Block names and a content block's attribute names are
 posts, so they are permanent once a site uses them. Settle them first
 ([architecture.md](docs/architecture.md), "Two kinds of component" and "Naming").
 
-**2. Copy the closer of the two existing components** (`stat` or `degree-finder`) and rename.
-Every component has:
+**2. Start it with the script:**
+
+```sh
+npm run new:component -- pull-quote --kind content --plugin ucf-content
+npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
+```
+
+It writes `components/{name}/` with one placeholder prop, and adds the component to every list
+in step 4 and to the lists in `components/_config/`, so it passes `npm run check` and `npm run test:stories`
+as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
+display name. Then replace the placeholder prop and markup. Every component has:
 
 ```
 {Name}.tsx            the core
@@ -319,8 +331,8 @@ index.ts              what the npm package exports
 style.css             colors as var(--ucf-c-{role}) only
 {Name}.stories.tsx    title 'Content (Server)/{Name}' or 'Interactive (Client)/{Name}',
                       tags [ 'server' ] or [ 'client' ], first story `Default`
-hosts/puck/config.tsx also add it to CONFIGS in components/shared/puck.test.tsx
-hosts/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
+adapters/puck/config.tsx also add it to CONFIGS in components/_config/puck.test.tsx
+adapters/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
 ```
 
 Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
@@ -331,8 +343,8 @@ Plus, for content: `example.json` (shared by the story, the test and the inserte
 **3. Apply the section colors:** `ucf-c` or `ucf-c-panel` on the outer element, roles only in
 `style.css` (see "Section colors" above).
 
-**4. Add it to the two lists.** Storybook and the package build find it on their own; these
-don't:
+**4. Check it is in the two lists** (the script adds it). Storybook and the package build find
+it on their own; these don't:
 
 - **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
   for content). This is what makes it importable from `@ucf/components`.
@@ -341,9 +353,9 @@ don't:
   interactive block with site settings also gets a settings function in that plugin's main PHP
   file, like `ucf_degrees_degree_finder_settings()`.
 
-**5. Check it.** The shared tests pick it up on their own: the block round-trip, WordPress and
+**5. Check it.** The tests in `components/_config/` pick it up on their own: the block round-trip, WordPress and
 Puck parity, and its stories on every composition and width. Review the new snapshot in
-`components/shared/__snapshots__/`: it is what every post using the block will store. In
+`components/_config/__snapshots__/`: it is what every post using the block will store. In
 Storybook, open it on every composition from the toolbar. Run
 `npm run release:temp` and try the block in WordPress's editor (never judge a block from the
 front end). Then run everything below. New tests must be shown to fail: break the code, watch

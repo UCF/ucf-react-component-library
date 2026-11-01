@@ -16,8 +16,8 @@
 			"default": "./dist/stat/index.js"
 		},
 		"./stat/puck": {
-			"types": "./dist/stat/hosts/puck/config.d.ts",
-			"default": "./dist/stat/hosts/puck/config.js"
+			"types": "./dist/stat/adapters/puck/config.d.ts",
+			"default": "./dist/stat/adapters/puck/config.js"
 		},
 		"./stat/example.json": "./dist/stat/example.json",
 		"./section": {
@@ -25,16 +25,16 @@
 			"default": "./dist/section/index.js"
 		},
 		"./section/puck": {
-			"types": "./dist/section/hosts/puck/config.d.ts",
-			"default": "./dist/section/hosts/puck/config.js"
+			"types": "./dist/section/adapters/puck/config.d.ts",
+			"default": "./dist/section/adapters/puck/config.js"
 		},
 		"./degree-finder": {
 			"types": "./dist/degree-finder/index.d.ts",
 			"default": "./dist/degree-finder/index.js"
 		},
 		"./degree-finder/puck": {
-			"types": "./dist/degree-finder/hosts/puck/config.d.ts",
-			"default": "./dist/degree-finder/hosts/puck/config.js"
+			"types": "./dist/degree-finder/adapters/puck/config.d.ts",
+			"default": "./dist/degree-finder/adapters/puck/config.js"
 		}
 	},
 	"files": [
@@ -55,6 +55,7 @@
 		"release:temp": "npm run build && node scripts/release-temp.mjs",
 		"deploy": "npm run build && node --env-file-if-exists=.env scripts/deploy.mjs",
 		"deploy:watch": "node --env-file-if-exists=.env scripts/deploy.mjs --watch",
+		"new:component": "node scripts/new-component.mjs",
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",
@@ -88,6 +89,7 @@
 		"prettier": "npm:wp-prettier@^3.9.6",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"new:component": "node scripts/new-component.mjs",
 		"storybook": "^10.6.5",
 		"typescript": "^5.9.3",
 		"vite": "^8.3.5",

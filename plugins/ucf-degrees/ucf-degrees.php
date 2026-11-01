@@ -50,7 +50,7 @@ function ucf_degrees_degree_finder_settings() {
  *
  * WHY: priority 20 runs after shared.php has registered the blocks on the default priority,
  * so their editor script handles exist.
- * SYNC: each window name is declared in that component's hosts/wp/settings.ts.
+ * SYNC: each window name is declared in that component's adapters/wp/settings.ts.
  *
  * @return void
  */

@@ -7,7 +7,7 @@
  * so a Puck host has none of WordPress's saved-markup limits.
  *
  * UPSTREAM: follows `@puckeditor/core`'s `ComponentConfig` (0.24) for the parts used here.
- * Puck needs a field for every prop and complete `defaultProps`. shared/puck.test.tsx checks
+ * Puck needs a field for every prop and complete `defaultProps`. _config/puck.test.tsx checks
  * every config against the real Puck types, so a change in Puck fails `npm run typecheck`.
  */
 import type { ElementType, ReactElement } from 'react';
@@ -24,7 +24,7 @@ export type PuckField =
  * component that draws them instead (PuckRenderInput).
  *
  * SYNC: `Slot` in `@puckeditor/core`. Puck turns a prop into a slot only when its type matches
- * Puck's own, which shared/puck.test.tsx checks.
+ * Puck's own, which _config/puck.test.tsx checks.
  */
 export type PuckSlot = {
 	type: string;

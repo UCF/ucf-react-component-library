@@ -21,7 +21,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { PuckComponentConfig } from './puck.ts';
 
-import.meta.glob( '../*/hosts/wp/index.tsx', { eager: true } );
+import.meta.glob( '../*/adapters/wp/index.tsx', { eager: true } );
 
 type BlockJson = {
 	name: string;
@@ -29,19 +29,22 @@ type BlockJson = {
 	attributes: Record< string, unknown >;
 };
 
-const blockJsons = import.meta.glob< BlockJson >( '../*/hosts/wp/block.json', {
-	eager: true,
-	import: 'default',
-} );
+const blockJsons = import.meta.glob< BlockJson >(
+	'../*/adapters/wp/block.json',
+	{
+		eager: true,
+		import: 'default',
+	}
+);
 const puckConfigs = import.meta.glob<
 	PuckComponentConfig< Record< string, string > >
->( '../*/hosts/puck/config.tsx', { eager: true, import: 'default' } );
+>( '../*/adapters/puck/config.tsx', { eager: true, import: 'default' } );
 const examples = import.meta.glob< Record< string, string > >(
 	'../*/example.json',
 	{ eager: true, import: 'default' }
 );
 
-// `../stat/hosts/wp/block.json` → `stat`.
+// `../stat/adapters/wp/block.json` → `stat`.
 const componentOf = ( file: string ) => file.split( '/' )[ 1 ] ?? file;
 
 // The file every component must have, or a clear failure naming it.
@@ -87,10 +90,10 @@ test( 'every component has a WordPress block', () => {
 
 describe.each( withBlock )( '%s', ( component ) => {
 	const json = need(
-		blockJsons[ `../${ component }/hosts/wp/block.json` ],
-		`${ component }/hosts/wp/block.json`
+		blockJsons[ `../${ component }/adapters/wp/block.json` ],
+		`${ component }/adapters/wp/block.json`
 	);
-	const puck = puckConfigs[ `../${ component }/hosts/puck/config.tsx` ];
+	const puck = puckConfigs[ `../${ component }/adapters/puck/config.tsx` ];
 	const sorted = ( object: object = {} ) => Object.keys( object ).sort();
 	// WHY slots left out: a Puck slot holds the components placed inside, which WordPress keeps
 	// as inner blocks rather than as an attribute. blocks.test.tsx checks those round-trip.
@@ -139,7 +142,10 @@ describe.each( withBlock )( '%s', ( component ) => {
 	test.runIf( ! json.render && example !== undefined )(
 		'WordPress saves the same markup Puck renders, for every choice',
 		() => {
-			const config = need( puck, `${ component }/hosts/puck/config.tsx` );
+			const config = need(
+				puck,
+				`${ component }/adapters/puck/config.tsx`
+			);
 			// What useBlockProps.save() adds: the block's own class, wp-block-{namespace}-{name},
 			// and `alignfull` for a block that spans the page.
 			const blockClass = `wp-block-${ json.name.replace( '/', '-' ) }`;

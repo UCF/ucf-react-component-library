@@ -1,5 +1,5 @@
 {
-	// Type-checks everything: components, their hosts, stories and tests. `npm run typecheck`.
+	// Type-checks everything: components, their adapters, stories and tests. `npm run typecheck`.
 	// UPSTREAM: Babel (wp-scripts, Jest) and Vite (Storybook) strip types without checking them,
 	// so this is the only thing that does.
 	"compilerOptions": {

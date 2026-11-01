@@ -29,7 +29,7 @@ import {
 import { describe, expect, test } from 'vitest';
 
 // Registers every block, as each plugin's editor script does.
-import.meta.glob( '../*/hosts/wp/index.tsx', { eager: true } );
+import.meta.glob( '../*/adapters/wp/index.tsx', { eager: true } );
 
 type BlockJson = {
 	name: string;
@@ -37,10 +37,13 @@ type BlockJson = {
 	attributes: Record< string, { default?: unknown } >;
 };
 
-const blockJsons = import.meta.glob< BlockJson >( '../*/hosts/wp/block.json', {
-	eager: true,
-	import: 'default',
-} );
+const blockJsons = import.meta.glob< BlockJson >(
+	'../*/adapters/wp/block.json',
+	{
+		eager: true,
+		import: 'default',
+	}
+);
 const examples = import.meta.glob< Record< string, unknown > >(
 	'../*/example.json',
 	{ eager: true, import: 'default' }

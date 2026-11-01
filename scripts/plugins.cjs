@@ -41,7 +41,7 @@ function getPlugins() {
 function assertEveryBlockHasOnePlugin( plugins ) {
 	const componentsDir = path.join( root, 'components' );
 	const withBlocks = readdirSync( componentsDir ).filter( ( name ) =>
-		existsSync( path.join( componentsDir, name, 'hosts/wp/block.json' ) )
+		existsSync( path.join( componentsDir, name, 'adapters/wp/block.json' ) )
 	);
 
 	for ( const name of withBlocks ) {
@@ -61,7 +61,7 @@ function assertEveryBlockHasOnePlugin( plugins ) {
 		for ( const name of plugin.blocks ) {
 			if ( ! withBlocks.includes( name ) ) {
 				throw new Error(
-					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no components/${ name }/hosts/wp/block.json.`
+					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no components/${ name }/adapters/wp/block.json.`
 				);
 			}
 		}

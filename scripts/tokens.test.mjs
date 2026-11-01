@@ -235,7 +235,7 @@ describe( 'component layer', () => {
 						file.endsWith( '.tsx' ) &&
 						! file.includes( 'stories' ) &&
 						! file.includes( 'test' ) &&
-						! file.includes( 'hosts' )
+						! file.includes( 'adapters' )
 				)
 				.map( ( file ) =>
 					readFileSync(

@@ -8,7 +8,7 @@ import Stat from '../../Stat.tsx';
 // WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
 // without it. Bundlers accept it too.
 import example from '../../example.json' with { type: 'json' };
-import type { PuckComponentConfig } from '../../../shared/puck.ts';
+import type { PuckComponentConfig } from '../../../_config/puck.ts';
 
 type Props = {
 	statement: string;
@@ -29,7 +29,7 @@ const config: PuckComponentConfig< Props > = {
 	},
 	defaultProps: example,
 	// FIX: pass only Stat's own props. Stat spreads the rest onto its <div>, so Puck's `id`,
-	// `puck` and `editMode` ended up in the markup (see PuckRenderProps in shared/puck.ts).
+	// `puck` and `editMode` ended up in the markup (see PuckRenderProps in _config/puck.ts).
 	render: ( { statement, detail, source, sourceUrl, asOf } ) => (
 		<Stat
 			statement={ statement }

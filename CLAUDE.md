@@ -13,8 +13,9 @@ restate them. Read `README.md` first for what the repo is and where each file li
 | The three layers                      | Tokens → markup and CSS → React                                 |
 | Two kinds of component                | Content (server) vs interactive (client); authored vs live data |
 | Naming                                | One name in every layer; which names are permanent              |
-| A component's folder                  | What each file is; why there is no `next/` host                 |
+| A component's folder                  | What each file is; why there is no `next/` adapter              |
 | Slots                                 | How host-specific pieces get in                                 |
+| Core blocks and our primitives        | Core for plain text; we own Section, Columns, Button, Image…    |
 | Distribution                          | One npm package; one plugin per content type                    |
 | Tokens, roles and fonts               | `--ucf-*` only; who sets roles; who loads fonts                 |
 | Changing a content component's markup | Major version plus a block deprecation                          |

@@ -8,7 +8,7 @@
  */
 import Section from '../../Section.tsx';
 import { COMPOSITIONS, type Composition } from '../../compositions.ts';
-import type { PuckComponentConfig, PuckSlot } from '../../../shared/puck.ts';
+import type { PuckComponentConfig, PuckSlot } from '../../../_config/puck.ts';
 
 type Props = {
 	composition: Composition;

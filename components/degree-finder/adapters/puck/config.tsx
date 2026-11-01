@@ -6,7 +6,7 @@
  */
 import DegreeFinder from '../../DegreeFinder.tsx';
 import { DEFAULTS } from '../../defaults.ts';
-import type { PuckComponentConfig } from '../../../shared/puck.ts';
+import type { PuckComponentConfig } from '../../../_config/puck.ts';
 
 type Props = {
 	/** A program type slug, or '' to ask the visitor. */

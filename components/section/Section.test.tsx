@@ -2,7 +2,7 @@
  * The Section's markup contract, and its list of compositions.
  *
  * The snapshot is the markup a non-React host copies. WordPress stores the same markup in every
- * post with a Section block (see shared/__snapshots__/blocks.test.tsx.snap), so a change here
+ * post with a Section block (see _config/__snapshots__/blocks.test.tsx.snap), so a change here
  * needs a major version and a deprecation.
  */
 import { renderToStaticMarkup } from 'react-dom/server';

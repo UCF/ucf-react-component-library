@@ -14,7 +14,7 @@
  *
  * SYNC: WordPress stores what this returns in every post that uses the block. Changing the
  * markup makes those blocks invalid: it needs a major version and a `deprecated` entry in
- * hosts/wp/index.tsx that carries a frozen copy of the old markup. Stat.test.tsx fails on any
+ * adapters/wp/index.tsx that carries a frozen copy of the old markup. Stat.test.tsx fails on any
  * markup change so this cannot happen by accident.
  *
  * WHY `ucf-c-` and not `ucf-`: the block theme already styles `.ucf-stat` for its pattern,

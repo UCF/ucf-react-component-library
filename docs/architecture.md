@@ -130,7 +130,7 @@ components/{name}/
   types.ts
   {Name}.stories.tsx    Storybook
   *.test.ts(x)          next to what they test
-  hosts/
+  adapters/
     wp/                 block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
     puck/config.tsx     a plain object in Puck's ComponentConfig shape
 ```
@@ -138,9 +138,10 @@ components/{name}/
 Each folder is self-contained, so a component can move into its own package or another repo
 without untangling it from the others.
 
-**There is no `next/` host.** Next's pieces go in through slots (below), so the library holds
-no Next code. A host gets a folder only when it needs something besides props, like Puck's
-config object or WordPress's block files.
+**There is no `next/` adapter.** Next's pieces go in through slots (below), so the library holds
+no Next code. A host gets an adapter only when it needs something besides props, like Puck's
+config object or WordPress's block files. WHY "adapter" for the folder and "host" for the
+platform: `adapters/wp/` is not WordPress, it is the code that plugs the core into WordPress.
 
 ## Slots
 
@@ -155,6 +156,47 @@ it is in.
 
 A slot only covers what was made a slot. A core that imports `next/link` directly is tied to
 Next, and the WordPress build fails on it.
+
+## Core blocks and our primitives
+
+Decided 2026-10-30. **If a WordPress core block saves just a plain HTML element, use core. If it
+needs structure WordPress invents (wrappers, layout classes, inline styles, settings that
+change its markup), we own it**, as a component here with the same markup in every host.
+
+| Use core: it is just the element                 | Own it: structure we must control                  |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group), Columns and Column    |
+| Table (styled by `elements.css`; see below)      | Cover / Hero, Buttons and Button, Image and Figure |
+|                                                  | Media and text, Gallery, Details / Accordion, Tabs |
+
+- **WHY core for plain text:** Paragraph, Heading and List save bare `<p>`, `<h2>`, `<ul>`, the
+  same elements Puck and Next render, so they are already at parity, and rebuilding their
+  editing (levels, anchors, splitting, pasting) would gain nothing. `elements.css` styles them in
+  React hosts; the theme does in WordPress.
+- **WHY our own for the rest:** core's markup carries wrappers and classes we don't choose,
+  global styles inject inline CSS, its design controls let editors break the system, and
+  WordPress changes it between releases. A core block and a Puck component can never share a
+  markup test; ours can (`_config/parity.test.tsx`, `_config/blocks.test.tsx`).
+- **Own the block, borrow the editor pieces.** A primitive's `edit` uses Gutenberg's editor
+  components (`RichText`, `LinkControl`, `MediaUpload`), so editors keep the familiar tools,
+  while `save()` writes our markup. Our Image keeps `wp-image-{id}` on the `<img>`, so WordPress
+  still adds responsive sizes and lazy loading when it renders the page.
+- **Edge cases:** Table stays core (rebuilding a table editor is a large job); own only a special
+  one, such as the theme's Comparison table. Block bindings started as core-block-only; check
+  current support for custom blocks before a design relies on them.
+- **Keep core out of the way:** allow only core's text blocks plus ours (`allowedBlocks` on our
+  containers, the `allowed_block_types_all` filter in the plugin), and turn off core's design
+  controls (custom colors, font sizes, spacing, borders) so editors pick our variants.
+- **The cost:** our primitives' saved markup is ours to keep stable, with a deprecation when it
+  changes. Keep it minimal and semantic; the stored-markup snapshots catch any change.
+
+**Not shadcn or Tailwind for saved blocks.** A block saves its classes into every post. Utility
+classes put the styling in the saved markup, so restyling would invalidate posts and need a
+deprecation each time; our named classes leave the styling in CSS. Interactive widgets (dialogs,
+menus, comboboxes, React-only tabs) may use Radix, unstyled, with our CSS: they are built in the
+browser and nothing is saved. Content that only shows or hides what is already in the HTML (tabs
+and accordions with editorial text) stays a content block with a small script on top (the
+Interactivity API in WordPress), per "Two kinds of component".
 
 ## Distribution
 
@@ -185,7 +227,7 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 | `ucf-degrees` | `ucf-degrees/degree-finder`               |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
-  fails if a component with a `hosts/wp/` is in no plugin or in two.
+  fails if a component with a `adapters/wp/` is in no plugin or in two.
 - **Each block is namespaced by its plugin,** so blocks from different plugins never clash and
   the name says where to look.
 - **`plugins/shared/shared.php` is copied into every plugin** as `build/shared.php`, so each
@@ -326,7 +368,7 @@ it makes those blocks invalid. So:
 
 1. Treat it as a major version.
 2. Copy the old markup into a frozen component (`Stat.v1.tsx`) and add a `deprecated` entry
-   in `hosts/wp/index.tsx` that renders it.
+   in `adapters/wp/index.tsx` that renders it.
 3. Only then update the snapshot (`npx vitest run -u`).
 
 `npm test` fails on any markup change so this can't happen by accident. Interactive components have
@@ -342,22 +384,22 @@ Vitest runs two kinds of project (`vitest.config.mts`): `npm test` runs `unit`, 
 composition at three widths. They are separate because the browser is slow to start. Run both
 before committing a change to a story, markup or CSS.
 
-The shared tests in `components/shared/` find every component on their own, so a new one is
+The tests in `components/_config/` find every component on their own, so a new one is
 covered with nothing to add. They are modeled on the UCF Brand Block Theme's suites.
 
-- **Block round-trip** (`shared/blocks.test.tsx`): every block is created, serialized as a post
+- **Block round-trip** (`_config/blocks.test.tsx`): every block is created, serialized as a post
   stores it, parsed back and checked with `isValidBlockContent()`, the editor's own test, plus a
   snapshot of what a post stores. WHY not the parsed block's `isValid`: `parse()` quietly
   migrates mismatched markup through `deprecated` and reports it valid. WHY the snapshot: a
   renamed class passes the round-trip while invalidating every saved post.
-- **WordPress and Puck parity** (`shared/parity.test.tsx`): every component has a block, a Puck
+- **WordPress and Puck parity** (`_config/parity.test.tsx`): every component has a block, a Puck
   config and stories; the block attributes, Puck fields and Puck defaults name the same props;
   and a content block saves the same markup Puck renders.
 - **Markup contract** (`Stat.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`client.test.ts`): what it requests and what it keeps, with a fake
   `fetch`. Every interactive component's client needs one.
-- **Puck configs** (`shared/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
+- **Puck configs** (`_config/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
   (checked by `npm run typecheck`), and its `render` gives the same markup with Puck's extra
   props (`id`, `puck`, `editMode`) as without. Add every new config to the file's list.
 - **Every story is a test, on every composition and width** (`@storybook/addon-vitest`): five
