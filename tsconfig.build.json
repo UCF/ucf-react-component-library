@@ -1,6 +1,8 @@
 {
 	// Emits the npm package to dist/: JavaScript, type files, and (via resolveJsonModule) the
 	// example data. Run by scripts/build-package.mjs.
+	// WHY rootDir is the repo: primitives/ and components/ build side by side, into
+	// dist/primitives/ and dist/components/. package.json `exports` maps the public paths.
 	// WHY adapters/wp is left out: it imports @wordpress/*, which only exists inside WordPress, and
 	// wp-scripts builds it into the plugins instead.
 	"extends": "./tsconfig.json",
@@ -9,13 +11,14 @@
 		"allowImportingTsExtensions": false,
 		"rewriteRelativeImportExtensions": true,
 		"declaration": true,
-		"rootDir": "components",
+		"rootDir": ".",
 		"outDir": "dist"
 	},
-	"include": [ "components/**/*.ts", "components/**/*.tsx" ],
-	"exclude": [
-		"components/*/adapters/wp/**",
-		"components/**/*.test.*",
-		"components/**/*.stories.*"
-	]
+	"include": [
+		"primitives/**/*.ts",
+		"primitives/**/*.tsx",
+		"components/**/*.ts",
+		"components/**/*.tsx"
+	],
+	"exclude": [ "*/*/adapters/wp/**", "**/*.test.*", "**/*.stories.*" ]
 }

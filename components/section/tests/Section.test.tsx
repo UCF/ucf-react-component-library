@@ -8,9 +8,9 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import tokens from '../../tokens/tokens.json';
-import Section, { type SectionProps } from './Section.tsx';
-import { COMPOSITIONS } from './compositions.ts';
+import tokens from '../../../tokens/tokens.json';
+import Section, { type SectionProps } from '../Section.tsx';
+import { COMPOSITIONS } from '../compositions.ts';
 
 const cases: Record< string, SectionProps > = {
 	defaults: {},

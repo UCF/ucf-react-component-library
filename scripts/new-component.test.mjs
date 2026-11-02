@@ -100,7 +100,8 @@ describe( 'planComponent', () => {
 		expect( files ).toEqual(
 			expect.arrayContaining( [
 				'components/pull-quote/PullQuote.tsx',
-				'components/pull-quote/PullQuote.test.tsx',
+				'components/pull-quote/tests/PullQuote.test.tsx',
+				'components/pull-quote/stories/PullQuote.stories.tsx',
 				'components/pull-quote/example.json',
 				'components/pull-quote/adapters/wp/save.tsx',
 			] )
@@ -138,18 +139,62 @@ describe( 'planComponent', () => {
 		expect( block.textdomain ).toBe( 'ucf-content' );
 	} );
 
+	test( 'a primitive goes in primitives/, with no WordPress block and no plugin', () => {
+		const files = planComponent( {
+			root,
+			name: 'badge',
+			kind: 'primitive',
+		} );
+		writePlan( root, files );
+
+		expect( [ ...files.keys() ] ).toEqual(
+			expect.arrayContaining( [
+				'primitives/badge/Badge.tsx',
+				'primitives/badge/adapters/puck/config.tsx',
+				'primitives/badge/adapters/wp/edit.tsx',
+			] )
+		);
+		expect( [ ...files.keys() ] ).not.toContain(
+			'primitives/badge/adapters/wp/block.json'
+		);
+		expect(
+			JSON.parse( read( 'plugins/ucf-content/plugin.json' ) ).blocks
+		).not.toContain( 'badge' );
+
+		const exports = JSON.parse( read( 'package.json' ) ).exports;
+		expect( exports[ './primitives/badge' ].default ).toBe(
+			'./dist/primitives/badge/index.js'
+		);
+		expect( read( 'components/_config/parity.test.tsx' ) ).toMatch(
+			/expect\( primitives \)\.toEqual\(\s*\[[^\]]*'badge'/
+		);
+		expect( read( 'components/_config/puck.test.tsx' ) ).toContain(
+			"import badge from '../../primitives/badge/adapters/puck/config.tsx';"
+		);
+	} );
+
+	test( 'refuses a name already used in the other folder', () => {
+		writePlan(
+			root,
+			planComponent( { root, name: 'badge', kind: 'primitive' } )
+		);
+		expect( () => plan( { name: 'badge' } ) ).toThrow(
+			/primitives\/badge already exists/
+		);
+	} );
+
 	test( 'adds the component to every list', () => {
 		writePlan( root, plan() );
 
 		const exports = JSON.parse( read( 'package.json' ) ).exports;
 		expect( exports[ './pull-quote' ].default ).toBe(
-			'./dist/pull-quote/index.js'
+			'./dist/components/pull-quote/index.js'
 		);
 		expect( exports[ './pull-quote/puck' ].default ).toBe(
-			'./dist/pull-quote/adapters/puck/config.js'
+			'./dist/components/pull-quote/adapters/puck/config.js'
 		);
 		expect( exports[ './pull-quote/example.json' ] ).toBe(
-			'./dist/pull-quote/example.json'
+			'./dist/components/pull-quote/example.json'
 		);
 
 		expect(
@@ -159,12 +204,20 @@ describe( 'planComponent', () => {
 			JSON.parse( read( 'plugins/ucf-degrees/plugin.json' ) ).blocks
 		).not.toContain( 'pull-quote' );
 
-		expect( read( 'components/_config/parity.test.tsx' ) ).toMatch(
-			/'degree-finder', 'pull-quote', 'section'/
-		);
-		expect( read( 'components/_config/blocks.test.tsx' ) ).toMatch(
-			/'degree-finder', 'pull-quote', 'section'/
-		);
+		// WHY only "listed, in order": the real lists grow with every component.
+		for ( const file of [ 'parity', 'blocks' ] ) {
+			const source = read( `components/_config/${ file }.test.tsx` );
+			const names = [
+				...source.matchAll( /^\t*'([a-z-]+)',?$/gm ),
+				...( source.match( /toEqual\( \[ ([^\]]+) \]/ )?.[ 1 ] ?? '' )
+					.split( ', ' )
+					.map( ( item ) => [ null, item.replace( /'/g, '' ) ] ),
+			]
+				.map( ( match ) => match[ 1 ] )
+				.filter( Boolean );
+			expect( names ).toContain( 'pull-quote' );
+			expect( names ).toEqual( [ ...names ].sort() );
+		}
 
 		const puck = read( 'components/_config/puck.test.tsx' );
 		expect( puck ).toContain(

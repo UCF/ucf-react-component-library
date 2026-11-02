@@ -1,7 +1,7 @@
 /**
  * The compositions a Section can apply, with their editor labels.
  *
- * SYNC: tokens/tokens.json `composition`. Section.test.tsx fails when the two differ.
+ * SYNC: tokens/tokens.json `composition`. tests/Section.test.tsx fails when the two differ.
  * WHY a copy, not read from tokens.json: the package is built from components/ only, and the
  * core may not import anything at runtime that isn't in its own folder.
  */

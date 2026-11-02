@@ -3,7 +3,7 @@
  */
 import { expect, test } from 'vitest';
 
-import { createSampleClient } from './sample-client.ts';
+import { createSampleClient } from '../sample-client.ts';
 
 const client = createSampleClient( { delay: 0 } );
 

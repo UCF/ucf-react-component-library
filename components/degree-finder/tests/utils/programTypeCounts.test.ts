@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
-import type { ProgramType } from '../types.ts';
-import { programTypeCounts } from './programTypeCounts.ts';
+import type { ProgramType } from '../../types.ts';
+import { programTypeCounts } from '../../utils/programTypeCounts.ts';
 
 const type = (
 	slug: string,

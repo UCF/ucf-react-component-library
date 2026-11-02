@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { buildSearchUrl } from './searchUrl.ts';
+import { buildSearchUrl } from '../../utils/searchUrl.ts';
 
 test( 'links to degree search when nothing is chosen', () => {
 	expect( buildSearchUrl() ).toBe( 'https://www.ucf.edu/degree-search/' );

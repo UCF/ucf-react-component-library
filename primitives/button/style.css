@@ -1,0 +1,134 @@
+/*
+ * CONTEXT: the Button's styles, for every host and every component that uses it.
+ *
+ * SYNC: the UCF Brand Block Theme's core Button: theme.json `styles.elements.button` (type,
+ * padding, the primary's colors), src/scss/_buttons.scss (the box, Outline, Text and the two
+ * sizes) and src/scss/_base.scss (the transition and the focus ring). A core Button an editor
+ * places and this one must look the same, so change both together. The numbers below that
+ * aren't tokens yet (padding, heights, letter spacing) are the theme's; making them tokens
+ * both read is in docs/todo.md.
+ *
+ * Colors are the button roles of whatever the Button sits on (`--ucf-c-button` and the rest),
+ * the same roles the theme's button reads, so the two match on every composition.
+ */
+
+/*
+ * SPEC: 52px tall, label centered. Every button carries a 2px border, transparent on the
+ * fill, so the outline's border isn't extra height and the two sit side by side at one size.
+ */
+.ucf-c-button {
+	align-items: center;
+	border: var(--ucf-custom-border-control) solid transparent;
+
+	/*
+	 * FIX: the heights include the padding and border, as on the theme, which sets this on
+	 * everything. Without it a 52px button was 82px tall.
+	 */
+	box-sizing: border-box;
+	display: inline-flex;
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-data-lg);
+	font-weight: 700;
+	justify-content: center;
+	letter-spacing: 0.01em;
+	line-height: 1.2;
+	min-height: 52px;
+	padding: 0.8rem 1.5rem;
+	text-decoration: none;
+	text-transform: none;
+
+	/*
+	 * FIX: only as wide as its label. In a grid or a column (a Section's content area), the
+	 * browser stretches a child across the row, which made a lone Button full width. Core's
+	 * Button avoids it by sitting inside a wrapper element.
+	 */
+	width: fit-content;
+
+	/* SPEC: hover inverts rather than fades, and the only motion is 150ms on color. */
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease,
+		text-decoration-color 0.15s ease;
+}
+
+/* A11Y: the theme's ring: the focus role, which clears 3:1 on every composition. */
+.ucf-c-button:focus-visible {
+	outline: var(--ucf-custom-focus-width) solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+/* Fill: the main action. Hover and focus swap to the hover pair, as the theme's do. */
+.ucf-c-button[data-variant="fill"] {
+	background-color: var(--ucf-c-button);
+	color: var(--ucf-c-button-text);
+}
+
+.ucf-c-button[data-variant="fill"]:hover,
+.ucf-c-button[data-variant="fill"]:focus {
+	background-color: var(--ucf-c-button-hover);
+	color: var(--ucf-c-button-hover-text);
+}
+
+/*
+ * Outline: the second action. WHY hover fills with the outline color rather than shifting
+ * it: a second outline shade would have to clear contrast on the field as well.
+ */
+.ucf-c-button[data-variant="outline"] {
+	background-color: transparent;
+	border-color: currentcolor;
+	color: var(--ucf-c-button-outline);
+}
+
+.ucf-c-button[data-variant="outline"]:hover,
+.ucf-c-button[data-variant="outline"]:focus {
+	background-color: var(--ucf-c-button-outline);
+	border-color: var(--ucf-c-button-outline);
+	color: var(--ucf-c-button-outline-on);
+}
+
+/*
+ * SPEC: Text: a link-weight action with a heavy underline in the indicator color, for "See
+ * all" beside a heading or a second action that must not compete.
+ * A11Y: the underline thickens on hover rather than changing color, so the state shows in
+ * shape; the 44px height keeps it a full tap target though it reads as text.
+ */
+.ucf-c-button[data-variant="text"] {
+	background-color: transparent;
+	color: var(--ucf-c-body);
+	min-height: var(--ucf-custom-tap-target);
+	padding-inline: 0;
+	text-decoration-color: var(--ucf-c-indicator);
+	text-decoration-line: underline;
+	text-decoration-thickness: 3px;
+	text-underline-offset: 0.4em;
+}
+
+.ucf-c-button[data-variant="text"]:hover,
+.ucf-c-button[data-variant="text"]:focus {
+	text-decoration-thickness: 5px;
+	text-underline-offset: 0.3em;
+}
+
+/*
+ * SPEC: the two other sizes: small (44px, the tap-target floor) and large (60px). In the
+ * theme, size rides on core's font-size control (Small, Body), which is why the prop is
+ * `fontSize`.
+ */
+.ucf-c-button[data-size="small"] {
+	font-size: var(--ucf-font-size-small);
+	min-height: var(--ucf-custom-tap-target);
+	padding: 0.55rem 1.1rem;
+}
+
+.ucf-c-button[data-size="body"] {
+	font-size: var(--ucf-font-size-body);
+	min-height: 60px;
+	padding: 1rem 2rem;
+}
+
+/* The Text style stays flush and 44px tall whatever the size, as the theme's does. */
+.ucf-c-button[data-variant="text"][data-size] {
+	min-height: var(--ucf-custom-tap-target);
+	padding-inline: 0;
+}

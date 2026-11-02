@@ -60,6 +60,8 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
+primitives/        the pieces components are built from: Button (Puck places them; WordPress
+                   editors use core's blocks instead)
 components/        one self-contained folder per component
   _config/         the tests every component must pass, and the Puck config shape (written
                    out so the library needs no Puck dependency)
@@ -226,7 +228,7 @@ components/{name}/
   {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
    the core               ├─► adapters/puck/ ───────► npm: @ucf/components/{name}/puck
                           ├─► adapters/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
-                          └─► {Name}.stories.tsx ► Storybook
+                          └─► stories/ ──────────► Storybook
   style.css ──────────────┬─► npm: concatenated into ucf.css
                           └─► WordPress: imported by adapters/wp/, built into the block's CSS
 ```
@@ -318,9 +320,11 @@ posts, so they are permanent once a site uses them. Settle them first
 ```sh
 npm run new:component -- pull-quote --kind content --plugin ucf-content
 npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
+npm run new:component -- badge --kind primitive   # primitives/badge: no plugin, no block
 ```
 
-It writes `components/{name}/` with one placeholder prop, and adds the component to every list
+It writes `components/{name}/` (a primitive: `primitives/{name}/`, see "Primitives" in
+[architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
 in step 4 and to the lists in `components/_config/`, so it passes `npm run check` and `npm run test:stories`
 as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
 display name. Then replace the placeholder prop and markup. Every component has:
@@ -329,15 +333,16 @@ display name. Then replace the placeholder prop and markup. Every component has:
 {Name}.tsx            the core
 index.ts              what the npm package exports
 style.css             colors as var(--ucf-c-{role}) only
-{Name}.stories.tsx    title 'Content (Server)/{Name}' or 'Interactive (Client)/{Name}',
+stories/              {Name}.stories.tsx: title 'Content (Server)/{Name}' or
+                      'Interactive (Client)/{Name}',
                       tags [ 'server' ] or [ 'client' ], first story `Default`
 adapters/puck/config.tsx also add it to CONFIGS in components/_config/puck.test.tsx
 adapters/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
 ```
 
 Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
-`{Name}.test.tsx`, the markup contract (copy `Stat.test.tsx`). For interactive: `defaults.ts`,
-`client.ts` (the only file that knows its API's response shape), `client.test.ts` (with a fake
+`tests/{Name}.test.tsx`, the markup contract (copy `stat/tests/Stat.test.tsx`). For interactive: `defaults.ts`,
+`client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
 `fetch`) and `sample-client.ts` (the same interface with no network, for stories).
 
 **3. Apply the section colors:** `ucf-c` or `ucf-c-panel` on the outer element, roles only in

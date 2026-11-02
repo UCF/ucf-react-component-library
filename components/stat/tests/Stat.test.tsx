@@ -14,8 +14,8 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import Stat, { type StatProps } from './Stat.tsx';
-import example from './example.json';
+import Stat, { type StatProps } from '../Stat.tsx';
+import example from '../example.json';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in adapters/wp/block.json.

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Stat from './Stat.tsx';
-import example from './example.json';
-import './style.css';
+import Stat from '../Stat.tsx';
+import example from '../example.json';
+import '../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.

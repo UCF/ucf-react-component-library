@@ -1,0 +1,70 @@
+/*
+ * CONTEXT: the block editor only. Makes the text fields in our blocks' editors look like the
+ * text they edit, so a block in the editor looks like the block on the page.
+ *
+ * UPSTREAM: `PlainText` is a textarea, and nothing in WordPress styles it: left alone it is a
+ * white box with a resize handle, about 20 characters wide, in the browser's font. Copied into
+ * every plugin as build/editor.css and loaded once in the editor by shared.php.
+ *
+ * WHY scoped to `.ucf-c` and `.ucf-c-panel`: every one of our components and primitives
+ * carries one of them, and core blocks never do, so this reaches only our fields.
+ */
+:where(.ucf-c, .ucf-c-panel) textarea.block-editor-plain-text {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	color: inherit;
+	display: block;
+	font: inherit;
+	letter-spacing: inherit;
+	line-height: inherit;
+	margin: 0;
+	min-height: 0;
+	overflow: hidden;
+	padding: 0;
+	resize: none;
+	text-align: inherit;
+	text-transform: inherit;
+	width: 100%;
+}
+
+/* WHY the text's own color, faded: on a dark band or a filled button, a gray placeholder vanished. */
+:where(.ucf-c, .ucf-c-panel) textarea.block-editor-plain-text::placeholder {
+	color: inherit;
+	opacity: 0.6;
+}
+
+/* A11Y: the field itself has no border, so show where the caret is with an outline instead. */
+:where(.ucf-c, .ucf-c-panel) textarea.block-editor-plain-text:focus {
+	outline: 1px dashed currentcolor;
+	outline-offset: 4px;
+}
+
+/*
+ * The Button's label field sizes to its text, as the label on the page does. A textarea can't
+ * size to its content in every browser yet, so a hidden copy of the text beside it (the
+ * wrapper's data-value) sets the width. SYNC: primitives/button/adapters/wp/edit.tsx.
+ */
+.ucf-c-button__field {
+	display: inline-grid;
+}
+
+.ucf-c-button__field::after {
+	content: attr(data-value) " ";
+	grid-area: 1 / 1;
+	visibility: hidden;
+	white-space: pre-wrap;
+}
+
+/*
+ * FIX: `width: 0` with `min-width: 100%`. A textarea's own width counts its default 20
+ * columns, not its text, so every label field was the same width, and in Firefox two of
+ * them were too wide to sit side by side in the Hero. At width 0 it adds nothing, and
+ * min-width stretches it across the width the hidden copy of the text sets.
+ */
+.ucf-c-button__field > textarea.block-editor-plain-text {
+	grid-area: 1 / 1;
+	min-width: 100%;
+	width: 0;
+}

@@ -26,6 +26,8 @@
 		}
 	},
 	"include": [
+		"primitives/**/*.ts",
+		"primitives/**/*.tsx",
 		"components/**/*.ts",
 		"components/**/*.tsx",
 		".storybook/*.ts",

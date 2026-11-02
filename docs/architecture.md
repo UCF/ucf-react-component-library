@@ -128,12 +128,17 @@ components/{name}/
   client.ts             interactive components: the only file that knows its API's response shape
   sample-client.ts      interactive components: the same interface with no network
   types.ts
-  {Name}.stories.tsx    Storybook
-  *.test.ts(x)          next to what they test
+  stories/              {Name}.stories.tsx: Storybook
+  tests/                every test, mirroring the folder it tests (tests/utils/…), and
+                        __snapshots__/
   adapters/
     wp/                 block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
     puck/config.tsx     a plain object in Puck's ComponentConfig shape
 ```
+
+WHY stories and tests in their own folders: a component's top level then holds only what makes
+it (the core, its data, its styles, its adapters), and what shows or checks it sits one level
+down. Both stay inside the component's folder, so the folder still moves as one.
 
 Each folder is self-contained, so a component can move into its own package or another repo
 without untangling it from the others.
@@ -197,6 +202,40 @@ menus, comboboxes, React-only tabs) may use Radix, unstyled, with our CSS: they 
 browser and nothing is saved. Content that only shows or hides what is already in the HTML (tabs
 and accordions with editorial text) stays a content block with a small script on top (the
 Interactivity API in WordPress), per "Two kinds of component".
+
+## Primitives
+
+Decided 2026-11-01, refining the section above. **Core blocks are for content editors only. Our
+components never contain core blocks: they are built from our own primitives**, in
+`primitives/`, next to `components/`.
+
+| Who                      | In WordPress                    | In Puck and Next |
+| ------------------------ | ------------------------------- | ---------------- |
+| A content editor         | Core blocks (Button, Image…)    | Our primitives   |
+| Our components (Hero, …) | Our primitives, in their markup | Our primitives   |
+
+- **A primitive is a component:** a core, `style.css`, stories, a markup test and a Puck config,
+  where Puck editors place it, since Puck has no core blocks. It has **no WordPress block**:
+  WordPress editors use core's equivalent. Instead it has `adapters/wp/edit.tsx`, its editing
+  version, which our blocks' `edit()` renders where their `save()` renders the plain primitive.
+- **Its settings are core's.** Props are named after the equivalent core block's attributes
+  (the Button's `text`, `url`, `linkTarget`, and core's Fill and Outline styles), and its editing
+  version uses core's tools (`PlainText` or `RichText`, `LinkControl`, `MediaUpload`). An editor
+  who knows core's Button knows ours, and content can move between them.
+- **Its markup and styles are ours,** from our tokens, the same in every host. Core blocks an
+  editor places are styled by the theme; keep the two looking alike through the tokens both
+  read.
+- **The dependency goes one way:** components import primitives; primitives never import
+  components (the one exception is the type-only Puck config shape in `components/_config/`).
+- **WHY primitives rather than each component drawing its own:** one Button in every component
+  is what stops buttons and inputs drifting apart. P1 does the same with its `internal/btn`.
+- **The cost:** a component saves its primitives' markup inside its own. Changing a primitive's
+  markup changes every saved block that uses it, so keep primitives small and plain, restyle in
+  CSS (which never touches saved posts), and when the markup must change, keep the old version
+  (`Button.v1.tsx`) and give every block that uses it a deprecation. The stored-markup snapshots
+  fail for each one, so none is missed.
+- **Not for behavior.** Interactive pieces (a combobox, a dialog) take their behavior from an
+  unstyled library in interactive components only; not chosen yet (docs/todo.md).
 
 ## Distribution
 
@@ -395,9 +434,9 @@ covered with nothing to add. They are modeled on the UCF Brand Block Theme's sui
 - **WordPress and Puck parity** (`_config/parity.test.tsx`): every component has a block, a Puck
   config and stories; the block attributes, Puck fields and Puck defaults name the same props;
   and a content block saves the same markup Puck renders.
-- **Markup contract** (`Stat.test.tsx`): WordPress's serializer and React DOM produce the
+- **Markup contract** (`stat/tests/Stat.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
-- **Data client** (`client.test.ts`): what it requests and what it keeps, with a fake
+- **Data client** (`degree-finder/tests/client.test.ts`): what it requests and what it keeps, with a fake
   `fetch`. Every interactive component's client needs one.
 - **Puck configs** (`_config/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
   (checked by `npm run typecheck`), and its `render` gives the same markup with Puck's extra

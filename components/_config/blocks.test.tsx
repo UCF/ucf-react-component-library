@@ -69,6 +69,7 @@ const blocks = Object.entries( blockJsons ).map( ( [ file, json ] ) => {
 test( 'finds every block', () => {
 	expect( blocks.map( ( block ) => block.component ).sort() ).toEqual( [
 		'degree-finder',
+		'hero',
 		'section',
 		'stat',
 	] );

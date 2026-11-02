@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button > renders the same in WordPress and React: example 1`] = `"<a class="ucf-c ucf-c-button" data-variant="fill" href="#">Apply now</a>"`;
+
+exports[`Button > renders the same in WordPress and React: large 1`] = `"<a class="ucf-c ucf-c-button" data-variant="fill" data-size="body" href="/apply/">Apply</a>"`;
+
+exports[`Button > renders the same in WordPress and React: new tab 1`] = `"<a class="ucf-c ucf-c-button" data-variant="fill" href="https://apply.ucf.edu/" target="_blank" rel="noopener noreferrer">Apply</a>"`;
+
+exports[`Button > renders the same in WordPress and React: no link yet 1`] = `"<a class="ucf-c ucf-c-button" data-variant="fill">Apply now</a>"`;
+
+exports[`Button > renders the same in WordPress and React: outline 1`] = `"<a class="ucf-c ucf-c-button" data-variant="outline" href="/visit/">Visit campus</a>"`;
+
+exports[`Button > renders the same in WordPress and React: small 1`] = `"<a class="ucf-c ucf-c-button" data-variant="fill" data-size="small" href="/apply/">Apply</a>"`;
+
+exports[`Button > renders the same in WordPress and React: text 1`] = `"<a class="ucf-c ucf-c-button" data-variant="text" href="/programs/">See all programs</a>"`;

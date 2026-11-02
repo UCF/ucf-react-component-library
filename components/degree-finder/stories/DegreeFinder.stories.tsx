@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import DegreeFinder from './DegreeFinder.tsx';
-import { createSampleClient } from './sample-client.ts';
-import './style.css';
+import DegreeFinder from '../DegreeFinder.tsx';
+import { createSampleClient } from '../sample-client.ts';
+import '../style.css';
 
 // WHY sample data by default: stories should work offline and never depend on the live API.
 // Try Bachelors, then "computer" or "psych".

@@ -50,6 +50,7 @@ export default defineConfig( {
 				test: {
 					name: 'unit',
 					include: [
+						'primitives/**/*.test.{ts,tsx}',
 						'components/**/*.test.{ts,tsx}',
 						'scripts/**/*.test.mjs',
 					],

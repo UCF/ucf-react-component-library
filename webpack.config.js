@@ -10,6 +10,7 @@
  *
  *   plugins/{plugin}/build/{component}/   block.json, its scripts and styles, render.php
  *   plugins/{plugin}/build/shared.php     from plugins/shared/
+ *   plugins/{plugin}/build/editor.css     from plugins/shared/: our blocks' text fields, editor only
  *   plugins/{plugin}/build/base.css       from dist/tokens/base-wp.css (run build:tokens first):
  *                                         tokens pointing at the theme, and the component layer
  */
@@ -118,6 +119,10 @@ module.exports = plugins.map( ( plugin ) => ( {
 				{
 					from: path.join( root, 'plugins/shared/shared.php' ),
 					to: 'shared.php',
+				},
+				{
+					from: path.join( root, 'plugins/shared/editor.css' ),
+					to: 'editor.css',
 				},
 				{
 					from: path.join( root, 'dist/tokens/base-wp.css' ),

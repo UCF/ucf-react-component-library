@@ -1,0 +1,112 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/hero",
+	"title": "Hero",
+	"category": "ucf",
+	"icon": "cover-image",
+	"description": "A page-opening band with a headline, two links and an image. A trial port of P1's Hero.",
+	"keywords": [ "hero", "banner", "header", "p1" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"eyebrow": {
+			"type": "string",
+			"default": ""
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"description": {
+			"type": "string",
+			"default": ""
+		},
+		"primaryLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"primaryHref": {
+			"type": "string",
+			"default": ""
+		},
+		"primaryTarget": {
+			"type": "string",
+			"default": "_self"
+		},
+		"secondaryLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"secondaryHref": {
+			"type": "string",
+			"default": ""
+		},
+		"secondaryTarget": {
+			"type": "string",
+			"default": "_self"
+		},
+		"tone": {
+			"type": "string",
+			"default": "accent"
+		},
+		"layout": {
+			"type": "string",
+			"default": "split"
+		},
+		"imageSrc": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"imageSide": {
+			"type": "string",
+			"default": "right"
+		},
+		"imageFill": {
+			"type": "string",
+			"default": "card"
+		},
+		"splitRatio": {
+			"type": "string",
+			"default": "even"
+		},
+		"contentAlign": {
+			"type": "string",
+			"default": "left"
+		},
+		"overlay": {
+			"type": "string",
+			"default": "gradient right"
+		},
+		"overlayStrength": {
+			"type": "string",
+			"default": "medium"
+		},
+		"badges": {
+			"type": "string",
+			"default": "off"
+		},
+		"badgeItems": {
+			"type": "array",
+			"default": []
+		},
+		"height": {
+			"type": "string",
+			"default": "regular"
+		},
+		"align": {
+			"type": "string",
+			"default": "full"
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [ "full" ]
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

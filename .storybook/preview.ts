@@ -32,7 +32,9 @@ const compositions = Object.entries( tokens.composition )
 // WHY every story inside the real Section: that is how a page places a component, in a band
 // that sets the composition, so a story shows the component as it will look. Every role in it
 // re-resolves from the Section, and the element styles apply inside it.
-// A story that is a Section itself (Section.stories.tsx) sets `parameters.section: false`.
+// A story that is a Section itself (components/section/stories/) sets `parameters.section: false`.
+// A story that is a band of its own (the Hero) sets `parameters.section` to the Section props
+// it needs, e.g. `{ width: 'wide', spacing: 'compact' }`, so it isn't framed like a card.
 const withSection: Decorator = ( Story, context ) =>
 	context.parameters.section === false
 		? createElement( Story )
@@ -43,6 +45,8 @@ const withSection: Decorator = ( Story, context ) =>
 						'light' ) as Composition,
 					width: ( context.globals.width ??
 						'default' ) as SectionProps[ 'width' ],
+					...( context.parameters.section as
+						Partial< SectionProps > | undefined ),
 				},
 				createElement( Story )
 			);
@@ -88,10 +92,15 @@ const preview: Preview = {
 		// Each group says where its components render (docs/architecture.md, "Two kinds of
 		// component"): Content (Server) works without JavaScript; Interactive (Client) needs
 		// it. Each component's meta also carries a `server` or `client` tag, so the sidebar's
-		// tag filter can show one kind.
+		// tag filter can show one kind. Primitives (primitives/), the pieces components are
+		// built from, come first and carry `server`: they render without JavaScript.
 		options: {
 			storySort: {
-				order: [ 'Content (Server)', 'Interactive (Client)' ],
+				order: [
+					'Primitives',
+					'Content (Server)',
+					'Interactive (Client)',
+				],
 			},
 		},
 		a11y: {

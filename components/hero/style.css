@@ -1,0 +1,283 @@
+/*
+ * CONTEXT: the Hero's styles, ported from P1's hero.css with `--p1-*` values swapped for UCF
+ * tokens and roles. The root carries `ucf-c` and its own composition class, so every color here
+ * is that composition's role.
+ *
+ * SPEC: P1's sizes where UCF has no token: the title's clamp, the full-image heights, the copy
+ * measure. Square corners throughout: UCF has no radius tokens, and P1's pills and rounded
+ * cards are Pantheon's look.
+ * The buttons are the Button primitive and carry its styles (primitives/button/style.css).
+ */
+
+/* SPEC: the Section's band padding, so a Hero lines up with the bands around it. */
+.ucf-c-hero {
+	overflow: hidden;
+	padding-block: var(--ucf-custom-section-y);
+	padding-inline: var(--ucf-custom-gutter);
+	position: relative;
+}
+
+/* SPEC: P1's compact (3rem) and tall (8rem). */
+.ucf-c-hero[data-height="compact"] {
+	padding-block: var(--ucf-spacing-70);
+}
+
+.ucf-c-hero[data-height="tall"] {
+	padding-block: var(--ucf-spacing-100);
+}
+
+/* FIX: the width, or a full-image Hero (a grid) shrank this to its copy and centered it. */
+.ucf-c-hero__inner {
+	align-items: center;
+	display: grid;
+	gap: var(--ucf-spacing-50);
+	margin-inline: auto;
+	max-width: var(--ucf-layout-wide);
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
+/* Base rules for the parts, before the layouts that adjust them. */
+/* SPEC: P1's measures: 35rem beside an image, 47.5rem centered. */
+.ucf-c-hero__copy {
+	display: grid;
+	gap: var(--ucf-spacing-40);
+	justify-items: start;
+	max-width: 35rem;
+}
+
+.ucf-c-hero__backdrop .ucf-c-hero__image {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+/* ── Split ─────────────────────────────────────────────────────────── */
+
+@media (min-width: 48rem) {
+	.ucf-c-hero[data-image-side] .ucf-c-hero__inner {
+		gap: var(--ucf-spacing-80);
+		grid-template-columns: 1fr 1fr;
+	}
+
+	/* WHY order, not swapped elements: the copy stays first in the HTML (Hero.tsx). */
+	.ucf-c-hero[data-image-side="left"] .ucf-c-hero__media {
+		order: -1;
+	}
+
+	/* SPEC: P1's ratios, 7:5 either way, mirrored when the image is on the left. */
+	.ucf-c-hero[data-image-side="right"][data-split-ratio="copy-wide"]
+		.ucf-c-hero__inner,
+	.ucf-c-hero[data-image-side="left"][data-split-ratio="image-wide"]
+		.ucf-c-hero__inner {
+		grid-template-columns: 7fr 5fr;
+	}
+
+	.ucf-c-hero[data-image-side="right"][data-split-ratio="image-wide"]
+		.ucf-c-hero__inner,
+	.ucf-c-hero[data-image-side="left"][data-split-ratio="copy-wide"]
+		.ucf-c-hero__inner {
+		grid-template-columns: 5fr 7fr;
+	}
+}
+
+.ucf-c-hero__media .ucf-c-hero__image {
+	aspect-ratio: 4 / 3;
+	display: block;
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.ucf-c-hero[data-image-fill="card"] .ucf-c-hero__media {
+	border: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
+}
+
+/* Flush: the image runs to the band's edges; the copy keeps the band's padding. */
+.ucf-c-hero[data-image-fill="flush"] {
+	padding: 0;
+}
+
+.ucf-c-hero[data-image-fill="flush"] .ucf-c-hero__inner {
+	align-items: stretch;
+	gap: 0;
+	max-width: none;
+}
+
+.ucf-c-hero[data-image-fill="flush"] .ucf-c-hero__copy {
+	align-self: center;
+	padding: var(--ucf-custom-section-y) var(--ucf-custom-gutter);
+}
+
+/* SPEC: P1's flush image heights, 17.5rem rising to 27.5rem. */
+.ucf-c-hero[data-image-fill="flush"] .ucf-c-hero__media {
+	min-height: 17.5rem;
+	position: relative;
+}
+
+@media (min-width: 48rem) {
+	.ucf-c-hero[data-image-fill="flush"] .ucf-c-hero__media {
+		min-height: 27.5rem;
+	}
+}
+
+.ucf-c-hero[data-image-fill="flush"] .ucf-c-hero__image {
+	aspect-ratio: auto;
+	inset: 0;
+	position: absolute;
+}
+
+/* ── Full image ────────────────────────────────────────────────────── */
+
+/* SPEC: P1's heights: 29rem, 34rem from 48rem wide; 22rem compact, 44rem tall. */
+.ucf-c-hero[data-layout="full-image"] {
+	align-items: center;
+	display: grid;
+	min-height: 29rem;
+}
+
+@media (min-width: 48rem) {
+	.ucf-c-hero[data-layout="full-image"] {
+		min-height: 34rem;
+	}
+}
+
+.ucf-c-hero[data-layout="full-image"][data-height="compact"] {
+	min-height: 22rem;
+}
+
+.ucf-c-hero[data-layout="full-image"][data-height="tall"] {
+	min-height: 44rem;
+}
+
+.ucf-c-hero__backdrop,
+.ucf-c-hero__overlay {
+	inset: 0;
+	position: absolute;
+}
+
+/*
+ * SPEC: P1's three strengths, 32%, 56% and 80%. WHY UCF black rather than P1's purple-black:
+ * the shade should read as UCF's dark composition, which the copy on it uses.
+ */
+.ucf-c-hero__overlay {
+	--uch-shade: color-mix(in srgb, var(--ucf-color-black) 56%, transparent);
+	--uch-half: color-mix(in srgb, var(--ucf-color-black) 28%, transparent);
+}
+
+.ucf-c-hero__overlay[data-strength="light"] {
+	--uch-shade: color-mix(in srgb, var(--ucf-color-black) 32%, transparent);
+	--uch-half: color-mix(in srgb, var(--ucf-color-black) 16%, transparent);
+}
+
+.ucf-c-hero__overlay[data-strength="heavy"] {
+	--uch-shade: color-mix(in srgb, var(--ucf-color-black) 80%, transparent);
+	--uch-half: color-mix(in srgb, var(--ucf-color-black) 40%, transparent);
+}
+
+.ucf-c-hero__overlay[data-overlay="scrim"] {
+	background: var(--uch-shade);
+}
+
+.ucf-c-hero__overlay[data-overlay="gradient-down"] {
+	background: linear-gradient(180deg, transparent 30%, var(--uch-shade) 100%);
+}
+
+.ucf-c-hero__overlay[data-overlay="gradient-right"] {
+	background: linear-gradient(
+		90deg,
+		var(--uch-shade) 0%,
+		var(--uch-half) 45%,
+		transparent 80%
+	);
+}
+
+/* ── Copy ──────────────────────────────────────────────────────────── */
+
+.ucf-c-hero__copy[data-align="center"] {
+	justify-items: center;
+	margin-inline: auto;
+	max-width: 47.5rem;
+	text-align: center;
+}
+
+.ucf-c-hero__copy[data-align="right"] {
+	justify-items: end;
+	margin-inline-start: auto;
+	text-align: end;
+}
+
+.ucf-c-hero__copy > * {
+	margin: 0;
+}
+
+.ucf-c-hero__eyebrow {
+	color: var(--ucf-c-accent-text);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+/* SPEC: P1's title size; UCF's display face and capitals, as the theme's headings. */
+.ucf-c-hero__title {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-display);
+	font-size: clamp(1.875rem, 5vw, 3.75rem);
+	font-weight: 700;
+	line-height: 1.02;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.ucf-c-hero__description {
+	color: var(--ucf-c-lead);
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.6;
+}
+
+.ucf-c-hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ucf-spacing-30);
+	margin-top: var(--ucf-spacing-20);
+}
+
+.ucf-c-hero__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ucf-spacing-20);
+	list-style: none;
+	padding: 0;
+}
+
+.ucf-c-hero__copy[data-align="center"] .ucf-c-hero__actions,
+.ucf-c-hero__copy[data-align="center"] .ucf-c-hero__badges {
+	justify-content: center;
+}
+
+.ucf-c-hero__copy[data-align="right"] .ucf-c-hero__actions,
+.ucf-c-hero__copy[data-align="right"] .ucf-c-hero__badges {
+	justify-content: end;
+}
+
+.ucf-c-hero__badge {
+	align-items: center;
+	border: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
+	color: var(--ucf-c-body);
+	display: inline-flex;
+	font-size: var(--ucf-font-size-data);
+	gap: var(--ucf-spacing-20);
+	padding: var(--ucf-spacing-10) var(--ucf-spacing-30);
+}
+
+/* A check mark, drawn rather than written so screen readers don't read it out. */
+.ucf-c-hero__badge::before {
+	border: solid var(--ucf-c-accent);
+	border-width: 0 2px 2px 0;
+	content: "";
+	height: 0.6em;
+	transform: translateY(-0.1em) rotate(45deg);
+	width: 0.3em;
+}

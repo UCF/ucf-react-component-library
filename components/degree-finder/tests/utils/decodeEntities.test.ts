@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { decodeEntities } from './decodeEntities.ts';
+import { decodeEntities } from '../../utils/decodeEntities.ts';
 
 test( 'decodes the entities WordPress uses in titles', () => {
 	expect( decodeEntities( 'Art &#8211; Studio' ) ).toBe( 'Art – Studio' );

@@ -175,11 +175,12 @@ describe( 'roles contract', () => {
 		...roles.map( ( role ) => `c-bar-${ role }` ),
 	] );
 
-	// The components' CSS and the opt-in element styles (styles/elements.css).
-	const cssFiles = [ 'components', 'styles' ].flatMap( ( dir ) =>
-		readdirSync( path.join( root, dir ), { recursive: true } )
-			.filter( ( file ) => file.endsWith( '.css' ) )
-			.map( ( file ) => path.join( dir, file ) )
+	// The primitives' and components' CSS and the opt-in element styles (styles/elements.css).
+	const cssFiles = [ 'primitives', 'components', 'styles' ].flatMap(
+		( dir ) =>
+			readdirSync( path.join( root, dir ), { recursive: true } )
+				.filter( ( file ) => file.endsWith( '.css' ) )
+				.map( ( file ) => path.join( dir, file ) )
 	);
 
 	const read = cssFiles.flatMap( ( file ) =>
@@ -210,9 +211,14 @@ describe( 'roles contract', () => {
 describe( 'component layer', () => {
 	// FIX: `--ucf-c-*` is set only on an element with `ucf-c` or `ucf-c-panel`. A component that
 	// reads it without carrying either class gets unset values and loses its colors silently.
-	const componentsDir = path.join( root, 'components' );
-	const users = readdirSync( componentsDir ).filter( ( name ) => {
-		const css = path.join( componentsDir, name, 'style.css' );
+	// Every primitive and component folder, as `primitives/button`, `components/stat`.
+	const folders = [ 'primitives', 'components' ].flatMap( ( tier ) =>
+		readdirSync( path.join( root, tier ) ).map( ( name ) =>
+			path.join( tier, name )
+		)
+	);
+	const users = folders.filter( ( folder ) => {
+		const css = path.join( root, folder, 'style.css' );
 		try {
 			return /var\(\s*--ucf-c-/.test( readFileSync( css, 'utf8' ) );
 		} catch {
@@ -225,9 +231,9 @@ describe( 'component layer', () => {
 	} );
 
 	test.each( users )(
-		'components/%s puts ucf-c or ucf-c-panel on an element',
-		( name ) => {
-			const source = readdirSync( path.join( componentsDir, name ), {
+		'%s puts ucf-c or ucf-c-panel on an element',
+		( folder ) => {
+			const source = readdirSync( path.join( root, folder ), {
 				recursive: true,
 			} )
 				.filter(
@@ -238,10 +244,7 @@ describe( 'component layer', () => {
 						! file.includes( 'adapters' )
 				)
 				.map( ( file ) =>
-					readFileSync(
-						path.join( componentsDir, name, file ),
-						'utf8'
-					)
+					readFileSync( path.join( root, folder, file ), 'utf8' )
 				)
 				.join( '\n' );
 			expect( source ).toMatch( /['"`\s]ucf-c(-panel)?['"`\s]/ );

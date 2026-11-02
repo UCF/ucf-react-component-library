@@ -3,7 +3,7 @@
  */
 import { expect, test } from 'vitest';
 
-import { createClient } from './client.ts';
+import { createClient } from '../client.ts';
 
 interface FakeResponse {
 	body: unknown;

@@ -2,16 +2,18 @@
  * CONTEXT: starts a new component. `npm run new:component -- <name> --kind <kind> --plugin <plugin>`
  *
  *   name     kebab-case, the one name in every layer (docs/architecture.md, "Naming").
- *   --kind   `content` (works without JavaScript; saved as HTML) or `interactive` (built in the
- *            browser). See "Two kinds of component".
+ *   --kind   `content` (works without JavaScript; saved as HTML), `interactive` (built in the
+ *            browser), or `primitive` (a piece components are built from: a button, an image).
+ *            See "Two kinds of component" and "Primitives".
  *   --plugin the WordPress plugin whose plugin.json will list the block, e.g. `ucf-content`.
+ *            Not for a primitive, which has no block of its own.
  *   --title  optional display name; defaults to the name in title case.
  *
  * Asks for whichever of kind and plugin is missing when run in a terminal.
  *
- * It writes components/{name}/, a working copy of the closer of `stat` and `degree-finder`
- * reduced to one prop, and adds the component to every list that names components by hand:
- * package.json `exports`, the plugin's plugin.json, and the component lists in
+ * It writes components/{name}/ (or primitives/{name}/), a working copy of the closest of `stat`,
+ * `degree-finder` and `button` reduced to one prop, and adds it to every list that names
+ * components by hand: package.json `exports`, the plugin's plugin.json, and the lists in
  * components/_config/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
  * `npm run test:stories` as written, so every later failure is the new code's.
  *
@@ -30,7 +32,7 @@ import path from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const KINDS = [ 'content', 'interactive' ];
+export const KINDS = [ 'content', 'interactive', 'primitive' ];
 
 // WHY: `ucf-c-panel` is the component layer's panel class (docs/architecture.md).
 // components/_config/ needs no entry: a name must start with a letter.
@@ -83,8 +85,8 @@ export function pluginNames( root ) {
  * @param {Object}  options
  * @param {string}  options.root   The repo.
  * @param {string}  options.name   kebab-case.
- * @param {string}  options.kind   `content` or `interactive`.
- * @param {string}  options.plugin A plugin under plugins/.
+ * @param {string}  options.kind   `content`, `interactive` or `primitive`.
+ * @param {string=} options.plugin A plugin under plugins/. Not for a primitive.
  * @param {string=} options.title  The display name.
  * @return {Map<string, string>} Repo-relative path → contents, new files and edited ones.
  */
@@ -95,22 +97,30 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 			`--kind must be ${ KINDS.join( ' or ' ) }, not "${ kind }".`
 		);
 	}
+	const primitive = kind === 'primitive';
 	const plugins = pluginNames( root );
-	if ( ! plugins.includes( plugin ) ) {
+	if ( ! primitive && ! plugins.includes( plugin ) ) {
 		throw new Error(
 			`--plugin must be one of ${ plugins.join( ', ' ) }, not "${ plugin }".`
 		);
 	}
-	if ( existsSync( path.join( root, 'components', name ) ) ) {
-		throw new Error( `components/${ name } already exists.` );
+	// WHY both folders: one name may mean one thing only, in Puck's list and in imports.
+	for ( const tier of [ 'components', 'primitives' ] ) {
+		if ( existsSync( path.join( root, tier, name ) ) ) {
+			throw new Error( `${ tier }/${ name } already exists.` );
+		}
 	}
 
-	const n = { ...names, plugin, block: `${ plugin }/${ name }` };
+	const tier = primitive ? 'primitives' : 'components';
+	const n = { ...names, tier, plugin, block: `${ plugin }/${ name }` };
 	const files = new Map();
-	const templates =
-		kind === 'content' ? contentFiles( n ) : interactiveFiles( n );
+	const templates = {
+		content: contentFiles,
+		interactive: interactiveFiles,
+		primitive: primitiveFiles,
+	}[ kind ]( n );
 	for ( const [ file, contents ] of Object.entries( templates ) ) {
-		files.set( `components/${ name }/${ file }`, contents );
+		files.set( `${ tier }/${ name }/${ file }`, contents );
 	}
 
 	const edit = ( file, change ) => {
@@ -122,17 +132,26 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 	};
 
 	edit( 'package.json', ( source ) => addExports( source, n, kind ) );
-	edit( `plugins/${ plugin }/plugin.json`, ( source ) => {
-		const json = JSON.parse( source );
-		json.blocks = [ ...json.blocks, name ];
-		return JSON.stringify( json, null, '\t' ) + '\n';
-	} );
 	edit( 'components/_config/parity.test.tsx', ( source, file ) =>
-		addToList( source, file, 'expect( components ).toEqual(', name )
+		addToList(
+			source,
+			file,
+			primitive
+				? 'expect( primitives ).toEqual('
+				: 'expect( components ).toEqual(',
+			name
+		)
 	);
-	edit( 'components/_config/blocks.test.tsx', ( source, file ) =>
-		addToList( source, file, "test( 'finds every block'", name )
-	);
+	if ( ! primitive ) {
+		edit( `plugins/${ plugin }/plugin.json`, ( source ) => {
+			const json = JSON.parse( source );
+			json.blocks = [ ...json.blocks, name ];
+			return JSON.stringify( json, null, '\t' ) + '\n';
+		} );
+		edit( 'components/_config/blocks.test.tsx', ( source, file ) =>
+			addToList( source, file, "test( 'finds every block'", name )
+		);
+	}
 	edit( 'components/_config/puck.test.tsx', ( source, file ) =>
 		addPuckConfig( source, file, n )
 	);
@@ -154,19 +173,24 @@ export function writePlan( root, files ) {
 	}
 }
 
+// WHY primitives under their own path (`@ucf/components/primitives/button`): a primitive and a
+// component may one day share a word (an Image primitive, a Gallery's image), and the path
+// says which tier a site is importing.
 function addExports( source, n, kind ) {
 	const json = JSON.parse( source );
-	const dist = `./dist/${ n.name }`;
-	json.exports[ `./${ n.name }` ] = {
+	const dist = `./dist/${ n.tier }/${ n.name }`;
+	const entry =
+		kind === 'primitive' ? `./primitives/${ n.name }` : `./${ n.name }`;
+	json.exports[ entry ] = {
 		types: `${ dist }/index.d.ts`,
 		default: `${ dist }/index.js`,
 	};
-	json.exports[ `./${ n.name }/puck` ] = {
+	json.exports[ `${ entry }/puck` ] = {
 		types: `${ dist }/adapters/puck/config.d.ts`,
 		default: `${ dist }/adapters/puck/config.js`,
 	};
-	if ( kind === 'content' ) {
-		json.exports[ `./${ n.name }/example.json` ] = `${ dist }/example.json`;
+	if ( kind !== 'interactive' ) {
+		json.exports[ `${ entry }/example.json` ] = `${ dist }/example.json`;
 	}
 	return JSON.stringify( json, null, '\t' ) + '\n';
 }
@@ -221,7 +245,9 @@ function addPuckConfig( source, file, n ) {
 	const importLines = imports
 		.map( ( match ) => match[ 0 ] )
 		.concat(
-			`import ${ n.camel } from '../${ n.name }/adapters/puck/config.tsx';\n`
+			`import ${ n.camel } from '${
+				n.tier === 'primitives' ? '../../primitives' : '..'
+			}/${ n.name }/adapters/puck/config.tsx';\n`
 		)
 		.sort( ( a, b ) =>
 			a.split( "'" )[ 1 ].localeCompare( b.split( "'" )[ 1 ] )
@@ -335,11 +361,11 @@ export default function ${ n.Name }( {
 	margin: 0;
 }
 `,
-		[ `${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import ${ n.Name } from './${ n.Name }.tsx';
-import example from './example.json';
-import './style.css';
+import ${ n.Name } from '../${ n.Name }.tsx';
+import example from '../example.json';
+import '../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
@@ -356,16 +382,16 @@ type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {};
 `,
-		[ `${ n.Name }.test.tsx` ]: `/**
+		[ `tests/${ n.Name }.test.tsx` ]: `/**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
- * matches the committed snapshot. See components/stat/Stat.test.tsx for why.
+ * matches the committed snapshot. See components/stat/tests/Stat.test.tsx for why.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import ${ n.Name }, { type ${ n.Name }Props } from './${ n.Name }.tsx';
-import example from './example.json';
+import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
+import example from '../example.json';
 
 // What \`useBlockProps.save()\` adds for this block.
 // SYNC: the block name in adapters/wp/block.json.
@@ -602,10 +628,10 @@ export { DEFAULTS } from './defaults.ts';
 	outline-offset: 2px;
 }
 `,
-		[ `${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import ${ n.Name } from './${ n.Name }.tsx';
-import './style.css';
+import ${ n.Name } from '../${ n.Name }.tsx';
+import '../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
@@ -800,6 +826,187 @@ $${ prefix }_${ n.name.replace( /-/g, '_' ) }_wrapper = get_block_wrapper_attrib
 	};
 }
 
+function primitiveFiles( n ) {
+	return {
+		[ `${ n.Name }.tsx` ]: `/**
+ * CONTEXT: the ${ n.title }, a primitive: one of the small pieces our components are built
+ * from (docs/architecture.md, "Primitives").
+ *
+ * Content rules apply: plain React, no runtime imports, nothing host-specific except through a
+ * slot. Puck editors place it on its own; our blocks render it inside their own markup; in
+ * WordPress, editors use core's equivalent block instead, so it has no block of its own.
+ *
+ * SYNC: our blocks save this markup inside theirs. Once a site uses them, changing what this
+ * returns needs a new version of it and a deprecation in every block that uses it
+ * (docs/architecture.md, "Primitives").
+ */
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+
+export type ${ n.Name }Props = {
+	/** The text. */
+	text: ReactNode;
+} & Omit< ComponentPropsWithoutRef< 'span' >, 'children' >;
+
+export default function ${ n.Name }( {
+	text,
+	className,
+	...props
+}: ${ n.Name }Props ) {
+	return (
+		<span
+			{ ...props }
+			className={ [ className, 'ucf-c', 'ucf-c-${ n.name }' ]
+				.filter( Boolean )
+				.join( ' ' ) }
+		>
+			{ text }
+		</span>
+	);
+}
+`,
+		'index.ts': `export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+`,
+		'example.json': `{
+	"text": "Sample text for the ${ n.title }."
+}
+`,
+		'style.css': `/*
+ * CONTEXT: the ${ n.title }'s styles, for every host and every component that uses it.
+ *
+ * Reads only \\\`--ucf-*\\\` names, and colors only as component-layer roles (\\\`--ucf-c-body\\\` and
+ * so on), so it takes the colors of whatever it sits on.
+ */
+.ucf-c-${ n.name } {
+	color: var(--ucf-c-body);
+}
+`,
+		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import ${ n.Name } from '../${ n.Name }.tsx';
+import example from '../example.json';
+import '../style.css';
+
+const meta = {
+	// SYNC: the group names and tags are explained in .storybook/preview.ts.
+	title: 'Primitives/${ n.title }',
+	tags: [ 'server' ],
+	component: ${ n.Name },
+	args: example,
+} satisfies Meta< typeof ${ n.Name } >;
+
+export default meta;
+
+type Story = StoryObj< typeof meta >;
+
+export const Default: Story = {};
+`,
+		[ `tests/${ n.Name }.test.tsx` ]: `/**
+ * The markup contract: WordPress's serializer and React DOM's give the same HTML, and it
+ * matches the snapshot. Our blocks save this markup inside theirs, so a change here is a change
+ * to every saved block that uses it.
+ */
+import { describe, expect, it } from 'vitest';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToString } from '@wordpress/element';
+
+import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
+import example from '../example.json';
+
+const cases: Record< string, ${ n.Name }Props > = {
+	example,
+};
+
+describe( '${ n.Name }', () => {
+	for ( const [ name, props ] of Object.entries( cases ) ) {
+		it( \`renders the same in WordPress and React: \${ name }\`, () => {
+			const element = <${ n.Name } { ...props } />;
+			const html = renderToStaticMarkup( element );
+
+			expect( renderToString( element ) ).toBe( html );
+			expect( html ).toMatchSnapshot();
+		} );
+	}
+} );
+`,
+		'adapters/puck/config.tsx': `/**
+ * The ${ n.title } for Puck, where editors place it on its own: Puck has no core blocks.
+ */
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import example from '../../example.json' with { type: 'json' };
+// WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
+import type { PuckComponentConfig } from '../../../../components/_config/puck.ts';
+
+type Props = {
+	text: string;
+};
+
+const config: PuckComponentConfig< Props > = {
+	label: '${ n.title }',
+	fields: {
+		text: { type: 'text', label: 'Text' },
+	},
+	defaultProps: example,
+	// FIX: only the primitive's own props; Puck's \\\`id\\\`, \\\`puck\\\` and \\\`editMode\\\` would
+	// reach the markup.
+	render: ( { text } ) => <${ n.Name } text={ text } />,
+};
+
+export default config;
+`,
+		'adapters/wp/edit.tsx': `/**
+ * The ${ n.title } as our blocks edit it: the primitive itself, with WordPress's editing tools
+ * in its slots. A block's edit() renders this where its save() renders the plain primitive.
+ *
+ * WHY no block of its own: WordPress editors use core's equivalent block.
+ */
+import { PlainText as UntypedPlainText } from '@wordpress/block-editor';
+import type { ComponentType } from 'react';
+
+import ${ n.Name } from '../../${ n.Name }.tsx';
+
+// UPSTREAM: block-editor's type files are generated from JSDoc, and PlainText's has no props.
+const PlainText = UntypedPlainText as ComponentType< {
+	value: string;
+	onChange: ( value: string ) => void;
+	placeholder?: string;
+	'aria-label'?: string;
+} >;
+
+export type ${ n.Name }EditProps = {
+	text: string;
+	onChangeText: ( text: string ) => void;
+	/** Names the field for screen readers and shows when it's empty. */
+	label: string;
+};
+
+/**
+ * @param props              The text and its setter.
+ * @param props.text         The text.
+ * @param props.onChangeText Updates it.
+ * @param props.label        What the field is for.
+ */
+export default function ${ n.Name }Edit( {
+	text,
+	onChangeText,
+	label,
+}: ${ n.Name }EditProps ) {
+	return (
+		<${ n.Name }
+			text={
+				<PlainText
+					value={ text }
+					onChange={ onChangeText }
+					placeholder={ label }
+					aria-label={ label }
+				/>
+			}
+		/>
+	);
+}
+`,
+	};
+}
+
 // ── Command line ─────────────────────────────────────────────────────────────────────────
 
 function parseArgs( argv ) {
@@ -845,7 +1052,7 @@ async function main() {
 	);
 	const options = parseArgs( process.argv.slice( 2 ) );
 	const usage =
-		'Usage: npm run new:component -- <name> --kind content|interactive --plugin <plugin> [--title "Display Name"]';
+		'Usage: npm run new:component -- <name> --kind content|interactive|primitive [--plugin <plugin>] [--title "Display Name"]';
 
 	if ( ! options.name ) {
 		throw new Error( usage );
@@ -853,9 +1060,14 @@ async function main() {
 	componentNames( options.name, options.title );
 	if ( process.stdin.isTTY ) {
 		options.kind ??= await ask( 'Kind', KINDS );
-		options.plugin ??= await ask( 'Plugin', pluginNames( root ) );
+		if ( options.kind !== 'primitive' ) {
+			options.plugin ??= await ask( 'Plugin', pluginNames( root ) );
+		}
 	}
-	if ( ! options.kind || ! options.plugin ) {
+	if (
+		! options.kind ||
+		( options.kind !== 'primitive' && ! options.plugin )
+	) {
 		throw new Error( usage );
 	}
 
@@ -873,18 +1085,30 @@ async function main() {
 	);
 
 	const { Name } = componentNames( options.name );
+	const folder = `${
+		options.kind === 'primitive' ? 'primitives' : 'components'
+	}/${ options.name }/`;
 	const created = [ ...files.keys() ].filter( ( file ) =>
-		file.startsWith( `components/${ options.name }/` )
+		file.startsWith( folder )
 	);
 	const edited = [ ...files.keys() ].filter(
 		( file ) => ! created.includes( file )
 	);
-	console.log(
-		`\nCreated components/${ options.name }/ (${ created.length } files).`
-	);
+	console.log( `\nCreated ${ folder } (${ created.length } files).` );
 	console.log(
 		`Added it to:\n${ edited.map( ( file ) => `  ${ file }` ).join( '\n' ) }`
 	);
+	if ( options.kind === 'primitive' ) {
+		console.log( `
+Next:
+  1. Replace the placeholder prop and markup in ${ Name }.tsx, with props named after core's
+     equivalent block's attributes, and keep the Puck fields and example.json naming the same.
+  2. Give adapters/wp/edit.tsx the same editing tools core's block has.
+  3. Run \`npm test\` to write the new markup snapshot, then review it: every block that uses
+     this primitive will save it.
+  Then: npm run check && npm run test:stories` );
+		return;
+	}
 	console.log( `
 Next:
   1. Replace the placeholder prop and markup in ${ Name }.tsx, and keep the block attributes
@@ -892,7 +1116,7 @@ Next:
   2. Write the block's description in adapters/wp/block.json.${
 		options.kind === 'interactive'
 			? `
-  3. If it fetches data, add client.ts, client.test.ts and sample-client.ts like degree-finder's.
+  3. If it fetches data, add client.ts, tests/client.test.ts and sample-client.ts like degree-finder's.
      If it has site settings, add a settings function to plugins/${ options.plugin }/${ options.plugin }.php.`
 			: `
   3. Run \`npm test\` to write the new markup snapshots, then review them: they are what every

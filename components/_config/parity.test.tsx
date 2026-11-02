@@ -66,12 +66,51 @@ const components = Object.keys( import.meta.glob( '../*/index.ts' ) )
 	.sort();
 const withBlock = Object.keys( blockJsons ).map( componentOf ).sort();
 const withPuck = Object.keys( puckConfigs ).map( componentOf ).sort();
-const withStories = Object.keys( import.meta.glob( '../*/*.stories.tsx' ) )
+const withStories = Object.keys(
+	import.meta.glob( '../*/stories/*.stories.tsx' )
+)
 	.map( componentOf )
 	.sort();
 
 test( 'finds every component', () => {
-	expect( components ).toEqual( [ 'degree-finder', 'section', 'stat' ] );
+	expect( components ).toEqual( [
+		'degree-finder',
+		'hero',
+		'section',
+		'stat',
+	] );
+} );
+
+// Primitives (primitives/): the pieces our components are built from. Each has stories and a
+// Puck config, where editors place them, and no WordPress block of its own: WordPress editors
+// use core's blocks, and our blocks use the primitive inside their own markup
+// (docs/architecture.md, "Primitives").
+const primitiveOf = ( file: string ) => file.split( '/' )[ 3 ] ?? file;
+const primitives = Object.keys(
+	import.meta.glob( '../../primitives/*/index.ts' )
+)
+	.map( primitiveOf )
+	.sort();
+
+test( 'finds every primitive', () => {
+	expect( primitives ).toEqual( [ 'button' ] );
+} );
+
+test( 'every primitive has stories and a Puck config, and no WordPress block', () => {
+	const found = ( glob: Record< string, unknown > ) =>
+		Object.keys( glob ).map( primitiveOf ).sort();
+
+	expect(
+		found( import.meta.glob( '../../primitives/*/stories/*.stories.tsx' ) )
+	).toEqual( primitives );
+	expect(
+		found(
+			import.meta.glob( '../../primitives/*/adapters/puck/config.tsx' )
+		)
+	).toEqual( primitives );
+	expect(
+		found( import.meta.glob( '../../primitives/*/adapters/wp/block.json' ) )
+	).toEqual( [] );
 } );
 
 // WHY: the accessibility checks run against stories (`npm run test:stories`), so a component

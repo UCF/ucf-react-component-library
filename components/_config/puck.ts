@@ -20,6 +20,20 @@ export type PuckField =
 	| { type: 'slot'; label?: string; allow?: string[] };
 
 /**
+ * A list of items, each with its own fields: the Hero's badges. Only a prop that holds a list
+ * (and isn't a slot) may use it.
+ *
+ * UPSTREAM: Puck types `arrayFields` and `defaultItemProps` by the item's own shape, so this
+ * does too, or no config would fit Puck's `ComponentConfig`.
+ */
+export type PuckArrayField< Item > = {
+	type: 'array';
+	label?: string;
+	arrayFields: { [ Key in keyof Item ]: PuckField };
+	defaultItemProps?: Item;
+};
+
+/**
  * A slot prop as Puck stores it: the components dropped into it. `render` receives a
  * component that draws them instead (PuckRenderInput).
  *
@@ -52,7 +66,13 @@ export type PuckRenderProps = {
 
 export type PuckComponentConfig< Props > = {
 	label?: string;
-	fields: { [ Key in keyof Props ]: PuckField };
+	fields: {
+		[ Key in keyof Props ]: Props[ Key ] extends PuckSlot
+			? PuckField
+			: Props[ Key ] extends readonly ( infer Item )[]
+				? PuckArrayField< Item >
+				: PuckField;
+	};
 	defaultProps: Props;
 	render: (
 		props: PuckRenderInput< Props > & PuckRenderProps

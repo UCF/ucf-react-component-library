@@ -141,13 +141,25 @@ would use the schema for attributes only. Verify the generated Puck fields in th
 
 ## Primitives to build
 
-Per docs/architecture.md, "Core blocks and our primitives": we own every block that needs
-structure; core is used for plain text only. Roughly in order of need:
+Per docs/architecture.md, "Primitives": our components are built from primitives in
+`primitives/`, never from core blocks, and each primitive's settings follow its core
+equivalent. Roughly in order of need:
 
-1. **Button**, with a Buttons group: variants from the hero screenshots (gold fill, outline on
-   dark, a trailing arrow). `RichText` for the label and `LinkControl` for the link in the
-   editor; one markup in every host. Unblocks the hero, cards and the theme patterns with
-   buttons.
+1. **Button: built** (`primitives/button`), used by the Hero. Still to do: a Buttons group,
+   the trailing-arrow variant from the hero screenshots, and `RichText` for the label if
+   editors need bold or italics in it.
+    - **Its measurements are copied from the theme, not shared.** Colors already come from
+      the same roles; the padding, heights and letter spacing are the theme's numbers, copied
+      (`SYNC:` in primitives/button/style.css). Add them to `tokens.json` `custom`
+      (`button-padding-y`, `button-padding-x`, `button-min-height`, and the small and large
+      sizes), have the theme's `theme.json` and `_buttons.scss` read `--wp--custom--button-*`,
+      and have ours read `--ucf-custom-button-*`, so one change moves both. Needs Jim.
+    - **PERF: its CSS ships with each block that uses it** (the Hero's editor script imports
+      it). Once several blocks use primitives, add every primitive's style.css to the plugins'
+      shared base.css instead, which loads once.
+    - **Behavior for interactive pieces:** pick the unstyled library (React Aria first, Base UI
+      the fallback) by trying it on the Degree Finder's interest combobox: bundle size, the
+      story accessibility checks, how styling it with our CSS feels.
 2. **Image** (and Figure, with a caption): `MediaUpload` and the media library in WordPress,
    saving the attachment ID with `wp-image-{id}` on the `<img>`; the host's image component
    (`next/image`) through a slot in React. Unblocks the photo patterns.

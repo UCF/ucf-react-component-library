@@ -15,7 +15,9 @@ import type { ComponentConfig } from '@puckeditor/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
+import button from '../../primitives/button/adapters/puck/config.tsx';
 import degreeFinder from '../degree-finder/adapters/puck/config.tsx';
+import hero from '../hero/adapters/puck/config.tsx';
 import section from '../section/adapters/puck/config.tsx';
 import stat from '../stat/adapters/puck/config.tsx';
 import type { PuckComponentConfig } from './puck.ts';
@@ -27,6 +29,8 @@ const CONFIGS = {
 	Stat: stat,
 	'Degree Finder': degreeFinder,
 	Section: section,
+	Hero: hero,
+	Button: button,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -34,6 +38,8 @@ const CONFIGS = {
 stat satisfies ComponentConfig< PropsOf< typeof stat > >;
 degreeFinder satisfies ComponentConfig< PropsOf< typeof degreeFinder > >;
 section satisfies ComponentConfig< PropsOf< typeof section > >;
+hero satisfies ComponentConfig< PropsOf< typeof hero > >;
+button satisfies ComponentConfig< PropsOf< typeof button > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {
