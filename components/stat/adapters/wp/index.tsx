@@ -4,7 +4,7 @@
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
 import '../../style.css';
-import example from '../../example.json';
+import { PARTS } from '../../Stat.tsx';
 import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';
 import save from './save.tsx';
@@ -14,12 +14,36 @@ import save from './save.tsx';
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {
-	// WHY here and not in block.json: block.json cannot reference another file, and the
-	// inserter preview should be the same example Storybook and the test render.
-	// UPSTREAM: @wordpress/blocks types `example.attributes` as the attribute schema rather
-	// than attribute values, so real values need the cast.
+	// WHY inner blocks in the example: a Stat's content is its inner blocks, so the inserter
+	// preview is empty without them. The same text as the Puck template (adapters/puck).
+	// UPSTREAM: @wordpress/blocks types `example` loosely, so it needs the cast.
 	example: {
-		attributes: example,
+		attributes: {},
+		innerBlocks: [
+			{
+				name: 'core/paragraph',
+				attributes: {
+					className: PARTS.statement,
+					content:
+						'Florida’s largest university, with 70,674 students',
+				},
+			},
+			{
+				name: 'core/paragraph',
+				attributes: {
+					className: PARTS.detail,
+					content: 'One sentence saying why the number matters.',
+				},
+			},
+			{
+				name: 'core/paragraph',
+				attributes: {
+					className: PARTS.source,
+					content:
+						'Source: <a href="https://www.ucf.edu/about-ucf/facts/">UCF Facts</a>, fall 2025',
+				},
+			},
+		],
 	} as unknown as BlockConfiguration< Attributes >[ 'example' ],
 	edit: Edit,
 	save,

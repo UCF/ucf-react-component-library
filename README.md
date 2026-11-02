@@ -60,17 +60,21 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
-primitives/        the pieces components are built from: Button (Puck places them; WordPress
-                   editors use core's blocks instead)
+primitives/        the pieces components are built from: Button, Image, Heading,
+                   Paragraph (Puck places them; WordPress editors use core's blocks instead)
 components/        one self-contained folder per component
   _config/         the tests every component must pass, and the Puck config shape (written
                    out so the library needs no Puck dependency)
   section/         the band other components sit in: sets their composition
-  stat/            a content component: works without JavaScript, saved as HTML
+  stat/            a content component and a frame: works without JavaScript, saved as HTML
   degree-finder/   an interactive component: built in the browser
+examples/          reference code, not shipped: typechecked, linted and tested, but in no
+                   Storybook, package or plugin
+  fixed-card/      a Card that owns its parts as fields, with the Image primitive built in
+  flexible-card/   the same Card as a frame (a copy of the shipped Card), to compare with
 plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
-  ucf-content/     plugin.json lists its blocks: section, stat
+  ucf-content/     plugin.json lists its blocks: section, stat, hero, card
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
@@ -152,7 +156,6 @@ npm install ./ucf-components-{version}.tgz
 ```
 
 ```tsx
-import Link from 'next/link';
 import { Section } from '@ucf/components/section';
 import { Stat } from '@ucf/components/stat';
 import { DegreeFinder } from '@ucf/components/degree-finder';
@@ -160,7 +163,9 @@ import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, 
 import '@ucf/components/elements.css'; // optional: the block theme's headings and copy, in a Section
 
 <Section composition="dark">
-	<Stat linkAs={ Link } statement="…" />
+	<Stat>
+		<p className="ucf-c-stat__statement">Florida’s largest university</p>
+	</Stat>
 </Section>
 <Section composition="light" width="wide">
 	<DegreeFinder programType="master" />
@@ -179,6 +184,27 @@ const config = {
 	components: { Section: section, Stat: stat, DegreeFinder: degreeFinder },
 };
 // Section has a slot: other components are dropped inside it and take on its composition.
+```
+
+Primitives are at `@ucf/components/primitives/{name}/puck`. Register them as `Button`, `Image`,
+`Heading` and `Paragraph`: the frames' starting templates name them by those keys.
+
+```tsx
+import { withTemplate } from '@ucf/components/card/puck';
+import heading from '@ucf/components/primitives/heading/puck';
+import image from '@ucf/components/primitives/image/puck';
+import paragraph from '@ucf/components/primitives/paragraph/puck';
+
+const config = {
+	components: {
+		Image: image,
+		Heading: heading,
+		Paragraph: paragraph,
+		// A new Card starts with an image, a heading and a paragraph. With other keys,
+		// pass a template of your own: withTemplate( [ { type: 'MyHeading', props: {} } ] ).
+		Card: withTemplate(),
+	},
+};
 ```
 
 ## Working against local sites
@@ -246,10 +272,11 @@ HTML is the same everywhere. What it may do depends on its kind:
 | First line      | Nothing special                            | `'use client';`                                |
 | Extra files     | `example.json`: sample props               | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
-Anything that differs between hosts comes in as a prop, a **slot**: Stat's `linkAs` takes
-`next/link` in Next and defaults to `<a>` elsewhere; its `statement` takes a string when saved
-and a text field in the WordPress editor. A core never imports a host or checks which one it
-is in. If it needs something a host has, add a slot.
+Anything that differs between hosts comes in as a prop, a **slot**: a frame's `innerAs` (the
+Section, Hero, Stat, Card) takes WordPress's inner-blocks element or Puck's slot, and
+defaults to a `<div>` elsewhere; the Card's `title` takes a string when saved and a text field
+in the WordPress editor. A core never imports a host or checks which one it is in. If it needs
+something a host has, add a slot.
 
 ### Adapters
 

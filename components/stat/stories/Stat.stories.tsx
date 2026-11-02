@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Stat from '../Stat.tsx';
-import example from '../example.json';
+import Paragraph from '../../../primitives/paragraph/Paragraph.tsx';
+import '../../../primitives/paragraph/style.css';
+import Stat, { PARTS } from '../Stat.tsx';
 import '../style.css';
 
 const meta = {
@@ -9,38 +10,59 @@ const meta = {
 	title: 'Content (Server)/Stat',
 	tags: [ 'server' ],
 	component: Stat,
-	// WHY example.json: the same props the WordPress inserter preview and the markup test use.
-	args: example,
+	// The template's three parts, as the Paragraph primitive with each part's class.
+	// SYNC: TEMPLATE in adapters/puck/config.tsx.
+	render: ( args ) => (
+		<Stat { ...args }>
+			<Paragraph
+				className={ PARTS.statement }
+				content="Florida’s largest university, with 70,674 students"
+			/>
+			<Paragraph
+				className={ PARTS.detail }
+				content="One sentence saying why the number matters."
+			/>
+			<Paragraph
+				className={ PARTS.source }
+				content={
+					<>
+						Source:{ ' ' }
+						<a href="https://www.ucf.edu/about-ucf/facts/">
+							UCF Facts
+						</a>
+						, fall 2025
+					</>
+				}
+			/>
+		</Stat>
+	),
 } satisfies Meta< typeof Stat >;
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
+/** The template: statement, detail and source. */
 export const Default: Story = {};
 
+/** An editor removed the detail and source: the frame holds whatever is left. */
 export const StatementOnly: Story = {
-	args: {
-		detail: undefined,
-		source: undefined,
-		sourceUrl: undefined,
-		asOf: undefined,
-	},
+	render: ( args ) => (
+		<Stat { ...args }>
+			<Paragraph
+				className={ PARTS.statement }
+				content="Two million square feet of research space"
+			/>
+		</Stat>
+	),
 };
 
-export const SourceWithoutLink: Story = {
-	args: { sourceUrl: undefined },
-};
-
-/**
- * How a host's link component goes in through the slot. Next would pass `next/link` here.
- */
-export const CustomLink: Story = {
-	args: {
-		linkAs: ( props: { href: string; children: React.ReactNode } ) => (
-			<a { ...props } data-router="host">
-				{ props.children }
-			</a>
-		),
-	},
+/** Plain paragraphs with no part class: the frame's rule and spacing, in body type. */
+export const WithoutPartClasses: Story = {
+	render: ( args ) => (
+		<Stat { ...args }>
+			<Paragraph content="A paragraph an editor added, without a part class." />
+			<Paragraph content="Another one." />
+		</Stat>
+	),
 };

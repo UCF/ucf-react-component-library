@@ -1,0 +1,62 @@
+/*
+ * CONTEXT: the Heading's styles, for every host and every component that uses it.
+ *
+ * SYNC: the theme's heading element styles (theme.json `styles.elements` h1 to h6), as
+ * styles/elements.css copies them for plain headings. The values come from the same tokens;
+ * these rules are copied, so change all three together.
+ *
+ * WHY no margin: space between pieces is the container's (a Section's flow, a Card's
+ * gap), as core's block gap is in WordPress.
+ */
+.ucf-c-heading {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-display);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
+	margin: 0;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+h1.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-1);
+	font-weight: 700;
+	line-height: 0.98;
+}
+
+h2.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-2);
+	line-height: 1.04;
+}
+
+h3.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-3);
+	line-height: 1.1;
+}
+
+/* SPEC: h4 to h6 are body type, not display: sentence case, heavier. */
+:is(h4, h5, h6).ucf-c-heading {
+	font-family: var(--ucf-font-family-body);
+	text-transform: none;
+}
+
+h4.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-4);
+	font-weight: 800;
+	letter-spacing: 0;
+	line-height: 1.3;
+}
+
+h5.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-5);
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1.4;
+}
+
+h6.ucf-c-heading {
+	font-size: var(--ucf-font-size-heading-6);
+	font-weight: 700;
+	line-height: 1.4;
+}

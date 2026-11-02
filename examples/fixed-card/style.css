@@ -1,0 +1,137 @@
+/*
+ * CONTEXT: the Card's styles, for every host.
+ *
+ * SYNC: the UCF Brand Block Theme's `.ucf-card` (src/scss/_components.scss there), its title
+ * (`.is-style-sans` in _text.scss, at the Heading 4 size) and its meta line (`.is-style-data`).
+ * The theme's Card is a pattern of core blocks; this one is ours. Keep the two looking alike.
+ *
+ * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles. The
+ * boxed look paints the section's raised color, as the theme's does.
+ */
+
+/* SPEC: a column with a small gap; the image and the meta line show first (FixedCard.tsx says why). */
+.ucf-c-fixed-card {
+	box-sizing: border-box;
+	color: var(--ucf-c-body);
+	display: flex;
+	flex-direction: column;
+	gap: var(--ucf-spacing-40);
+	height: 100%;
+}
+
+.ucf-c-fixed-card__media {
+	order: -1;
+}
+
+.ucf-c-fixed-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ucf-spacing-20);
+}
+
+.ucf-c-fixed-card__body > * {
+	margin: 0;
+}
+
+.ucf-c-fixed-card__meta {
+	color: var(--ucf-c-muted);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	line-height: 1.55;
+	order: -1;
+}
+
+/* SPEC: the theme's sans heading, Montserrat 800 in sentence case, at the Heading 4 size. */
+.ucf-c-fixed-card__title {
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-heading-4);
+	font-weight: 800;
+	letter-spacing: 0;
+	line-height: 1.3;
+	text-transform: none;
+}
+
+.ucf-c-fixed-card__description {
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.6;
+}
+
+/*
+ * The whole card is one click target, through the title's link. Its ::after covers the card,
+ * so the link stays the one tab stop and the card's focus ring shows where it is.
+ */
+.ucf-c-fixed-card[data-linked] {
+	position: relative;
+}
+
+.ucf-c-fixed-card__link {
+	color: var(--ucf-c-body);
+	text-decoration-color: transparent;
+	text-decoration-line: underline;
+	text-decoration-thickness: 3px;
+	text-underline-offset: 0.25em;
+	transition: text-decoration-color 0.15s ease;
+}
+
+.ucf-c-fixed-card__link::after {
+	content: "";
+	inset: 0;
+	position: absolute;
+}
+
+/* A11Y: the ring is drawn around the card instead (below), so the link's own is off. */
+.ucf-c-fixed-card__link:focus-visible {
+	outline: none;
+}
+
+/* A11Y: hover and focus both underline the title in the accent: a shape, not a color alone. */
+.ucf-c-fixed-card:hover .ucf-c-fixed-card__link,
+.ucf-c-fixed-card:focus-within .ucf-c-fixed-card__link {
+	text-decoration-color: var(--ucf-c-accent);
+}
+
+.ucf-c-fixed-card[data-linked]:has(:focus-visible) {
+	outline: var(--ucf-custom-focus-width) solid var(--ucf-c-focus);
+	outline-offset: 4px;
+}
+
+/* ── Looks ─────────────────────────────────────────────────────────────── */
+
+/* SPEC: boxed, on the raised ground, with the image running to the box's edges. */
+.ucf-c-fixed-card[data-variant="boxed"] {
+	background-color: var(--ucf-c-raised);
+	padding: var(--ucf-spacing-50);
+}
+
+.ucf-c-fixed-card[data-variant="boxed"][data-layout="vertical"]
+	.ucf-c-fixed-card__media {
+	margin: calc(-1 * var(--ucf-spacing-50)) calc(-1 * var(--ucf-spacing-50)) 0;
+}
+
+/* SPEC: ruled, under a heavy top rule in the body color. */
+.ucf-c-fixed-card[data-variant="ruled"] {
+	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-body);
+	padding-top: var(--ucf-spacing-40);
+}
+
+/* ── Horizontal ────────────────────────────────────────────────────────── */
+
+/* SPEC: the image beside the text from 576px, taking 40%. */
+@media (min-width: 576px) {
+	.ucf-c-fixed-card[data-layout="horizontal"] {
+		align-items: start;
+		display: grid;
+		gap: var(--ucf-spacing-50);
+		grid-template-columns: 2fr 3fr;
+	}
+
+	.ucf-c-fixed-card[data-layout="horizontal"] .ucf-c-fixed-card__media {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.ucf-c-fixed-card[data-layout="horizontal"] .ucf-c-fixed-card__body {
+		grid-column: 2;
+		grid-row: 1;
+	}
+}

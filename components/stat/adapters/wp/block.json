@@ -4,31 +4,10 @@
 	"name": "ucf-content/stat",
 	"title": "Stat",
 	"category": "ucf",
-	"description": "A fact written as a complete statement, with one supporting sentence and its source. Never a big number over small words.",
+	"description": "A fact written as a complete statement, with one supporting sentence and its source. Starts with three paragraphs; edit or replace them.",
 	"keywords": [ "stat", "fact", "number", "source" ],
 	"textdomain": "ucf-content",
-	"attributes": {
-		"statement": {
-			"type": "string",
-			"default": ""
-		},
-		"detail": {
-			"type": "string",
-			"default": ""
-		},
-		"source": {
-			"type": "string",
-			"default": ""
-		},
-		"sourceUrl": {
-			"type": "string",
-			"default": ""
-		},
-		"asOf": {
-			"type": "string",
-			"default": ""
-		}
-	},
+	"attributes": {},
 	"supports": {
 		"html": false
 	},

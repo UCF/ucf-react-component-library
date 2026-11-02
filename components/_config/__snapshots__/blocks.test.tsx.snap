@@ -1,26 +1,50 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`a Section holding other blocks > saves them inside its inner element 1`] = `
-"<!-- wp:ucf-content/section {"composition":"dark"} -->
-<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-dark"><div class="ucf-section__inner ucf-section__inner--default"><!-- wp:ucf-content/stat {"statement":"Inside a section"} -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">Inside a section</p></div>
-<!-- /wp:ucf-content/stat -->
+exports[`ucf-content/card > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="plain"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
 
-<!-- wp:ucf-content/stat {"statement":"And another"} -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">And another</p></div>
-<!-- /wp:ucf-content/stat --></div></section>
-<!-- /wp:ucf-content/section -->"
+exports[`ucf-content/card > example > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card {"variant":"boxed"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="boxed"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/card {"variant":"boxed"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="boxed"><div class="ucf-c-card__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div>
+<!-- /wp:ucf-content/card -->"
 `;
 
 exports[`ucf-content/hero > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/hero -->
-<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"><h1 class="ucf-c-hero__title"></h1></div></div></section>
+<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"></div></div></section>
 <!-- /wp:ucf-content/hero -->"
 `;
 
 exports[`ucf-content/hero > example > matches the stored markup snapshot 1`] = `
-"<!-- wp:ucf-content/hero {"eyebrow":"Undergraduate admissions","title":"Reach for the stars","description":"Florida’s largest university, with 70,674 students, in Orlando and online.","primaryLabel":"Apply now","primaryHref":"#","secondaryLabel":"Visit campus","secondaryHref":"#","imageSrc":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 900%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23444%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%271200%27 height=%27900%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%27880%27 cy=%27260%27 r=%27150%27 fill=%27%23ffc904%27/%3E%3C/svg%3E","badgeItems":[{"text":"Orlando, Florida"},{"text":"Founded 1963"},{"text":"70,000+ students"}]} -->
-<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular" data-image-side="right" data-image-fill="card" data-split-ratio="even"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"><p class="ucf-c-hero__eyebrow">Undergraduate admissions</p><h1 class="ucf-c-hero__title">Reach for the stars</h1><p class="ucf-c-hero__description">Florida’s largest university, with 70,674 students, in Orlando and online.</p><div class="ucf-c-hero__actions"><a class="ucf-c ucf-c-button" data-variant="fill" href="#">Apply now</a><a class="ucf-c ucf-c-button" data-variant="outline" href="#">Visit campus</a></div></div><div class="ucf-c-hero__media"><img class="ucf-c-hero__image" src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 900%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23444%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%271200%27 height=%27900%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%27880%27 cy=%27260%27 r=%27150%27 fill=%27%23ffc904%27/%3E%3C/svg%3E" alt=""/></div></div></section>
+"<!-- wp:ucf-content/hero {"imageSrc":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 900%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23444%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%271200%27 height=%27900%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%27880%27 cy=%27260%27 r=%27150%27 fill=%27%23ffc904%27/%3E%3C/svg%3E"} -->
+<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular" data-image-side="right" data-image-fill="card" data-split-ratio="even"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"></div><div class="ucf-c-hero__media"><img class="ucf-c-hero__image ucf-c-image" src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 900%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23444%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%271200%27 height=%27900%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%27880%27 cy=%27260%27 r=%27150%27 fill=%27%23ffc904%27/%3E%3C/svg%3E" alt=""/></div></div></section>
+<!-- /wp:ucf-content/hero -->"
+`;
+
+exports[`ucf-content/hero holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/hero -->
+<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div></section>
 <!-- /wp:ucf-content/hero -->"
 `;
 
@@ -36,15 +60,39 @@ exports[`ucf-content/section > example > matches the stored markup snapshot 1`] 
 <!-- /wp:ucf-content/section -->"
 `;
 
+exports[`ucf-content/section holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/section {"composition":"dark"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-dark"><div class="ucf-section__inner ucf-section__inner--default"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
 exports[`ucf-content/stat > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/stat -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement"></p></div>
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"></div></div>
 <!-- /wp:ucf-content/stat -->"
 `;
 
 exports[`ucf-content/stat > example > matches the stored markup snapshot 1`] = `
-"<!-- wp:ucf-content/stat {"statement":"Florida’s largest university, with 70,674 students","detail":"One sentence saying why the number matters.","source":"UCF Facts","sourceUrl":"https://www.ucf.edu/about-ucf/facts/","asOf":"fall 2025"} -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><p class="ucf-c-stat__statement">Florida’s largest university, with 70,674 students</p><p class="ucf-c-stat__detail">One sentence saying why the number matters.</p><p class="ucf-c-stat__source">Source: <a href="https://www.ucf.edu/about-ucf/facts/">UCF Facts</a>, fall 2025</p></div>
+"<!-- wp:ucf-content/stat -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"></div></div>
+<!-- /wp:ucf-content/stat -->"
+`;
+
+exports[`ucf-content/stat holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/stat -->
+<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div>
 <!-- /wp:ucf-content/stat -->"
 `;
 

@@ -52,6 +52,7 @@ export default defineConfig( {
 					include: [
 						'primitives/**/*.test.{ts,tsx}',
 						'components/**/*.test.{ts,tsx}',
+						'examples/**/*.test.{ts,tsx}',
 						'scripts/**/*.test.mjs',
 					],
 					environment: 'node',

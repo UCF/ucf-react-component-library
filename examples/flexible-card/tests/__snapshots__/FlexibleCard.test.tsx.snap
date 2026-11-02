@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FlexibleCard > renders the same in WordPress and React: defaults 1`] = `"<div class="wp-block-ucf-content-flexible-card ucf-c ucf-c-flexible-card" data-variant="plain"><div class="ucf-c-flexible-card__content"><p>Content</p></div></div>"`;
+
+exports[`FlexibleCard > renders the same in WordPress and React: example 1`] = `"<div class="wp-block-ucf-content-flexible-card ucf-c ucf-c-flexible-card" data-variant="boxed"><div class="ucf-c-flexible-card__content"><p>Content</p></div></div>"`;
+
+exports[`FlexibleCard > renders the same in WordPress and React: ruled 1`] = `"<div class="wp-block-ucf-content-flexible-card ucf-c ucf-c-flexible-card" data-variant="ruled"><div class="ucf-c-flexible-card__content"><p>Content</p></div></div>"`;

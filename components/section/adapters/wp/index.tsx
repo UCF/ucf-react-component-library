@@ -13,15 +13,23 @@ import save from './save.tsx';
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {
-	// WHY a Stat inside: the inserter preview should show what a Section is for.
+	// WHY blocks inside: the inserter preview should show what a Section is for. The same
+	// heading and paragraph a new Section starts with (TEMPLATE in edit.tsx).
 	example: {
 		attributes: example,
 		innerBlocks: [
 			{
-				name: 'ucf-content/stat',
+				name: 'core/heading',
 				attributes: {
-					statement:
-						'Florida’s largest university, with 70,674 students',
+					level: 2,
+					content: 'Florida’s largest university',
+				},
+			},
+			{
+				name: 'core/paragraph',
+				attributes: {
+					content:
+						'A paragraph of body copy, on the band’s own background.',
 				},
 			},
 		],

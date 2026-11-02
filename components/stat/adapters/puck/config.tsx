@@ -1,44 +1,70 @@
 /**
- * The Stat for Puck: a plain config object, so this library needs no Puck dependency.
+ * The Stat for Puck: the frame with a slot, so its statement, detail and source are components
+ * placed inside it.
  *
- * WHY only string props: Puck stores what the fields hold, and the same plain strings are
- * what the WordPress block stores, so content can move between the two hosts as-is.
+ * WHY the slot is passed as `innerAs`: Puck renders a slot as an element of its own. Passed as
+ * the Stat's inner element, Puck's drop zone is that element, so the markup matches what the
+ * Stat renders in Next, with no extra wrapper.
  */
-import Stat from '../../Stat.tsx';
-// WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
-// without it. Bundlers accept it too.
-import example from '../../example.json' with { type: 'json' };
-import type { PuckComponentConfig } from '../../../_config/puck.ts';
+import Stat, { PARTS } from '../../Stat.tsx';
+import type { PuckComponentConfig, PuckSlot } from '../../../_config/puck.ts';
 
 type Props = {
-	statement: string;
-	detail: string;
-	source: string;
-	sourceUrl: string;
-	asOf: string;
+	content: PuckSlot;
 };
 
 const config: PuckComponentConfig< Props > = {
 	label: 'Stat',
 	fields: {
-		statement: { type: 'textarea', label: 'Statement' },
-		detail: { type: 'textarea', label: 'Supporting sentence' },
-		source: { type: 'text', label: 'Published by' },
-		sourceUrl: { type: 'text', label: 'Link' },
-		asOf: { type: 'text', label: 'As of' },
+		content: { type: 'slot' },
 	},
-	defaultProps: example,
-	// FIX: pass only Stat's own props. Stat spreads the rest onto its <div>, so Puck's `id`,
-	// `puck` and `editMode` ended up in the markup (see PuckRenderProps in _config/puck.ts).
-	render: ( { statement, detail, source, sourceUrl, asOf } ) => (
-		<Stat
-			statement={ statement }
-			detail={ detail }
-			source={ source }
-			sourceUrl={ sourceUrl }
-			asOf={ asOf }
-		/>
-	),
+	defaultProps: { content: [] },
+	// FIX: only the Stat's own props; Puck's `id`, `puck` and `editMode` would reach the markup.
+	render: ( { content } ) => <Stat innerAs={ content } />,
 };
 
 export default config;
+
+/**
+ * What a new Stat starts with in Puck: three Paragraphs, each with the class that styles it,
+ * as in WordPress (TEMPLATE in adapters/wp/edit.tsx).
+ *
+ * SYNC: each `type` is the key a host registers the primitive under (README: `Paragraph`).
+ * WHY the source has no link here: the Paragraph primitive is plain text. In WordPress the
+ * source is a core paragraph, which can hold one.
+ */
+export const TEMPLATE: PuckSlot = [
+	{
+		type: 'Paragraph',
+		props: {
+			content: 'Florida’s largest university, with 70,674 students',
+			className: PARTS.statement,
+		},
+	},
+	{
+		type: 'Paragraph',
+		props: {
+			content: 'One sentence saying why the number matters.',
+			className: PARTS.detail,
+		},
+	},
+	{
+		type: 'Paragraph',
+		props: {
+			content: 'Source: UCF Facts, fall 2025',
+			className: PARTS.source,
+		},
+	},
+];
+
+/**
+ * The Stat, starting with components already in its slot. Opt-in, as the Card's is
+ * (components/card/adapters/puck/config.tsx says why).
+ *
+ * @param content The components a new Stat starts with, in order. TEMPLATE by default.
+ */
+export function withTemplate(
+	content: PuckSlot = TEMPLATE
+): PuckComponentConfig< Props > {
+	return { ...config, defaultProps: { ...config.defaultProps, content } };
+}

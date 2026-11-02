@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Paragraph > renders the same in WordPress and React: example 1`] = `"<p class="ucf-c ucf-c-paragraph">Explore more than 100 bachelor’s programs, taught by faculty who put undergraduate teaching first.</p>"`;
+
+exports[`Paragraph > renders the same in WordPress and React: with a class 1`] = `"<p class="is-lead ucf-c ucf-c-paragraph">Lead-in</p>"`;

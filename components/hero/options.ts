@@ -11,11 +11,6 @@ type Choice = {
 	options: readonly { value: string; label: string }[];
 };
 
-const TARGETS = [
-	{ value: '_self', label: 'Same tab' },
-	{ value: '_blank', label: 'New tab' },
-] as const;
-
 export const CHOICES = {
 	layout: {
 		label: 'Layout',
@@ -97,37 +92,12 @@ export const CHOICES = {
 			{ value: 'heavy', label: 'Heavy' },
 		],
 	},
-	primaryTarget: {
-		label: 'Primary opens in',
-		control: 'radio',
-		options: TARGETS,
-	},
-	secondaryTarget: {
-		label: 'Secondary opens in',
-		control: 'radio',
-		options: TARGETS,
-	},
-	badges: {
-		label: 'Badges',
-		control: 'radio',
-		options: [
-			{ value: 'off', label: 'Off' },
-			{ value: 'on', label: 'On' },
-		],
-	},
 } as const satisfies Record< string, Choice >;
 
 export type ChoiceKey = keyof typeof CHOICES;
 
-/** The free-text settings, with their editor labels. */
+/** The free-text settings, with their editor labels. The copy is the Hero's content, not settings. */
 export const TEXTS = {
-	eyebrow: 'Eyebrow',
-	title: 'Title',
-	description: 'Description',
-	primaryLabel: 'Primary label',
-	primaryHref: 'Primary link',
-	secondaryLabel: 'Secondary label',
-	secondaryHref: 'Secondary link',
 	imageSrc: 'Image URL',
 	imageAlt: 'Image description (alt text)',
 } as const;

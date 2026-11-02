@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Image > renders the same in WordPress and React: by URL, its own shape 1`] = `"<img class="ucf-c-image" src="https://www.ucf.edu/files/2026/01/students.jpg" alt=""/>"`;
+
+exports[`Image > renders the same in WordPress and React: from the media library, cropped 1`] = `"<img class="ucf-c-image wp-image-1234" src="https://www.ucf.edu/files/2026/01/students.jpg" alt="Students walking past the Student Union" data-ratio="3-2"/>"`;
+
+exports[`Image > renders the same in WordPress and React: no attachment yet 1`] = `"<img class="ucf-c-image" src="https://www.ucf.edu/files/2026/01/students.jpg" alt=""/>"`;

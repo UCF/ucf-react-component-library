@@ -4,9 +4,9 @@
  * SYNC: the UCF Brand Block Theme's core Button: theme.json `styles.elements.button` (type,
  * padding, the primary's colors), src/scss/_buttons.scss (the box, Outline, Text and the two
  * sizes) and src/scss/_base.scss (the transition and the focus ring). A core Button an editor
- * places and this one must look the same, so change both together. The numbers below that
- * aren't tokens yet (padding, heights, letter spacing) are the theme's; making them tokens
- * both read is in docs/todo.md.
+ * places and this one must look the same. Its measurements are `custom` tokens (tokens/tokens.json,
+ * `button-*`) that the theme reads as `--wp--custom--button-*`, so a change there moves both;
+ * the rules themselves are still written in both places.
  *
  * Colors are the button roles of whatever the Button sits on (`--ucf-c-button` and the rest),
  * the same roles the theme's button reads, so the two match on every composition.
@@ -30,10 +30,11 @@
 	font-size: var(--ucf-font-size-data-lg);
 	font-weight: 700;
 	justify-content: center;
-	letter-spacing: 0.01em;
+	letter-spacing: var(--ucf-custom-button-letter-spacing);
 	line-height: 1.2;
-	min-height: 52px;
-	padding: 0.8rem 1.5rem;
+	min-height: var(--ucf-custom-button-min-height);
+	padding: var(--ucf-custom-button-padding-y)
+		var(--ucf-custom-button-padding-x);
 	text-decoration: none;
 	text-transform: none;
 
@@ -100,14 +101,14 @@
 	padding-inline: 0;
 	text-decoration-color: var(--ucf-c-indicator);
 	text-decoration-line: underline;
-	text-decoration-thickness: 3px;
-	text-underline-offset: 0.4em;
+	text-decoration-thickness: var(--ucf-custom-button-underline);
+	text-underline-offset: var(--ucf-custom-button-underline-offset);
 }
 
 .ucf-c-button[data-variant="text"]:hover,
 .ucf-c-button[data-variant="text"]:focus {
-	text-decoration-thickness: 5px;
-	text-underline-offset: 0.3em;
+	text-decoration-thickness: var(--ucf-custom-button-underline-hover);
+	text-underline-offset: var(--ucf-custom-button-underline-offset-hover);
 }
 
 /*
@@ -118,13 +119,15 @@
 .ucf-c-button[data-size="small"] {
 	font-size: var(--ucf-font-size-small);
 	min-height: var(--ucf-custom-tap-target);
-	padding: 0.55rem 1.1rem;
+	padding: var(--ucf-custom-button-padding-y-small)
+		var(--ucf-custom-button-padding-x-small);
 }
 
 .ucf-c-button[data-size="body"] {
 	font-size: var(--ucf-font-size-body);
-	min-height: 60px;
-	padding: 1rem 2rem;
+	min-height: var(--ucf-custom-button-min-height-large);
+	padding: var(--ucf-custom-button-padding-y-large)
+		var(--ucf-custom-button-padding-x-large);
 }
 
 /* The Text style stays flush and 44px tall whatever the size, as the theme's does. */

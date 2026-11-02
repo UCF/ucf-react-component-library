@@ -14,25 +14,23 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import Stat, { type StatProps } from '../Stat.tsx';
-import example from '../example.json';
+import Stat, { PARTS, type StatProps } from '../Stat.tsx';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in adapters/wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-ucf-content-stat' };
 
 const cases: Record< string, StatProps > = {
-	example,
-	'statement only': {
-		statement: 'Two million square feet of research space',
-	},
-	// SYNC: block attributes default to '', so a saved block passes empty strings, not undefined.
-	'source without link or date': {
-		statement: 'Two million square feet of research space',
-		detail: '',
-		source: 'UCF Research',
-		sourceUrl: '',
-		asOf: '',
+	empty: {},
+	'the template’s parts': {
+		children: (
+			<>
+				<p className={ PARTS.statement }>
+					Two million square feet of research space
+				</p>
+				<p className={ PARTS.source }>Source: UCF Research</p>
+			</>
+		),
 	},
 };
 
@@ -46,4 +44,17 @@ describe( 'Stat', () => {
 			expect( html ).toMatchSnapshot();
 		} );
 	}
+
+	// WHY: WordPress and Puck each edit the content through their own element. If the Stat
+	// rendered its children anywhere else, blocks dropped in would land outside the frame.
+	it( 'renders its content in the element a host passes as innerAs', () => {
+		const Zone = ( props: object ) => (
+			<div data-zone="" { ...props }>
+				<p>Dropped in</p>
+			</div>
+		);
+		expect( renderToStaticMarkup( <Stat innerAs={ Zone } /> ) ).toContain(
+			'<div data-zone="" class="ucf-c-stat__content"><p>Dropped in</p></div>'
+		);
+	} );
 } );

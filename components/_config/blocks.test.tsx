@@ -68,6 +68,7 @@ const blocks = Object.entries( blockJsons ).map( ( [ file, json ] ) => {
 
 test( 'finds every block', () => {
 	expect( blocks.map( ( block ) => block.component ).sort() ).toEqual( [
+		'card',
 		'degree-finder',
 		'hero',
 		'section',
@@ -136,15 +137,20 @@ describe.each( blocks )(
 	}
 );
 
-// WHY its own test: a Section is only useful with blocks inside it, and a block that holds
+// WHY its own test: a frame is only useful with blocks inside it, and a block that holds
 // others can save and parse its own markup correctly while losing what it holds.
-describe( 'a Section holding other blocks', () => {
+// WHY a Section and a Card inside: core's blocks aren't registered here, only ours; any
+// block with an attribute to tell it by will do.
+describe.each( [
+	[ 'ucf-content/section', { composition: 'dark' } ],
+	[ 'ucf-content/hero', {} ],
+	[ 'ucf-content/stat', {} ],
+	[ 'ucf-content/card', { variant: 'boxed' } ],
+] )( '%s holding other blocks', ( name, attributes ) => {
 	const build = () =>
-		createBlock( 'ucf-content/section', { composition: 'dark' }, [
-			createBlock( 'ucf-content/stat', {
-				statement: 'Inside a section',
-			} ),
-			createBlock( 'ucf-content/stat', { statement: 'And another' } ),
+		createBlock( name, attributes, [
+			createBlock( 'ucf-content/section', { composition: 'gold' } ),
+			createBlock( 'ucf-content/card', { variant: 'ruled' } ),
 		] );
 
 	test( 'reads back with the same blocks inside, in order', () => {
@@ -152,11 +158,11 @@ describe( 'a Section holding other blocks', () => {
 		expect(
 			parsed?.innerBlocks.map( ( inner ) => [
 				inner.name,
-				inner.attributes.statement,
+				inner.attributes.composition ?? inner.attributes.variant,
 			] )
 		).toEqual( [
-			[ 'ucf-content/stat', 'Inside a section' ],
-			[ 'ucf-content/stat', 'And another' ],
+			[ 'ucf-content/section', 'gold' ],
+			[ 'ucf-content/card', 'ruled' ],
 		] );
 	} );
 

@@ -1,26 +1,19 @@
-import { useBlockProps } from '@wordpress/block-editor';
-import type { BlockSaveProps } from '@wordpress/blocks';
+import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 
 import Stat from '../../Stat.tsx';
-import type { Attributes } from './edit.tsx';
 
 /**
- * The stored markup: the core component, with strings in its slots.
+ * The saved inner element, with the blocks placed inside the Stat.
  *
- * @param props            The block's save props.
- * @param props.attributes Its attributes.
+ * @param props The inner element's props from Stat.
  */
-export default function save( { attributes }: BlockSaveProps< Attributes > ) {
-	const { statement, detail, source, sourceUrl, asOf } = attributes;
+function InnerBlocksContent( props: Record< string, unknown > ) {
+	return <div { ...useInnerBlocksProps.save( props ) } />;
+}
 
-	return (
-		<Stat
-			{ ...useBlockProps.save() }
-			statement={ statement }
-			detail={ detail }
-			source={ source }
-			sourceUrl={ sourceUrl }
-			asOf={ asOf }
-		/>
-	);
+/**
+ * The stored markup: the Stat, its inner blocks inside its inner element.
+ */
+export default function save() {
+	return <Stat { ...useBlockProps.save() } innerAs={ InnerBlocksContent } />;
 }

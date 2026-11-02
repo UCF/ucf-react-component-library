@@ -53,7 +53,43 @@
 			"types": "./dist/primitives/button/adapters/puck/config.d.ts",
 			"default": "./dist/primitives/button/adapters/puck/config.js"
 		},
-		"./primitives/button/example.json": "./dist/primitives/button/example.json"
+		"./primitives/button/example.json": "./dist/primitives/button/example.json",
+		"./primitives/image": {
+			"types": "./dist/primitives/image/index.d.ts",
+			"default": "./dist/primitives/image/index.js"
+		},
+		"./primitives/image/puck": {
+			"types": "./dist/primitives/image/adapters/puck/config.d.ts",
+			"default": "./dist/primitives/image/adapters/puck/config.js"
+		},
+		"./primitives/image/example.json": "./dist/primitives/image/example.json",
+		"./card": {
+			"types": "./dist/components/card/index.d.ts",
+			"default": "./dist/components/card/index.js"
+		},
+		"./card/puck": {
+			"types": "./dist/components/card/adapters/puck/config.d.ts",
+			"default": "./dist/components/card/adapters/puck/config.js"
+		},
+		"./card/example.json": "./dist/components/card/example.json",
+		"./primitives/heading": {
+			"types": "./dist/primitives/heading/index.d.ts",
+			"default": "./dist/primitives/heading/index.js"
+		},
+		"./primitives/heading/puck": {
+			"types": "./dist/primitives/heading/adapters/puck/config.d.ts",
+			"default": "./dist/primitives/heading/adapters/puck/config.js"
+		},
+		"./primitives/heading/example.json": "./dist/primitives/heading/example.json",
+		"./primitives/paragraph": {
+			"types": "./dist/primitives/paragraph/index.d.ts",
+			"default": "./dist/primitives/paragraph/index.js"
+		},
+		"./primitives/paragraph/puck": {
+			"types": "./dist/primitives/paragraph/adapters/puck/config.d.ts",
+			"default": "./dist/primitives/paragraph/adapters/puck/config.js"
+		},
+		"./primitives/paragraph/example.json": "./dist/primitives/paragraph/example.json"
 	},
 	"files": [
 		"dist"
@@ -80,8 +116,8 @@
 		"test:stories": "wp-scripts test-unit-js --project='storybook:*'",
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-		"lint:js": "wp-scripts lint-js primitives components scripts .storybook webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"primitives/**/*.css\" \"components/**/*.css\" \"styles/**/*.css\"",
+		"lint:js": "wp-scripts lint-js primitives components examples scripts .storybook webpack.config.js",
+		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"primitives/**/*.css\" \"components/**/*.css\" \"examples/**/*.css\" \"styles/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

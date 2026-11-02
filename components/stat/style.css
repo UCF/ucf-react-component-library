@@ -11,19 +11,31 @@
  * is why this is not `stat.css`.
  *
  * SPEC: a fact written as a complete statement, never a giant number over small words.
+ * The Stat is a frame (Stat.tsx): it draws the rule and the spacing, and styles the parts
+ * placed inside by their class.
  */
 .ucf-c-stat {
 	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
-	display: grid;
-	gap: var(--ucf-spacing-30);
 	padding-top: var(--ucf-spacing-50);
 }
 
-.ucf-c-stat > * {
+/* WHY `> *`: the frame doesn't know what it holds; whatever it is, it stacks with one gap. */
+.ucf-c-stat__content {
+	display: grid;
+	gap: var(--ucf-spacing-30);
+}
+
+.ucf-c-stat__content > * {
 	margin: 0;
 }
 
-.ucf-c-stat__statement {
+/*
+ * The parts, by the classes the templates give them (Stat.tsx, PARTS).
+ * WHY `.ucf-c-stat` in front: the part is a core paragraph in WordPress and the Paragraph
+ * primitive in Puck, and both style it with one class of their own. Two classes win over
+ * either, whichever stylesheet loads last.
+ */
+.ucf-c-stat .ucf-c-stat__statement {
 	color: var(--ucf-c-body);
 	font-family: var(--ucf-font-family-display);
 	font-size: clamp(1.625rem, 1.45rem + 0.75vw, 2.125rem);
@@ -34,19 +46,19 @@
 	text-wrap: balance;
 }
 
-.ucf-c-stat__detail {
+.ucf-c-stat .ucf-c-stat__detail {
 	color: var(--ucf-c-body);
 	font-size: var(--ucf-font-size-data-lg);
 	line-height: 1.6;
 }
 
-.ucf-c-stat__source {
+.ucf-c-stat .ucf-c-stat__source {
 	color: var(--ucf-c-muted);
 	font-family: var(--ucf-font-family-mono);
 	font-size: var(--ucf-font-size-data);
 	line-height: 1.55;
 }
 
-.ucf-c-stat__source a {
+.ucf-c-stat .ucf-c-stat__source a {
 	color: inherit;
 }

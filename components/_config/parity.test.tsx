@@ -55,10 +55,13 @@ function need< T >( value: T | undefined, file: string ): T {
 	return value;
 }
 /**
- * WordPress's own layout attribute, which Puck has no counterpart for: the Section sets
- * `align: full` so it spans the page in a theme's constrained layout.
+ * Attributes only WordPress has, which Puck has no counterpart for:
+ *   - `align`: WordPress's own layout attribute. The Section sets `align: full` so it spans
+ *     the page in a theme's constrained layout.
+ *   - `imageId`: the media library's attachment ID, which WordPress reads to add responsive
+ *     sizes (primitives/image). Puck sites choose images by URL.
  */
-const WORDPRESS_ONLY = new Set( [ 'align' ] );
+const WORDPRESS_ONLY = new Set( [ 'align', 'imageId' ] );
 
 // Every component: each folder with a core the package exports.
 const components = Object.keys( import.meta.glob( '../*/index.ts' ) )
@@ -74,6 +77,7 @@ const withStories = Object.keys(
 
 test( 'finds every component', () => {
 	expect( components ).toEqual( [
+		'card',
 		'degree-finder',
 		'hero',
 		'section',
@@ -93,7 +97,12 @@ const primitives = Object.keys(
 	.sort();
 
 test( 'finds every primitive', () => {
-	expect( primitives ).toEqual( [ 'button' ] );
+	expect( primitives ).toEqual( [
+		'button',
+		'heading',
+		'image',
+		'paragraph',
+	] );
 } );
 
 test( 'every primitive has stories and a Puck config, and no WordPress block', () => {

@@ -6,7 +6,10 @@
  * SPEC: P1's sizes where UCF has no token: the title's clamp, the full-image heights, the copy
  * measure. Square corners throughout: UCF has no radius tokens, and P1's pills and rounded
  * cards are Pantheon's look.
- * The buttons are the Button primitive and carry its styles (primitives/button/style.css).
+ * A frame: the copy is content placed inside (Hero.tsx). Its parts are styled by the classes
+ * the templates give them (PARTS), with `.ucf-c-hero` in front so two classes win over the
+ * one a core block or a primitive styles itself with. The buttons keep their own styles: core
+ * Button's in WordPress, the Button primitive's in Puck.
  */
 
 /* SPEC: the Section's band padding, so a Hero lines up with the bands around it. */
@@ -212,7 +215,7 @@
 	margin: 0;
 }
 
-.ucf-c-hero__eyebrow {
+.ucf-c-hero .ucf-c-hero__eyebrow {
 	color: var(--ucf-c-accent-text);
 	font-family: var(--ucf-font-family-mono);
 	font-size: var(--ucf-font-size-data);
@@ -221,7 +224,7 @@
 }
 
 /* SPEC: P1's title size; UCF's display face and capitals, as the theme's headings. */
-.ucf-c-hero__title {
+.ucf-c-hero .ucf-c-hero__title {
 	color: var(--ucf-c-heading);
 	font-family: var(--ucf-font-family-display);
 	font-size: clamp(1.875rem, 5vw, 3.75rem);
@@ -231,53 +234,8 @@
 	text-wrap: balance;
 }
 
-.ucf-c-hero__description {
+.ucf-c-hero .ucf-c-hero__description {
 	color: var(--ucf-c-lead);
 	font-size: var(--ucf-font-size-data-lg);
 	line-height: 1.6;
-}
-
-.ucf-c-hero__actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--ucf-spacing-30);
-	margin-top: var(--ucf-spacing-20);
-}
-
-.ucf-c-hero__badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--ucf-spacing-20);
-	list-style: none;
-	padding: 0;
-}
-
-.ucf-c-hero__copy[data-align="center"] .ucf-c-hero__actions,
-.ucf-c-hero__copy[data-align="center"] .ucf-c-hero__badges {
-	justify-content: center;
-}
-
-.ucf-c-hero__copy[data-align="right"] .ucf-c-hero__actions,
-.ucf-c-hero__copy[data-align="right"] .ucf-c-hero__badges {
-	justify-content: end;
-}
-
-.ucf-c-hero__badge {
-	align-items: center;
-	border: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
-	color: var(--ucf-c-body);
-	display: inline-flex;
-	font-size: var(--ucf-font-size-data);
-	gap: var(--ucf-spacing-20);
-	padding: var(--ucf-spacing-10) var(--ucf-spacing-30);
-}
-
-/* A check mark, drawn rather than written so screen readers don't read it out. */
-.ucf-c-hero__badge::before {
-	border: solid var(--ucf-c-accent);
-	border-width: 0 2px 2px 0;
-	content: "";
-	height: 0.6em;
-	transform: translateY(-0.1em) rotate(45deg);
-	width: 0.3em;
 }

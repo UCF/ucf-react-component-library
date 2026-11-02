@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Heading > renders the same in WordPress and React: default level 1`] = `"<h2 class="ucf-c ucf-c-heading">No level given</h2>"`;
+
+exports[`Heading > renders the same in WordPress and React: example 1`] = `"<h2 class="ucf-c ucf-c-heading">Undergraduate degrees</h2>"`;
+
+exports[`Heading > renders the same in WordPress and React: h4 1`] = `"<h4 class="ucf-c ucf-c-heading">Smaller</h4>"`;

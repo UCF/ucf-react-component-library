@@ -173,6 +173,45 @@ describe( 'planComponent', () => {
 		);
 	} );
 
+	// FIX: adding an import once rewrote the block from the one-line imports it recognized,
+	// and dropped one that spans three lines (`import card, { withTemplate }`).
+	test( 'keeps every import already in puck.test.tsx', () => {
+		const file = 'components/_config/puck.test.tsx';
+		const importsIn = ( source ) =>
+			source.match( /^import [\s\S]*? from '[^']+';$/gm ) ?? [];
+		const before = importsIn( read( file ) );
+		expect( before.some( ( line ) => line.includes( '\n' ) ) ).toBe( true );
+
+		writePlan(
+			root,
+			planComponent( { root, name: 'badge', kind: 'primitive' } )
+		);
+
+		expect( importsIn( read( file ) ) ).toEqual(
+			expect.arrayContaining( before )
+		);
+	} );
+
+	// FIX: the templates are template literals, so a backtick in them is written \`. Written
+	// \\\` it came out as a backslash and a backtick in the new files' comments.
+	test.each( [ 'content', 'interactive', 'primitive' ] )(
+		'writes no stray backslash before a backtick: %s',
+		( kind ) => {
+			const files = planComponent( {
+				root,
+				name: 'badge',
+				kind,
+				plugin: 'ucf-content',
+			} );
+			for ( const [ file, contents ] of files ) {
+				expect( [ file, contents.includes( '\\`' ) ] ).toEqual( [
+					file,
+					false,
+				] );
+			}
+		}
+	);
+
 	test( 'refuses a name already used in the other folder', () => {
 		writePlan(
 			root,
@@ -205,15 +244,18 @@ describe( 'planComponent', () => {
 		).not.toContain( 'pull-quote' );
 
 		// WHY only "listed, in order": the real lists grow with every component.
-		for ( const file of [ 'parity', 'blocks' ] ) {
+		// FIX: read only the components list. parity.test.tsx also lists the primitives, and
+		// reading every quoted name in the file merged the two into one unsorted list.
+		for ( const [ file, start ] of [
+			[ 'parity', 'expect( components ).toEqual( [' ],
+			[ 'blocks', '.sort() ).toEqual( [' ],
+		] ) {
 			const source = read( `components/_config/${ file }.test.tsx` );
-			const names = [
-				...source.matchAll( /^\t*'([a-z-]+)',?$/gm ),
-				...( source.match( /toEqual\( \[ ([^\]]+) \]/ )?.[ 1 ] ?? '' )
-					.split( ', ' )
-					.map( ( item ) => [ null, item.replace( /'/g, '' ) ] ),
-			]
-				.map( ( match ) => match[ 1 ] )
+			const list = source.slice( source.indexOf( start ) + start.length );
+			const names = list
+				.slice( 0, list.indexOf( ']' ) )
+				.split( ',' )
+				.map( ( item ) => item.trim().replace( /'/g, '' ) )
 				.filter( Boolean );
 			expect( names ).toContain( 'pull-quote' );
 			expect( names ).toEqual( [ ...names ].sort() );

@@ -1,0 +1,22 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/card",
+	"title": "Card",
+	"category": "ucf",
+	"icon": "id-alt",
+	"description": "A card: a box with any blocks inside. Starts with an image, a heading and a paragraph.",
+	"keywords": [ "card", "box", "container", "frame" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"variant": {
+			"type": "string",
+			"default": "plain"
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

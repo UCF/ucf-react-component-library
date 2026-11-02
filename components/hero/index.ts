@@ -1,6 +1,6 @@
 export {
 	default as Hero,
-	type HeroBadge,
+	PARTS as HERO_PARTS,
 	type HeroLayout,
 	type HeroProps,
 	type HeroTone,

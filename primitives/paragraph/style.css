@@ -1,0 +1,16 @@
+/*
+ * CONTEXT: the Paragraph's styles, for every host and every component that uses it.
+ *
+ * SYNC: the theme's body copy (theme.json `styles.typography`), as styles/elements.css copies
+ * it for plain paragraphs. The values come from the same tokens; these rules are copied.
+ *
+ * WHY no margin: space between pieces is the container's (a Section's flow, a Card's
+ * gap), as core's block gap is in WordPress.
+ */
+.ucf-c-paragraph {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-body);
+	line-height: 1.65;
+	margin: 0;
+}

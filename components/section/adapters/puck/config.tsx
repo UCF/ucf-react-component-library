@@ -66,3 +66,33 @@ const config: PuckComponentConfig< Props > = {
 };
 
 export default config;
+
+/**
+ * What a new Section starts with in Puck: a Heading (h2) and a Paragraph, as in WordPress
+ * (TEMPLATE in adapters/wp/edit.tsx).
+ *
+ * SYNC: each `type` is the key a host registers the primitive under (README: `Heading`,
+ * `Paragraph`).
+ */
+export const TEMPLATE: PuckSlot = [
+	{
+		type: 'Heading',
+		props: { content: 'Heading', level: '2', className: '' },
+	},
+	{
+		type: 'Paragraph',
+		props: { content: 'Body copy.', className: '' },
+	},
+];
+
+/**
+ * The Section, starting with components already in its slot. Opt-in, as the Card's is
+ * (components/card/adapters/puck/config.tsx says why).
+ *
+ * @param content The components a new Section starts with, in order. TEMPLATE by default.
+ */
+export function withTemplate(
+	content: PuckSlot = TEMPLATE
+): PuckComponentConfig< Props > {
+	return { ...config, defaultProps: { ...config.defaultProps, content } };
+}

@@ -7,10 +7,15 @@
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Hero, { type HeroProps } from '../Hero.tsx';
+import Button from '../../../primitives/button/Button.tsx';
+import '../../../primitives/button/style.css';
+import Heading from '../../../primitives/heading/Heading.tsx';
+import '../../../primitives/heading/style.css';
+import Paragraph from '../../../primitives/paragraph/Paragraph.tsx';
+import '../../../primitives/paragraph/style.css';
+import Hero, { PARTS, type HeroProps } from '../Hero.tsx';
 import example from '../example.json';
 import { CHOICES, type ChoiceKey } from '../options.ts';
-import '../../../primitives/button/style.css';
 import '../style.css';
 
 const control = ( key: ChoiceKey ) => ( {
@@ -33,6 +38,29 @@ const meta = {
 	),
 	// WHY: a band of its own, so the Section around it runs edge to edge with the least padding.
 	parameters: { section: { width: 'wide', spacing: 'compact' } },
+	// The template's copy, from the primitives. SYNC: TEMPLATE in adapters/puck/config.tsx.
+	// WHY the buttons in a row here: Puck has no Buttons group yet, and WordPress uses core's.
+	render: ( args ) => (
+		<Hero { ...args }>
+			<Paragraph
+				className={ PARTS.eyebrow }
+				content="Undergraduate admissions"
+			/>
+			<Heading
+				className={ PARTS.title }
+				level={ 1 }
+				content="Reach for the stars"
+			/>
+			<Paragraph
+				className={ PARTS.description }
+				content="Florida’s largest university, with 70,674 students, in Orlando and online."
+			/>
+			<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1rem' } }>
+				<Button text="Apply now" url="#" />
+				<Button text="Visit campus" url="#" variant="outline" />
+			</div>
+		</Hero>
+	),
 } satisfies Meta< typeof Hero >;
 
 export default meta;
@@ -57,7 +85,7 @@ export const FullImage: Story = {
 	args: { layout: 'full image', overlay: 'scrim', height: 'tall' },
 };
 
-/** No image, centered, with P1's trust badges. */
+/** No image, centered. */
 export const TextOnly: Story = {
-	args: { layout: 'text only', contentAlign: 'center', badges: 'on' },
+	args: { layout: 'text only', contentAlign: 'center' },
 };

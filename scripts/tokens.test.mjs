@@ -175,12 +175,18 @@ describe( 'roles contract', () => {
 		...roles.map( ( role ) => `c-bar-${ role }` ),
 	] );
 
-	// The primitives' and components' CSS and the opt-in element styles (styles/elements.css).
-	const cssFiles = [ 'primitives', 'components', 'styles' ].flatMap(
-		( dir ) =>
-			readdirSync( path.join( root, dir ), { recursive: true } )
-				.filter( ( file ) => file.endsWith( '.css' ) )
-				.map( ( file ) => path.join( dir, file ) )
+	// The primitives', components' and examples' CSS and the opt-in element styles
+	// (styles/elements.css). WHY examples: they are written to be copied, so they follow the
+	// same rules.
+	const cssFiles = [
+		'primitives',
+		'components',
+		'examples',
+		'styles',
+	].flatMap( ( dir ) =>
+		readdirSync( path.join( root, dir ), { recursive: true } )
+			.filter( ( file ) => file.endsWith( '.css' ) )
+			.map( ( file ) => path.join( dir, file ) )
 	);
 
 	const read = cssFiles.flatMap( ( file ) =>
@@ -211,11 +217,12 @@ describe( 'roles contract', () => {
 describe( 'component layer', () => {
 	// FIX: `--ucf-c-*` is set only on an element with `ucf-c` or `ucf-c-panel`. A component that
 	// reads it without carrying either class gets unset values and loses its colors silently.
-	// Every primitive and component folder, as `primitives/button`, `components/stat`.
-	const folders = [ 'primitives', 'components' ].flatMap( ( tier ) =>
-		readdirSync( path.join( root, tier ) ).map( ( name ) =>
-			path.join( tier, name )
-		)
+	// Every primitive, component and example folder, as `primitives/button`, `components/stat`.
+	const folders = [ 'primitives', 'components', 'examples' ].flatMap(
+		( tier ) =>
+			readdirSync( path.join( root, tier ) ).map( ( name ) =>
+				path.join( tier, name )
+			)
 	);
 	const users = folders.filter( ( folder ) => {
 		const css = path.join( root, folder, 'style.css' );

@@ -1,1 +1,5 @@
-export { default as Stat, type StatProps } from './Stat.tsx';
+export {
+	default as Stat,
+	PARTS as STAT_PARTS,
+	type StatProps,
+} from './Stat.tsx';

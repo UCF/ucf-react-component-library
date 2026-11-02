@@ -153,11 +153,11 @@ platform: `adapters/wp/` is not WordPress, it is the code that plugs the core in
 A slot is a prop that takes something each host provides. The core never checks which host
 it is in.
 
-| Slot     | Next passes          | WordPress passes                          | Puck passes |
-| -------- | -------------------- | ----------------------------------------- | ----------- |
-| `linkAs` | `next/link`          | nothing (default `<a>`)                   | nothing     |
-| text     | a string             | a string in `save()`, a field in `edit()` | a string    |
-| `client` | a client for its API | nothing (default client)                  | nothing     |
+| Slot      | Next passes          | WordPress passes                          | Puck passes |
+| --------- | -------------------- | ----------------------------------------- | ----------- |
+| `innerAs` | nothing (`<div>`)    | its inner-blocks element                  | its slot    |
+| text      | a string             | a string in `save()`, a field in `edit()` | a string    |
+| `client`  | a client for its API | nothing (default client)                  | nothing     |
 
 A slot only covers what was made a slot. A core that imports `next/link` directly is tied to
 Next, and the WordPress build fails on it.
@@ -205,14 +205,15 @@ Interactivity API in WordPress), per "Two kinds of component".
 
 ## Primitives
 
-Decided 2026-11-01, refining the section above. **Core blocks are for content editors only. Our
-components never contain core blocks: they are built from our own primitives**, in
-`primitives/`, next to `components/`.
+Decided 2026-11-01, refining the section above; narrowed 2026-11-02 by "Frames" below. **Core
+blocks are for content editors. The markup a component owns is built from our own
+primitives**, in `primitives/`, next to `components/`. A frame's open content area is editor
+content, so in WordPress it holds core blocks (see "Frames").
 
-| Who                      | In WordPress                    | In Puck and Next |
-| ------------------------ | ------------------------------- | ---------------- |
-| A content editor         | Core blocks (Button, Image…)    | Our primitives   |
-| Our components (Hero, …) | Our primitives, in their markup | Our primitives   |
+| Who                                 | In WordPress                    | In Puck and Next |
+| ----------------------------------- | ------------------------------- | ---------------- |
+| A content editor, or a frame's area | Core blocks (Button, Image…)    | Our primitives   |
+| A component's own markup (the Card) | Our primitives, in their markup | Our primitives   |
 
 - **A primitive is a component:** a core, `style.css`, stories, a markup test and a Puck config,
   where Puck editors place it, since Puck has no core blocks. It has **no WordPress block**:
@@ -236,6 +237,36 @@ components never contain core blocks: they are built from our own primitives**, 
   fail for each one, so none is missed.
 - **Not for behavior.** Interactive pieces (a combobox, a dialog) take their behavior from an
   unstyled library in interactive components only; not chosen yet (docs/todo.md).
+
+## Frames
+
+Decided 2026-11-02. A content component is one of two shapes:
+
+| Shape     | What it owns                                  | Its content                                  | Examples                                          |
+| --------- | --------------------------------------------- | -------------------------------------------- | ------------------------------------------------- |
+| **Fixed** | Its markup, its parts as fields, how they fit | Fields (attributes in WordPress, Puck props) | examples/fixed-card                               |
+| **Frame** | The box: layout, band, image, rule, spacing   | Open: inner blocks in WordPress, a Puck slot | Section, Hero, Stat, Card; examples/flexible-card |
+
+- **A frame renders its content in one element, `innerAs`.** WordPress passes its inner-blocks
+  element (in `edit()` and `save()`), Puck its slot, plain React a `<div>`. The markup is the
+  same in every host, and each host's editing area is the frame's own element.
+- **A new frame starts with a template, never a lock.** WordPress: `useInnerBlocksProps( props,
+{ template } )` with core blocks. Puck: `withTemplate()` from the frame's Puck config, with the
+  library's primitives under the keys the README gives (`Heading`, `Paragraph`, `Button`,
+  `Image`). The plain Puck config starts empty, because a host may register the primitives
+  under other names. Editors may change, move or remove anything in it.
+- **Parts are named by class.** Where a part has its own look (the Hero's title, the Stat's
+  statement), the template sets a class on it (`PARTS` in the core) in both hosts: core's
+  "Additional CSS class(es)" in WordPress, the primitive's CSS class field in Puck. The frame's
+  CSS styles it as `.ucf-c-{frame} .ucf-c-{frame}__{part}`, two classes, so it wins over the one
+  class a core block or a primitive styles itself with.
+- **The cost:** nothing makes a Hero have a title or a Stat a source, an editor can remove the
+  class, and nothing else can read the parts as fields. Choose fixed when something must read a
+  part (a listing, search) or the design depends on how parts fit (the fixed card's image bleed
+  and whole-card link, in examples/fixed-card); choose a frame when the content is meant to vary.
+- **Tests:** a frame's markup test renders content through `innerAs`; blocks.test.tsx checks
+  each frame saves and reads back blocks placed inside it; puck.test.tsx checks each template
+  names primitives that exist and sets every prop they have.
 
 ## Distribution
 

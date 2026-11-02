@@ -148,21 +148,24 @@ equivalent. Roughly in order of need:
 1. **Button: built** (`primitives/button`), used by the Hero. Still to do: a Buttons group,
    the trailing-arrow variant from the hero screenshots, and `RichText` for the label if
    editors need bold or italics in it.
-    - **Its measurements are copied from the theme, not shared.** Colors already come from
-      the same roles; the padding, heights and letter spacing are the theme's numbers, copied
-      (`SYNC:` in primitives/button/style.css). Add them to `tokens.json` `custom`
-      (`button-padding-y`, `button-padding-x`, `button-min-height`, and the small and large
-      sizes), have the theme's `theme.json` and `_buttons.scss` read `--wp--custom--button-*`,
-      and have ours read `--ucf-custom-button-*`, so one change moves both. Needs Jim.
+    - **Its measurements are shared tokens (done 2026-11-02).** `tokens.json` `custom`
+      `button-*` (heights, paddings, letter spacing, underline); ours reads
+      `--ucf-custom-button-*`, the theme's `theme.json` and `_buttons.scss` read
+      `--wp--custom--button-*`, and the theme's `check:tokens` fails when they differ. The
+      rules are still written in both places. Next, if this holds: generate the theme's button
+      CSS from ours (a selector map from `data-variant` to core's `is-style-*`), with a
+      screenshot test comparing a core Button and ours. Show Jim first: it moves the core
+      Button's look from the theme to the library.
     - **PERF: its CSS ships with each block that uses it** (the Hero's editor script imports
       it). Once several blocks use primitives, add every primitive's style.css to the plugins'
       shared base.css instead, which loads once.
     - **Behavior for interactive pieces:** pick the unstyled library (React Aria first, Base UI
       the fallback) by trying it on the Degree Finder's interest combobox: bundle size, the
       story accessibility checks, how styling it with our CSS feels.
-2. **Image** (and Figure, with a caption): `MediaUpload` and the media library in WordPress,
-   saving the attachment ID with `wp-image-{id}` on the `<img>`; the host's image component
-   (`next/image`) through a slot in React. Unblocks the photo patterns.
+2. **Image: built** (`primitives/image`), used by the Card. It keeps `wp-image-{id}`, so
+   WordPress adds responsive sizes, and edits through the media library. Still to do: a
+   Figure with a caption; the host's image component (`next/image`) through a slot in React;
+   and moving the Hero to it (the Hero still draws its own `<img>`).
 3. **Columns and Column:** a column count, ratio, gap and the width at which they stack; a
    Puck slot per column. Match P1's Columns setting names (2–4 columns, ratio, gap, vertical
    alignment) for parity.
@@ -170,7 +173,11 @@ equivalent. Roughly in order of need:
 5. **Lock core down** in the plugin: the allowed block list and core's design controls off.
    Do it alongside the first primitive so editors meet ours, not core's.
 
-The Section already exists (frozen until compared with P1's Container, below).
+The Section already exists (frozen until compared with P1's Container, below). 6. **Heading and Paragraph: built as examples** (`primitives/heading`, `primitives/paragraph`),
+so the frames' Puck templates (`withTemplate()`) is made of library pieces, as
+WordPress's is of core blocks. Props are core's (`content`, `level`). Still to do: their
+rules copy styles/elements.css (`SYNC:`); generate one from the other, or have
+elements.css style these classes too. Decide whether Paragraph needs a Lead size.
 
 ## Element styles
 

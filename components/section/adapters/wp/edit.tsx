@@ -19,6 +19,22 @@ export type Attributes = {
 };
 
 /**
+ * What a new Section starts with: a heading and a paragraph.
+ *
+ * WHY an h2: a Section is a band of the page, under the page's h1.
+ * WHY a starting point, not a lock: a Section holds anything; editors may change, move or
+ * remove it.
+ * SYNC: TEMPLATE in adapters/puck/config.tsx, the same with the library's primitives.
+ */
+const TEMPLATE: [ string, Record< string, unknown > ][] = [
+	[
+		'core/heading',
+		{ level: 2, placeholder: __( 'Heading', 'ucf-content' ) },
+	],
+	[ 'core/paragraph', { placeholder: __( 'Body copy', 'ucf-content' ) } ],
+];
+
+/**
  * The Section's inner element, holding the blocks placed inside it.
  *
  * WHY passed to the Section as `innerAs`: the inner-blocks area is then the Section's own inner
@@ -27,7 +43,7 @@ export type Attributes = {
  * @param props The inner element's props from Section.
  */
 function InnerBlocksArea( props: object ) {
-	return <div { ...useInnerBlocksProps( props ) } />;
+	return <div { ...useInnerBlocksProps( props, { template: TEMPLATE } ) } />;
 }
 
 /**

@@ -30,6 +30,8 @@
 		"primitives/**/*.tsx",
 		"components/**/*.ts",
 		"components/**/*.tsx",
+		"examples/**/*.ts",
+		"examples/**/*.tsx",
 		".storybook/*.ts",
 		"vitest.config.mts",
 		"vitest.shims.d.ts"

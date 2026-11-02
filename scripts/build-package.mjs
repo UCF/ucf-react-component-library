@@ -1,12 +1,13 @@
 /**
  * CONTEXT: builds the npm package, `@ucf/components`, into dist/.
  *
- *   1. `tsc -p tsconfig.build.json` writes the JavaScript, the `.d.ts` type files and the
- *      example data, rewriting `./Stat.tsx` imports to `./Stat.js`.
+ *   1. `tsc -p tsconfig.build.json` writes the JavaScript and the `.d.ts` type files, rewriting
+ *      `./Stat.tsx` imports to `./Stat.js`. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
  *   4. dist/package.json marks the output as ES modules.
+ *   5. Every file package.json exports must exist, or the build fails.
  *
  * WHY step 3 rather than `"type": "module"` in the root package.json: the root holds the
  * webpack, ESLint and Jest configs, which wp-scripts loads as CommonJS.
@@ -64,6 +65,20 @@ for ( const tier of [ 'primitives', 'components' ] ) {
 }
 writeFileSync( path.join( dist, 'ucf.css' ), parts.join( '' ) );
 
+// WHY copied, not left to tsc: tsc writes a JSON file only when code imports it, and a frame's
+// code doesn't read its example. Every example.json is a package export.
+for ( const tier of [ 'primitives', 'components' ] ) {
+	for ( const name of readdirSync( path.join( root, tier ) ) ) {
+		const example = path.join( root, tier, name, 'example.json' );
+		if ( existsSync( example ) ) {
+			copyFileSync(
+				example,
+				path.join( dist, tier, name, 'example.json' )
+			);
+		}
+	}
+}
+
 // WHY separate from ucf.css: opt-in. It styles plain elements, which a site with its own
 // typography must be able to leave out (styles/elements.css).
 copyFileSync(
@@ -75,5 +90,34 @@ writeFileSync(
 	path.join( dist, 'package.json' ),
 	JSON.stringify( { type: 'module' }, null, '\t' ) + '\n'
 );
+
+// FIX: an export whose file the build never wrote. tsc copies a JSON file only when code
+// imports it, so a frame whose code doesn't read its example.json shipped an export
+// (`@ucf/components/stat/example.json`) that pointed at nothing. Fail here, not in a site.
+const targets = ( value ) =>
+	typeof value === 'string'
+		? [ value ]
+		: Object.values( value ).flatMap( targets );
+const missing = Object.entries(
+	JSON.parse( readFileSync( path.join( root, 'package.json' ), 'utf8' ) )
+		.exports
+).flatMap( ( [ name, value ] ) =>
+	targets( value )
+		// A `*` export needs its folder, with something in it.
+		.filter( ( target ) => {
+			const file = path.join( root, target );
+			return target.includes( '*' )
+				? readdirSync( path.dirname( file ) ).length === 0
+				: ! existsSync( file );
+		} )
+		.map( ( target ) => `${ name } → ${ target }` )
+);
+if ( missing.length ) {
+	throw new Error(
+		`package.json exports files the build didn't write:\n  ${ missing.join(
+			'\n  '
+		) }`
+	);
+}
 
 console.log( 'Built dist/ for @ucf/components.' );

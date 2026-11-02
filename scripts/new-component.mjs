@@ -240,18 +240,19 @@ function addPuckConfig( source, file, n ) {
 		throw new Error( `Can't find the config lists in ${ file }.` );
 	}
 
-	const first = imports[ 0 ].index;
-	const last = imports.at( -1 ).index + imports.at( -1 )[ 0 ].length;
-	const importLines = imports
-		.map( ( match ) => match[ 0 ] )
-		.concat(
-			`import ${ n.camel } from '${
-				n.tier === 'primitives' ? '../../primitives' : '..'
-			}/${ n.name }/adapters/puck/config.tsx';\n`
-		)
-		.sort( ( a, b ) =>
-			a.split( "'" )[ 1 ].localeCompare( b.split( "'" )[ 1 ] )
-		);
+	// FIX: insert the one new line in its sorted place. Rewriting the block from the lines the
+	// pattern matched dropped any import between them that it didn't match (one split over
+	// several lines, as `import card, { withTemplate }` is).
+	const configPath = `${
+		n.tier === 'primitives' ? '../../primitives' : '..'
+	}/${ n.name }/adapters/puck/config.tsx`;
+	const before = imports.find(
+		( match ) =>
+			match[ 0 ].split( "'" )[ 1 ].localeCompare( configPath ) > 0
+	);
+	const at = before
+		? before.index
+		: imports.at( -1 ).index + imports.at( -1 )[ 0 ].length;
 	const lastCheck = checks.at( -1 ).index + checks.at( -1 )[ 0 ].length;
 	const key = /^[A-Za-z_$][\w$]*$/.test( n.title )
 		? n.title
@@ -267,7 +268,10 @@ function addPuckConfig( source, file, n ) {
 		out.slice( 0, configsEnd ) +
 		`\n\t${ key }: ${ n.camel },` +
 		out.slice( configsEnd );
-	out = out.slice( 0, first ) + importLines.join( '' ) + out.slice( last );
+	out =
+		out.slice( 0, at ) +
+		`import ${ n.camel } from '${ configPath }';\n` +
+		out.slice( at );
 	return out;
 }
 
@@ -873,7 +877,7 @@ export default function ${ n.Name }( {
 		'style.css': `/*
  * CONTEXT: the ${ n.title }'s styles, for every host and every component that uses it.
  *
- * Reads only \\\`--ucf-*\\\` names, and colors only as component-layer roles (\\\`--ucf-c-body\\\` and
+ * Reads only \`--ucf-*\` names, and colors only as component-layer roles (\`--ucf-c-body\` and
  * so on), so it takes the colors of whatever it sits on.
  */
 .ucf-c-${ n.name } {
@@ -946,7 +950,7 @@ const config: PuckComponentConfig< Props > = {
 		text: { type: 'text', label: 'Text' },
 	},
 	defaultProps: example,
-	// FIX: only the primitive's own props; Puck's \\\`id\\\`, \\\`puck\\\` and \\\`editMode\\\` would
+	// FIX: only the primitive's own props; Puck's \`id\`, \`puck\` and \`editMode\` would
 	// reach the markup.
 	render: ( { text } ) => <${ n.Name } text={ text } />,
 };

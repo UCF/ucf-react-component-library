@@ -1,0 +1,32 @@
+/*
+ * CONTEXT: the Image's styles, for every host and every component that uses it.
+ *
+ * It fills the width it is given and, with a ratio, crops to that shape. SPEC: square corners,
+ * as everything in the theme (its _base.scss).
+ */
+.ucf-c-image {
+	display: block;
+	height: auto;
+	max-width: 100%;
+	width: 100%;
+}
+
+.ucf-c-image[data-ratio] {
+	object-fit: cover;
+}
+
+.ucf-c-image[data-ratio="3-2"] {
+	aspect-ratio: 3 / 2;
+}
+
+.ucf-c-image[data-ratio="16-9"] {
+	aspect-ratio: 16 / 9;
+}
+
+.ucf-c-image[data-ratio="4-3"] {
+	aspect-ratio: 4 / 3;
+}
+
+.ucf-c-image[data-ratio="1-1"] {
+	aspect-ratio: 1 / 1;
+}

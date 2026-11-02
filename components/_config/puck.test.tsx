@@ -16,10 +16,22 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import button from '../../primitives/button/adapters/puck/config.tsx';
+import heading from '../../primitives/heading/adapters/puck/config.tsx';
+import image from '../../primitives/image/adapters/puck/config.tsx';
+import paragraph from '../../primitives/paragraph/adapters/puck/config.tsx';
+import card, {
+	withTemplate as cardWithTemplate,
+} from '../card/adapters/puck/config.tsx';
 import degreeFinder from '../degree-finder/adapters/puck/config.tsx';
-import hero from '../hero/adapters/puck/config.tsx';
-import section from '../section/adapters/puck/config.tsx';
-import stat from '../stat/adapters/puck/config.tsx';
+import hero, {
+	withTemplate as heroWithTemplate,
+} from '../hero/adapters/puck/config.tsx';
+import section, {
+	withTemplate as sectionWithTemplate,
+} from '../section/adapters/puck/config.tsx';
+import stat, {
+	withTemplate as statWithTemplate,
+} from '../stat/adapters/puck/config.tsx';
 import type { PuckComponentConfig } from './puck.ts';
 
 type PropsOf< Config > =
@@ -31,6 +43,10 @@ const CONFIGS = {
 	Section: section,
 	Hero: hero,
 	Button: button,
+	Image: image,
+	Card: card,
+	Heading: heading,
+	Paragraph: paragraph,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -40,6 +56,10 @@ degreeFinder satisfies ComponentConfig< PropsOf< typeof degreeFinder > >;
 section satisfies ComponentConfig< PropsOf< typeof section > >;
 hero satisfies ComponentConfig< PropsOf< typeof hero > >;
 button satisfies ComponentConfig< PropsOf< typeof button > >;
+image satisfies ComponentConfig< PropsOf< typeof image > >;
+card satisfies ComponentConfig< PropsOf< typeof card > >;
+heading satisfies ComponentConfig< PropsOf< typeof heading > >;
+paragraph satisfies ComponentConfig< PropsOf< typeof paragraph > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {
@@ -82,3 +102,70 @@ describe.each( Object.entries( CONFIGS ) )(
 		} );
 	}
 );
+
+// WHY: the host names the components a new Card starts with (withTemplate's comment).
+// The template must reach the slot's default, and must not change the plain config, which
+// other hosts use as it is.
+describe( 'the Card with a template', () => {
+	const template = [
+		{ type: 'Image', props: { url: '/photo.jpg', alt: '' } },
+		{ type: 'Heading', props: { text: 'Title' } },
+	];
+
+	it( 'starts its slot with the template’s components, in order', () => {
+		expect( cardWithTemplate( template ).defaultProps.content ).toEqual(
+			template
+		);
+	} );
+
+	it( 'keeps everything else, and leaves the plain config empty', () => {
+		const { defaultProps, ...rest } = cardWithTemplate( template );
+		const { defaultProps: plainDefaults, ...plainRest } = card;
+
+		expect( rest ).toEqual( plainRest );
+		expect( defaultProps.variant ).toBe( plainDefaults.variant );
+		expect( plainDefaults.content ).toEqual( [] );
+	} );
+} );
+
+// WHY: each default template names primitives by the keys the README tells hosts to use. If
+// one of those keys stopped matching a primitive here, a host following the README would get
+// items Puck can't draw.
+const PRIMITIVES: Record< string, { defaultProps: object } > = {
+	Button: button,
+	Image: image,
+	Heading: heading,
+	Paragraph: paragraph,
+};
+
+describe.each( [
+	[ 'Card', cardWithTemplate, [ 'Image', 'Heading', 'Paragraph' ] ],
+	[ 'Section', sectionWithTemplate, [ 'Heading', 'Paragraph' ] ],
+	[ 'Stat', statWithTemplate, [ 'Paragraph', 'Paragraph', 'Paragraph' ] ],
+	[
+		'Hero',
+		heroWithTemplate,
+		[ 'Paragraph', 'Heading', 'Paragraph', 'Button', 'Button' ],
+	],
+] )( 'the %s’s default template', ( _, withTemplate, types ) => {
+	const content = (
+		withTemplate as () => {
+			defaultProps: { content: { type: string; props: object }[] };
+		}
+	 )().defaultProps.content;
+
+	it( 'starts with the primitives WordPress’s template has, in order', () => {
+		expect( content.map( ( item ) => item.type ) ).toEqual( types );
+	} );
+
+	it( 'sets every prop of each primitive, and only props it has', () => {
+		for ( const item of content ) {
+			// WHY every prop: Puck doesn't merge a template item with the component's defaults.
+			expect( Object.keys( item.props ).sort() ).toEqual(
+				Object.keys(
+					PRIMITIVES[ item.type ]?.defaultProps ?? {}
+				).sort()
+			);
+		}
+	} );
+} );
