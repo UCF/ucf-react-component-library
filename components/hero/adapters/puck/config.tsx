@@ -98,6 +98,7 @@ export const TEMPLATE: PuckSlot = [
 			linkTarget: '',
 			variant: 'fill',
 			fontSize: '',
+			className: '',
 		},
 	},
 	{
@@ -108,6 +109,7 @@ export const TEMPLATE: PuckSlot = [
 			linkTarget: '',
 			variant: 'outline',
 			fontSize: '',
+			className: '',
 		},
 	},
 ];

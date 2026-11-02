@@ -1,7 +1,7 @@
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
-import Card from '../../Card.tsx';
+import Card, { type CardProps } from '../../Card.tsx';
 import type { Attributes } from './edit.tsx';
 
 /**
@@ -14,7 +14,7 @@ function InnerBlocksContent( props: Record< string, unknown > ) {
 }
 
 /**
- * The stored markup: the frame, its inner blocks inside its inner element.
+ * The stored markup: the frame, with its settings as props and its inner blocks inside.
  *
  * @param props            The block's save props.
  * @param props.attributes Its attributes.
@@ -23,7 +23,7 @@ export default function save( { attributes }: BlockSaveProps< Attributes > ) {
 	return (
 		<Card
 			{ ...useBlockProps.save() }
-			variant={ attributes.variant }
+			{ ...( attributes as CardProps ) }
 			innerAs={ InnerBlocksContent }
 		/>
 	);

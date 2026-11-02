@@ -2,22 +2,59 @@
  * CONTEXT: the Card's styles, for every host.
  *
  * SPEC: the UCF Brand Block Theme's Card looks (`.ucf-card` in src/scss/_components.scss
- * there): plain, boxed on the raised ground, ruled under a heavy top rule. The frame styles
- * only its box and the space between what is inside; the blocks inside keep their own styles.
- * SYNC: examples/fixed-card/style.css draws the same box.
+ * there): plain, boxed on the raised ground, ruled under a heavy top rule; and the UCF card
+ * designs built from the settings (variations.ts). The frame styles its box, its background
+ * and the parts placed inside by their class (Card.tsx, PARTS); other blocks keep their own
+ * styles.
+ * SYNC: examples/fixed-card/style.css draws the same plain, boxed and ruled box.
  *
- * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles.
+ * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles,
+ * or its own composition's when it has one (the composition class also paints its surface).
  */
 
-/* WHY the full height: in a grid, every card in a row matches the tallest. */
+/*
+ * WHY the full height: in a grid, every card in a row matches the tallest.
+ * WHY a column: `contentPosition` moves the content within a card taller than it.
+ * WHY `isolation`: the background and overlay sit at z-index -1, under the content but
+ * inside the card, not behind the page.
+ */
 .ucf-c-card {
 	box-sizing: border-box;
 	color: var(--ucf-c-body);
+	display: flex;
+	flex-direction: column;
 	height: 100%;
+	isolation: isolate;
+	position: relative;
+}
+
+.ucf-c-card[data-position="center"] {
+	justify-content: center;
+}
+
+.ucf-c-card[data-position="bottom"] {
+	justify-content: flex-end;
+}
+
+/* A fixed shape for tiles. WHY `height: auto`: a set height would win over the ratio. */
+.ucf-c-card[data-ratio] {
+	height: auto;
+}
+
+.ucf-c-card[data-ratio="1-1"] {
+	aspect-ratio: 1 / 1;
+}
+
+.ucf-c-card[data-ratio="4-3"] {
+	aspect-ratio: 4 / 3;
+}
+
+.ucf-c-card[data-ratio="3-4"] {
+	aspect-ratio: 3 / 4;
 }
 
 /*
- * SPEC: the blocks inside stack with one gap, the Card's, whatever margins they bring.
+ * SPEC: the blocks inside stack with one gap, whatever margins they bring.
  * WHY `> *` and not each core block's class: the frame doesn't know what it holds, and naming
  * core's classes would tie it to their markup.
  */
@@ -31,16 +68,196 @@
 	margin-block: 0;
 }
 
+.ucf-c-card[data-align="center"] .ucf-c-card__content {
+	align-items: center;
+	text-align: center;
+}
+
 /* ── Looks ─────────────────────────────────────────────────────────────── */
 
-/* SPEC: boxed, on the raised ground. */
+/*
+ * SPEC: padded when the card has a ground of its own: boxed, its own colors, or an image.
+ * Plain and ruled sit on the section's ground, flush.
+ */
+.ucf-c-card:is(
+	[data-variant="boxed"],
+	[data-composed],
+	:has(> .ucf-c-card__background)
+) {
+	padding: var(--ucf-spacing-50);
+}
+
 .ucf-c-card[data-variant="boxed"] {
 	background-color: var(--ucf-c-raised);
-	padding: var(--ucf-spacing-50);
 }
 
 /* SPEC: ruled, under a heavy top rule in the body color. */
 .ucf-c-card[data-variant="ruled"] {
 	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-body);
 	padding-top: var(--ucf-spacing-40);
+}
+
+/* ── Background image ─────────────────────────────────────────────────── */
+
+.ucf-c-card:has(> .ucf-c-card__background) {
+	overflow: hidden;
+}
+
+.ucf-c-card__background,
+.ucf-c-card__overlay {
+	inset: 0;
+	position: absolute;
+	z-index: -1;
+}
+
+.ucf-c-card__background .ucf-c-card__image {
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+/*
+ * SPEC: a tint in the card's own surface color (Bold Gold on an audience tile), so the photo
+ * shows through faintly; or a dark gradient rising from the bottom under a caption.
+ */
+.ucf-c-card__overlay[data-overlay="tint"] {
+	background: color-mix(in srgb, var(--ucf-c-surface) 85%, transparent);
+}
+
+/*
+ * A11Y: the lower half, where the caption sits, is at least 70% black, so white text clears
+ * 4.5:1 over even a bright photo (WCAG 1.4.3). FIX: a 35% to 85% fade looked fine on a dark
+ * sample and left a caption over sunlit water unreadable.
+ */
+.ucf-c-card__overlay[data-overlay="gradient"] {
+	background: linear-gradient(
+		180deg,
+		transparent 20%,
+		color-mix(in srgb, var(--ucf-color-black) 70%, transparent) 50%,
+		color-mix(in srgb, var(--ucf-color-black) 90%, transparent) 100%
+	);
+}
+
+/* ── Parts ─────────────────────────────────────────────────────────────── */
+
+/*
+ * The parts, by the classes the variations give them (Card.tsx, PARTS).
+ * WHY `.ucf-c-card` in front: the part is a core block in WordPress and a primitive in Puck,
+ * and both style it with one class of their own. Two classes win over either.
+ */
+
+/* SPEC: the data voice, as the theme's `.is-style-data`. */
+.ucf-c-card .ucf-c-card__meta {
+	color: var(--ucf-c-muted);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	line-height: 1.55;
+}
+
+.ucf-c-card .ucf-c-card__eyebrow {
+	color: var(--ucf-c-accent-text);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-data);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+/* SPEC: the theme's sans heading, Montserrat 800 in sentence case, at the Heading 4 size. */
+.ucf-c-card .ucf-c-card__title {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-heading-4);
+	font-weight: 800;
+	letter-spacing: 0;
+	line-height: 1.3;
+	text-transform: none;
+}
+
+/*
+ * SPEC: display type, as the theme's h3, at the Heading 4 size: a page's h3 is a section's
+ * subhead, too large for a card a quarter of the width.
+ */
+.ucf-c-card .ucf-c-card__heading {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-display);
+	font-size: var(--ucf-font-size-heading-4);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
+	text-transform: uppercase;
+}
+
+/* SPEC: a short audience name in sans capitals, as the admissions tiles. */
+.ucf-c-card .ucf-c-card__label {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-heading-5);
+	font-weight: 800;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	text-transform: uppercase;
+}
+
+.ucf-c-card .ucf-c-card__description {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.6;
+}
+
+/* SPEC: a small label on the accent, in the data voice. */
+.ucf-c-card .ucf-c-card__tag {
+	align-self: flex-start;
+	background-color: var(--ucf-c-accent);
+	color: var(--ucf-c-on-accent);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	line-height: 1.4;
+	padding: var(--ucf-spacing-10) var(--ucf-spacing-20);
+	text-transform: uppercase;
+}
+
+/* On a card with a background, the tag is pinned to its top corner, whatever else moves. */
+.ucf-c-card:has(> .ucf-c-card__background) .ucf-c-card__tag {
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
+/*
+ * SPEC: a text link in the data voice, capitals and an arrow, in the accent.
+ * WHY both the part and a link inside it: in WordPress the part is a paragraph holding a link;
+ * in Puck it is the Button primitive (Text style), itself the link. The rules here undo that
+ * style's underline and tap-target height, so the two look the same.
+ * A11Y: the arrow is CSS, so a screen reader reads the link's words only.
+ */
+.ucf-c-card .ucf-c-card__link,
+.ucf-c-card .ucf-c-card__link a {
+	color: var(--ucf-c-accent-text);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	line-height: 1.4;
+	min-height: 0;
+	padding: 0;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.ucf-c-card .ucf-c-card__link:hover,
+.ucf-c-card .ucf-c-card__link a:hover {
+	text-decoration: underline;
+}
+
+/*
+ * FIX: a margin, not a space in `content`: in Puck the link is the Button primitive, a flex
+ * box, which drops a pseudo-element's leading space.
+ */
+.ucf-c-card a.ucf-c-card__link::after,
+.ucf-c-card .ucf-c-card__link a::after {
+	content: "→";
+	margin-inline-start: 0.4em;
 }

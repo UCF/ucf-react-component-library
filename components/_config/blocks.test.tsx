@@ -158,7 +158,8 @@ describe.each( [
 		expect(
 			parsed?.innerBlocks.map( ( inner ) => [
 				inner.name,
-				inner.attributes.composition ?? inner.attributes.variant,
+				// WHY `||`: a Card's composition is '' by default.
+				inner.attributes.composition || inner.attributes.variant,
 			] )
 		).toEqual( [
 			[ 'ucf-content/section', 'gold' ],

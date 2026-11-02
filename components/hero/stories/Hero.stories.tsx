@@ -13,6 +13,10 @@ import Heading from '../../../primitives/heading/Heading.tsx';
 import '../../../primitives/heading/style.css';
 import Paragraph from '../../../primitives/paragraph/Paragraph.tsx';
 import '../../../primitives/paragraph/style.css';
+import {
+	PLACEHOLDER_ALT,
+	PLACEHOLDER_IMAGE,
+} from '../../../.storybook/placeholder.ts';
 import Hero, { PARTS, type HeroProps } from '../Hero.tsx';
 import example from '../example.json';
 import { CHOICES, type ChoiceKey } from '../options.ts';
@@ -28,8 +32,13 @@ const meta = {
 	title: 'Content (Server)/Hero',
 	tags: [ 'server' ],
 	component: Hero,
-	// WHY example.json: the same props the WordPress inserter preview and the markup test use.
-	args: example as HeroProps,
+	// WHY example.json: the same props the WordPress inserter preview and the markup test use,
+	// with the stories' photo.
+	args: {
+		...( example as HeroProps ),
+		imageSrc: PLACEHOLDER_IMAGE,
+		imageAlt: PLACEHOLDER_ALT,
+	},
 	argTypes: Object.fromEntries(
 		( Object.keys( CHOICES ) as ChoiceKey[] ).map( ( key ) => [
 			key,

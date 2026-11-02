@@ -21,7 +21,9 @@ import image from '../../primitives/image/adapters/puck/config.tsx';
 import paragraph from '../../primitives/paragraph/adapters/puck/config.tsx';
 import card, {
 	withTemplate as cardWithTemplate,
+	withVariation as cardWithVariation,
 } from '../card/adapters/puck/config.tsx';
+import { VARIATIONS as CARD_VARIATIONS } from '../card/variations.ts';
 import degreeFinder from '../degree-finder/adapters/puck/config.tsx';
 import hero, {
 	withTemplate as heroWithTemplate,
@@ -138,8 +140,33 @@ const PRIMITIVES: Record< string, { defaultProps: object } > = {
 	Paragraph: paragraph,
 };
 
-describe.each( [
-	[ 'Card', cardWithTemplate, [ 'Image', 'Heading', 'Paragraph' ] ],
+// A component's name, how Puck builds it with its template, and the primitives expected.
+type TemplateCase = [ string, () => unknown, string[] ];
+
+describe.each< TemplateCase >( [
+	[
+		'Card',
+		cardWithTemplate,
+		[ 'Image', 'Paragraph', 'Heading', 'Paragraph' ],
+	],
+	// Each card design (card/variations.ts), as Puck builds it.
+	...CARD_VARIATIONS.map(
+		( variation ) =>
+			[
+				`Card's ${ variation.name } design`,
+				() => cardWithVariation( variation.name ),
+				variation.content.map(
+					( part ) =>
+						( {
+							image: 'Image',
+							heading: 'Heading',
+							text: 'Paragraph',
+							link: 'Button',
+							button: 'Button',
+						} )[ part.kind ]
+				),
+			] as TemplateCase
+	),
 	[ 'Section', sectionWithTemplate, [ 'Heading', 'Paragraph' ] ],
 	[ 'Stat', statWithTemplate, [ 'Paragraph', 'Paragraph', 'Paragraph' ] ],
 	[

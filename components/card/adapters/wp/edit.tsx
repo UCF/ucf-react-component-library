@@ -4,31 +4,35 @@ import {
 	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
-import { PanelBody, RadioControl } from '@wordpress/components';
+import {
+	Button as WPButton,
+	PanelBody,
+	RadioControl,
+	SelectControl,
+	TextControl,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import Card from '../../Card.tsx';
-import { VARIANTS, type Variant } from '../../options.ts';
+import ImageEdit, {
+	type ImageValue,
+} from '../../../../primitives/image/adapters/wp/edit.tsx';
+import Card, { type CardProps } from '../../Card.tsx';
+import { CHOICES, type ChoiceKey } from '../../options.ts';
+import { VARIATIONS } from '../../variations.ts';
+import { toBlocks } from './blocks.ts';
 
 // SYNC: the attributes in block.json.
 export type Attributes = {
-	variant: Variant;
-};
+	[ Key in ChoiceKey ]: NonNullable< CardProps[ Key ] >;
+} & { imageSrc: string; imageAlt: string; imageId: number };
 
 /**
- * What a new Card starts with: the theme Card pattern's pieces, as core blocks.
+ * What a Card inserted without a design starts with: the story card's parts.
  *
- * WHY a starting point, not a lock: a card's content varies, so editors may change,
- * move or remove any of it.
+ * WHY a starting point, not a lock: a card's content varies, so editors may change, move or
+ * remove any of it. The other designs are block variations (index.tsx).
  */
-const TEMPLATE: [ string, Record< string, unknown > ][] = [
-	[ 'core/image', { aspectRatio: '3/2', scale: 'cover' } ],
-	[ 'core/heading', { level: 3, placeholder: __( 'Title', 'ucf-content' ) } ],
-	[
-		'core/paragraph',
-		{ placeholder: __( 'One or two sentences', 'ucf-content' ) },
-	],
-];
+const TEMPLATE = toBlocks( VARIATIONS[ 0 ]?.content ?? [] );
 
 /**
  * The frame's inner element, holding the blocks placed inside it.
@@ -42,8 +46,25 @@ function InnerBlocksArea( props: object ) {
 	return <div { ...useInnerBlocksProps( props, { template: TEMPLATE } ) } />;
 }
 
+// The sidebar, grouped as an editor thinks about a card.
+const PANELS: { title: string; fields: ChoiceKey[] }[] = [
+	{
+		title: __( 'Card', 'ucf-content' ),
+		fields: [ 'variant', 'composition' ],
+	},
+	{
+		title: __( 'Layout', 'ucf-content' ),
+		fields: [ 'contentAlign', 'contentPosition', 'aspectRatio' ],
+	},
+	{ title: __( 'Background image', 'ucf-content' ), fields: [ 'overlay' ] },
+];
+
 /**
- * The editor view: the frame, with its blocks editable inside it and its look in the sidebar.
+ * The editor view: the frame, with its blocks editable inside it and its settings in the
+ * sidebar.
+ *
+ * WHY the background image is picked in the sidebar only: it sits under the content and the
+ * overlay, so it can't be clicked on the canvas.
  *
  * @param props               The block's edit props.
  * @param props.attributes    Its attributes.
@@ -53,26 +74,97 @@ export default function Edit( {
 	attributes,
 	setAttributes,
 }: BlockEditProps< Attributes > ) {
+	const { imageSrc, imageAlt, imageId } = attributes;
+	const set = ( key: keyof Attributes ) => ( value: string ) =>
+		setAttributes( { [ key ]: value } );
+
+	const control = ( key: ChoiceKey ) => {
+		const { label, control: type, options } = CHOICES[ key ];
+		const props = {
+			label,
+			options: options.map( ( option ) => ( {
+				value: option.value as string,
+				label: option.label as string,
+			} ) ),
+			onChange: set( key ),
+		};
+		return type === 'radio' ? (
+			<RadioControl
+				key={ key }
+				{ ...props }
+				selected={ attributes[ key ] }
+			/>
+		) : (
+			<SelectControl
+				key={ key }
+				__next40pxDefaultSize
+				{ ...props }
+				value={ attributes[ key ] }
+			/>
+		);
+	};
+
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __( 'Card', 'ucf-content' ) }>
-					<RadioControl
-						label={ VARIANTS.label }
-						selected={ attributes.variant }
-						options={ VARIANTS.options.map( ( option ) => ( {
-							...option,
-						} ) ) }
-						onChange={ ( value ) =>
-							setAttributes( { variant: value as Variant } )
-						}
-					/>
-				</PanelBody>
+				{ PANELS.map( ( panel ) => (
+					<PanelBody key={ panel.title } title={ panel.title }>
+						{ panel.fields === PANELS[ 2 ]?.fields ? (
+							<div style={ { marginBottom: '16px' } }>
+								<ImageEdit
+									id={ imageId }
+									url={ imageSrc }
+									alt={ imageAlt }
+									label={ __(
+										'background image',
+										'ucf-content'
+									) }
+									onChange={ ( image: ImageValue ) =>
+										setAttributes( {
+											imageId: image.id,
+											imageSrc: image.url,
+											imageAlt: '',
+										} )
+									}
+								/>
+								{ imageSrc ? (
+									<WPButton
+										variant="link"
+										isDestructive
+										onClick={ () =>
+											setAttributes( {
+												imageSrc: '',
+												imageAlt: '',
+												imageId: 0,
+											} )
+										}
+									>
+										{ __( 'Remove image', 'ucf-content' ) }
+									</WPButton>
+								) : null }
+								<TextControl
+									__next40pxDefaultSize
+									label={ __(
+										'Alternative text',
+										'ucf-content'
+									) }
+									help={ __(
+										'Usually empty: under a tint or gradient the image is decoration.',
+										'ucf-content'
+									) }
+									value={ imageAlt }
+									onChange={ set( 'imageAlt' ) }
+								/>
+							</div>
+						) : null }
+						{ panel.fields.map( control ) }
+					</PanelBody>
+				) ) }
 			</InspectorControls>
 
 			<Card
 				{ ...useBlockProps() }
-				variant={ attributes.variant }
+				{ ...( attributes as CardProps ) }
 				innerAs={ InnerBlocksArea }
 			/>
 		</>

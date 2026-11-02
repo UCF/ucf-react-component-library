@@ -15,6 +15,7 @@ type Props = {
 	linkTarget: string;
 	variant: 'fill' | 'outline' | 'text';
 	fontSize: '' | 'small' | 'body';
+	className: string;
 };
 
 const config: PuckComponentConfig< Props > = {
@@ -48,12 +49,19 @@ const config: PuckComponentConfig< Props > = {
 				{ value: 'body', label: 'Large' },
 			],
 		},
+		// WHY: core's "Additional CSS class(es)", as on Heading and Paragraph. A component's
+		// template names a part with it (the Card's arrow link).
+		className: { type: 'text', label: 'CSS class' },
 	},
-	defaultProps: example as Props,
+	defaultProps: {
+		...( example as Omit< Props, 'className' > ),
+		className: '',
+	},
 	// FIX: only the Button's own props; Puck's `id`, `puck` and `editMode` would reach the
 	// markup (see PuckRenderProps in components/_config/puck.ts).
-	render: ( { text, url, linkTarget, variant, fontSize } ) => (
+	render: ( { text, url, linkTarget, variant, fontSize, className } ) => (
 		<Button
+			className={ className || undefined }
 			text={ text }
 			url={ url }
 			linkTarget={ linkTarget }

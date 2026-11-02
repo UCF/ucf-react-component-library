@@ -255,6 +255,12 @@ Decided 2026-11-02. A content component is one of two shapes:
   library's primitives under the keys the README gives (`Heading`, `Paragraph`, `Button`,
   `Image`). The plain Puck config starts empty, because a host may register the primitives
   under other names. Editors may change, move or remove anything in it.
+- **Designs are data.** Where a frame has several named designs (the Card's story, next step,
+  audience, pathway and media cards), they live in one list, `variations.ts`: each is the
+  frame's settings plus its parts by kind. WordPress registers each as a block variation
+  (`toBlocks()` maps parts to core blocks), Puck builds each with `withVariation( name )`
+  (`toPrimitives()` maps them to primitives), and the stories render them. A new design is a
+  new entry; tests check each reaches both hosts and uses only the frame's own settings.
 - **Parts are named by class.** Where a part has its own look (the Hero's title, the Stat's
   statement), the template sets a class on it (`PARTS` in the core) in both hosts: core's
   "Additional CSS class(es)" in WordPress, the primitive's CSS class field in Puck. The frame's

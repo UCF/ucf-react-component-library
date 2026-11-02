@@ -1,3 +1,10 @@
 {
-	"variant": "boxed"
+	"variant": "boxed",
+	"composition": "",
+	"imageSrc": "",
+	"imageAlt": "",
+	"overlay": "tint",
+	"contentAlign": "start",
+	"contentPosition": "top",
+	"aspectRatio": ""
 }

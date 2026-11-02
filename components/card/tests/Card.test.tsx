@@ -2,13 +2,14 @@
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
  * matches the committed snapshot. See components/stat/tests/Stat.test.tsx for why.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import Card, { type CardProps } from '../Card.tsx';
+import Card, { PARTS, type CardProps } from '../Card.tsx';
 import example from '../example.json';
-import type { Variant } from '../options.ts';
+import { VARIATIONS } from '../variations.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in adapters/wp/block.json.
@@ -17,7 +18,16 @@ const WP_WRAPPER = { className: 'wp-block-ucf-content-card' };
 const cases: Record< string, CardProps > = {
 	example: example as CardProps,
 	defaults: {},
-	ruled: { variant: 'ruled' as Variant },
+	// Each design's settings, with a background image where the design has one.
+	...Object.fromEntries(
+		VARIATIONS.map( ( variation ) => [
+			`the ${ variation.name } design`,
+			{
+				...( variation.settings as CardProps ),
+				imageSrc: variation.background ? '/photo.jpg' : '',
+			},
+		] )
+	),
 };
 
 describe( 'Card', () => {
@@ -47,4 +57,45 @@ describe( 'Card', () => {
 			'<div data-zone="" class="ucf-c-card__content"><p>Dropped in</p></div>'
 		);
 	} );
+
+	it( 'takes its own composition only when it has one', () => {
+		expect( renderToStaticMarkup( <Card /> ) ).not.toContain(
+			'ucf-composition-'
+		);
+		expect( renderToStaticMarkup( <Card composition="dark" /> ) ).toContain(
+			'ucf-c ucf-c-card ucf-composition-dark'
+		);
+	} );
+
+	// WHY: the image and overlay sit under the content. In the HTML they come first and the
+	// content last, so a screen reader meets the content as it would without them.
+	it( 'puts a background image and its overlay before the content, and nothing without one', () => {
+		const html = renderToStaticMarkup(
+			<Card imageSrc="/photo.jpg" imageId={ 7 } overlay="gradient" />
+		);
+		expect( html.indexOf( 'ucf-c-card__background' ) ).toBeLessThan(
+			html.indexOf( 'data-overlay="gradient"' )
+		);
+		expect( html.indexOf( 'data-overlay' ) ).toBeLessThan(
+			html.indexOf( 'ucf-c-card__content' )
+		);
+		expect( html ).toContain( 'wp-image-7' );
+		expect( renderToStaticMarkup( <Card /> ) ).not.toContain(
+			'ucf-c-card__background'
+		);
+	} );
+} );
+
+// WHY: a part class with no rule does nothing; an editor who picks it sees no change.
+it( 'styles every part class', () => {
+	const css = readFileSync(
+		new URL( '../style.css', import.meta.url ),
+		'utf8'
+	);
+	for ( const className of Object.values( PARTS ) ) {
+		expect( [ className, css.includes( `.${ className }` ) ] ).toEqual( [
+			className,
+			true,
+		] );
+	}
 } );

@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import {
+	PLACEHOLDER_ALT,
+	PLACEHOLDER_IMAGE,
+} from '../../../.storybook/placeholder.ts';
 import Image, { type ImageProps } from '../Image.tsx';
 import example from '../example.json';
 import '../style.css';
@@ -9,7 +13,11 @@ const meta = {
 	title: 'Primitives/Image',
 	tags: [ 'server' ],
 	component: Image,
-	args: example as ImageProps,
+	args: {
+		...( example as ImageProps ),
+		url: PLACEHOLDER_IMAGE,
+		alt: PLACEHOLDER_ALT,
+	},
 	argTypes: {
 		aspectRatio: {
 			control: 'inline-radio',

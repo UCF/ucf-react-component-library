@@ -190,7 +190,7 @@ Primitives are at `@ucf/components/primitives/{name}/puck`. Register them as `Bu
 `Heading` and `Paragraph`: the frames' starting templates name them by those keys.
 
 ```tsx
-import { withTemplate } from '@ucf/components/card/puck';
+import { withTemplate, withVariation } from '@ucf/components/card/puck';
 import heading from '@ucf/components/primitives/heading/puck';
 import image from '@ucf/components/primitives/image/puck';
 import paragraph from '@ucf/components/primitives/paragraph/puck';
@@ -203,6 +203,8 @@ const config = {
 		// A new Card starts with an image, a heading and a paragraph. With other keys,
 		// pass a template of your own: withTemplate( [ { type: 'MyHeading', props: {} } ] ).
 		Card: withTemplate(),
+		// Each UCF card design as its own Puck component (card/variations.ts).
+		PathwayCard: withVariation( 'pathway' ),
 	},
 };
 ```
