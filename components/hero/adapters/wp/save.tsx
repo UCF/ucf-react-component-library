@@ -2,6 +2,8 @@ import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
 import Hero, { type HeroProps } from '../../Hero.tsx';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 import type { Attributes } from './edit.tsx';
 
 /**
@@ -21,7 +23,10 @@ function InnerBlocksContent( props: Record< string, unknown > ) {
  */
 export default function save( { attributes }: BlockSaveProps< Attributes > ) {
 	// WHY without `align`: it is WordPress's own; useBlockProps.save() turns it into a class.
-	const { align, ...props } = attributes as Attributes & { align?: string };
+	const { align, ...props } = ownAttributes< HeroProps & { align?: string } >(
+		attributes,
+		metadata
+	);
 
 	return (
 		<Hero

@@ -1,7 +1,9 @@
 import { useBlockProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
-import FixedCard from '../../FixedCard.tsx';
+import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
+import { ownAttributes } from '../../../../components/_config/wp.ts';
+import metadata from './block.json';
 import type { Attributes } from './edit.tsx';
 
 /**
@@ -11,5 +13,10 @@ import type { Attributes } from './edit.tsx';
  * @param props.attributes Its attributes.
  */
 export default function save( { attributes }: BlockSaveProps< Attributes > ) {
-	return <FixedCard { ...useBlockProps.save() } { ...attributes } />;
+	return (
+		<FixedCard
+			{ ...useBlockProps.save() }
+			{ ...ownAttributes< FixedCardProps >( attributes, metadata ) }
+		/>
+	);
 }

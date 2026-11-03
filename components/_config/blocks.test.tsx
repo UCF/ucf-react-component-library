@@ -148,6 +148,59 @@ describe.each( blocks )(
 	}
 );
 
+// FIX: edit and save spread the attributes after useBlockProps(), so an editor's "Additional
+// CSS class(es)" replaced WordPress's merged className: the saved block lost its
+// `wp-block-*` class, and in the editor the block lost the classes it is selected by.
+describe.each( blocks.filter( ( block ) => ! block.dynamic ) )(
+	'$json.name with WordPress’s own attributes set',
+	( { json } ) => {
+		const anchor = Boolean(
+			( getBlockType( json.name )?.supports as { anchor?: boolean } )
+				?.anchor
+		);
+		const saved = () => {
+			const block = createBlock( json.name, {
+				className: 'editor-class',
+				...( anchor ? { anchor: 'editor-anchor' } : {} ),
+			} );
+			const root = new DOMParser()
+				.parseFromString( serialize( [ block ] ), 'text/html' )
+				.body.querySelector( '*' );
+			return { block, root };
+		};
+
+		test( 'keeps the block’s class and the editor’s class', () => {
+			const classes = [ ...( saved().root?.classList ?? [] ) ];
+			expect( classes ).toEqual(
+				expect.arrayContaining( [
+					`wp-block-${ json.name.replace( '/', '-' ) }`,
+					'editor-class',
+				] )
+			);
+		} );
+
+		test.runIf( anchor )(
+			'saves the anchor as its id, and no stray attribute',
+			() => {
+				const { root } = saved();
+				expect( root?.id ).toBe( 'editor-anchor' );
+				expect( root?.hasAttribute( 'anchor' ) ).toBe( false );
+			}
+		);
+
+		test( 'is valid against today’s save()', () => {
+			const [ parsed ] = parse( serialize( [ saved().block ] ) );
+			expect(
+				isValidBlockContent(
+					json.name,
+					parsed?.attributes ?? {},
+					parsed?.originalContent ?? ''
+				)
+			).toBe( true );
+		} );
+	}
+);
+
 // WHY its own test: a frame is only useful with blocks inside it, and a block that holds
 // others can save and parse its own markup correctly while losing what it holds.
 // WHY a Section and a Card inside: core's blocks aren't registered here, only ours; any

@@ -17,6 +17,8 @@ import type { ComponentType } from 'react';
 import ImageEdit from '../../../../primitives/image/adapters/wp/edit.tsx';
 import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
 import { CHOICES, type ChoiceKey } from '../../options.ts';
+import { ownAttributes } from '../../../../components/_config/wp.ts';
+import metadata from './block.json';
 
 // UPSTREAM: block-editor's type files are generated from JSDoc, and PlainText's has no props.
 const PlainText = UntypedPlainText as ComponentType< {
@@ -141,7 +143,7 @@ export default function Edit( {
 
 			<FixedCard
 				{ ...useBlockProps() }
-				{ ...attributes }
+				{ ...ownAttributes< FixedCardProps >( attributes, metadata ) }
 				// WHY no url here: see the note above.
 				url={ undefined }
 				title={ inline( 'title', __( 'Title', 'ucf-content' ) ) }

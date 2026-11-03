@@ -19,6 +19,8 @@ import ImageEdit, {
 import Hero, { PARTS, type HeroProps } from '../../Hero.tsx';
 import example from '../../example.json';
 import { CHOICES, TEXTS, type ChoiceKey, type TextKey } from '../../options.ts';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 
 // SYNC: the attributes in block.json: example.json's, and `imageId`, which only WordPress has.
 export type Attributes = {
@@ -180,6 +182,12 @@ export default function Edit( {
 		);
 	};
 
+	// WHY without `align`: useBlockProps() already turns it into a class; on the Hero it would be a
+	// stray HTML attribute.
+	const { align, ...heroProps } = ownAttributes<
+		HeroProps & { align?: string }
+	>( attributes, metadata );
+
 	return (
 		<>
 			<InspectorControls>
@@ -212,7 +220,7 @@ export default function Edit( {
 
 			<Hero
 				{ ...useBlockProps() }
-				{ ...( attributes as HeroProps ) }
+				{ ...heroProps }
 				media={ imagePicker( 'ucf-c-hero__image' ) }
 				innerAs={ InnerBlocksArea }
 			/>

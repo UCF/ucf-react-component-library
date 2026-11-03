@@ -11,6 +11,8 @@ import Highlight, { type HighlightProps } from '../../Highlight.tsx';
 import { CHOICES, type ChoiceKey } from '../../options.ts';
 import { VARIATIONS } from '../../variations.ts';
 import { toBlocks } from './blocks.ts';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 
 // SYNC: the attributes in block.json.
 export type Attributes = {
@@ -87,7 +89,7 @@ export default function Edit( {
 
 			<Highlight
 				{ ...useBlockProps() }
-				{ ...attributes }
+				{ ...ownAttributes< HighlightProps >( attributes, metadata ) }
 				innerAs={ InnerBlocksArea }
 			/>
 		</>

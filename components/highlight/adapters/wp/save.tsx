@@ -1,7 +1,9 @@
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
-import Highlight from '../../Highlight.tsx';
+import Highlight, { type HighlightProps } from '../../Highlight.tsx';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 import type { Attributes } from './edit.tsx';
 
 /**
@@ -23,7 +25,7 @@ export default function save( { attributes }: BlockSaveProps< Attributes > ) {
 	return (
 		<Highlight
 			{ ...useBlockProps.save() }
-			{ ...attributes }
+			{ ...ownAttributes< HighlightProps >( attributes, metadata ) }
 			innerAs={ InnerBlocksContent }
 		/>
 	);

@@ -20,6 +20,8 @@ import Card, { type CardProps } from '../../Card.tsx';
 import { CHOICES, type ChoiceKey } from '../../options.ts';
 import { VARIATIONS } from '../../variations.ts';
 import { toBlocks } from './blocks.ts';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 
 // SYNC: the attributes in block.json.
 export type Attributes = {
@@ -164,7 +166,7 @@ export default function Edit( {
 
 			<Card
 				{ ...useBlockProps() }
-				{ ...( attributes as CardProps ) }
+				{ ...ownAttributes< CardProps >( attributes, metadata ) }
 				innerAs={ InnerBlocksArea }
 			/>
 		</>

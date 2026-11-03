@@ -2,6 +2,8 @@ import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
 import Card, { type CardProps } from '../../Card.tsx';
+import { ownAttributes } from '../../../_config/wp.ts';
+import metadata from './block.json';
 import type { Attributes } from './edit.tsx';
 
 /**
@@ -23,7 +25,7 @@ export default function save( { attributes }: BlockSaveProps< Attributes > ) {
 	return (
 		<Card
 			{ ...useBlockProps.save() }
-			{ ...( attributes as CardProps ) }
+			{ ...ownAttributes< CardProps >( attributes, metadata ) }
 			innerAs={ InnerBlocksContent }
 		/>
 	);
