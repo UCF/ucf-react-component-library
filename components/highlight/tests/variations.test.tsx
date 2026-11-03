@@ -6,7 +6,9 @@
 import { getBlockVariations } from '@wordpress/blocks';
 import { describe, expect, it } from 'vitest';
 
+import metadata from '../adapters/wp/block.json';
 import '../adapters/wp/index.tsx';
+import example from '../example.json';
 import { CHOICES, type ChoiceKey } from '../options.ts';
 import { VARIATIONS } from '../variations.ts';
 
@@ -23,6 +25,24 @@ it( 'registers every design as a variation, the statement as the default', () =>
 } );
 
 describe.each( VARIATIONS )( 'the $name design', ( variation ) => {
+	// FIX: WordPress fills a setting a design leaves out from block.json's default; Puck and the
+	// stories fill it from example.json. Where those two differ (the Card's variant: plain, boxed),
+	// a design that left it out came out boxed in Puck and the stories only.
+	it( 'sets every setting whose default differs between hosts', () => {
+		const settings: Record< string, unknown > = variation.settings;
+		const differ = Object.entries( metadata.attributes )
+			.filter(
+				( [ key, attribute ] ) =>
+					key in example &&
+					attribute.default !==
+						( example as Record< string, unknown > )[ key ]
+			)
+			.map( ( [ key ] ) => key );
+		expect( differ.filter( ( key ) => ! ( key in settings ) ) ).toEqual(
+			[]
+		);
+	} );
+
 	it( 'starts with a block for each of its parts', () => {
 		const inWordPress = registered().find(
 			( item ) => item.name === variation.name

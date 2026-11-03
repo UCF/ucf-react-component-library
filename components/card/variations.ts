@@ -26,7 +26,12 @@ export type Part =
 	| { kind: 'link'; text: string; url: string }
 	| { kind: 'button'; text: string; url: string };
 
-/** The Card settings a design sets; the rest keep their defaults. */
+/**
+ * The Card settings a design sets; the rest keep their defaults.
+ *
+ * WHY every design sets `variant`: the block's default (plain) and example.json's (boxed)
+ * differ, and Puck and the stories start from example.json. tests/variations.test.tsx checks.
+ */
 export type CardSettings = Pick<
 	CardProps,
 	| 'variant'
@@ -97,6 +102,7 @@ export const VARIATIONS: Variation[] = [
 		description:
 			'A square tile: a photo under a tint, a name in capitals and a sentence.',
 		settings: {
+			variant: 'plain',
 			composition: 'gold',
 			overlay: 'tint',
 			contentAlign: 'center',
@@ -118,7 +124,7 @@ export const VARIATIONS: Variation[] = [
 		title: 'Card: Pathway',
 		description:
 			'A dark card: who it is for, a display title, a sentence and a link.',
-		settings: { composition: 'dark' },
+		settings: { variant: 'plain', composition: 'dark' },
 		content: [
 			{ kind: 'text', part: 'eyebrow', text: 'First-year' },
 			{
@@ -141,6 +147,7 @@ export const VARIATIONS: Variation[] = [
 		description:
 			'A photo under a gradient, a tag in the corner and a caption at the bottom.',
 		settings: {
+			variant: 'plain',
 			composition: 'dark',
 			overlay: 'gradient',
 			contentPosition: 'bottom',
