@@ -1,6 +1,7 @@
 /**
  * Editor entry: registers the Hero block.
  */
+import { cover } from '@wordpress/icons';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
 import '../../style.css';
@@ -13,7 +14,10 @@ import save from './save.tsx';
 // UPSTREAM: see the same casts in components/highlight/adapters/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
+// WHY icons here, not in block.json: block.json takes only a Dashicon name, and WordPress's own
+// icon set (@wordpress/icons, the one core's blocks use) has closer pictures.
 registerBlockType< Attributes >( blockMetadata, {
+	icon: cover,
 	// WHY inner blocks in the example: the copy is the Hero's inner blocks, so the inserter
 	// preview would show an empty band without them. The same copy as the Puck template.
 	example: {

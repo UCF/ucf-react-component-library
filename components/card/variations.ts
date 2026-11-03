@@ -39,6 +39,10 @@ export type CardSettings = Pick<
 
 export type Variation = {
 	name: string;
+	/**
+	 * Its name in the inserter and Puck, after the block's: "Card: Pathway". WHY the prefix: in
+	 * a search or a list of blocks, it says which block the design is.
+	 */
 	title: string;
 	description: string;
 	settings: CardSettings;
@@ -53,7 +57,7 @@ export type Variation = {
 export const VARIATIONS: Variation[] = [
 	{
 		name: 'story',
-		title: 'Story card',
+		title: 'Card: Story',
 		description: 'An image, a category and date, a title and a sentence.',
 		settings: { variant: 'plain' },
 		content: [
@@ -74,7 +78,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'next-step',
-		title: 'Next step card',
+		title: 'Card: Next step',
 		description: 'A boxed title, a sentence and one button.',
 		settings: { variant: 'boxed' },
 		content: [
@@ -89,7 +93,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'audience',
-		title: 'Audience tile',
+		title: 'Card: Audience tile',
 		description:
 			'A square tile: a photo under a tint, a name in capitals and a sentence.',
 		settings: {
@@ -111,7 +115,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'pathway',
-		title: 'Pathway card',
+		title: 'Card: Pathway',
 		description:
 			'A dark card: who it is for, a display title, a sentence and a link.',
 		settings: { composition: 'dark' },
@@ -133,7 +137,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'media',
-		title: 'Media tile',
+		title: 'Card: Media tile',
 		description:
 			'A photo under a gradient, a tag in the corner and a caption at the bottom.',
 		settings: {

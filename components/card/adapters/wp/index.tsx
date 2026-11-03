@@ -12,6 +12,14 @@ import {
 } from '@wordpress/blocks';
 
 import '../../../../primitives/image/style.css';
+import {
+	arrowRight,
+	button,
+	overlayText,
+	people,
+	postFeaturedImage,
+} from '@wordpress/icons';
+
 import '../../style.css';
 import example from '../../example.json';
 import { VARIATIONS } from '../../variations.ts';
@@ -23,7 +31,20 @@ import save from './save.tsx';
 // UPSTREAM: see the same casts in components/highlight/adapters/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
+// WHY icons here, not in block.json: block.json takes only a Dashicon name, and WordPress's own
+// icon set (@wordpress/icons, the one core's blocks use) has closer pictures.
+// Each design's icon, by its name in variations.ts: the shape of the design where it can.
+// variations.test.tsx checks every design has one.
+export const VARIATION_ICONS: Record< string, JSX.Element > = {
+	story: postFeaturedImage,
+	'next-step': button,
+	audience: people,
+	pathway: arrowRight,
+	media: overlayText,
+};
+
 registerBlockType< Attributes >( blockMetadata, {
+	icon: postFeaturedImage,
 	example: {
 		attributes: example,
 	} as unknown as BlockConfiguration< Attributes >[ 'example' ],
@@ -34,6 +55,7 @@ registerBlockType< Attributes >( blockMetadata, {
 		name: variation.name,
 		title: variation.title,
 		description: variation.description,
+		icon: VARIATION_ICONS[ variation.name ],
 		attributes: variation.settings,
 		innerBlocks: toBlocks( variation.content ),
 		isDefault: index === 0,

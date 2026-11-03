@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "ucf-content/highlight",
 	"title": "Highlight",
-	"category": "ucf",
+	"category": "ucf-content",
 	"description": "Something pulled out of the page to stand on its own: a fact, a key figure or a ranking, with its source. Pick a design or start from a statement.",
 	"keywords": [
 		"stat",

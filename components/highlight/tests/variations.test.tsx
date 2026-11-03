@@ -32,6 +32,16 @@ describe.each( VARIATIONS )( 'the $name design', ( variation ) => {
 		);
 	} );
 
+	// WHY: in the inserter, a design's icon and the block's name in its title say which block
+	// it is and how it looks (adapters/wp/index.tsx).
+	it( 'has its own icon, and a title that starts with the block’s name', () => {
+		const inWordPress = registered().find(
+			( item ) => item.name === variation.name
+		);
+		expect( inWordPress?.icon ).toBeTruthy();
+		expect( inWordPress?.title ).toMatch( /^Highlight: / );
+	} );
+
 	// WHY: a value that isn't a choice saves, but no rule matches it and the sidebar shows
 	// nothing selected.
 	it( 'sets only values the Highlight offers', () => {

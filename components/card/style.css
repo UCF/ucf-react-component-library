@@ -253,11 +253,24 @@
 }
 
 /*
- * FIX: a margin, not a space in `content`: in Puck the link is the Button primitive, a flex
- * box, which drops a pseudo-element's leading space.
+ * SPEC: the arrow is the UCF icon set's `arrow` (the theme's assets/icons/arrow.svg, Font
+ * Awesome Free 6.7.2 Solid, CC BY 4.0, https://fontawesome.com), drawn as a mask so it takes
+ * the link's color on every composition and on hover.
+ * WHY an SVG, not a "→" character: a text arrow is drawn by whatever font is in use, so its
+ * weight, size and height change with the face (thin and low in the mono one). The icon is
+ * the same everywhere, and matches the theme's other icons.
+ * A11Y: it is decoration with no text, so a screen reader reads the link's words only.
+ * SYNC: the theme's arrow.svg. If the theme swaps to Sharp Solid, swap the path here too.
  */
 .ucf-c-card a.ucf-c-card__link::after,
 .ucf-c-card .ucf-c-card__link a::after {
-	content: "→";
-	margin-inline-start: 0.4em;
+	background-color: currentcolor;
+	content: "";
+	display: inline-block;
+	height: 0.85em;
+	margin-inline-start: 0.5em;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath d='M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+	vertical-align: -0.1em;
+	width: 0.75em;
 }

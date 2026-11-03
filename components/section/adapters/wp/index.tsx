@@ -1,6 +1,7 @@
 /**
  * Editor entry: registers the Section block.
  */
+import { stretchFullWidth } from '@wordpress/icons';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
 import '../../style.css';
@@ -12,7 +13,10 @@ import save from './save.tsx';
 // UPSTREAM: see the same cast in components/highlight/adapters/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
+// WHY icons here, not in block.json: block.json takes only a Dashicon name, and WordPress's own
+// icon set (@wordpress/icons, the one core's blocks use) has closer pictures.
 registerBlockType< Attributes >( blockMetadata, {
+	icon: stretchFullWidth,
 	// WHY blocks inside: the inserter preview should show what a Section is for. The same
 	// heading and paragraph a new Section starts with (TEMPLATE in edit.tsx).
 	example: {

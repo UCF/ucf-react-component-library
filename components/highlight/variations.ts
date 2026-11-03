@@ -18,6 +18,10 @@ export type Part =
 
 export type Variation = {
 	name: string;
+	/**
+	 * Its name in the inserter and Puck, after the block's: "Card: Pathway". WHY the prefix: in
+	 * a search or a list of blocks, it says which block the design is.
+	 */
 	title: string;
 	description: string;
 	settings: Pick< HighlightProps, 'rule' | 'contentAlign' >;
@@ -27,7 +31,7 @@ export type Variation = {
 export const VARIATIONS: Variation[] = [
 	{
 		name: 'statement',
-		title: 'Statement',
+		title: 'Highlight: Statement',
 		description:
 			'A fact as a full sentence, why it matters, and its source.',
 		settings: { rule: 'top' },
@@ -51,7 +55,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'key-figure',
-		title: 'Key figure',
+		title: 'Highlight: Key figure',
 		description:
 			'A date, code or number set large, what it is, and its source.',
 		settings: { rule: 'top' },
@@ -67,7 +71,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'bracket',
-		title: 'Bracketed statement',
+		title: 'Highlight: Bracket',
 		description: 'A statement and its detail inside an accent bracket.',
 		settings: { rule: 'corner' },
 		content: [
@@ -81,7 +85,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'side-rule',
-		title: 'Side-rule statement',
+		title: 'Highlight: Side rule',
 		description:
 			'A statement beside an accent rule, its detail, and a short credit.',
 		settings: { rule: 'side' },
@@ -105,7 +109,7 @@ export const VARIATIONS: Variation[] = [
 	},
 	{
 		name: 'centered',
-		title: 'Centered figure',
+		title: 'Highlight: Centered',
 		description:
 			'A large figure or a logo, a short bar, a sentence and a credit, centered.',
 		settings: { rule: 'divider', contentAlign: 'center' },

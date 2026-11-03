@@ -286,7 +286,9 @@ const blockJson = ( n, attributes, extra ) =>
 			apiVersion: 3,
 			name: n.block,
 			title: n.title,
-			category: 'ucf',
+			// SYNC: a block's category is its kind's (ucf_components_block_category() in
+			// plugins/shared/shared.php). An interactive block is the one rendered by render.php.
+			category: extra.render ? 'ucf-interactive' : 'ucf-content',
 			description: `The ${ n.title }.`,
 			keywords: [ n.title.toLowerCase() ],
 			textdomain: n.plugin,

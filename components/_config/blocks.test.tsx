@@ -33,6 +33,7 @@ import.meta.glob( '../*/adapters/wp/index.tsx', { eager: true } );
 
 type BlockJson = {
 	name: string;
+	category: string;
 	render?: string;
 	attributes: Record< string, { default?: unknown } >;
 };
@@ -81,6 +82,16 @@ describe.each( blocks )(
 	( { component, json, dynamic, cases } ) => {
 		test( 'registers', () => {
 			expect( getBlockType( json.name ) ).toBeDefined();
+		} );
+
+		// WHY: the inserter groups blocks by kind, as Storybook does: an interactive block (one
+		// render.php renders) in UCF Interactive, the rest in UCF Content (plugins/shared).
+		// WHY block.json, not the registered block: the categories are registered in PHP, so
+		// here WordPress drops a category it doesn't know.
+		test( 'sits in its kind’s inserter category', () => {
+			expect( json.category ).toBe(
+				dynamic ? 'ucf-interactive' : 'ucf-content'
+			);
 		} );
 
 		describe.each( Object.entries( cases ) )( '%s', ( _, attributes ) => {

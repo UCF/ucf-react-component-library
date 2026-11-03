@@ -132,7 +132,9 @@ names go away when a release pipeline replaces them.
 ### In WordPress
 
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
-activate, then add blocks from the **UCF** category of the inserter.
+activate, then add blocks from the inserter's **UCF Content** and **UCF Interactive**
+categories (grouped by kind, as Storybook groups them). A design such as "Card: Pathway" is
+a variation of its block, listed under the block's name.
 
 To work on blocks in a development WordPress, see "Working against local sites" below.
 
@@ -292,8 +294,9 @@ passes it to the core as props. A host gets a folder in `adapters/` only when it
 besides props.
 
 - **`adapters/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
-  **UCF** inserter category) and declares the attributes WordPress stores. `index.tsx`
-  registers it. `edit.tsx` renders the core in the editor, with fields in its slots. Then,
+  **UCF Content** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
+  registers it, with its icon from `@wordpress/icons` (and its designs as variations, if it
+  has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
       in the post, which is why a content component's markup is frozen once a site uses it.
