@@ -125,17 +125,58 @@
 }
 
 /*
- * A11Y: the lower half, where the caption sits, is at least 70% black, so white text clears
- * 4.5:1 over even a bright photo (WCAG 1.4.3). FIX: a 35% to 85% fade looked fine on a dark
- * sample and left a caption over sunlit water unreadable.
+ * SPEC: a gradient darkest on the content's side of the card (the bottom, under a Media
+ * tile's caption), clear on the far side so the photo shows.
+ * WHY the card's own surface, not black: the text takes the card's colors (its composition,
+ * or the section's), and those are only legible on that surface. Black under a light
+ * section's dark text failed. The Media tile sets Dark, so its gradient is still near-black.
+ * FIX: a 35% to 85% fade looked fine on a dark sample and left a caption over sunlit water
+ * unreadable.
  */
 .ucf-c-card__overlay[data-overlay="gradient"] {
+	/* WHY toward the top by default: Card.tsx leaves out `data-position` for `top`. */
+	--ucc-gradient-toward: top;
 	background: linear-gradient(
-		180deg,
+		to var(--ucc-gradient-toward),
 		transparent 20%,
-		color-mix(in srgb, var(--ucf-color-black) 70%, transparent) 50%,
-		color-mix(in srgb, var(--ucf-color-black) 90%, transparent) 100%
+		color-mix(in srgb, var(--ucf-c-surface) 70%, transparent) 50%,
+		color-mix(in srgb, var(--ucf-c-surface) 90%, transparent) 100%
 	);
+}
+
+.ucf-c-card[data-position="bottom"]
+	> .ucf-c-card__overlay[data-overlay="gradient"] {
+	--ucc-gradient-toward: bottom;
+}
+
+.ucf-c-card[data-position="center"]
+	> .ucf-c-card__overlay[data-overlay="gradient"] {
+	background: linear-gradient(
+		to bottom,
+		transparent,
+		color-mix(in srgb, var(--ucf-c-surface) 70%, transparent) 30% 70%,
+		transparent
+	);
+}
+
+/*
+ * A11Y: the text's own ground, wherever it sits and however long it runs, so it clears 4.5:1
+ * over any photo, black to white (WCAG 1.4.3). The gradient can't promise that: a caption
+ * that wraps climbs past its dark band. The shadow carries the ground out over the card's
+ * padding and fades it, so it reads as part of the gradient, not a box.
+ * WHY 85%: the least that passes. The eyebrow's accent text has the least contrast to spare;
+ * at 75% it fell to 3.5:1 on three compositions.
+ * stories/Card.stories.tsx (CaptionOverPhoto) measures it on every composition.
+ */
+.ucf-c-card__overlay[data-overlay="gradient"] ~ .ucf-c-card__content {
+	--ucc-text-ground: color-mix(
+		in srgb,
+		var(--ucf-c-surface) 85%,
+		transparent
+	);
+	background-color: var(--ucc-text-ground);
+	box-shadow: 0 0 var(--ucf-spacing-60) var(--ucf-spacing-50)
+		var(--ucc-text-ground);
 }
 
 /* ── Parts ─────────────────────────────────────────────────────────────── */

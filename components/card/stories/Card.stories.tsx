@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 
 import Button from '../../../primitives/button/Button.tsx';
 import '../../../primitives/button/style.css';
@@ -198,3 +199,125 @@ export const MediaGrid: Story = grid( 'media', 4 );
 
 /** Under a heavy top rule. */
 export const Ruled: Story = { args: { variant: 'ruled' } };
+
+/**
+ * A color as it shows over a solid ground, read back as pixels. WHY a canvas: Chromium
+ * reports `color-mix()` as `color(srgb …)`, not `rgb()`, and the canvas reads either.
+ *
+ * @param color  A CSS color, perhaps translucent.
+ * @param ground The opaque color under it.
+ */
+function over( color: string, ground: string ) {
+	const context = document
+		.createElement( 'canvas' )
+		.getContext( '2d', { willReadFrequently: true } );
+	if ( ! context ) {
+		throw new Error( 'no canvas' );
+	}
+	context.fillStyle = ground;
+	context.fillRect( 0, 0, 1, 1 );
+	context.fillStyle = color;
+	context.fillRect( 0, 0, 1, 1 );
+	return [ ...context.getImageData( 0, 0, 1, 1 ).data.slice( 0, 3 ) ];
+}
+
+/**
+ * WCAG 2's contrast ratio of two opaque colors.
+ *
+ * @param a One color's red, green and blue, 0 to 255.
+ * @param b The other's.
+ */
+function contrast( a: number[], b: number[] ) {
+	const luminance = ( rgb: number[] ) => {
+		const [ r = 0, g = 0, b2 = 0 ] = rgb.map( ( value ) => {
+			const c = value / 255;
+			return c <= 0.04045 ? c / 12.92 : ( ( c + 0.055 ) / 1.055 ) ** 2.4;
+		} );
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b2;
+	};
+	const [ light, dark ] = [ luminance( a ), luminance( b ) ].sort(
+		( x, y ) => y - x
+	);
+	return ( ( light ?? 0 ) + 0.05 ) / ( ( dark ?? 0 ) + 0.05 );
+}
+
+/**
+ * A caption over a photo, at each position, on whatever section the story sits on.
+ *
+ * A11Y: axe can't measure text over an image, so this does. Whatever the photo, the text must
+ * clear 4.5:1 (WCAG 1.4.3): each line of text, over the ground the card gives it, laid over
+ * pure black and over pure white, the two photos furthest apart. FIX: a black gradient, clear
+ * at the top, left text placed at the top on bare photo, and dark text from a light section on
+ * black.
+ */
+export const CaptionOverPhoto: Story = {
+	args: {
+		imageSrc: PLACEHOLDER_IMAGE,
+		overlay: 'gradient',
+		aspectRatio: '4/3',
+	},
+	parameters: { cardWidth: 'none' },
+	render: ( args ) => (
+		<div
+			style={ {
+				display: 'grid',
+				gap: '1.5rem',
+				gridTemplateColumns:
+					'repeat(auto-fit, minmax(min(100%, 16rem), 1fr))',
+			} }
+		>
+			{ ( [ 'top', 'center', 'bottom' ] as const ).map( ( position ) => (
+				<Card key={ position } { ...args } contentPosition={ position }>
+					<Paragraph
+						content="Engineering"
+						className={ PARTS.eyebrow }
+					/>
+					<Heading
+						content="A caption long enough to wrap onto a third line on a narrow tile"
+						level={ 3 }
+						className={ PARTS.title }
+					/>
+					<Paragraph
+						content="A materials pour. You do it, nobody demonstrates it at you."
+						className={ PARTS.description }
+					/>
+				</Card>
+			) ) }
+		</div>
+	),
+	play: async ( { canvasElement } ) => {
+		const failures: string[] = [];
+		for ( const content of canvasElement.querySelectorAll< HTMLElement >(
+			'.ucf-c-card__content'
+		) ) {
+			const ground = getComputedStyle( content ).backgroundColor;
+			for ( const text of content.querySelectorAll< HTMLElement >(
+				'*'
+			) ) {
+				const own = [ ...text.childNodes ].some(
+					( node ) =>
+						node.nodeType === Node.TEXT_NODE &&
+						node.textContent?.trim()
+				);
+				if ( ! own ) {
+					continue;
+				}
+				const color = getComputedStyle( text ).color;
+				for ( const photo of [ 'black', 'white' ] ) {
+					const behind = over( ground, photo );
+					const ratio = contrast( over( color, photo ), behind );
+					if ( ratio < 4.5 ) {
+						failures.push(
+							`${ text.className } at ${
+								content
+									.closest( '[data-position]' )
+									?.getAttribute( 'data-position' ) ?? 'top'
+							} over a ${ photo } photo: ${ ratio.toFixed( 2 ) }:1`
+						);
+					}
+				}
+			}
+		}
+		await expect( failures ).toEqual( [] );
+	},
+};
