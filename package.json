@@ -11,15 +11,15 @@
 		"./ucf.css": "./dist/ucf.css",
 		"./elements.css": "./dist/elements.css",
 		"./theme/*": "./dist/theme/*",
-		"./stat": {
-			"types": "./dist/components/stat/index.d.ts",
-			"default": "./dist/components/stat/index.js"
+		"./highlight": {
+			"types": "./dist/components/highlight/index.d.ts",
+			"default": "./dist/components/highlight/index.js"
 		},
-		"./stat/puck": {
-			"types": "./dist/components/stat/adapters/puck/config.d.ts",
-			"default": "./dist/components/stat/adapters/puck/config.js"
+		"./highlight/puck": {
+			"types": "./dist/components/highlight/adapters/puck/config.d.ts",
+			"default": "./dist/components/highlight/adapters/puck/config.js"
 		},
-		"./stat/example.json": "./dist/components/stat/example.json",
+		"./highlight/example.json": "./dist/components/highlight/example.json",
 		"./section": {
 			"types": "./dist/components/section/index.d.ts",
 			"default": "./dist/components/section/index.js"

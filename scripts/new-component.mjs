@@ -11,7 +11,7 @@
  *
  * Asks for whichever of kind and plugin is missing when run in a terminal.
  *
- * It writes components/{name}/ (or primitives/{name}/), a working copy of the closest of `stat`,
+ * It writes components/{name}/ (or primitives/{name}/), a working copy of the closest of `highlight`,
  * `degree-finder` and `button` reduced to one prop, and adds it to every list that names
  * components by hand: package.json `exports`, the plugin's plugin.json, and the lists in
  * components/_config/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
@@ -276,7 +276,7 @@ function addPuckConfig( source, file, n ) {
 }
 
 // ── Templates ────────────────────────────────────────────────────────────────────────────
-// SYNC: modeled on components/stat (content) and components/degree-finder (interactive). When
+// SYNC: modeled on components/highlight (content) and components/degree-finder (interactive). When
 // a convention changes there, change it here too.
 
 const blockJson = ( n, attributes, extra ) =>
@@ -388,7 +388,7 @@ export const Default: Story = {};
 `,
 		[ `tests/${ n.Name }.test.tsx` ]: `/**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
- * matches the committed snapshot. See components/stat/tests/Stat.test.tsx for why.
+ * matches the committed snapshot. See components/highlight/tests/Highlight.test.tsx for why.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -460,7 +460,7 @@ import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';
 import save from './save.tsx';
 
-// UPSTREAM: see the same casts in components/stat/adapters/wp/index.tsx.
+// UPSTREAM: see the same casts in components/highlight/adapters/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {
@@ -686,7 +686,7 @@ import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';
 
-// UPSTREAM: see the same cast in components/stat/adapters/wp/index.tsx.
+// UPSTREAM: see the same cast in components/highlight/adapters/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {

@@ -31,16 +31,18 @@ import hero, {
 import section, {
 	withTemplate as sectionWithTemplate,
 } from '../section/adapters/puck/config.tsx';
-import stat, {
-	withTemplate as statWithTemplate,
-} from '../stat/adapters/puck/config.tsx';
+import highlight, {
+	withTemplate as highlightWithTemplate,
+	withVariation as highlightWithVariation,
+} from '../highlight/adapters/puck/config.tsx';
+import { VARIATIONS as HIGHLIGHT_VARIATIONS } from '../highlight/variations.ts';
 import type { PuckComponentConfig } from './puck.ts';
 
 type PropsOf< Config > =
 	Config extends PuckComponentConfig< infer Props > ? Props : never;
 
 const CONFIGS = {
-	Stat: stat,
+	Highlight: highlight,
 	'Degree Finder': degreeFinder,
 	Section: section,
 	Hero: hero,
@@ -53,7 +55,7 @@ const CONFIGS = {
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
 // the config that broke.
-stat satisfies ComponentConfig< PropsOf< typeof stat > >;
+highlight satisfies ComponentConfig< PropsOf< typeof highlight > >;
 degreeFinder satisfies ComponentConfig< PropsOf< typeof degreeFinder > >;
 section satisfies ComponentConfig< PropsOf< typeof section > >;
 hero satisfies ComponentConfig< PropsOf< typeof hero > >;
@@ -65,7 +67,7 @@ paragraph satisfies ComponentConfig< PropsOf< typeof paragraph > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {
-	id: 'Stat-1234',
+	id: 'Highlight-1234',
 	editMode: true,
 	puck: {
 		isEditing: true,
@@ -167,8 +169,20 @@ describe.each< TemplateCase >( [
 				),
 			] as TemplateCase
 	),
+	// Each highlight design (highlight/variations.ts), as Puck builds it.
+	...HIGHLIGHT_VARIATIONS.map( ( variation ): TemplateCase => [
+		`Highlight's ${ variation.name } design`,
+		() => highlightWithVariation( variation.name ),
+		variation.content.map( ( part ) =>
+			part.kind === 'logo' ? 'Image' : 'Paragraph'
+		),
+	] ),
 	[ 'Section', sectionWithTemplate, [ 'Heading', 'Paragraph' ] ],
-	[ 'Stat', statWithTemplate, [ 'Paragraph', 'Paragraph', 'Paragraph' ] ],
+	[
+		'Highlight',
+		highlightWithTemplate,
+		[ 'Paragraph', 'Paragraph', 'Paragraph' ],
+	],
 	[
 		'Hero',
 		heroWithTemplate,

@@ -103,7 +103,7 @@ npm install ./${ tgz }
 Then import components and the one stylesheet:
 
 \`\`\`tsx
-import { Stat } from '@ucf/components/stat';
+import { Highlight } from '@ucf/components/highlight';
 import '@ucf/components/ucf.css';
 \`\`\`
 

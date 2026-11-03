@@ -2,7 +2,7 @@
  * CONTEXT: the shape of a Puck component config, written out here so the library does not
  * depend on Puck.
  *
- * A Puck site imports a component's config (`@ucf/components/stat/puck`) and adds it to its
+ * A Puck site imports a component's config (`@ucf/components/highlight/puck`) and adds it to its
  * own `config.components`. Puck stores the props as JSON and calls `render` on every request,
  * so a Puck host has none of WordPress's saved-markup limits.
  *
@@ -56,7 +56,7 @@ export type PuckRenderInput< Props > = {
  * What Puck passes to `render` besides the component's own props.
  *
  * WHY listed: `render` must not hand these to the component. A component that spreads its
- * other props onto its root element (Stat does) would put them in the markup.
+ * other props onto its root element (Highlight does) would put them in the markup.
  */
 export type PuckRenderProps = {
 	id?: string;

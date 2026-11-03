@@ -75,6 +75,7 @@ export function toPrimitives( parts: Part[] ): PuckSlot {
 						url: imageExample.url,
 						alt: '',
 						aspectRatio: part.aspectRatio,
+						className: '',
 					},
 				};
 			case 'heading':

@@ -44,7 +44,7 @@ const examples = import.meta.glob< Record< string, string > >(
 	{ eager: true, import: 'default' }
 );
 
-// `../stat/adapters/wp/block.json` → `stat`.
+// `../highlight/adapters/wp/block.json` → `highlight`.
 const componentOf = ( file: string ) => file.split( '/' )[ 1 ] ?? file;
 
 // The file every component must have, or a clear failure naming it.
@@ -80,8 +80,8 @@ test( 'finds every component', () => {
 		'card',
 		'degree-finder',
 		'hero',
+		'highlight',
 		'section',
-		'stat',
 	] );
 } );
 

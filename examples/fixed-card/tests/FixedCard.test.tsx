@@ -1,6 +1,6 @@
 /**
  * The Card's markup contract: WordPress's serializer and React DOM's give the same HTML, and it
- * matches the snapshot. See components/stat/tests/Stat.test.tsx for why. Then the rules that
+ * matches the snapshot. See components/highlight/tests/Highlight.test.tsx for why. Then the rules that
  * make the card accessible, which a snapshot alone wouldn't explain if one broke.
  */
 import { describe, expect, it } from 'vitest';

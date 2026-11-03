@@ -12,6 +12,7 @@ type Props = {
 	url: string;
 	alt: string;
 	aspectRatio: NonNullable< ImageProps[ 'aspectRatio' ] >;
+	className: string;
 };
 
 export const ASPECT_RATIOS = [
@@ -32,12 +33,23 @@ const config: PuckComponentConfig< Props > = {
 			label: 'Aspect ratio',
 			options: ASPECT_RATIOS,
 		},
+		// WHY: core's "Additional CSS class(es)", as on Heading and Paragraph. A component's
+		// template names a part with it (the Highlight's logo).
+		className: { type: 'text', label: 'CSS class' },
 	},
-	defaultProps: example as Props,
+	defaultProps: {
+		...( example as Omit< Props, 'className' > ),
+		className: '',
+	},
 	// FIX: only the Image's own props; Puck's `id`, `puck` and `editMode` would reach the
 	// markup, and Puck's `id` would even be read as the attachment ID.
-	render: ( { url, alt, aspectRatio } ) => (
-		<Image url={ url } alt={ alt } aspectRatio={ aspectRatio } />
+	render: ( { url, alt, aspectRatio, className } ) => (
+		<Image
+			className={ className || undefined }
+			url={ url }
+			alt={ alt }
+			aspectRatio={ aspectRatio }
+		/>
 	),
 };
 

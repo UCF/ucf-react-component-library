@@ -66,7 +66,7 @@ components/        one self-contained folder per component
   _config/         the tests every component must pass, and the Puck config shape (written
                    out so the library needs no Puck dependency)
   section/         the band other components sit in: sets their composition
-  stat/            a content component and a frame: works without JavaScript, saved as HTML
+  highlight/       a content component and a frame: works without JavaScript, saved as HTML
   degree-finder/   an interactive component: built in the browser
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
@@ -74,7 +74,7 @@ examples/          reference code, not shipped: typechecked, linted and tested, 
   flexible-card/   the same Card as a frame (a copy of the shipped Card), to compare with
 plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
-  ucf-content/     plugin.json lists its blocks: section, stat, hero, card
+  ucf-content/     plugin.json lists its blocks: section, highlight, hero, card
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
@@ -157,15 +157,15 @@ npm install ./ucf-components-{version}.tgz
 
 ```tsx
 import { Section } from '@ucf/components/section';
-import { Stat } from '@ucf/components/stat';
+import { Highlight } from '@ucf/components/highlight';
 import { DegreeFinder } from '@ucf/components/degree-finder';
 import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, every component
 import '@ucf/components/elements.css'; // optional: the block theme's headings and copy, in a Section
 
 <Section composition="dark">
-	<Stat>
-		<p className="ucf-c-stat__statement">Florida’s largest university</p>
-	</Stat>
+	<Highlight>
+		<p className="ucf-c-highlight__statement">Florida’s largest university</p>
+	</Highlight>
 </Section>
 <Section composition="light" width="wide">
 	<DegreeFinder programType="master" />
@@ -177,11 +177,15 @@ config is the default export of `@ucf/components/{name}/puck`:
 
 ```tsx
 import section from '@ucf/components/section/puck';
-import stat from '@ucf/components/stat/puck';
+import highlight from '@ucf/components/highlight/puck';
 import degreeFinder from '@ucf/components/degree-finder/puck';
 
 const config = {
-	components: { Section: section, Stat: stat, DegreeFinder: degreeFinder },
+	components: {
+		Section: section,
+		Highlight: highlight,
+		DegreeFinder: degreeFinder,
+	},
 };
 // Section has a slot: other components are dropped inside it and take on its composition.
 ```
@@ -266,7 +270,7 @@ components/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `stat`               | **Interactive (client)**: `degree-finder`      |
+|                 | **Content (server)**: `highlight`          | **Interactive (client)**: `degree-finder`      |
 | --------------- | ------------------------------------------ | ---------------------------------------------- |
 | Its HTML        | Must exist before JavaScript runs          | Built in the browser                           |
 | The core may    | Take props and return markup, nothing else | Hold state, run effects, fetch data            |
@@ -275,7 +279,7 @@ HTML is the same everywhere. What it may do depends on its kind:
 | Extra files     | `example.json`: sample props               | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in as a prop, a **slot**: a frame's `innerAs` (the
-Section, Hero, Stat, Card) takes WordPress's inner-blocks element or Puck's slot, and
+Section, Hero, Highlight, Card) takes WordPress's inner-blocks element or Puck's slot, and
 defaults to a `<div>` elsewhere; the Card's `title` takes a string when saved and a text field
 in the WordPress editor. A core never imports a host or checks which one it is in. If it needs
 something a host has, add a slot.
@@ -370,7 +374,7 @@ adapters/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render
 ```
 
 Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
-`tests/{Name}.test.tsx`, the markup contract (copy `stat/tests/Stat.test.tsx`). For interactive: `defaults.ts`,
+`tests/{Name}.test.tsx`, the markup contract (copy `highlight/tests/Highlight.test.tsx`). For interactive: `defaults.ts`,
 `client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
 `fetch`) and `sample-client.ts` (the same interface with no network, for stories).
 

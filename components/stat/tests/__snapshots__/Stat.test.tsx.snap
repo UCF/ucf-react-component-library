@@ -1,5 +1,0 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`Stat > renders the same in WordPress and React: empty 1`] = `"<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"></div></div>"`;
-
-exports[`Stat > renders the same in WordPress and React: the template’s parts 1`] = `"<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"><p class="ucf-c-stat__statement">Two million square feet of research space</p><p class="ucf-c-stat__source">Source: UCF Research</p></div></div>"`;

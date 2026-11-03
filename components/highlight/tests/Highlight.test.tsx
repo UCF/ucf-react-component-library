@@ -10,18 +10,27 @@
  *
  * The snapshot is also the markup a non-React host copies to render a stat itself.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import Stat, { PARTS, type StatProps } from '../Stat.tsx';
+import Highlight, { PARTS, type HighlightProps } from '../Highlight.tsx';
+import { VARIATIONS } from '../variations.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in adapters/wp/block.json.
-const WP_WRAPPER = { className: 'wp-block-ucf-content-stat' };
+const WP_WRAPPER = { className: 'wp-block-ucf-content-highlight' };
 
-const cases: Record< string, StatProps > = {
+const cases: Record< string, HighlightProps > = {
 	empty: {},
+	// Each design's settings.
+	...Object.fromEntries(
+		VARIATIONS.map( ( variation ) => [
+			`the ${ variation.name } design`,
+			variation.settings as HighlightProps,
+		] )
+	),
 	'the template’s parts': {
 		children: (
 			<>
@@ -34,10 +43,10 @@ const cases: Record< string, StatProps > = {
 	},
 };
 
-describe( 'Stat', () => {
+describe( 'Highlight', () => {
 	for ( const [ name, props ] of Object.entries( cases ) ) {
 		it( `renders the same in WordPress and React: ${ name }`, () => {
-			const element = <Stat { ...WP_WRAPPER } { ...props } />;
+			const element = <Highlight { ...WP_WRAPPER } { ...props } />;
 			const html = renderToStaticMarkup( element );
 
 			expect( renderToString( element ) ).toBe( html );
@@ -45,7 +54,7 @@ describe( 'Stat', () => {
 		} );
 	}
 
-	// WHY: WordPress and Puck each edit the content through their own element. If the Stat
+	// WHY: WordPress and Puck each edit the content through their own element. If the Highlight
 	// rendered its children anywhere else, blocks dropped in would land outside the frame.
 	it( 'renders its content in the element a host passes as innerAs', () => {
 		const Zone = ( props: object ) => (
@@ -53,8 +62,24 @@ describe( 'Stat', () => {
 				<p>Dropped in</p>
 			</div>
 		);
-		expect( renderToStaticMarkup( <Stat innerAs={ Zone } /> ) ).toContain(
-			'<div data-zone="" class="ucf-c-stat__content"><p>Dropped in</p></div>'
+		expect(
+			renderToStaticMarkup( <Highlight innerAs={ Zone } /> )
+		).toContain(
+			'<div data-zone="" class="ucf-c-highlight__content"><p>Dropped in</p></div>'
 		);
 	} );
+} );
+
+// WHY: a part class with no rule does nothing; an editor who picks it sees no change.
+it( 'styles every part class', () => {
+	const css = readFileSync(
+		new URL( '../style.css', import.meta.url ),
+		'utf8'
+	);
+	for ( const className of Object.values( PARTS ) ) {
+		expect( [ className, css.includes( `.${ className }` ) ] ).toEqual( [
+			className,
+			true,
+		] );
+	}
 } );

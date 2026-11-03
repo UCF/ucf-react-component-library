@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Paragraph from '../../../primitives/paragraph/Paragraph.tsx';
 import '../../../primitives/paragraph/style.css';
-import Stat, { PARTS } from '../../stat/Stat.tsx';
-import '../../stat/style.css';
+import Highlight, { PARTS } from '../../highlight/Highlight.tsx';
+import '../../highlight/style.css';
 import Section from '../Section.tsx';
 import type { Composition } from '../compositions.ts';
 import '../style.css';
@@ -38,7 +38,7 @@ const meta = {
 				A paragraph of body copy, at the reading measure, on the band’s
 				own background.
 			</p>
-			<Stat>
+			<Highlight>
 				<Paragraph
 					className={ PARTS.statement }
 					content="Florida’s largest university, with 70,674 students"
@@ -47,7 +47,7 @@ const meta = {
 					className={ PARTS.source }
 					content="Source: UCF Facts, fall 2025"
 				/>
-			</Stat>
+			</Highlight>
 		</Section>
 	),
 } satisfies Meta< typeof Section >;

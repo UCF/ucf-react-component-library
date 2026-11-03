@@ -1,6 +1,6 @@
 /**
  * The Hero's markup contract: WordPress's serializer and React DOM's give the same HTML, and it
- * matches the snapshot. See components/stat/tests/Stat.test.tsx for why.
+ * matches the snapshot. See components/highlight/tests/Highlight.test.tsx for why.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';

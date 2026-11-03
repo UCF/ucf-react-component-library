@@ -2,7 +2,7 @@
  * CONTEXT: builds the npm package, `@ucf/components`, into dist/.
  *
  *   1. `tsc -p tsconfig.build.json` writes the JavaScript and the `.d.ts` type files, rewriting
- *      `./Stat.tsx` imports to `./Stat.js`. Then every example.json is copied beside them.
+ *      `./Highlight.tsx` imports to `./Highlight.js`. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
@@ -93,7 +93,7 @@ writeFileSync(
 
 // FIX: an export whose file the build never wrote. tsc copies a JSON file only when code
 // imports it, so a frame whose code doesn't read its example.json shipped an export
-// (`@ucf/components/stat/example.json`) that pointed at nothing. Fail here, not in a site.
+// (`@ucf/components/highlight/example.json`) that pointed at nothing. Fail here, not in a site.
 const targets = ( value ) =>
 	typeof value === 'string'
 		? [ value ]

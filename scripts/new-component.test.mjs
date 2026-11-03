@@ -23,7 +23,7 @@ const COPIED = [
 	'components/_config/parity.test.tsx',
 	'components/_config/blocks.test.tsx',
 	'components/_config/puck.test.tsx',
-	'components/stat/index.ts',
+	'components/highlight/index.ts',
 ];
 
 let root;
@@ -81,7 +81,9 @@ describe( 'planComponent', () => {
 		} );
 
 	test( 'refuses a component that already exists', () => {
-		expect( () => plan( { name: 'stat' } ) ).toThrow( /already exists/ );
+		expect( () => plan( { name: 'highlight' } ) ).toThrow(
+			/already exists/
+		);
 	} );
 
 	test( 'refuses an unknown kind or plugin', () => {

@@ -16,7 +16,7 @@ const config: PuckComponentConfig< Props > = {
 	fields: {
 		content: { type: 'textarea', label: 'Text' },
 		// WHY: core's "Additional CSS class(es)". A component's template names a part with it
-		// (the Stat's statement, the Hero's title), the same class WordPress's template sets, so
+		// (the Highlight's statement, the Hero's title), the same class WordPress's template sets, so
 		// the part looks the same in both hosts.
 		className: { type: 'text', label: 'CSS class' },
 	},

@@ -116,7 +116,7 @@ export const schema = {
 - **The TypeScript prop type,** inferred from it.
 
 For content blocks, attribute names are saved in posts, so the schema carries the same
-"permanent once used" rule (docs/architecture.md, "Naming"). Stat edits its text inline, so it
+"permanent once used" rule (docs/architecture.md, "Naming"). Highlight edits its text inline, so it
 would use the schema for attributes only. Verify the generated Puck fields in the playground.
 
 ## Noted, not started
@@ -132,7 +132,7 @@ would use the schema for attributes only. Verify the generated Puck fields in th
   today. Not needed until there's a pipeline.
 - **The component layer, made more robust.** (`.ucf-c`, `.ucf-c-panel`) works for now; known gaps:
     - A `ucf-c` component nested inside a `ucf-c-panel` one reads the section's roles, not the
-      panel's. On Bold Gold, a Stat inside a white panel would get gold's black rule.
+      panel's. On Bold Gold, a Highlight inside a white panel would get gold's black rule.
     - No per-component override yet. The plan: an Appearance setting (Follow section, Light,
       Light Alt, Dark, Dark Alt, Bold Gold) that sets `data-ucf-composition` on the component,
       with the component layer honoring it, so the section applies unless the component overrides it.
@@ -234,7 +234,7 @@ Still to do:
 
 From reviewing whether this works equally well for WordPress and Puck:
 
-- **A Card component.** An image, nested content and a link: the cases Stat avoids, and
+- **A Card component.** An image, nested content and a link: the cases Highlight avoids, and
   where WordPress and Puck differ most.
 
 ## Open questions for Jim

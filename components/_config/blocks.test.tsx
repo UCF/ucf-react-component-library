@@ -71,8 +71,8 @@ test( 'finds every block', () => {
 		'card',
 		'degree-finder',
 		'hero',
+		'highlight',
 		'section',
-		'stat',
 	] );
 } );
 
@@ -144,7 +144,7 @@ describe.each( blocks )(
 describe.each( [
 	[ 'ucf-content/section', { composition: 'dark' } ],
 	[ 'ucf-content/hero', {} ],
-	[ 'ucf-content/stat', {} ],
+	[ 'ucf-content/highlight', {} ],
 	[ 'ucf-content/card', { variant: 'boxed' } ],
 ] )( '%s holding other blocks', ( name, attributes ) => {
 	const build = () =>

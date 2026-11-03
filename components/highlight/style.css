@@ -1,0 +1,156 @@
+/*
+ * CONTEXT: the Highlight's styles, for every host.
+ *
+ * Reads only `--ucf-*` names. Colors come from the component layer (the component layer in dist/tokens/base.css):
+ * the root carries `ucf-c`, a component that sits on the section, so `--ucf-c-accent`,
+ * `--ucf-c-body` and `--ucf-c-muted` are the section's roles, or the light default with no
+ * section. That is what lets the same stat sit on a dark section in any host. Spacing, type and
+ * rule widths are tokens, from the same file (base-wp.css in WordPress).
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`, which
+ * is why this is not `highlight.css`.
+ *
+ * SPEC: a fact written as a complete statement, never a giant number over small words.
+ * The Highlight is a frame (Highlight.tsx): it draws the rule and the spacing, and styles the
+ * parts placed inside by their class.
+ */
+/* ── The rule ─────────────────────────────────────────────────────────── */
+
+/* SPEC: across the top, the default: a heavy accent rule over the statement. */
+.ucf-c-highlight[data-rule="top"] {
+	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
+	padding-top: var(--ucf-spacing-50);
+}
+
+/* SPEC: down the left, the content set in from it. */
+.ucf-c-highlight[data-rule="side"] {
+	border-left: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
+	padding-left: var(--ucf-spacing-40);
+}
+
+/* SPEC: a bracket, top and left, the content set in from both. */
+.ucf-c-highlight[data-rule="corner"] {
+	border-left: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
+	border-top: var(--ucf-custom-rule-accent) solid var(--ucf-c-accent);
+	padding: var(--ucf-spacing-40) 0 0 var(--ucf-spacing-40);
+}
+
+/*
+ * SPEC: a short bar between the first part (a figure or a logo) and the rest.
+ * WHY on the second part's ::before: the first may be an image, which can't carry one.
+ */
+.ucf-c-highlight[data-rule="divider"]
+	.ucf-c-highlight__content
+	> :nth-child(2)::before {
+	background-color: var(--ucf-c-body);
+	content: "";
+	display: block;
+	height: var(--ucf-custom-rule-accent);
+	margin-bottom: var(--ucf-spacing-40);
+	/* FIX: room above, or a large figure's tight line height let it sit on the bar. */
+	margin-top: var(--ucf-spacing-30);
+	width: 4rem;
+}
+
+.ucf-c-highlight[data-rule="divider"][data-align="center"]
+	.ucf-c-highlight__content
+	> :nth-child(2)::before {
+	margin-inline: auto;
+}
+
+/* WHY `> *`: the frame doesn't know what it holds; whatever it is, it stacks with one gap. */
+.ucf-c-highlight__content {
+	display: grid;
+	gap: var(--ucf-spacing-30);
+}
+
+.ucf-c-highlight__content > * {
+	margin: 0;
+}
+
+.ucf-c-highlight[data-align="center"] .ucf-c-highlight__content {
+	justify-items: center;
+	text-align: center;
+}
+
+/*
+ * The parts, by the classes the templates give them (Highlight.tsx, PARTS).
+ * WHY `.ucf-c-highlight` in front: the part is a core paragraph in WordPress and the Paragraph
+ * primitive in Puck, and both style it with one class of their own. Two classes win over
+ * either, whichever stylesheet loads last.
+ */
+.ucf-c-highlight .ucf-c-highlight__statement {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-display);
+	font-size: clamp(1.625rem, 1.45rem + 0.75vw, 2.125rem);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.08;
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.ucf-c-highlight .ucf-c-highlight__detail {
+	color: var(--ucf-c-body);
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.6;
+}
+
+.ucf-c-highlight .ucf-c-highlight__source {
+	color: var(--ucf-c-muted);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-data);
+	line-height: 1.55;
+}
+
+.ucf-c-highlight .ucf-c-highlight__source a {
+	color: inherit;
+}
+
+/*
+ * SPEC: a short value set very large in the display face, in its own case ("Nov 1", "No. 1"):
+ * the key figure and centered designs.
+ */
+.ucf-c-highlight .ucf-c-highlight__figure {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-display);
+	font-size: clamp(3rem, 2.4rem + 3vw, 5rem);
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 0.95;
+	text-transform: none;
+}
+
+.ucf-c-highlight .ucf-c-highlight__label {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-data-lg);
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.ucf-c-highlight .ucf-c-highlight__citation {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-data);
+	font-style: italic;
+	line-height: 1.5;
+}
+
+/*
+ * SPEC: a logo or badge keeps its own shape at a set height, rather than filling the width as
+ * a photo does. WHY both the part and an image inside it: in WordPress the part is core
+ * Image's <figure>; in Puck it is the Image primitive's <img> itself.
+ */
+.ucf-c-highlight .ucf-c-highlight__logo,
+.ucf-c-highlight .ucf-c-highlight__logo img {
+	height: auto;
+	max-height: 8rem;
+	max-width: 100%;
+	width: auto;
+}
+
+.ucf-c-highlight[data-align="center"] .ucf-c-highlight__logo,
+.ucf-c-highlight[data-align="center"] .ucf-c-highlight__logo img {
+	margin-inline: auto;
+}

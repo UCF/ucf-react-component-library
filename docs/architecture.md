@@ -41,7 +41,7 @@ runs** (for search engines, for visitors without JavaScript, for WordPress to sa
 
 |                 | Content component                                   | Interactive component                                                     |
 | --------------- | --------------------------------------------------- | ------------------------------------------------------------------------- |
-| Example         | `stat`                                              | `degree-finder`                                                           |
+| Example         | `highlight`                                         | `degree-finder`                                                           |
 | Renders         | Server: saved in the post or server-rendered        | Client: the browser builds what a visitor uses                            |
 | In Next         | Can be a Server Component                           | Needs `'use client'`                                                      |
 | Needs its HTML? | Yes                                                 | No: what a visitor uses is what its script builds                         |
@@ -84,7 +84,7 @@ an API). Together they describe every component, and how each host renders it fo
 
 |                 | Authored                          | Live                                              |
 | --------------- | --------------------------------- | ------------------------------------------------- |
-| **Content**     | `stat`, a quote, a card           | **Live content**, not built yet: the degree facts |
+| **Content**     | `highlight`, a quote, a card      | **Live content**, not built yet: the degree facts |
 | **Interactive** | A calculator that fetches nothing | `degree-finder`                                   |
 
 **Live content is the hard corner.** Its live data must be in the HTML (it is content), so in
@@ -95,21 +95,21 @@ React and in PHP, and a test must compare the two. See `docs/todo.md`.
 
 One name per component, spelled the same way in every layer:
 
-| Layer   | Form                         | Example                            |
-| ------- | ---------------------------- | ---------------------------------- |
-| Folder  | kebab-case                   | `components/stat`                  |
-| React   | PascalCase                   | `Stat`                             |
-| CSS     | `ucf-c-{name}`, BEM below it | `ucf-c-stat__detail`               |
-| Block   | `{plugin}/{name}`            | `ucf-content/stat`                 |
-| Display | Title case, short            | "Stat" (Storybook, inserter, Puck) |
+| Layer   | Form                         | Example                                 |
+| ------- | ---------------------------- | --------------------------------------- |
+| Folder  | kebab-case                   | `components/highlight`                  |
+| React   | PascalCase                   | `Highlight`                             |
+| CSS     | `ucf-c-{name}`, BEM below it | `ucf-c-highlight__detail`               |
+| Block   | `{plugin}/{name}`            | `ucf-content/highlight`                 |
+| Display | Title case, short            | "Highlight" (Storybook, inserter, Puck) |
 
-- **Content is named for what a reader sees,** a plain noun: Stat, Quote, Card, Section. No
+- **Content is named for what a reader sees,** a plain noun: Highlight, Quote, Card, Section. No
   suffix; how it reads goes in the description ("a fact written as a complete statement").
 - **Interactive is named for the subject and the task:** Degree Finder, Tuition Calculator,
   Event Search. WHY not "picker": it reads as one form control, like a date picker, not a
   whole tool.
 - **In Storybook, a component sits under its kind** and carries the matching tag:
-  `Content (Server)/Stat` with `tags: [ 'server' ]`, `Interactive (Client)/Degree Finder`
+  `Content (Server)/Highlight` with `tags: [ 'server' ]`, `Interactive (Client)/Degree Finder`
   with `tags: [ 'client' ]`. Its first story is `Default`. Section colors are not separate
   stories; the Composition toolbar sets them.
 - **Display names can change any time;** nothing stores them. **Block names and a content
@@ -242,10 +242,10 @@ content, so in WordPress it holds core blocks (see "Frames").
 
 Decided 2026-11-02. A content component is one of two shapes:
 
-| Shape     | What it owns                                  | Its content                                  | Examples                                          |
-| --------- | --------------------------------------------- | -------------------------------------------- | ------------------------------------------------- |
-| **Fixed** | Its markup, its parts as fields, how they fit | Fields (attributes in WordPress, Puck props) | examples/fixed-card                               |
-| **Frame** | The box: layout, band, image, rule, spacing   | Open: inner blocks in WordPress, a Puck slot | Section, Hero, Stat, Card; examples/flexible-card |
+| Shape     | What it owns                                  | Its content                                  | Examples                                               |
+| --------- | --------------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| **Fixed** | Its markup, its parts as fields, how they fit | Fields (attributes in WordPress, Puck props) | examples/fixed-card                                    |
+| **Frame** | The box: layout, band, image, rule, spacing   | Open: inner blocks in WordPress, a Puck slot | Section, Hero, Highlight, Card; examples/flexible-card |
 
 - **A frame renders its content in one element, `innerAs`.** WordPress passes its inner-blocks
   element (in `edit()` and `save()`), Puck its slot, plain React a `<div>`. The markup is the
@@ -256,17 +256,18 @@ Decided 2026-11-02. A content component is one of two shapes:
   `Image`). The plain Puck config starts empty, because a host may register the primitives
   under other names. Editors may change, move or remove anything in it.
 - **Designs are data.** Where a frame has several named designs (the Card's story, next step,
-  audience, pathway and media cards), they live in one list, `variations.ts`: each is the
+  audience, pathway and media cards; the Highlight's statement, key figure, bracket, side rule
+  and centered), they live in one list, `variations.ts`: each is the
   frame's settings plus its parts by kind. WordPress registers each as a block variation
   (`toBlocks()` maps parts to core blocks), Puck builds each with `withVariation( name )`
   (`toPrimitives()` maps them to primitives), and the stories render them. A new design is a
   new entry; tests check each reaches both hosts and uses only the frame's own settings.
-- **Parts are named by class.** Where a part has its own look (the Hero's title, the Stat's
+- **Parts are named by class.** Where a part has its own look (the Hero's title, the Highlight's
   statement), the template sets a class on it (`PARTS` in the core) in both hosts: core's
   "Additional CSS class(es)" in WordPress, the primitive's CSS class field in Puck. The frame's
   CSS styles it as `.ucf-c-{frame} .ucf-c-{frame}__{part}`, two classes, so it wins over the one
   class a core block or a primitive styles itself with.
-- **The cost:** nothing makes a Hero have a title or a Stat a source, an editor can remove the
+- **The cost:** nothing makes a Hero have a title or a Highlight a source, an editor can remove the
   class, and nothing else can read the parts as fields. Choose fixed when something must read a
   part (a listing, search) or the design depends on how parts fit (the fixed card's image bleed
   and whole-card link, in examples/fixed-card); choose a frame when the content is meant to vary.
@@ -278,7 +279,7 @@ Decided 2026-11-02. A content component is one of two shapes:
 
 ### npm: one package
 
-`@ucf/components`, one version, a path per component (`@ucf/components/stat`,
+`@ucf/components`, one version, a path per component (`@ucf/components/highlight`,
 `@ucf/components/degree-finder`, `…/puck`), and one stylesheet, `ucf.css`: tokens, compositions,
 the component layer and every component's styles. A site imports it once.
 
@@ -297,10 +298,10 @@ catalog. Until then, keep every component folder self-contained so the split is 
 `plugins/{plugin}/` is a plugin: its main PHP file, and `plugin.json` listing the components
 whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/`.
 
-| Plugin        | Blocks                                    |
-| ------------- | ----------------------------------------- |
-| `ucf-content` | `ucf-content/section`, `ucf-content/stat` |
-| `ucf-degrees` | `ucf-degrees/degree-finder`               |
+| Plugin        | Blocks                                         |
+| ------------- | ---------------------------------------------- |
+| `ucf-content` | `ucf-content/section`, `ucf-content/highlight` |
+| `ucf-degrees` | `ucf-degrees/degree-finder`                    |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
   fails if a component with a `adapters/wp/` is in no plugin or in two.
@@ -415,7 +416,7 @@ inherits the roles: the section's, unless the component is a panel.
 | `.ucf-c`       | Sits on the section: a stat, a quote, a heading        | The section's accent, or light's default           |
 | `.ucf-c-panel` | Paints its own ground: the Degree Finder, a boxed card | The panel accent, then the section's, then light's |
 
-That split is why, on Bold Gold, a Stat draws a black rule (gold's own accent) while the
+That split is why, on Bold Gold, a Highlight draws a black rule (gold's own accent) while the
 Degree Finder shows Light Alt inside (gold's panel composition).
 
 The component layer reads roles and never sets them, so WordPress loads it too, in `base.css`,
@@ -443,7 +444,7 @@ What a content core returns is stored in every WordPress post that uses its bloc
 it makes those blocks invalid. So:
 
 1. Treat it as a major version.
-2. Copy the old markup into a frozen component (`Stat.v1.tsx`) and add a `deprecated` entry
+2. Copy the old markup into a frozen component (`Highlight.v1.tsx`) and add a `deprecated` entry
    in `adapters/wp/index.tsx` that renders it.
 3. Only then update the snapshot (`npx vitest run -u`).
 
@@ -471,7 +472,7 @@ covered with nothing to add. They are modeled on the UCF Brand Block Theme's sui
 - **WordPress and Puck parity** (`_config/parity.test.tsx`): every component has a block, a Puck
   config and stories; the block attributes, Puck fields and Puck defaults name the same props;
   and a content block saves the same markup Puck renders.
-- **Markup contract** (`stat/tests/Stat.test.tsx`): WordPress's serializer and React DOM produce the
+- **Markup contract** (`highlight/tests/Highlight.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`degree-finder/tests/client.test.ts`): what it requests and what it keeps, with a fake
   `fetch`. Every interactive component's client needs one.
@@ -504,8 +505,8 @@ through the front end: an invalid block still renders there. Ask the editor's st
 - **`@wordpress/block-editor` doesn't list its type files.** `tsconfig.json`'s `paths` points
   at them.
 - **`@wordpress/blocks` types `example.attributes` as the attribute schema,** not values.
-  The Stat block casts.
-- **`PlainText`'s generated types have no props.** The Stat edit casts it.
+  The Highlight block casts.
+- **`PlainText`'s generated types have no props.** The Highlight edit casts it.
 - **The editor canvas is an iframe with its own `Element`.** `instanceof Element` is false
   for anything inside it; check for `closest()`.
 - **The webpack config finds wp-scripts' copy plugins by constructor name.** wp-scripts

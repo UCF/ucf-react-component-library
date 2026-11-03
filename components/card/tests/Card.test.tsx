@@ -1,6 +1,6 @@
 /**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
- * matches the committed snapshot. See components/stat/tests/Stat.test.tsx for why.
+ * matches the committed snapshot. See components/highlight/tests/Highlight.test.tsx for why.
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';

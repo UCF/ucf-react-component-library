@@ -48,6 +48,30 @@ exports[`ucf-content/hero holding other blocks > saves them inside its inner ele
 <!-- /wp:ucf-content/hero -->"
 `;
 
+exports[`ucf-content/highlight > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > example > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
 exports[`ucf-content/section > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/section -->
 <section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
@@ -70,30 +94,6 @@ exports[`ucf-content/section holding other blocks > saves them inside its inner 
 <div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
 <!-- /wp:ucf-content/card --></div></section>
 <!-- /wp:ucf-content/section -->"
-`;
-
-exports[`ucf-content/stat > defaults > matches the stored markup snapshot 1`] = `
-"<!-- wp:ucf-content/stat -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"></div></div>
-<!-- /wp:ucf-content/stat -->"
-`;
-
-exports[`ucf-content/stat > example > matches the stored markup snapshot 1`] = `
-"<!-- wp:ucf-content/stat -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"></div></div>
-<!-- /wp:ucf-content/stat -->"
-`;
-
-exports[`ucf-content/stat holding other blocks > saves them inside its inner element 1`] = `
-"<!-- wp:ucf-content/stat -->
-<div class="wp-block-ucf-content-stat ucf-c ucf-c-stat"><div class="ucf-c-stat__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
-<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
-<!-- /wp:ucf-content/section -->
-
-<!-- wp:ucf-content/card {"variant":"ruled"} -->
-<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
-<!-- /wp:ucf-content/card --></div></div>
-<!-- /wp:ucf-content/stat -->"
 `;
 
 exports[`ucf-degrees/degree-finder > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-finder /-->"`;

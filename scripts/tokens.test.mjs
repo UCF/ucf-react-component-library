@@ -217,7 +217,7 @@ describe( 'roles contract', () => {
 describe( 'component layer', () => {
 	// FIX: `--ucf-c-*` is set only on an element with `ucf-c` or `ucf-c-panel`. A component that
 	// reads it without carrying either class gets unset values and loses its colors silently.
-	// Every primitive, component and example folder, as `primitives/button`, `components/stat`.
+	// Every primitive, component and example folder, as `primitives/button`, `components/highlight`.
 	const folders = [ 'primitives', 'components', 'examples' ].flatMap(
 		( tier ) =>
 			readdirSync( path.join( root, tier ) ).map( ( name ) =>
