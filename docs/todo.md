@@ -283,9 +283,8 @@ From reviewing whether this works equally well for WordPress and Puck:
   with both plugins active, the inserter shows a Degree Picker and a Degree Finder. Decide
   whether his plugin drops its block in favor of `ucf-degrees`, and tell him his later changes
   now need merging by hand.
-- **License.** His package is marked `GPL-3.0-or-later`; this repo is `GPL-2.0-or-later`. A
-  GPL-3 file inside makes the combined work GPL-3. Confirm with him which license the
-  picker code is under here.
+- **License.** Settled 2026-11-05: this repo is now `GPL-3.0-or-later`, as his package is, so
+  the picker code needs no separate answer.
 - One npm scope and registry: `@ucf` here, `@ucfweb` in his plan.
 - One Storybook for both.
 - Who owns the token values. The theme now builds from this repo's `tokens.json` (on its
