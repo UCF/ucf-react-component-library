@@ -111,6 +111,7 @@
 		"deploy": "npm run build && node --env-file-if-exists=.env scripts/deploy.mjs",
 		"deploy:watch": "node --env-file-if-exists=.env scripts/deploy.mjs --watch",
 		"new:component": "node scripts/new-component.mjs",
+		"sync:blocks": "node --no-warnings scripts/sync-blocks.mjs",
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",

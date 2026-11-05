@@ -368,8 +368,8 @@ describe.each( Object.keys( propsByComponent ).sort() )(
 			`${ component }'s prop definitions`
 		);
 
-		// WHY: block.json is written by hand, because PHP reads it before any script runs. A name,
-		// type or default that differs from the definitions' would save one thing and edit another.
+		// WHY: PHP reads block.json before any script runs, so its attributes are written from the
+		// props by `npm run sync:blocks`. One that differs would save one thing and edit another.
 		test( 'block.json declares exactly its props, with their types and defaults', () => {
 			const json = need(
 				fileOf( blockJsons, component ),

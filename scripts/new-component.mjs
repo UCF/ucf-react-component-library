@@ -1228,8 +1228,8 @@ Next:
 		console.log( `
 Next (docs/architecture.md, "Built with frame()"):
   1. Write the markup in ${ Name }Markup (${ Name }.tsx); mark where content goes with area().
-  2. Add props to ${ Name }.props.ts, and each one's attribute to wp/block.json (a test fails
-     until they match). Add parts to ${ Name }.parts.ts, each with its class in style.css.
+  2. Add props to ${ Name }.props.ts, then run \`npm run sync:blocks\` to write them into
+     wp/block.json. Add parts to ${ Name }.parts.ts, each with its class in style.css.
   3. Replace the standard preset in ${ Name }.presets.ts with the designs it has.
   4. Write the block's description in wp/block.json.
   5. Run \`npm test\` to write the new markup snapshots, then review them: they are what every

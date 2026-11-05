@@ -123,9 +123,9 @@ block.json against them. Still to do:
   (docs/architecture.md, "How content reaches a frame").
 - **Drop the deprecated `withVariation`** from the Card's and Highlight's Puck configs once
   ucf-puck-demo uses `withPreset`.
-- **block.json stays hand-written** (decided 2026-11-05): generating it, and the integration
-  entry points, would hide the files WordPress developers look for. parity.test.tsx checks it
-  against each component's props instead.
+- **block.json stays a file on disk** (decided 2026-11-05): generating it away, and the
+  integration entry points, would hide the files WordPress developers look for. Its
+  `attributes` are written from the props by `npm run sync:blocks`; the rest is by hand.
 
 The original note:
 
