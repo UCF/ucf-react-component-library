@@ -36,10 +36,12 @@ describe( 'Section', () => {
 		} );
 	}
 
-	it( 'renders its content in the element a host passes as innerAs', () => {
+	it( 'renders its content area as the element a host passes for it', () => {
 		const Zone = ( props: object ) => <div data-zone="" { ...props } />;
 		expect(
-			renderToStaticMarkup( <Section innerAs={ Zone } /> )
+			renderToStaticMarkup(
+				<Section.port.Frame areas={ { content: Zone } } />
+			)
 		).toContain(
 			'<div data-zone="" class="ucf-section__inner ucf-section__inner--default">'
 		);

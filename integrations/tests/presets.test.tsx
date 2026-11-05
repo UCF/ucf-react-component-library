@@ -62,9 +62,10 @@ describe.each( Object.keys( presetFiles ).sort() )( '%s', ( component ) => {
 		expect( registered().map( ( variation ) => variation.name ) ).toEqual(
 			PRESETS.map( ( preset ) => preset.name )
 		);
+		// A component with no presets (the Section) has no variations, so no default one.
 		expect(
 			registered().find( ( variation ) => variation.isDefault )?.name
-		).toBe( DEFAULT_PRESET?.name );
+		).toBe( PRESETS.length ? DEFAULT_PRESET?.name : undefined );
 	} );
 
 	describe.each( PRESETS )( 'the $name preset', ( preset ) => {

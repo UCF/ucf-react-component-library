@@ -18,7 +18,8 @@ import {
 
 export type Preset = PresetOf< HighlightEditableProps, Part >;
 
-export const PRESETS: Preset[] = [
+// WHY `as const`: the names and parts stay exact, so `preset` and `content` are typed.
+export const PRESETS = [
 	{
 		name: 'statement',
 		title: 'Highlight: Statement',
@@ -109,7 +110,7 @@ export const PRESETS: Preset[] = [
 			{ part: 'citation', text: '(Aviation Week)' },
 		],
 	},
-];
+] as const satisfies readonly Preset[];
 
 /**
  * A preset by its name.

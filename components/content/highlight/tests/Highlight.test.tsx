@@ -57,14 +57,16 @@ describe( 'Highlight', () => {
 
 	// WHY: WordPress and Puck each edit the content through their own element. If the Highlight
 	// rendered its children anywhere else, blocks dropped in would land outside the frame.
-	it( 'renders its content in the element a host passes as innerAs', () => {
+	it( 'renders its content area as the element a host passes for it', () => {
 		const Zone = ( props: object ) => (
 			<div data-zone="" { ...props }>
 				<p>Dropped in</p>
 			</div>
 		);
 		expect(
-			renderToStaticMarkup( <Highlight innerAs={ Zone } /> )
+			renderToStaticMarkup(
+				<Highlight.port.Frame areas={ { content: Zone } } />
+			)
 		).toContain(
 			'<div data-zone="" class="ucf-c-highlight__content"><p>Dropped in</p></div>'
 		);

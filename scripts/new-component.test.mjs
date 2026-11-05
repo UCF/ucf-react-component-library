@@ -104,7 +104,9 @@ describe( 'planComponent', () => {
 				'components/content/pull-quote/PullQuote.tsx',
 				'components/content/pull-quote/tests/PullQuote.test.tsx',
 				'components/content/pull-quote/integrations/storybook/PullQuote.stories.tsx',
-				'components/content/pull-quote/example.json',
+				'components/content/pull-quote/PullQuote.props.ts',
+				'components/content/pull-quote/PullQuote.parts.ts',
+				'components/content/pull-quote/PullQuote.presets.ts',
 				'components/content/pull-quote/integrations/wp/save.tsx',
 			] )
 		);
@@ -236,9 +238,8 @@ describe( 'planComponent', () => {
 		expect( exports[ './pull-quote/puck' ].default ).toBe(
 			'./dist/components/content/pull-quote/integrations/puck/config.js'
 		);
-		expect( exports[ './pull-quote/example.json' ] ).toBe(
-			'./dist/components/content/pull-quote/example.json'
-		);
+		// A content component's sample is its presets.
+		expect( exports[ './pull-quote/example.json' ] ).toBeUndefined();
 
 		expect(
 			JSON.parse( read( 'plugins/ucf-content/plugin.json' ) ).blocks

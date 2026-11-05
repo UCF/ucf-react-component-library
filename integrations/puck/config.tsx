@@ -94,15 +94,19 @@ export function puckConfig<
 		Record< string, unknown >
 	>;
 	const images = mediaProps( definitions );
+	// WHY: a component with no presets (the Section) is always open: its props, and a slot.
+	const hasPresets = presets.length > 0;
 
-	const fields = {
-		...presetFields( parts, presets ),
-		...puckFields( definitions ),
-	} as PuckComponentConfig< StoredProps >[ 'fields' ];
+	const fields = (
+		hasPresets
+			? {
+					...presetFields( parts, presets ),
+					...puckFields( definitions ),
+				}
+			: { blocks: { type: 'slot' }, ...puckFields( definitions ) }
+	) as PuckComponentConfig< StoredProps >[ 'fields' ];
 
-	const config: PuckComponentConfig< StoredProps > = {
-		label: title,
-		fields,
+	const presetConfig = {
 		defaultProps: {
 			...defaultsIn( definitions, 'puck' ),
 			...defaultPreset.props,
@@ -122,6 +126,20 @@ export function puckConfig<
 			presets,
 			fields as unknown as { content: { objectFields: object } }
 		) as unknown as PuckComponentConfig< StoredProps >[ 'resolveFields' ],
+	};
+
+	const openConfig = {
+		defaultProps: {
+			...defaultsIn( definitions, 'puck' ),
+			...defaultPreset.props,
+			blocks: [],
+		} as unknown as StoredProps,
+	};
+
+	const config: PuckComponentConfig< StoredProps > = {
+		label: title,
+		fields,
+		...( hasPresets ? presetConfig : openConfig ),
 		// FIX: only the component's own props; Puck's `id`, `puck` and `editMode` would reach
 		// the markup.
 		render: ( {
@@ -177,7 +195,11 @@ export function puckConfig<
 		blocks: PuckSlot = TEMPLATE
 	): PuckComponentConfig< StoredProps > => ( {
 		...config,
-		defaultProps: { ...config.defaultProps, preset: '', blocks },
+		defaultProps: {
+			...config.defaultProps,
+			...( hasPresets && { preset: '' } ),
+			blocks,
+		},
 	} );
 
 	/**

@@ -3,8 +3,8 @@
  *
  * A block keeps WordPress's usual files, each a one-line call:
  *
- *   edit.tsx    export default blockEdit( Card, metadata );
- *   save.tsx    export default blockSave( Card, metadata );
+ *   edit.tsx    export default blockEdit( Card );
+ *   save.tsx    export default blockSave( Card );
  *   index.tsx   registerBlockType( metadata, { ...blockSettings( Card ), edit, save } );
  *
  * A block that needs something of its own wraps or replaces the call in its file.
@@ -23,18 +23,20 @@ import {
 } from '@wordpress/blocks';
 import { Button, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { createContext, useContext, type ComponentType } from 'react';
 
+import imageExample from '../../components/primitives/image/example.json';
 import ImageEdit, {
 	type ImageValue,
 } from '../../components/primitives/image/integrations/wp/edit.tsx';
-import type { Ported } from '../react/frame.tsx';
+import type { Areas, Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import {
+	mediaProps,
 	panelsOf,
 	type PropDefinitions,
 	type TextProp,
 } from '../schema/props.ts';
-import { ownAttributes } from './attributes.ts';
 import { toBlocks, toExampleBlocks } from './parts.ts';
 import { ICONS } from './icons.ts';
 import { FieldControl } from './inspector.tsx';
@@ -103,8 +105,49 @@ function MediaField( {
 	);
 }
 
-const attributesOf = ( metadata: object ) =>
-	metadata as { attributes: Record< string, unknown > };
+/**
+ * The component's markup, taking a block's attributes as they are.
+ * WHY loosely typed: attributes are stored values; ownProps() keeps only the component's own.
+ *
+ * @param component The component, from frame().
+ */
+type HasFrame = { port: { Frame: unknown } };
+const looseFrame = ( component: HasFrame ) =>
+	component.port.Frame as ComponentType< Record< string, unknown > >;
+
+/**
+ * A block's attributes that are the component's props.
+ * FIX: WordPress's own (`className`, `anchor`, `align`) would replace useBlockProps()'s class or
+ * reach the markup as stray attributes.
+ *
+ * @param attributes  The block's attributes.
+ * @param definitions The component's prop definitions.
+ */
+const ownProps = (
+	attributes: Attributes,
+	definitions: PropDefinitions
+): Attributes =>
+	Object.fromEntries(
+		Object.entries( attributes ).filter( ( [ key ] ) => key in definitions )
+	);
+
+/** The block being edited, for an area's element (the Hero's image picker). */
+const BlockContext = createContext< BlockEditProps< Attributes > | null >(
+	null
+);
+
+/**
+ * The block an area's element sits in: its attributes, and setAttributes().
+ * WHY context: an area's element must be the same component every render, or WordPress would
+ * remount it; so it can't close over the attributes.
+ */
+export function useBlock(): BlockEditProps< Attributes > {
+	const block = useContext( BlockContext );
+	if ( ! block ) {
+		throw new Error( 'useBlock() is for an area inside blockEdit().' );
+	}
+	return block;
+}
 
 // ── edit() ─────────────────────────────────────────────────────────────────────────────────────
 //
@@ -114,15 +157,17 @@ const attributesOf = ( metadata: object ) =>
  * A block's edit(): the markup, its content editable as inner blocks, its props' fields in the
  * sidebar by panel.
  *
- * @param component The component, from frame().
- * @param metadata  Its block.json.
+ * @param component     The component, from frame().
+ * @param options       What a block adds, from its own edit.tsx.
+ * @param options.areas Its other areas on the canvas (the Hero's image picker). They read the
+ *                      block through useBlock().
  */
 export function blockEdit<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
->( component: Ported< Props, Parts >, metadata: object ) {
-	const { Frame, props: definitions, parts, defaultPreset } = component.port;
-	const json = attributesOf( metadata );
+>( component: Ported< Props, Parts >, { areas = {} }: { areas?: Areas } = {} ) {
+	const { props: definitions, parts, defaultPreset } = component.port;
+	const Frame = looseFrame( component );
 	const panels = panelsOf( definitions );
 	// What a block inserted without picking a preset starts with: a start, not a lock.
 	const template = toBlocks( resolveParts( parts, defaultPreset.parts ) );
@@ -132,12 +177,10 @@ export function blockEdit<
 		<div { ...useInnerBlocksProps( props, { template } ) } />
 	);
 
-	return function Edit( {
-		attributes,
-		setAttributes,
-	}: BlockEditProps< Attributes > ) {
+	return function Edit( props: BlockEditProps< Attributes > ) {
+		const { attributes, setAttributes } = props;
 		return (
-			<>
+			<BlockContext.Provider value={ props }>
 				<InspectorControls>
 					{ panels.map( ( panel ) => (
 						<PanelBody key={ panel.title } title={ panel.title }>
@@ -171,10 +214,10 @@ export function blockEdit<
 
 				<Frame
 					{ ...useBlockProps() }
-					{ ...ownAttributes( attributes, json ) }
-					areas={ { content: InnerBlocksArea } }
+					{ ...ownProps( attributes, definitions ) }
+					areas={ { ...areas, content: InnerBlocksArea } }
 				/>
-			</>
+			</BlockContext.Provider>
 		);
 	};
 }
@@ -188,14 +231,13 @@ export function blockEdit<
  * SYNC: what this returns is stored in every post; the markup snapshots check it.
  *
  * @param component The component, from frame().
- * @param metadata  Its block.json.
  */
 export function blockSave<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
->( component: Ported< Props, Parts >, metadata: object ) {
-	const { Frame } = component.port;
-	const json = attributesOf( metadata );
+>( component: Ported< Props, Parts > ) {
+	const { props: definitions } = component.port;
+	const Frame = looseFrame( component );
 
 	const InnerBlocksContent = ( props: Record< string, unknown > ) => (
 		<div { ...useInnerBlocksProps.save( props ) } />
@@ -205,7 +247,7 @@ export function blockSave<
 		return (
 			<Frame
 				{ ...useBlockProps.save() }
-				{ ...ownAttributes( attributes, json ) }
+				{ ...ownProps( attributes, definitions ) }
 				areas={ { content: InnerBlocksContent } }
 			/>
 		);
@@ -228,12 +270,20 @@ export function blockSettings<
 >(
 	component: Ported< Props, Parts >
 ): Pick< BlockConfiguration< Attributes >, 'icon' | 'example' | 'variations' > {
-	const { parts, presets, defaultPreset, wpIcon } = component.port;
+	const { props, parts, presets, defaultPreset, wpIcon } = component.port;
+	const [ backgroundProp ] = mediaProps( props );
 	// UPSTREAM: @wordpress/blocks types `example` and variations' inner blocks loosely.
 	return {
 		icon: ICONS[ wpIcon ],
 		example: {
-			attributes: defaultPreset.props,
+			attributes: {
+				...defaultPreset.props,
+				// A sample background, never saved: the preview shows what the block is for.
+				...( defaultPreset.background &&
+					backgroundProp && {
+						[ backgroundProp ]: imageExample.url,
+					} ),
+			},
 			innerBlocks: toExampleBlocks(
 				toBlocks( resolveParts( parts, defaultPreset.parts ), {
 					sample: true,

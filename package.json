@@ -47,7 +47,6 @@
 			"types": "./dist/components/content/hero/integrations/puck/config.d.ts",
 			"default": "./dist/components/content/hero/integrations/puck/config.js"
 		},
-		"./hero/example.json": "./dist/components/content/hero/example.json",
 		"./primitives/button": {
 			"types": "./dist/components/primitives/button/index.d.ts",
 			"default": "./dist/components/primitives/button/index.js"

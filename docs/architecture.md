@@ -171,8 +171,7 @@ same name at the top holds the half every component shares. Something about Word
 one of the two `integrations/wp/` folders: `components/content/card/integrations/wp/` for the Card,
 `integrations/wp/` for every component.
 
-The Card and the Highlight follow this. The Hero and Section still use the files it replaced
-(`options.ts`, `example.json`) and move next (docs/todo.md).
+Every content component follows this: the Card, the Highlight, the Hero and the Section.
 
 **What every component shares is in `integrations/`,** laid out in the same layers
 ([integrations/README.md](../integrations/README.md)): what a schema may declare (`schema/`), and how
@@ -280,19 +279,19 @@ integrations/tests/exports.test.ts checks every component's entry. WHY the name 
 a site imports several components' parts into one file. `@ucf/components/react`
 (integrations/react/) turns a preset into content for a plain React site, as WordPress's
 variations and Puck's `withPreset()` do in theirs; integrations/tests/react.test.tsx renders
-every preset that way. The Hero and Section still export their older extras (`HERO_CHOICES`,
-`COMPOSITIONS`) until they move (docs/todo.md).
+every preset that way. The Section also exports `COMPOSITIONS`, the choice any component's
+props can offer.
 
 ## Slots
 
 A slot is a prop that takes something each host provides. The core never checks which host
 it is in.
 
-| Slot                          | Next passes          | WordPress passes                          | Puck passes |
-| ----------------------------- | -------------------- | ----------------------------------------- | ----------- |
-| `innerAs` or a `content` area | nothing (`<div>`)    | its inner-blocks element                  | its slot    |
-| text                          | a string             | a string in `save()`, a field in `edit()` | a string    |
-| `client`                      | a client for its API | nothing (default client)                  | nothing     |
+| Slot                                    | Next passes                           | WordPress passes                                  | Puck passes |
+| --------------------------------------- | ------------------------------------- | ------------------------------------------------- | ----------- |
+| an area (`content`, the Hero's `media`) | nothing (`<div>`, or the area's `as`) | its inner-blocks element; the Hero's image picker | its slot    |
+| text                                    | a string                              | a string in `save()`, a field in `edit()`         | a string    |
+| `client`                                | a client for its API                  | nothing (default client)                          | nothing     |
 
 A slot only covers what was made a slot. A core that imports `next/link` directly is tied to
 Next, and the WordPress build fails on it.
@@ -382,8 +381,8 @@ Decided 2026-11-02. A content component is one of two shapes:
 | **Fixed** | Its markup, its parts as fields, how they fit | Fields (attributes in WordPress, Puck props) | examples/fixed-card                                    |
 | **Frame** | The box: layout, band, image, rule, spacing   | Open: inner blocks in WordPress, a Puck slot | Section, Hero, Highlight, Card; examples/flexible-card |
 
-- **A frame renders its content in one element:** its `content` area (built with `frame()`), or
-  `innerAs` (the frames not moved yet). WordPress passes its inner-blocks
+- **A frame renders its content in one element,** its `content` area (`area()`, "Built with
+  frame()"). WordPress passes its inner-blocks
   element (in `edit()` and `save()`), Puck its slot, plain React a `<div>`. The markup is the
   same in every host, and each host's editing area is the frame's own element.
 - **A new frame starts with a template, never a lock.** WordPress: `useInnerBlocksProps( props,
@@ -409,7 +408,7 @@ Decided 2026-11-02. A content component is one of two shapes:
   class, and nothing else can read the parts as fields. Choose fixed when something must read a
   part (a listing, search) or the design depends on how parts fit (the fixed card's image bleed
   and whole-card link, in examples/fixed-card); choose a frame when the content is meant to vary.
-- **Tests:** a frame's markup test renders content through its `content` area (or `innerAs`); blocks.test.tsx checks
+- **Tests:** a frame's markup test renders content through its `content` area; blocks.test.tsx checks
   each frame saves and reads back blocks placed inside it; puck.test.tsx checks each template
   names primitives that exist and sets every prop they have.
 
@@ -446,6 +445,14 @@ named `content`. WHY: host-only props (`innerAs`, `media`) had become part of th
 areas keep them on the port, so every prop a React site sees means something there. WHY `area`
 a function, not an `<Area>` component: it needs no React context, so nothing happens that the
 file doesn't show. The component may not use hooks: WordPress saves its markup.
+
+An area may name its element on a React site with `as` (the Hero's image area is an
+`<Image>`), and `area.hosted( name )` says whether a host fills it (the Hero shows its image
+frame while WordPress's picker is in it). A block's own edit.tsx passes its extra areas:
+`blockEdit( Hero, { areas: { media: ImagePicker } } )`, and the picker reads the block with
+`useBlock()`. A component with no designs (the Section, the Hero for now) has an empty `PRESETS`
+and a `DEFAULT_PRESET` outside it: what a new one starts with, and no variations or Design
+picker.
 
 The rules that keep frame() small: an area is a name, a class and its children, nothing more; the
 port is plain data plus `Frame`; frame() takes no per-component options (a need one component

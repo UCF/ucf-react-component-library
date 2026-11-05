@@ -139,17 +139,26 @@ export type PresetProps<
 export type Areas = Partial< Record< string, ElementType > >;
 
 /**
- * An area: where content goes in the markup.
+ * An area: where content goes in the markup. A host's element takes the same props.
  *
  * @param name     Its name. Hosts fill the one named `content` with their editable content.
- * @param props    Its element's props (`className`).
+ * @param props    Its element's props: `className`, and `as`, the element on a React site (a
+ *                 `<div>` by default; the Hero's image area is an `<Image>`).
  * @param children What a React site puts there.
  */
-export type Area = (
+export type Area = ( (
 	name: string,
-	props: { className?: string },
+	props: { as?: ElementType; className?: string; [ prop: string ]: unknown },
 	children?: ReactNode
-) => ReactElement;
+) => ReactElement ) & {
+	/**
+	 * Whether a host fills the area: the Hero shows its image frame while WordPress's picker is
+	 * in it, before an image is chosen.
+	 *
+	 * @param name The area's name.
+	 */
+	hosted: ( name: string ) => boolean;
+};
 
 // ── Building one ───────────────────────────────────────────────────────────────────────────────
 
@@ -207,10 +216,17 @@ export function frame<
 		areas = {},
 		...props
 	}: OwnProps< Props > & HostAttributes & { areas?: Areas } ) {
-		const area: Area = ( name, areaProps, children ) => {
-			const Element = areas[ name ] ?? 'div';
-			return <Element { ...areaProps }>{ children }</Element>;
-		};
+		const area: Area = Object.assign(
+			(
+				name: string,
+				{ as = 'div', ...areaProps }: Parameters< Area >[ 1 ],
+				children?: ReactNode
+			) => {
+				const Element = areas[ name ] ?? as;
+				return <Element { ...areaProps }>{ children }</Element>;
+			},
+			{ hosted: ( name: string ) => Boolean( areas[ name ] ) }
+		);
 		return <Markup { ...( props as FrameProps< Props > ) } area={ area } />;
 	}
 	Frame.displayName = `${ definition.title }.port.Frame`;

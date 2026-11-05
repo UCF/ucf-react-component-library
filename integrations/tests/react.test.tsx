@@ -32,12 +32,16 @@ const pascal = ( name: string ) =>
 	);
 const constant = ( name: string ) => name.toUpperCase().replace( /-/g, '_' );
 
-// Components whose entry exports presets (integrations/tests/exports.test.ts checks which must).
+// Components whose entry exports presets (integrations/tests/exports.test.ts checks which must),
+// and has some: the Section and the Hero have none yet.
 const withPresets = Object.entries( entries )
 	.map( ( [ file, entry ] ) => ( { component: componentOf( file ), entry } ) )
 	.filter(
 		( { component, entry } ) =>
-			`${ constant( component ) }_PRESETS` in entry
+			(
+				entry[ `${ constant( component ) }_PRESETS` ] as
+					unknown[] | undefined
+			 )?.length
 	);
 
 it( 'finds the components with presets', () => {
@@ -222,20 +226,24 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 		)
 		.at( 0 );
 
-	it( 'lets the props passed win over the preset’s', () => {
-		// WHY a prop two presets set differently: overriding with the preset's own value would
-		// pass whichever won.
-		const { preset, key, value } = override ?? {
-			preset: { name: '', props: {} },
-			key: 'missing',
-			value: undefined,
-		};
-		const root = ( html: string ) => html.split( '>' )[ 0 ];
-		expect( override ).toBeDefined();
-		expect(
-			root( render( { preset: preset.name, [ key ]: value } ) )
-		).toBe( root( render( { ...preset.props, [ key ]: value } ) ) );
-	} );
+	// WHY two or more: the check needs a prop two presets set differently.
+	it.runIf( presets.length > 1 )(
+		'lets the props passed win over the preset’s',
+		() => {
+			// WHY a prop two presets set differently: overriding with the preset's own value would
+			// pass whichever won.
+			const { preset, key, value } = override ?? {
+				preset: { name: '', props: {} },
+				key: 'missing',
+				value: undefined,
+			};
+			const root = ( html: string ) => html.split( '>' )[ 0 ];
+			expect( override ).toBeDefined();
+			expect(
+				root( render( { preset: preset.name, [ key ]: value } ) )
+			).toBe( root( render( { ...preset.props, [ key ]: value } ) ) );
+		}
+	);
 
 	it( 'puts children in place of the preset’s parts: the frame stays open', () => {
 		const html = render( {

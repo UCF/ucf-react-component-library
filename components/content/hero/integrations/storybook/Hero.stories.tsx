@@ -17,51 +17,42 @@ import {
 	PLACEHOLDER_ALT,
 	PLACEHOLDER_IMAGE,
 } from '../../../../../.storybook/placeholder.ts';
-import Hero, { PARTS, type HeroProps } from '../../Hero.tsx';
-import example from '../../example.json';
-import { CHOICES, type ChoiceKey } from '../../options.ts';
+import { defaultsIn } from '../../../../../integrations/schema/props.ts';
+import { argTypesOf } from '../../../../../integrations/storybook/arg-types.ts';
+import Hero from '../../Hero.tsx';
+import { PARTS } from '../../Hero.parts.ts';
+import { PROPS } from '../../Hero.props.ts';
 import '../../style.css';
-
-const control = ( key: ChoiceKey ) => ( {
-	control: CHOICES[ key ].control === 'radio' ? 'inline-radio' : 'select',
-	options: CHOICES[ key ].options.map( ( option ) => option.value ),
-} );
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
 	title: 'Content (Server)/Hero',
 	tags: [ 'server' ],
 	component: Hero,
-	// WHY example.json: the same props the WordPress inserter preview and the markup test use,
-	// with the stories' photo.
+	// WHY the defaults: what a new Hero starts with in WordPress and Puck, with the stories' photo.
 	args: {
-		...( example as HeroProps ),
+		...defaultsIn( PROPS, 'puck' ),
 		imageSrc: PLACEHOLDER_IMAGE,
 		imageAlt: PLACEHOLDER_ALT,
 	},
-	argTypes: Object.fromEntries(
-		( Object.keys( CHOICES ) as ChoiceKey[] ).map( ( key ) => [
-			key,
-			control( key ),
-		] )
-	),
+	argTypes: argTypesOf( PROPS ),
 	// WHY: a band of its own, so the Section around it runs edge to edge with the least padding.
 	parameters: { section: { width: 'wide', spacing: 'compact' } },
-	// The template's copy, from the primitives. SYNC: TEMPLATE in puck/config.tsx.
+	// The default preset's copy (Hero.presets.ts), from the primitives.
 	// WHY the buttons in a row here: Puck has no Buttons group yet, and WordPress uses core's.
 	render: ( args ) => (
 		<Hero { ...args }>
 			<Paragraph
-				className={ PARTS.eyebrow }
+				className={ PARTS.eyebrow.className }
 				content="Undergraduate admissions"
 			/>
 			<Heading
-				className={ PARTS.title }
+				className={ PARTS.title.className }
 				level={ 1 }
 				content="Reach for the stars"
 			/>
 			<Paragraph
-				className={ PARTS.description }
+				className={ PARTS.description.className }
 				content="Florida’s largest university, with 70,674 students, in Orlando and online."
 			/>
 			<div style={ { display: 'flex', flexWrap: 'wrap', gap: '1rem' } }>

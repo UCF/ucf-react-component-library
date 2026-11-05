@@ -10,11 +10,11 @@
  * overlays, heights, the prop names and values, and variants as data attributes.
  *
  * A frame: the Hero draws the band, the image and the layout; its copy is open content placed
- * inside (the eyebrow, title, description and buttons P1 has as fields). A new Hero starts
- * with those as a template (wp/edit.tsx, puck/config.tsx), each with the
- * class that styles it (PARTS). In WordPress the buttons are core Buttons; in Puck, the Button
- * primitive. The cost: nothing makes a Hero have a title, and nothing else can read it as a
- * field.
+ * inside (the eyebrow, title, description and buttons P1 has as fields). A new Hero starts with
+ * those (DEFAULT_PRESET in Hero.presets.ts), each with the class that styles it (Hero.parts.ts).
+ * It has two areas: `content`, the copy, and `media`, the image, where WordPress's editor puts
+ * its picker (integrations/wp/edit.tsx). The cost: nothing makes a Hero have a title, and nothing
+ * else can read it as a field.
  *
  * Changed for UCF, and why. Each is a question for the P1 decision:
  *   - Tone sets a UCF composition, not fixed colors: accent is Bold Gold, dark is Dark, light
@@ -35,59 +35,24 @@
  *     pause button that does nothing), `knockout` text, the image `frame`, and P1's stock
  *     fallback image. Rounded corners are square: UCF has no radius tokens.
  *
- * Content component rules apply (docs/architecture.md, "Two kinds of component").
- * SYNC: WordPress stores this markup in every post with a Hero.
+ * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react';
-
+import {
+	frame,
+	type FrameProps,
+	type OwnProps,
+	type PresetProps,
+} from '../../../integrations/react/frame.tsx';
 import Image from '../../primitives/image/Image.tsx';
+import { PARTS } from './Hero.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './Hero.presets.ts';
+import { PROPS, type HeroEditableProps } from './Hero.props.ts';
 
-export type HeroLayout = 'split' | 'full image' | 'text only';
-export type HeroTone = 'accent' | 'dark' | 'light';
-
-/**
- * The classes that style the copy's parts. The templates set them; an editor can too.
- * SYNC: style.css, and the templates in wp/edit.tsx and puck/config.tsx.
- */
-export const PARTS = {
-	eyebrow: 'ucf-c-hero__eyebrow',
-	title: 'ucf-c-hero__title',
-	description: 'ucf-c-hero__description',
-} as const;
-
-export type HeroProps = {
-	/** The copy: eyebrow, title, description and buttons, or whatever an editor placed. */
-	children?: ReactNode;
-	/**
-	 * The element that holds the copy. WordPress passes its inner-blocks element and Puck its
-	 * slot, so each host's editing area is this element, with no wrapper of its own.
-	 */
-	innerAs?: ElementType;
-	/** The band's colors: Bold Gold, Dark or Light Alt. A full image is always Dark. */
-	tone?: HeroTone;
-	layout?: HeroLayout;
-	imageSrc?: string;
-	/** What the image shows, or '' when it is decoration. */
-	imageAlt?: string;
-	/** The media library's attachment ID, for WordPress's responsive sizes (components/primitives/image). */
-	imageId?: number;
-	/**
-	 * Replaces the image built from the props above, inside its frame. WordPress's editor passes
-	 * the media library picker here (components/primitives/image/integrations/wp/edit.tsx), so the
-	 * frame shows
-	 * even before an image is chosen.
-	 */
-	media?: ReactNode;
-	imageSide?: 'right' | 'left';
-	imageFill?: 'card' | 'flush';
-	splitRatio?: 'even' | 'copy-wide' | 'image-wide';
-	/** Where the copy sits. P1 calls this `align`. */
-	contentAlign?: 'left' | 'center' | 'right';
-	/** The shade over a full image, so the copy on it can be read. */
-	overlay?: 'none' | 'scrim' | 'gradient down' | 'gradient right';
-	overlayStrength?: 'light' | 'medium' | 'heavy';
-	height?: 'compact' | 'regular' | 'tall';
-} & Omit< ComponentPropsWithoutRef< 'section' >, 'children' >;
+/** Everything the Hero takes: its props, its copy as children, and a site's HTML attributes. */
+export type HeroProps = OwnProps< typeof PROPS > &
+	PresetProps< typeof PARTS, typeof PRESETS >;
+export type HeroLayout = HeroEditableProps[ 'layout' ];
+export type HeroTone = HeroEditableProps[ 'tone' ];
 
 // SYNC: the composition slugs in integrations/schema/compositions.ts.
 const COMPOSITION: Record< HeroTone, string > = {
@@ -99,28 +64,29 @@ const COMPOSITION: Record< HeroTone, string > = {
 // `full image` → `full-image`, for a data attribute CSS can match without quoting a space.
 const slug = ( value: string ) => value.replace( / /g, '-' );
 
-export default function Hero( {
-	children,
-	innerAs: Inner = 'div',
-	tone = 'accent',
-	layout = 'split',
+function HeroMarkup( {
+	tone = PROPS.tone.default,
+	layout = PROPS.layout.default,
 	imageSrc,
-	imageAlt = '',
+	imageAlt = PROPS.imageAlt.default,
 	imageId,
-	media,
-	imageSide = 'right',
-	imageFill = 'card',
-	splitRatio = 'even',
-	contentAlign = 'left',
-	overlay = 'gradient right',
-	overlayStrength = 'medium',
-	height = 'regular',
+	imageSide = PROPS.imageSide.default,
+	imageFill = PROPS.imageFill.default,
+	splitRatio = PROPS.splitRatio.default,
+	contentAlign = PROPS.contentAlign.default,
+	overlay = PROPS.overlay.default,
+	overlayStrength = PROPS.overlayStrength.default,
+	height = PROPS.height.default,
+	children,
 	className,
-	...sectionProps
-}: HeroProps ) {
+	area,
+	...props
+}: FrameProps< typeof PROPS > ) {
 	const overImage = layout === 'full image';
 	const composition = overImage ? 'dark' : COMPOSITION[ tone ];
-	const showImage = Boolean( imageSrc || media ) && layout !== 'text only';
+	// WHY `hosted`: WordPress's picker shows in the image's frame before an image is chosen.
+	const showImage =
+		Boolean( imageSrc || area.hosted( 'media' ) ) && layout !== 'text only';
 
 	const image = showImage ? (
 		<div
@@ -128,21 +94,20 @@ export default function Hero( {
 				overImage ? 'ucf-c-hero__backdrop' : 'ucf-c-hero__media'
 			}
 		>
-			{ media ?? (
-				<Image
-					className="ucf-c-hero__image"
-					url={ imageSrc ?? '' }
-					// A11Y: behind the copy, the image is backdrop, so it is decoration.
-					alt={ overImage ? '' : imageAlt }
-					id={ imageId }
-				/>
-			) }
+			{ area( 'media', {
+				as: Image,
+				className: 'ucf-c-hero__image',
+				url: imageSrc ?? '',
+				// A11Y: behind the copy, the image is backdrop, so it is decoration.
+				alt: overImage ? '' : imageAlt,
+				id: imageId,
+			} ) }
 		</div>
 	) : null;
 
 	return (
 		<section
-			{ ...sectionProps }
+			{ ...props }
 			className={ [
 				className,
 				'ucf-c',
@@ -168,11 +133,41 @@ export default function Hero( {
 				/>
 			) : null }
 			<div className="ucf-c-hero__inner">
-				<Inner className="ucf-c-hero__copy" data-align={ contentAlign }>
-					{ children }
-				</Inner>
+				{ area(
+					'content',
+					{
+						className: 'ucf-c-hero__copy',
+						'data-align': contentAlign,
+					},
+					children
+				) }
 				{ overImage ? null : image }
 			</div>
 		</section>
 	);
 }
+
+/**
+ * A page-opening band: an image, and its copy and buttons placed inside.
+ *
+ *   <Hero layout="full image" imageSrc="/campus.jpg">…</Hero>
+ *
+ * Its props and parts: Hero.props.ts, Hero.parts.ts.
+ */
+const Hero = frame( HeroMarkup, {
+	// Who it is
+	slug: 'hero',
+	title: 'Hero', // SYNC: block.json's title
+	kind: 'content',
+
+	// What it takes
+	props: PROPS,
+	parts: PARTS,
+	presets: PRESETS,
+	defaultPreset: DEFAULT_PRESET,
+
+	// WordPress only
+	wpIcon: 'cover',
+} );
+
+export default Hero;

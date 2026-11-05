@@ -6,15 +6,29 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
-import Hero, { PARTS, type HeroProps } from '../Hero.tsx';
-import example from '../example.json';
+import Hero, { type HeroProps } from '../Hero.tsx';
+import { PARTS } from '../Hero.parts.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-ucf-content-hero alignfull' };
 
-const base = example as HeroProps;
-const copy = <h1 className={ PARTS.title }>Reach for the stars</h1>;
+// The props the markup snapshots were taken with: the defaults, and a small drawn image.
+const base: HeroProps = {
+	tone: 'accent',
+	layout: 'split',
+	imageSrc:
+		'data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 1200 900%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23444%27/%3E%3Cstop offset=%271%27 stop-color=%27%23000%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%271200%27 height=%27900%27 fill=%27url(%23g)%27/%3E%3Ccircle cx=%27880%27 cy=%27260%27 r=%27150%27 fill=%27%23ffc904%27/%3E%3C/svg%3E',
+	imageAlt: '',
+	imageSide: 'right',
+	imageFill: 'card',
+	splitRatio: 'even',
+	contentAlign: 'left',
+	overlay: 'gradient right',
+	overlayStrength: 'medium',
+	height: 'regular',
+};
+const copy = <h1 className={ PARTS.title.className }>Reach for the stars</h1>;
 
 const cases: Record< string, HeroProps > = {
 	example: base,
@@ -73,7 +87,7 @@ describe( 'Hero', () => {
 	// WHY: WordPress and Puck each edit the copy through their own element. If the Hero rendered
 	// its children anywhere else, blocks dropped in would land outside the copy, and the copy's
 	// alignment would not reach them.
-	it( 'renders its copy in the element a host passes as innerAs, with its alignment', () => {
+	it( 'renders its copy area as the element a host passes for it, with its alignment', () => {
 		const Zone = ( props: object ) => (
 			<div data-zone="" { ...props }>
 				<p>Dropped in</p>
@@ -81,7 +95,11 @@ describe( 'Hero', () => {
 		);
 		expect(
 			renderToStaticMarkup(
-				<Hero { ...base } contentAlign="center" innerAs={ Zone } />
+				<Hero.port.Frame
+					{ ...base }
+					contentAlign="center"
+					areas={ { content: Zone } }
+				/>
 			)
 		).toContain(
 			'<div data-zone="" class="ucf-c-hero__copy" data-align="center"><p>Dropped in</p></div>'
@@ -97,11 +115,16 @@ describe( 'Hero', () => {
 		expect( html ).toMatch( /<img class="[^"]*\bwp-image-42\b[^"]*"/ );
 	} );
 
-	// WHY: WordPress's editor passes its picker as `media`, which must show in the image's frame
-	// even before an image is chosen, or there is nothing to click.
-	it( 'shows the media slot in the image frame, even with no image yet', () => {
+	// WHY: WordPress's editor puts its picker in the image area, which must show in the image's
+	// frame even before an image is chosen, or there is nothing to click.
+	it( 'shows the host’s image area in the image frame, even with no image yet', () => {
+		const Choose = () => <button>Choose</button>;
 		const html = renderToStaticMarkup(
-			<Hero { ...base } imageSrc="" media={ <button>Choose</button> } />
+			<Hero.port.Frame
+				{ ...base }
+				imageSrc=""
+				areas={ { media: Choose } }
+			/>
 		);
 		expect( html ).toContain(
 			'<div class="ucf-c-hero__media"><button>Choose</button></div>'

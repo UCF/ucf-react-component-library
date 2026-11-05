@@ -13,8 +13,8 @@
  * Asks for whichever of kind and plugin is missing when run in a terminal.
  *
  * It writes components/{bucket}/{name}/ (content, interactive or primitives, by kind), a working
- * copy of the closest of `highlight`,
- * `degree-finder` and `button` reduced to one prop, and adds it to every list that names
+ * copy of the closest of `card`, `degree-finder` and `button` reduced to one prop (a content
+ * component: one prop, two parts, one preset, built with frame()), and adds it to every list that names
  * components by hand: package.json `exports`, the plugin's plugin.json, and the lists in
  * integrations/tests/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
  * `npm run test:stories` as written, so every later failure is the new code's.
@@ -202,7 +202,8 @@ function addExports( source, n, kind ) {
 		types: `${ dist }/integrations/puck/config.d.ts`,
 		default: `${ dist }/integrations/puck/config.js`,
 	};
-	if ( kind !== 'interactive' ) {
+	// WHY a primitive only: a content component's sample is its presets, not example.json.
+	if ( kind === 'primitive' ) {
 		json.exports[ `${ entry }/example.json` ] = `${ dist }/example.json`;
 	}
 	return JSON.stringify( json, null, '\t' ) + '\n';
@@ -287,9 +288,9 @@ function addPuckConfig( source, file, n ) {
 }
 
 // ── Templates ────────────────────────────────────────────────────────────────────────────
-// SYNC: modeled on components/content/highlight (content) and components/interactive/degree-finder
-// (interactive). When
-// a convention changes there, change it here too.
+// SYNC: modeled on components/content/card (content), components/interactive/degree-finder
+// (interactive) and components/primitives/button (primitive). When a convention changes there,
+// change it here too.
 
 const blockJson = ( n, attributes, extra ) =>
 	JSON.stringify(
@@ -319,70 +320,204 @@ const blockJson = ( n, attributes, extra ) =>
 	) + '\n';
 
 function contentFiles( n ) {
+	// `pull-quote` → `PULL_QUOTE`, for the package entry's PARTS and PRESETS names.
+	const NAME = n.name.toUpperCase().replace( /-/g, '_' );
+	const root = '../../../../..';
 	return {
 		[ `${ n.Name }.tsx` ]: `/**
- * CONTEXT: the ${ n.title }, a content component. Every host renders this one file.
- *
- * A content core takes props and returns markup, nothing else: no runtime imports (\`import
- * type\` only), no state, effects or data fetching. WordPress's \`save()\` renders it once, to a
- * string, and stores the result in the post. Anything host-specific comes in through a slot
- * (docs/architecture.md, "Slots").
- *
- * SYNC: WordPress stores what this returns in every post that uses the block. Once a site uses
- * it, changing the markup needs a major version and a \`deprecated\` entry in
- * wp/index.tsx (docs/architecture.md, "Changing a content component's markup").
+ * The ${ n.title }. Why it's built this way: docs/architecture.md, "Built with frame()".
+ * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import {
+	frame,
+	type FrameProps,
+	type OwnProps,
+	type PresetProps,
+} from '../../../integrations/react/frame.tsx';
+import { PARTS } from './${ n.Name }.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './${ n.Name }.presets.ts';
+import { PROPS } from './${ n.Name }.props.ts';
 
-export type ${ n.Name }Props = {
-	/** The text. */
-	text: ReactNode;
-} & Omit< ComponentPropsWithoutRef< 'div' >, 'children' >;
+/** Everything the ${ n.title } takes: its props, \`preset\`, \`content\`, and a site's HTML attributes. */
+export type ${ n.Name }Props = OwnProps< typeof PROPS > &
+	PresetProps< typeof PARTS, typeof PRESETS >;
 
-export default function ${ n.Name }( {
-	text,
+function ${ n.Name }Markup( {
+	contentAlign = PROPS.contentAlign.default,
+	children,
 	className,
-	...wrapperProps
-}: ${ n.Name }Props ) {
+	area,
+	...props
+}: FrameProps< typeof PROPS > ) {
 	return (
 		<div
-			{ ...wrapperProps }
+			{ ...props }
 			className={ [ className, 'ucf-c', 'ucf-c-${ n.name }' ]
 				.filter( Boolean )
 				.join( ' ' ) }
+			data-align={ contentAlign === 'start' ? undefined : contentAlign }
 		>
-			<p className="ucf-c-${ n.name }__text">{ text }</p>
+			{ area(
+				'content',
+				{ className: 'ucf-c-${ n.name }__content' },
+				children
+			) }
 		</div>
 	);
 }
+
+/**
+ * The ${ n.title }. Start from a preset and fill its parts, or pass any children:
+ *
+ *   <${ n.Name } preset="standard" content={ { title: 'A title' } } />
+ *
+ * Its props, presets and parts: ${ n.Name }.props.ts, ${ n.Name }.presets.ts, ${ n.Name }.parts.ts.
+ */
+const ${ n.Name } = frame( ${ n.Name }Markup, {
+	// Who it is
+	slug: '${ n.name }',
+	title: '${ n.title }', // SYNC: block.json's title
+	kind: 'content',
+
+	// What it takes
+	props: PROPS,
+	parts: PARTS,
+	presets: PRESETS,
+	defaultPreset: DEFAULT_PRESET,
+
+	// WordPress only
+	wpIcon: 'postFeaturedImage',
+} );
+
+export default ${ n.Name };
 `,
-		'index.ts': `export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+		[ `${ n.Name }.props.ts` ]: `/**
+ * The ${ n.title }'s props, in the order editors see them. Each key is a saved block attribute.
+ * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
+ * block deprecation.
+ */
+import type {
+	PropDefinitions,
+	PropsOf,
+} from '../../../integrations/schema/props.ts';
+
+export const PROPS = {
+	/** The content's alignment, across. */
+	contentAlign: {
+		type: 'choice',
+		label: 'Align',
+		panel: '${ n.title }',
+		control: 'radio',
+		options: [
+			{ value: 'start', label: 'Start' },
+			{ value: 'center', label: 'Center' },
+		],
+		default: 'start',
+	},
+} as const satisfies PropDefinitions;
+
+/** The props above, typed. */
+export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 `,
-		'example.json': `{
-	"text": "Sample text for the ${ n.title }."
-}
+		[ `${ n.Name }.parts.ts` ]: `/**
+ * The ${ n.title }'s parts: what goes inside it, each with its kind and the class that styles it.
+ * SYNC: style.css styles every class here; tests/${ n.Name }.test.tsx checks.
+ */
+import type {
+	PartDefinitions,
+	PartOf,
+} from '../../../integrations/schema/parts.ts';
+
+export const PARTS = {
+	/** The title. */
+	title: { kind: 'heading', className: 'ucf-c-${ n.name }__title' },
+	/** One or two sentences. */
+	text: { kind: 'text', className: 'ucf-c-${ n.name }__text' },
+} as const satisfies PartDefinitions;
+
+/** A part in a preset: \`{ part: 'title', level: 2, text: 'A title' }\`. */
+export type Part = PartOf< typeof PARTS >;
+`,
+		[ `${ n.Name }.presets.ts` ]: `/**
+ * The ${ n.title }'s presets: its designs, each a mix of props and parts. WordPress shows each as
+ * a variation, Puck in its Design picker.
+ */
+import type { Part } from './${ n.Name }.parts.ts';
+import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
+import {
+	findPreset,
+	type Preset as PresetOf,
+} from '../../../integrations/schema/presets.ts';
+
+export type Preset = PresetOf< ${ n.Name }EditableProps, Part >;
+
+// WHY \`as const\`: the names and parts stay exact, so \`preset\` and \`content\` are typed.
+export const PRESETS = [
+	{
+		name: 'standard',
+		title: '${ n.title }: Standard',
+		description: 'A title and a sentence.',
+		wpIcon: 'postFeaturedImage',
+		props: { contentAlign: 'start' },
+		parts: [
+			{ part: 'title', level: 2, text: 'A title for the ${ n.title }' },
+			{ part: 'text', text: 'One or two sentences.' },
+		],
+	},
+] as const satisfies readonly Preset[];
+
+// A preset by its name.
+export const presetNamed = ( name: string ): Preset =>
+	findPreset( PRESETS, name );
+
+/** What a new ${ n.title } starts with: a start, not a lock. */
+export const DEFAULT_PRESET: Preset = presetNamed( 'standard' );
+`,
+		'index.ts': `/**
+ * \`@ucf/components/${ n.name }\`. SYNC: docs/architecture.md, "What a component exports".
+ */
+export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+
+// Its pieces, for a site that builds its own
+
+export { PARTS as ${ NAME }_PARTS } from './${ n.Name }.parts.ts';
+export { PRESETS as ${ NAME }_PRESETS } from './${ n.Name }.presets.ts';
 `,
 		'style.css': `/*
- * CONTEXT: the ${ n.title }'s styles, for every host.
+ * The ${ n.title }'s styles, for every host.
  *
  * Reads only \`--ucf-*\` names, and colors only as component-layer roles (\`--ucf-c-body\` and
- * so on). The root carries \`ucf-c\`, a component that sits on the section, so the roles are
- * the section's (docs/architecture.md, "The component layer").
- *
+ * so on). The root carries \`ucf-c\`, so the roles are the section's (docs/architecture.md).
+ * SYNC: every class in ${ n.Name }.parts.ts.
  * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named \`style.css\`.
  */
 .ucf-c-${ n.name } {
 	color: var(--ucf-c-body);
 }
 
-.ucf-c-${ n.name }__text {
+.ucf-c-${ n.name }[data-align="center"] {
+	text-align: center;
+}
+
+.ucf-c-${ n.name } .ucf-c-${ n.name }__title {
+	margin: 0 0 0.5em;
+}
+
+.ucf-c-${ n.name } .ucf-c-${ n.name }__text {
 	margin: 0;
 }
 `,
-		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `/**
+ * The ${ n.title }: its default preset, and its props as controls.
+ */
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { defaultsIn } from '${ root }/integrations/schema/props.ts';
+import { argTypesOf } from '${ root }/integrations/storybook/arg-types.ts';
+import '${ root }/components/primitives/heading/style.css';
+import '${ root }/components/primitives/paragraph/style.css';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import example from '../../example.json';
+import { PROPS } from '../../${ n.Name }.props.ts';
 import '../../style.css';
 
 const meta = {
@@ -390,167 +525,129 @@ const meta = {
 	title: 'Content (Server)/${ n.title }',
 	tags: [ 'server' ],
 	component: ${ n.Name },
-	// WHY example.json: the same props the WordPress inserter preview and the markup test use.
-	args: example,
+	// WHY the defaults: what a new ${ n.title } starts with in WordPress and Puck.
+	args: defaultsIn( PROPS, 'puck' ),
+	argTypes: argTypesOf( PROPS ),
 } satisfies Meta< typeof ${ n.Name } >;
 
 export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-export const Default: Story = {};
+/** The standard preset, with its sample text. */
+export const Standard: Story = { args: { preset: 'standard', sample: true } };
 `,
 		[ `tests/${ n.Name }.test.tsx` ]: `/**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
  * matches the committed snapshot. See components/content/highlight/tests/Highlight.test.tsx for
  * why.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
-import example from '../example.json';
+import { PARTS } from '../${ n.Name }.parts.ts';
+import { PRESETS } from '../${ n.Name }.presets.ts';
 
 // What \`useBlockProps.save()\` adds for this block.
 // SYNC: the block name in wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-${ n.block.replace( '/', '-' ) }' };
 
 const cases: Record< string, ${ n.Name }Props > = {
-	example,
+	defaults: {},
+	// Each preset's props.
+	...Object.fromEntries(
+		PRESETS.map( ( preset ) => [ \`the \${ preset.name } preset\`, preset.props ] )
+	),
 };
 
 describe( '${ n.Name }', () => {
 	for ( const [ name, props ] of Object.entries( cases ) ) {
 		it( \`renders the same in WordPress and React: \${ name }\`, () => {
-			const element = <${ n.Name } { ...WP_WRAPPER } { ...props } />;
+			const element = (
+				<${ n.Name } { ...WP_WRAPPER } { ...props }>
+					<p>Content</p>
+				</${ n.Name }>
+			);
 			const html = renderToStaticMarkup( element );
 
 			expect( renderToString( element ) ).toBe( html );
 			expect( html ).toMatchSnapshot();
 		} );
 	}
+
+	// WHY: WordPress and Puck each edit the content through their own element. If the markup
+	// rendered its children anywhere else, blocks dropped in would land outside it.
+	it( 'renders its content area as the element a host passes for it', () => {
+		const Zone = ( props: object ) => <div data-zone="" { ...props } />;
+		expect(
+			renderToStaticMarkup(
+				<${ n.Name }.port.Frame areas={ { content: Zone } } />
+			)
+		).toContain( '<div data-zone="" class="ucf-c-${ n.name }__content">' );
+	} );
+} );
+
+// WHY: a part class with no rule does nothing; an editor who picks it sees no change.
+it( 'styles every part class', () => {
+	const css = readFileSync( new URL( '../style.css', import.meta.url ), 'utf8' );
+	const classes: ( string | undefined )[] = Object.values( PARTS ).map(
+		( definition: { className?: string } ) => definition.className
+	);
+	expect(
+		classes.filter(
+			( className ) => className && ! css.includes( \`.\${ className }\` )
+		)
+	).toEqual( [] );
 } );
 `,
-		'integrations/puck/config.tsx': `/**
- * The ${ n.title } for Puck: a plain config object, so this library needs no Puck dependency.
- *
- * WHY only string props: the same plain strings are what the WordPress block stores, so
- * content can move between the two hosts as-is.
- */
+		'integrations/puck/config.tsx': `/** The ${ n.title } in Puck, from its port (integrations/puck/config.tsx). */
+import { puckConfig } from '${ root }/integrations/puck/config.tsx';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-// WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
-// without it.
-import example from '../../example.json' with { type: 'json' };
-import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
-type Props = {
-	text: string;
-};
-
-const config: PuckComponentConfig< Props > = {
-	label: '${ n.title }',
-	fields: {
-		text: { type: 'textarea', label: 'Text' },
-	},
-	defaultProps: example,
-	// FIX: pass only the core's own props. It spreads the rest onto its <div>, so Puck's \`id\`,
-	// \`puck\` and \`editMode\` would end up in the markup (see PuckRenderProps in
-	// integrations/puck/types.ts).
-	render: ( { text } ) => <${ n.Name } text={ text } />,
-};
+const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( ${ n.Name } );
 
 export default config;
+export { TEMPLATE, withTemplate, withPreset };
 `,
-		'integrations/wp/block.json': blockJson( n, [ 'text' ], {
+		'integrations/wp/block.json': blockJson( n, [], {
+			attributes: { contentAlign: { type: 'string', default: 'start' } },
 			style: 'file:./style-index.css',
 		} ),
-		'integrations/wp/index.tsx': `/**
- * Editor entry: registers the ${ n.title } block.
- */
+		'integrations/wp/index.tsx': `/** Registers the ${ n.title }'s block: its settings from its port, and its edit and save. */
+// WHY imported here: webpack builds the block's stylesheet from what its script imports.
+import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
-import '../../style.css';
-import example from '../../example.json';
+import { blockSettings } from '${ root }/integrations/wp/block.tsx';
+import ${ n.Name } from '../../${ n.Name }.tsx';
 import metadata from './block.json';
-import Edit, { type Attributes } from './edit.tsx';
+import edit from './edit.tsx';
 import save from './save.tsx';
 
-// UPSTREAM: see the same casts in components/content/highlight/integrations/wp/index.tsx.
-const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
-
-registerBlockType< Attributes >( blockMetadata, {
-	example: {
-		attributes: example,
-	} as unknown as BlockConfiguration< Attributes >[ 'example' ],
-	edit: Edit,
+// UPSTREAM: TypeScript reads block.json's values as plain strings, not WordPress's types.
+registerBlockType( metadata as unknown as BlockConfiguration, {
+	...blockSettings( ${ n.Name } ),
+	edit,
 	save,
 } );
 `,
-		'integrations/wp/edit.tsx': `import { __ } from '@wordpress/i18n';
-import {
-	PlainText as UntypedPlainText,
-	useBlockProps,
-} from '@wordpress/block-editor';
-import type { BlockEditProps } from '@wordpress/blocks';
-import type { ComponentType } from 'react';
-
+		'integrations/wp/edit.tsx': `/** The ${ n.title }'s editor view: its sidebar and its content, from its port. */
+import { blockEdit } from '${ root }/integrations/wp/block.tsx';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
-// UPSTREAM: block-editor's type files are generated from JSDoc, and PlainText's has no props.
-const PlainText = UntypedPlainText as ComponentType< {
-	value: string;
-	onChange: ( value: string ) => void;
-	placeholder?: string;
-	'aria-label'?: string;
-} >;
-
-// SYNC: the attributes in block.json.
-export type Attributes = {
-	text: string;
-};
-
-/**
- * The editor view: the core component, with fields in its slots.
- *
- * @param props               The block's edit props.
- * @param props.attributes    Its attributes.
- * @param props.setAttributes Updates them.
- */
-export default function Edit( {
-	attributes,
-	setAttributes,
-}: BlockEditProps< Attributes > ) {
-	return (
-		<${ n.Name }
-			{ ...useBlockProps() }
-			text={
-				<PlainText
-					value={ attributes.text }
-					onChange={ ( text ) => setAttributes( { text } ) }
-					placeholder={ __( 'Text', '${ n.plugin }' ) }
-					aria-label={ __( 'Text', '${ n.plugin }' ) }
-				/>
-			}
-		/>
-	);
-}
+export default blockEdit( ${ n.Name } );
 `,
-		'integrations/wp/save.tsx': `import { useBlockProps } from '@wordpress/block-editor';
-import type { BlockSaveProps } from '@wordpress/blocks';
-
-import ${ n.Name } from '../../${ n.Name }.tsx';
-import type { Attributes } from './edit.tsx';
-
-/**
- * The stored markup: the core component, with strings in its slots.
- *
- * @param props            The block's save props.
- * @param props.attributes Its attributes.
+		'integrations/wp/save.tsx': `/**
+ * What the ${ n.title }'s block stores in a post.
+ * SYNC: stored in every post with the block; changing it needs a deprecation in index.tsx.
  */
-export default function save( { attributes }: BlockSaveProps< Attributes > ) {
-	return <${ n.Name } { ...useBlockProps.save() } text={ attributes.text } />;
-}
+import { blockSave } from '${ root }/integrations/wp/block.tsx';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+
+export default blockSave( ${ n.Name } );
 `,
 	};
 }
@@ -1127,10 +1224,23 @@ Next:
   Then: npm run check && npm run test:stories` );
 		return;
 	}
+	if ( options.kind === 'content' ) {
+		console.log( `
+Next (docs/architecture.md, "Built with frame()"):
+  1. Write the markup in ${ Name }Markup (${ Name }.tsx); mark where content goes with area().
+  2. Add props to ${ Name }.props.ts, and each one's attribute to wp/block.json (a test fails
+     until they match). Add parts to ${ Name }.parts.ts, each with its class in style.css.
+  3. Replace the standard preset in ${ Name }.presets.ts with the designs it has.
+  4. Write the block's description in wp/block.json.
+  5. Run \`npm test\` to write the new markup snapshots, then review them: they are what every
+     saved post will store.
+  Then: npm run check && npm run test:stories` );
+		return;
+	}
 	console.log( `
 Next:
   1. Replace the placeholder prop and markup in ${ Name }.tsx, and keep the block attributes
-     (wp/block.json), the Puck fields and ${ options.kind === 'content' ? 'example.json' : 'defaults.ts' } naming the same props.
+     (wp/block.json), the Puck fields and defaults.ts naming the same props.
   2. Write the block's description in wp/block.json.${
 		options.kind === 'interactive'
 			? `

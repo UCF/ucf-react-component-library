@@ -18,11 +18,13 @@ export type KindContent = {
 		alt?: string;
 		url?: string;
 	};
-	heading: { text: string; level: 2 | 3 | 4 };
+	/** `level: 1` only where the part opens the page (the Hero's title). */
+	heading: { text: string; level: 1 | 2 | 3 | 4 };
 	text: { text: string };
 	/** A text link with an arrow. */
 	link: { text: string; url: string };
-	button: { text: string; url: string };
+	/** `outline`: the secondary button, core Button's Outline style. */
+	button: { text: string; url: string; outline?: boolean };
 };
 
 export type Kind = keyof KindContent;

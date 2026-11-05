@@ -311,10 +311,10 @@ HTML is the same everywhere. What it may do depends on its kind:
 | First line      | Nothing special                               | `'use client';`                                |
 | Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
-Anything that differs between hosts comes in as a prop, a **slot**: a frame's `innerAs` (the
-Section, Hero, Highlight, Card) takes WordPress's inner-blocks element or Puck's slot, and
-defaults to a `<div>` elsewhere; the Card's `title` takes a string when saved and a text field
-in the WordPress editor. A core never imports a host or checks which one it is in. If it needs
+Anything that differs between hosts comes in through a **slot**: a content component's areas
+(`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks
+element or Puck's slot, and are a `<div>` elsewhere; the Hero's `media` area takes WordPress's
+image picker. A core never imports a host or checks which one it is in. If it needs
 something a host has, add a slot.
 
 ### Adapters
@@ -411,8 +411,8 @@ Plus, for content: `tests/{Name}.test.tsx`, the markup contract (copy
 `card/tests/Card.test.tsx`), and `{Name}.props.ts` (its prop definitions), a frame's `{Name}.parts.ts`,
 `{Name}.presets.ts` if it has designs, and a `README.md` with its object model: copy the
 Card's, and see "A component's folder" in [architecture.md](docs/architecture.md). The script
-still writes the older layout (`example.json` for sample props, props written out in each
-adapter); move the props into `{Name}.props.ts` and the samples into presets as the Card does. For interactive: `defaults.ts`,
+writes a content component in the Card's layout, built with `frame()` ("Built with frame()").
+For interactive: `defaults.ts`,
 `client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
 `fetch`) and `sample-client.ts` (the same interface with no network, for stories).
 
@@ -423,7 +423,7 @@ adapter); move the props into `{Name}.props.ts` and the samples into presets as 
 it on their own; these don't:
 
 - **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
-  for a component that still has one). This is what makes it importable from `@ucf/components`.
+  for a primitive). This is what makes it importable from `@ucf/components`.
 - **One `plugins/*/plugin.json`:** add the name to `blocks`, and name the block after that
   plugin (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two. An
   interactive block with site settings also gets a settings function in that plugin's main PHP

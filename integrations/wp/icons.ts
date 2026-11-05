@@ -10,12 +10,14 @@ import {
 	button,
 	chartBar,
 	cornerTopLeft,
+	cover,
 	overlayText,
 	people,
 	postFeaturedImage,
 	sidesLeft,
 	sidesTop,
 	starFilled,
+	stretchFullWidth,
 } from '@wordpress/icons';
 
 export const ICONS: Record< string, JSX.Element > = {
@@ -24,10 +26,12 @@ export const ICONS: Record< string, JSX.Element > = {
 	button,
 	chartBar,
 	cornerTopLeft,
+	cover,
 	overlayText,
 	people,
 	postFeaturedImage,
 	sidesLeft,
 	sidesTop,
 	starFilled,
+	stretchFullWidth,
 };

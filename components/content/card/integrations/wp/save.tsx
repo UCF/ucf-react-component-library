@@ -4,6 +4,5 @@
  */
 import { blockSave } from '../../../../../integrations/wp/block.tsx';
 import Card from '../../Card.tsx';
-import metadata from './block.json';
 
-export default blockSave( Card, metadata );
+export default blockSave( Card );

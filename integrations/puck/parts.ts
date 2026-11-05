@@ -10,6 +10,18 @@ import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
 import type { PuckSlot } from './types.ts';
 
 /**
+ * The Button primitive's variant for a link or button part.
+ *
+ * @param part A link or button part.
+ */
+const variantOf = ( part: ResolvedPart ) => {
+	if ( part.kind === 'link' ) {
+		return 'text';
+	}
+	return part.kind === 'button' && part.outline ? 'outline' : 'fill';
+};
+
+/**
  * Parts as the library's primitives.
  *
  * @param parts Parts, from resolveParts().
@@ -50,7 +62,7 @@ export function toPrimitives( parts: ResolvedPart[] ): PuckSlot {
 						text: part.text,
 						url: part.url,
 						linkTarget: '',
-						variant: part.kind === 'link' ? 'text' : 'fill',
+						variant: variantOf( part ),
 						fontSize: '',
 						className: part.className,
 					},

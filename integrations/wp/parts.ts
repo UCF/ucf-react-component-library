@@ -37,7 +37,7 @@ export function toBlocks(
 	// The part's class, when its look has one.
 	const classOf = ( className: string ) => ( className ? { className } : {} );
 
-	return parts.map( ( part ): BlockTemplate[ number ] => {
+	const blocks = parts.map( ( part ): BlockTemplate[ number ] => {
 		switch ( part.kind ) {
 			case 'image':
 				return [
@@ -89,7 +89,14 @@ export function toBlocks(
 							{
 								text: part.text,
 								url: part.url,
-								...classOf( part.className ),
+								...classOf(
+									[
+										part.className,
+										part.outline && 'is-style-outline',
+									]
+										.filter( Boolean )
+										.join( ' ' )
+								),
 							},
 						],
 					],
@@ -98,6 +105,15 @@ export function toBlocks(
 				return unhandledPart( part );
 		}
 	} );
+	// WHY: buttons side by side share one core Buttons group, so they sit in a row.
+	return blocks.reduce< BlockTemplate >( ( merged, block ) => {
+		const last = merged.at( -1 );
+		if ( block[ 0 ] === 'core/buttons' && last?.[ 0 ] === 'core/buttons' ) {
+			last[ 2 ] = [ ...( last[ 2 ] ?? [] ), ...( block[ 2 ] ?? [] ) ];
+			return merged;
+		}
+		return [ ...merged, block ];
+	}, [] );
 }
 
 // ── The inserter preview ───────────────────────────────────────────────────────────────────────

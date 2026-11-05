@@ -101,34 +101,31 @@ parts in `Card.parts.ts` and its presets in `Card.presets.ts`. Its props, Puck f
 defaults, sidebar panels and story controls come from them, and parity.test.tsx checks
 block.json against them. Still to do:
 
-- **Move the Hero and the Section** to the same files, as the Card and the Highlight have:
-  the Hero's `options.ts` (`CHOICES`/`TEXTS`) into `Hero.props.ts` and its `PARTS` into
-  `Hero.parts.ts`; each `example.json` into the defaults (and presets, if it has designs); the
-  stories and tests to `{Name}.*` names; a README.md each. Then drop `example.json` from
-  blocks.test.tsx, parity.test.tsx, scripts/build-package.mjs and package.json's exports, and
-  `imageId` from `WORDPRESS_ONLY` in parity.test.tsx (the Hero has one).
+- **Every content component is on `frame()`** (done 2026-11-05: Card, Highlight, Hero,
+  Section), and the scaffolder writes that layout. Left from the move: drop the content
+  components' `example.json` handling from blocks.test.tsx, parity.test.tsx and
+  scripts/build-package.mjs (only primitives have one now), and `imageId` from
+  `WORDPRESS_ONLY` in parity.test.tsx (the Hero's and Card's are in their props); a README.md
+  for the Hero and the Section, as the Card's.
+- **The Hero's designs as presets:** it has none yet, only DEFAULT_PRESET. P1's layouts (split,
+  full image, text only) may be worth naming.
+- **The examples** (examples/fixed-card, examples/flexible-card) still use `innerAs`.
 - **The primitives** to the same files: each one's props in `{Name}.props.ts` (now written out
   in its adapters) and its `example.json` into its defaults.
-- **The other components onto definitions and translators,** as the Card is
-  (docs/architecture.md, "One definition, one translator per environment"): the Highlight first
-  (its adapters are the Card's pattern), then the Hero (its edit.tsx is the biggest: the test of
-  the translator's override points), the Section, the primitives, and the Degree Finder (the
-  WordPress translator's interactive path: render.php and view.tsx). Then the scaffolder writes a
-  definition and the one-line integration files.
-- **The Highlight in Puck as data,** as the Card is (integrations/puck/presets.ts): a Design
-  picker, a field per part, and `blocks` for the open frame.
-- **ucf-puck-demo:** its saved page keeps a Card's slot under `content`, now `blocks`. Reset the
-  page (or move the list) after deploying.
+- **The primitives and the Degree Finder onto the translators** (docs/architecture.md, "One
+  definition, one translator per environment"): the Degree Finder is the WordPress
+  translator's interactive path (render.php and view.tsx).
+- **ucf-puck-demo:** its saved page keeps the Card's, Highlight's, Hero's and Section's slots
+  under `content`, now `blocks`, and the Highlight's designs are now data (a Design picker),
+  not slot contents. `HERO_PARTS` is now each part's kind and class, not a class string. Reset
+  the page after deploying.
 - **WordPress at the content layer:** prototype pattern overrides (6.6+) for the Card's presets
   (docs/architecture.md, "How content reaches a frame").
-- **The Highlight on `frame()`:** as the Card is, which gives it `preset` and `content`. integrations/tests/react.test.tsx then checks it with no other change.
 - **Drop the deprecated `withVariation`** from the Card's and Highlight's Puck configs once
   ucf-puck-demo uses `withPreset`.
 - **block.json stays hand-written** (decided 2026-11-05): generating it, and the integration
   entry points, would hide the files WordPress developers look for. parity.test.tsx checks it
   against each component's props instead.
-- **scripts/new-component.mjs** still scaffolds the old layout (props written out in each
-  adapter, `example.json`), though in the new folders.
 
 The original note:
 

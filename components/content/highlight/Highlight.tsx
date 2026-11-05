@@ -1,74 +1,78 @@
 /**
- * CONTEXT: the Highlight, a content component and a frame: the accent rule and spacing of a
- * statement, with its text placed inside. Every host renders this one file.
+ * The Highlight: something pulled out of the page to stand on its own, a fact, a key figure or a
+ * ranking, with its source. The accent rule and spacing; the content placed inside is open.
  *
- * WordPress's block `save()` renders it to produce the HTML stored in a post, its `edit()`
- * renders it with the editable inner blocks inside, and Next, Puck or any other React host
- * renders it as a page component. So it has to be plain React:
- *
- *   - no runtime imports but its own files: not `react`, not `@wordpress/*`, not `next/*`. JSX
- *     compiles to `react/jsx-runtime`, which each host supplies. (`import type` is erased at
- *     build.)
- *   - no state, effects, handlers, `'use client'` or data fetching. `save()` renders this
- *     synchronously, once, to a string.
- *   - anything host-specific comes in through a slot. `innerAs` is the example: WordPress
- *     passes its inner-blocks element, Puck its slot; plain React leaves the default `<div>`.
- *     The library holds no host code.
- *
- * WHY a frame: what goes inside is open. A new Highlight starts with one of the UCF designs
- * (PRESETS in Highlight.presets.ts: statement, key figure, bracket, side rule, centered), each
- * part carrying the class that styles it, and editors can change any of it. The cost: nothing
- * makes a Highlight have a statement or a source, and nothing else can read them as fields.
- * WHY "Highlight", not "Stat": not every one is a number (a partnership, a ranking with a
- * logo), and all of them are something pulled out of the page to stand on its own.
- * SPEC: the default is the statement, a fact written as a full sentence. The key figure (a
- * large number or date over a label) is for values that are not claims: a deadline, a code.
- *
- * SYNC: WordPress stores what this returns in every post that uses the block. Changing the
- * markup makes those blocks invalid: it needs a major version and a `deprecated` entry in
- * integrations/wp/index.tsx that carries a frozen copy of the old markup.
- * tests/Highlight.test.tsx fails on any markup change so this cannot happen by accident.
- *
- * WHY `ucf-c-` and not `ucf-`: the block theme already styles `.ucf-stat` for its pattern,
- * and its `> p:not(...)` selectors outrank a single class. A separate prefix keeps this
- * component's CSS the only CSS that applies to it, on any theme.
+ * `<Highlight preset="key-figure" content={ { figure: 'Nov 1', label: 'Early action' } } />`, or
+ * any children. Hosts read `Highlight.port` (integrations/react/frame.tsx).
+ * WHY "Highlight", not "Stat": not every one is a number (a partnership, a ranking with a logo).
+ * SPEC: the default is the statement, a fact written as a full sentence. The key figure (a large
+ * number or date over a label) is for values that are not claims: a deadline, a code.
+ * WHY `ucf-c-` and not `ucf-`: the block theme already styles `.ucf-stat`, and its
+ * `> p:not(...)` selectors outrank a single class.
+ * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react';
+import {
+	frame,
+	type FrameProps,
+	type OwnProps,
+	type PresetProps,
+} from '../../../integrations/react/frame.tsx';
+import { PARTS } from './Highlight.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './Highlight.presets.ts';
+import { PROPS } from './Highlight.props.ts';
 
-import { PROPS, type HighlightEditableProps } from './Highlight.props.ts';
+/** Everything the Highlight takes: its props, `preset`, `content`, and a site's HTML attributes. */
+export type HighlightProps = OwnProps< typeof PROPS > &
+	PresetProps< typeof PARTS, typeof PRESETS >;
 
-/**
- * The props from the prop definitions (Highlight.props.ts, where each is described), and what a
- * host passes besides. The classes for the parts placed inside are in Highlight.parts.ts.
- */
-export type HighlightProps = Partial< HighlightEditableProps > & {
-	/** The statement, its detail and its source, or whatever an editor placed instead. */
-	children?: ReactNode;
-	/**
-	 * The element that holds the content. WordPress passes its inner-blocks element and Puck its
-	 * slot, so each host's editing area is this element, with no wrapper of its own.
-	 */
-	innerAs?: ElementType;
-} & Omit< ComponentPropsWithoutRef< 'div' >, 'children' >;
-
-export default function Highlight( {
+function HighlightMarkup( {
 	rule = PROPS.rule.default,
 	contentAlign = PROPS.contentAlign.default,
 	children,
-	innerAs: Inner = 'div',
 	className,
-	...wrapperProps
-}: HighlightProps ) {
+	area,
+	...props
+}: FrameProps< typeof PROPS > ) {
 	return (
 		<div
-			{ ...wrapperProps }
+			{ ...props }
 			className={ [ className, 'ucf-c', 'ucf-c-highlight' ]
 				.filter( Boolean )
 				.join( ' ' ) }
 			data-rule={ rule }
 			data-align={ contentAlign === 'start' ? undefined : contentAlign }
 		>
-			<Inner className="ucf-c-highlight__content">{ children }</Inner>
+			{ area(
+				'content',
+				{ className: 'ucf-c-highlight__content' },
+				children
+			) }
 		</div>
 	);
 }
+
+/**
+ * A fact, a key figure or a ranking, with its source. Start from a preset and fill its parts, or
+ * pass any children:
+ *
+ *   <Highlight preset="key-figure" content={ { figure: 'Nov 1', label: 'Early action deadline' } } />
+ *
+ * Its props, presets and parts: Highlight.props.ts, Highlight.presets.ts, Highlight.parts.ts.
+ */
+const Highlight = frame( HighlightMarkup, {
+	// Who it is
+	slug: 'highlight',
+	title: 'Highlight', // SYNC: block.json's title
+	kind: 'content',
+
+	// What it takes
+	props: PROPS,
+	parts: PARTS,
+	presets: PRESETS,
+	defaultPreset: DEFAULT_PRESET,
+
+	// WordPress only
+	wpIcon: 'starFilled',
+} );
+
+export default Highlight;

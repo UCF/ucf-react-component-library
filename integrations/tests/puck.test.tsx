@@ -38,10 +38,8 @@ import highlight, {
 	withTemplate as highlightWithTemplate,
 	withPreset as highlightWithPreset,
 } from '../../components/content/highlight/integrations/puck/config.tsx';
-import { PARTS as HIGHLIGHT_PARTS } from '../../components/content/highlight/Highlight.parts.ts';
 import { PRESETS as HIGHLIGHT_PRESETS } from '../../components/content/highlight/Highlight.presets.ts';
 import type { PuckComponentConfig } from '../puck/types.ts';
-import type { Kind } from '../schema/parts.ts';
 
 type PropsOf< Config > =
 	Config extends PuckComponentConfig< infer Props > ? Props : never;
@@ -154,74 +152,52 @@ const PRIMITIVES: Record< string, { defaultProps: object } > = {
 	Paragraph: paragraph,
 };
 
-// Which primitive each kind of part is (integrations/puck/parts.ts).
-const PRIMITIVE_OF: Record< Kind, string > = {
-	image: 'Image',
-	heading: 'Heading',
-	text: 'Paragraph',
-	link: 'Button',
-	button: 'Button',
-};
-
-// A component's name, how Puck builds it with its template, the primitives expected, and its
-// slot's prop (`content` unless it says).
-type TemplateCase = [ string, () => unknown, string[], string? ];
+// A component's name, how Puck builds it with its template, and the primitives expected.
+type TemplateCase = [ string, () => unknown, string[] ];
 
 describe.each< TemplateCase >( [
 	[
 		'Card',
 		cardWithTemplate,
 		[ 'Image', 'Paragraph', 'Heading', 'Paragraph' ],
-		'blocks',
 	],
-	// Each highlight preset (highlight/Highlight.presets.ts), as Puck builds it.
-	...HIGHLIGHT_PRESETS.map( ( preset ): TemplateCase => [
-		`Highlight's ${ preset.name } preset`,
-		() => highlightWithPreset( preset.name ),
-		preset.parts.map(
-			( part ) => PRIMITIVE_OF[ HIGHLIGHT_PARTS[ part.part ].kind ]
-		),
-	] ),
-	[ 'Section', sectionWithTemplate, [ 'Heading', 'Paragraph' ] ],
 	[
 		'Highlight',
 		highlightWithTemplate,
 		[ 'Paragraph', 'Paragraph', 'Paragraph' ],
 	],
+	[ 'Section', sectionWithTemplate, [ 'Heading', 'Paragraph' ] ],
 	[
 		'Hero',
 		heroWithTemplate,
 		[ 'Paragraph', 'Heading', 'Paragraph', 'Button', 'Button' ],
 	],
-] )(
-	'the %s’s default template',
-	( _, withTemplate, types, slot = 'content' ) => {
-		const content =
-			(
-				withTemplate as () => {
-					defaultProps: Record<
-						string,
-						{ type: string; props: object }[]
-					>;
-				}
-			 )().defaultProps[ slot ] ?? [];
-
-		it( 'starts with the primitives WordPress’s template has, in order', () => {
-			expect( content.map( ( item ) => item.type ) ).toEqual( types );
-		} );
-
-		it( 'sets every prop of each primitive, and only props it has', () => {
-			for ( const item of content ) {
-				// WHY every prop: Puck doesn't merge a template item with the component's defaults.
-				expect( Object.keys( item.props ).sort() ).toEqual(
-					Object.keys(
-						PRIMITIVES[ item.type ]?.defaultProps ?? {}
-					).sort()
-				);
+] )( 'the %s’s default template', ( _, withTemplate, types ) => {
+	const content =
+		(
+			withTemplate as () => {
+				defaultProps: Record<
+					string,
+					{ type: string; props: object }[]
+				>;
 			}
-		} );
-	}
-);
+		 )().defaultProps.blocks ?? [];
+
+	it( 'starts with the primitives WordPress’s template has, in order', () => {
+		expect( content.map( ( item ) => item.type ) ).toEqual( types );
+	} );
+
+	it( 'sets every prop of each primitive, and only props it has', () => {
+		for ( const item of content ) {
+			// WHY every prop: Puck doesn't merge a template item with the component's defaults.
+			expect( Object.keys( item.props ).sort() ).toEqual(
+				Object.keys(
+					PRIMITIVES[ item.type ]?.defaultProps ?? {}
+				).sort()
+			);
+		}
+	} );
+} );
 
 // WHY: in Puck the Card stores its design and its content as data (integrations/puck/presets.ts),
 // and renders through the Card a React site uses.
@@ -307,5 +283,29 @@ describe( 'the Card’s presets in Puck', () => {
 		expect( fieldsFor( 'pathway' ).blocks ).toBeUndefined();
 		expect( fieldsFor( '' ).content ).toBeUndefined();
 		expect( fieldsFor( '' ).blocks ).toBeDefined();
+	} );
+} );
+
+// WHY: the Highlight's designs are data in Puck too, as the Card's are (above).
+describe( 'the Highlight’s presets in Puck', () => {
+	it.each( HIGHLIGHT_PRESETS.map( ( preset ) => [ preset.name, preset ] ) )(
+		'starts on the %s preset: its name, its props, no content yet',
+		( name, preset ) => {
+			const { defaultProps } = highlightWithPreset( name );
+			expect( defaultProps.preset ).toBe( name );
+			expect( defaultProps ).toMatchObject( preset.props );
+			expect( defaultProps.content ).toEqual( {} );
+		}
+	);
+
+	it( 'shows only the preset’s parts', () => {
+		const [ first ] = HIGHLIGHT_PRESETS;
+		const fields = highlight.resolveFields?.(
+			{ props: { ...highlight.defaultProps, preset: first.name } },
+			{ fields: {} }
+		) as Record< string, { objectFields?: object } >;
+		expect( Object.keys( fields.content?.objectFields ?? {} ) ).toEqual( [
+			...new Set( first.parts.map( ( { part } ) => part ) ),
+		] );
 	} );
 } );
