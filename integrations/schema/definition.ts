@@ -1,27 +1,21 @@
 /**
- * CONTEXT: a component's definition (`{Name}.definition.ts`): everything the component is, in one
- * object. Each environment's translator reads it and produces that environment's integration:
+ * Definition: everything a component is, in one object.
  *
- *   integrations/react/with-presets.tsx  presetComponent( definition )  → <Card preset content />
- *   integrations/puck/translate.tsx      puckConfig( definition )       → Puck's config
- *   integrations/wp/register.tsx         registerComponent( definition ) → the WordPress block
- *
- * WHY one definition and one translator per environment, not one file that translates for
- * every environment: the definition is plain data and a React component, safe to import
- * anywhere; WordPress's code must never reach the npm package, nor Puck's the plugins. Each
- * translator is the one place that knows its environment, written once for every component.
+ * Each environment reads it: wp/block.tsx, puck/config.tsx, react/component.tsx.
+ * WHY one reader per environment: WordPress's code must never reach the npm package, nor Puck's the
+ * plugins; the definition is safe to import anywhere.
  */
+
 import type { ComponentType } from 'react';
 
-import type { Looks, PartOf } from './parts.ts';
+import type { PartDefinitions, PartOf } from './parts.ts';
 import type { Preset } from './presets.ts';
 import type { PropDefinitions, PropsOf } from './props.ts';
 
 export type ComponentDefinition<
-	Definitions extends PropDefinitions,
-	L extends Looks,
-	// WHY `any` by default: a translator that takes any definition passes the props its
-	// environment stores; a component's own definition keeps its component's exact props.
+	Props extends PropDefinitions,
+	Parts extends PartDefinitions,
+	// WHY `any` by default: a translator takes any component; each definition keeps its own.
 	ComponentProps = any,
 > = {
 	// Who it is
@@ -38,13 +32,13 @@ export type ComponentDefinition<
 	/** The React component: the frame. It takes its props, and `className`, `children`. */
 	component: ComponentType< ComponentProps >;
 	/** {Name}.props.ts */
-	props: Definitions;
+	props: Props;
 	/** {Name}.parts.ts */
-	parts: L;
+	parts: Parts;
 	/** {Name}.presets.ts */
-	presets: readonly Preset< PropsOf< Definitions >, PartOf< L > >[];
+	presets: readonly Preset< PropsOf< Props >, PartOf< Parts > >[];
 	/** The preset a new one starts with. */
-	defaultPreset: Preset< PropsOf< Definitions >, PartOf< L > >;
+	defaultPreset: Preset< PropsOf< Props >, PartOf< Parts > >;
 
 	// WordPress only
 
@@ -53,15 +47,14 @@ export type ComponentDefinition<
 };
 
 /**
- * A component's definition, checked: TypeScript keeps each piece's exact types for the
- * translators.
+ * A component's definition, with each piece's exact types kept.
  *
  * @param definition Everything the component is.
  */
 export const defineComponent = <
-	Definitions extends PropDefinitions,
-	L extends Looks,
+	Props extends PropDefinitions,
+	Parts extends PartDefinitions,
 	ComponentProps,
 >(
-	definition: ComponentDefinition< Definitions, L, ComponentProps >
+	definition: ComponentDefinition< Props, Parts, ComponentProps >
 ) => definition;

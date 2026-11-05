@@ -19,7 +19,7 @@ import { getSaveContent } from '@wordpress/blocks';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test } from 'vitest';
 
-import type { PuckComponentConfig, PuckField } from '../puck/config.ts';
+import type { PuckComponentConfig, PuckField } from '../puck/types.ts';
 import { defaultsIn, inHost, type PropDefinitions } from '../schema/props.ts';
 import { PRESET_FIELDS } from '../puck/presets.ts';
 import { blockAttributes } from '../wp/attributes.ts';

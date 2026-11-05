@@ -1,10 +1,9 @@
 /**
- * CONTEXT: a prop's field (`PROPS` in {Name}.props.ts) as a WordPress sidebar control,
- * for the blocks' edit.tsx.
+ * WordPress: a prop as a sidebar control.
  *
- * WHY left out of the npm package (tsconfig.build.json): it imports `@wordpress/components`,
- * which only exists inside WordPress, as wp does.
+ * WHY not in the npm package: it imports `@wordpress/components`, which only WordPress has.
  */
+
 import {
 	RadioControl,
 	SelectControl,

@@ -114,7 +114,7 @@ block.json against them. Still to do:
   (its adapters are the Card's pattern), then the Hero (its edit.tsx is the biggest: the test of
   the translator's override points), the Section, the primitives, and the Degree Finder (the
   WordPress translator's interactive path: render.php and view.tsx). Then the scaffolder writes a
-  definition instead of adapter files.
+  definition and the one-line integration files.
 - **The Highlight in Puck as data,** as the Card is (integrations/puck/presets.ts): a Design
   picker, a field per part, and `blocks` for the open frame.
 - **ucf-puck-demo:** its saved page keeps a Card's slot under `content`, now `blocks`. Reset the
@@ -125,8 +125,9 @@ block.json against them. Still to do:
   the Card is. integrations/tests/react.test.tsx then checks it with no other change.
 - **Drop the deprecated `withVariation`** from the Card's and Highlight's Puck configs once
   ucf-puck-demo uses `withPreset`.
-- **Generate block.json's attributes** in the webpack copy step, instead of checking a
-  hand-written copy. Needs webpack's config to load the TypeScript definitions.
+- **block.json stays hand-written** (decided 2026-11-05): generating it, and the integration
+  entry points, would hide the files WordPress developers look for. parity.test.tsx checks it
+  against each component's props instead.
 - **scripts/new-component.mjs** still scaffolds the old layout (props written out in each
   adapter, `example.json`), though in the new folders.
 

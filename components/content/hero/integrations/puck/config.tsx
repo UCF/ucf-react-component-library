@@ -13,7 +13,7 @@ import type {
 	PuckComponentConfig,
 	PuckScalarField,
 	PuckSlot,
-} from '../../../../../integrations/puck/config.ts';
+} from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	[ Key in keyof typeof example ]: ( typeof example )[ Key ];
@@ -49,7 +49,7 @@ const config: PuckComponentConfig< Props > = {
 	},
 	defaultProps: { ...example, content: [] },
 	// FIX: only the Hero's own props. Puck's `id`, `puck` and `editMode` would reach the markup
-	// (see PuckRenderProps in integrations/puck/config.ts).
+	// (see PuckRenderProps in integrations/puck/types.ts).
 	render: ( { id, puck, editMode, content, ...props } ) => (
 		<Hero { ...( props as HeroProps ) } innerAs={ content } />
 	),

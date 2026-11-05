@@ -52,15 +52,15 @@ Card
 
 ## Files
 
-| File                      | What it holds                                                                                            |
-| ------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `Card.tsx`                | the component: props in, markup out                                                                      |
-| `Card.props.ts`           | the props: each one's type, values, default and field                                                    |
-| `Card.parts.ts`           | the parts: each one's kind and the class that styles it                                                  |
-| `Card.presets.ts`         | the data: the presets, and `DEFAULT_PRESET` (what a new Card starts with, and the inserter's preview)    |
-| `style.css`               | the box, the background, and every class in PARTS                                                        |
-| `Card.definition.ts`      | everything the Card is, for the translators: slug, title, kind, wpIcon, component, props, parts, presets |
-| `integrations/wp/`        | `block.json`, and `index.tsx`: `registerComponent( card, metadata )`                                     |
-| `integrations/puck/`      | `config.tsx`: `puckConfig( card )`, with `withTemplate()` and `withPreset()`                             |
-| `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                        |
-| `tests/`                  | `Card.test.tsx` (markup), `presets.test.tsx`                                                             |
+| File                      | What it holds                                                                                                                                                  |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card.tsx`                | the component: props in, markup out                                                                                                                            |
+| `Card.props.ts`           | the props: each one's type, values, default and field                                                                                                          |
+| `Card.parts.ts`           | the parts: each one's kind and the class that styles it                                                                                                        |
+| `Card.presets.ts`         | the data: the presets, and `DEFAULT_PRESET` (what a new Card starts with, and the inserter's preview)                                                          |
+| `style.css`               | the box, the background, and every class in PARTS                                                                                                              |
+| `Card.definition.ts`      | everything the Card is, for the translators: slug, title, kind, wpIcon, component, props, parts, presets                                                       |
+| `integrations/wp/`        | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
+| `integrations/puck/`      | `config.tsx`: `puckConfig( card )`, with `withTemplate()` and `withPreset()`                                                                                   |
+| `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
+| `tests/`                  | `Card.test.tsx` (markup), `presets.test.tsx`                                                                                                                   |

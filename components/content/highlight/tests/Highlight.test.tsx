@@ -77,10 +77,10 @@ it( 'styles every part class', () => {
 		new URL( '../style.css', import.meta.url ),
 		'utf8'
 	);
-	const looks: { kind: string; className?: string }[] =
+	const partDefinitions: { kind: string; className?: string }[] =
 		Object.values( PARTS );
-	const unstyled = looks
-		.map( ( look ) => look.className )
+	const unstyled = partDefinitions
+		.map( ( definition ) => definition.className )
 		.filter(
 			( className ): className is string =>
 				Boolean( className ) && ! css.includes( `.${ className }` )

@@ -6,7 +6,7 @@
  */
 import Heading, { type HeadingLevel } from '../../Heading.tsx';
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	content: string;

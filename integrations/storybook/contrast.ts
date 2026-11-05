@@ -1,11 +1,10 @@
 /**
- * CONTEXT: color contrast measured in the browser, for stories that check text where axe
- * can't: over an image (components/content/card/integrations/storybook/Card.checks.stories.tsx).
+ * Storybook: color contrast measured in the browser, for checks axe can't make.
  */
 
 /**
- * A color as it shows over a solid ground, read back as pixels. WHY a canvas: Chromium
- * reports `color-mix()` as `color(srgb …)`, not `rgb()`, and the canvas reads either.
+ * A color as it shows over a solid ground, read back as pixels. WHY a canvas: Chromium reports
+ * `color-mix()` as `color(srgb …)`, which a canvas reads and parsing doesn't.
  *
  * @param color  A CSS color, perhaps translucent.
  * @param ground The opaque color under it.

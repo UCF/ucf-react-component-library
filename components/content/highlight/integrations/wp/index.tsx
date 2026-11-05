@@ -19,7 +19,7 @@ import { resolveParts } from '../../../../../integrations/schema/parts.ts';
 import {
 	toBlocks,
 	toExampleBlocks,
-} from '../../../../../integrations/wp/blocks.mapper.ts';
+} from '../../../../../integrations/wp/parts.ts';
 import { ICONS } from '../../../../../integrations/wp/icons.ts';
 import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';

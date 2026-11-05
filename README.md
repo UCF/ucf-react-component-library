@@ -335,7 +335,7 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
 - **`integrations/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([integrations/puck/config.ts](integrations/puck/config.ts)): `fields` for the editor,
+  ([integrations/puck/types.ts](integrations/puck/types.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.

@@ -2,7 +2,10 @@
  * The Card's parts: what goes inside it, each with its kind and the class that styles it.
  * SYNC: style.css styles every class here; tests/Card.test.tsx checks.
  */
-import type { Looks, PartOf } from '../../../integrations/schema/parts.ts';
+import type {
+	PartDefinitions,
+	PartOf,
+} from '../../../integrations/schema/parts.ts';
 
 export const PARTS = {
 	/** A photo or illustration across the card. */
@@ -25,7 +28,7 @@ export const PARTS = {
 	link: { kind: 'link', className: 'ucf-c-card__link' },
 	/** A call to action. */
 	button: { kind: 'button' },
-} as const satisfies Looks;
+} as const satisfies PartDefinitions;
 
 /** A part in a preset: `{ part: 'eyebrow', text: 'First-year' }`. */
 export type Part = PartOf< typeof PARTS >;

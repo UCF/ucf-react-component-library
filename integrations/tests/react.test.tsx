@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 import imageExample from '../../components/primitives/image/example.json';
 import { Card as CardWithPresets } from '../../components/content/card/index.ts';
 import { presetContent } from '../react/index.ts';
-import type { Looks } from '../schema/parts.ts';
+import type { PartDefinitions } from '../schema/parts.ts';
 
 type Entry = Record< string, unknown >;
 type Preset = {
@@ -50,7 +50,9 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 		const Component = entry[ pascal( component ) ] as ComponentType< {
 			children?: ReactNode;
 		} >;
-		const looks = entry[ `${ constant( component ) }_PARTS` ] as Looks;
+		const partDefinitions = entry[
+			`${ constant( component ) }_PARTS`
+		] as PartDefinitions;
 		const presets = entry[
 			`${ constant( component ) }_PRESETS`
 		] as Preset[];
@@ -58,7 +60,7 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 		describe.each( presets )( 'the $name preset', ( preset ) => {
 			const html = renderToStaticMarkup(
 				<Component { ...preset.props }>
-					{ presetContent( looks, preset as never, {
+					{ presetContent( partDefinitions, preset as never, {
 						imageUrl: '/photo.jpg',
 					} ) }
 				</Component>
@@ -66,7 +68,7 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 
 			it( 'renders each of its parts, with the class that styles it', () => {
 				const missing = preset.parts
-					.map( ( { part } ) => looks[ part ]?.className )
+					.map( ( { part } ) => partDefinitions[ part ]?.className )
 					.filter(
 						( className ): className is string =>
 							className !== undefined &&
@@ -77,7 +79,7 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 
 			it( 'shows the site’s image in an image part', () => {
 				const images = preset.parts.filter(
-					( { part } ) => looks[ part ]?.kind === 'image'
+					( { part } ) => partDefinitions[ part ]?.kind === 'image'
 				);
 				expect( html.includes( 'src="/photo.jpg"' ) ).toBe(
 					images.length > 0
@@ -87,11 +89,11 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 	}
 );
 
-// --- Components that take `preset` and `content` (integrations/react/with-presets.tsx).
+// --- Components that take `preset` and `content` (integrations/react/component.tsx).
 
 type Wrapped = ComponentType< Record< string, unknown > > & {
 	presets: Preset[];
-	looks: Looks;
+	partDefinitions: PartDefinitions;
 };
 
 const wrapped = withPresets.flatMap( ( { component, entry } ) => {
@@ -133,7 +135,7 @@ const sampleTextIn = ( html: string, preset: Preset ) =>
 		.filter( ( text ) => html.includes( text ) );
 
 describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
-	const looks = Component.looks;
+	const partDefinitions = Component.partDefinitions;
 	const render = ( props: Record< string, unknown > ) =>
 		renderToStaticMarkup( <Component { ...props } /> );
 
@@ -141,7 +143,7 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 		const content = Object.fromEntries(
 			preset.parts.map( ( { part } ) => [
 				part,
-				contentFor( part, looks[ part ]?.kind ),
+				contentFor( part, partDefinitions[ part ]?.kind ),
 			] )
 		);
 
@@ -159,7 +161,7 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 							imageSrc: imageExample.url,
 						} ) }
 					>
-						{ presetContent( looks, preset as never, {
+						{ presetContent( partDefinitions, preset as never, {
 							imageUrl: imageExample.url,
 						} ) }
 					</Plain>
@@ -183,7 +185,7 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 				positions
 			);
 			const unstyled = preset.parts
-				.map( ( { part } ) => looks[ part ]?.className )
+				.map( ( { part } ) => partDefinitions[ part ]?.className )
 				.filter(
 					( className ): className is string =>
 						className !== undefined && ! html.includes( className )

@@ -188,8 +188,9 @@ Puck started with while WordPress started plain.
 
 **Files are named `{Name}.{role}.{ext}`,** as `Card.test.tsx` and `Card.stories.tsx` already
 were: the first word is the component, the suffix is what the file defines. Typing `Card.` in
-a file finder lists everything that defines the Card. In `integrations/`, a mapper is named for
-what it produces: `blocks.mapper.ts`, `primitives.mapper.ts`.
+a file finder lists everything that defines the Card. In `integrations/`, each environment's folder has a
+main file named for what it produces (`wp/block.tsx`, `puck/config.tsx`, `react/component.tsx`)
+and a `parts` file for how parts render there, mirroring `schema/`.
 
 ### The object model
 
@@ -209,12 +210,12 @@ Component
 
 Each host reads the same objects:
 
-|           | Prop definitions                                                        | Parts                                                      | Presets                                                                   |
-| --------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)         | (its `style.css` styles PARTS)                             |                                                                           |
-| WordPress | block.json attributes (written by hand, checked); the sidebar, by panel | `integrations/wp/blocks.mapper.ts`: kind → core block      | block variations; DEFAULT_PRESET is the block's template and its preview  |
-| Puck      | `puckFields()` and `defaultsIn()`                                       | `integrations/puck/primitives.mapper.ts`: kind → primitive | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
-| Storybook | `argTypesOf()`, and the defaults as the starting args                   | `integrations/storybook/parts.tsx`                         | `{Name}.presets.stories.tsx`                                              |
+|           | Prop definitions                                                        | Parts                                          | Presets                                                                   |
+| --------- | ----------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)         | (its `style.css` styles PARTS)                 |                                                                           |
+| WordPress | block.json attributes (written by hand, checked); the sidebar, by panel | `integrations/wp/parts.ts`: kind → core block  | block variations; DEFAULT_PRESET is the block's template and its preview  |
+| Puck      | `puckFields()` and `defaultsIn()`                                       | `integrations/puck/parts.ts`: kind → primitive | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
+| Storybook | `argTypesOf()`, and the defaults as the starting args                   | `integrations/storybook/parts.tsx`             | `{Name}.presets.stories.tsx`                                              |
 
 `integrations/schema/` defines the shape of each: `props.ts` what prop definitions look like
 and the functions above; `parts.ts` the part kinds, and `resolveParts()`, which gives the
@@ -269,7 +270,7 @@ use it with no CMS:
 | `{NAME}_PRESETS` | it has `{Name}.presets.ts` | `CARD_PRESETS`: its designs, as data |
 
 A component with presets exports its `{Name}` wrapped by `withPresets()`
-(integrations/react/with-presets.tsx), so it also takes `preset`, `content` and `sample`: a plain
+(integrations/react/component.tsx), so it also takes `preset`, `content` and `sample`: a plain
 React site passes data (`<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`) and gets
 the preset's props and parts, filled. WHY a wrapper in the package entry, not props on the
 component: the component's markup is what WordPress saves, and WordPress and Puck import the
@@ -395,8 +396,8 @@ Decided 2026-11-02. A content component is one of two shapes:
   audience, pathway and media cards; the Highlight's statement, key figure, bracket, side rule
   and centered), they are presets, in one list, `{Name}.presets.ts`: each is the frame's props plus its parts by kind, and `DEFAULT_PRESET` is
   the one a new frame starts with. WordPress registers each as a block variation
-  (integrations/wp/blocks.mapper.ts maps parts to core blocks), Puck builds each with
-  `withPreset( name )` (integrations/puck/primitives.mapper.ts maps them to primitives), and the stories render them. A new preset
+  (integrations/wp/parts.ts maps parts to core blocks), Puck builds each with
+  `withPreset( name )` (integrations/puck/parts.ts maps them to primitives), and the stories render them. A new preset
   is a new entry; tests check each reaches both hosts, names an icon WordPress has, and uses
   only the frame's own props.
 - **Parts are named by class.** Where a part has its own look (the Hero's title, the Highlight's
@@ -420,21 +421,27 @@ Decided 2026-11-04. A component writes what it is once, in `{Name}.definition.ts
 component, prop definitions, parts and presets. Each environment has one translator that turns
 any definition into its integration:
 
-| Environment | Translator                                               | A component's file becomes                                         |
-| ----------- | -------------------------------------------------------- | ------------------------------------------------------------------ |
-| React site  | `presetComponent()`, integrations/react/with-presets.tsx | `export const Card = presetComponent( card )` in index.ts          |
-| Puck        | `puckConfig()`, integrations/puck/translate.tsx          | `puckConfig( card )` in integrations/puck/config.tsx               |
-| WordPress   | `registerComponent()`, integrations/wp/register.tsx      | `registerComponent( card, metadata )` in integrations/wp/index.tsx |
+| Environment | Translator                                                                 | A component's file becomes                                        |
+| ----------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| React site  | `presetComponent()`, integrations/react/component.tsx                      | `export const Card = presetComponent( card )` in index.ts         |
+| Puck        | `puckConfig()`, integrations/puck/config.tsx                               | `puckConfig( card )` in integrations/puck/config.tsx              |
+| WordPress   | `blockEdit()`, `blockSave()`, `blockSettings()`, integrations/wp/block.tsx | one line each in integrations/wp/edit.tsx, save.tsx and index.tsx |
 
 WHY one translator per environment, not one file for all: the definition is plain data and a
 React component, safe to import anywhere; WordPress's code must never reach the npm package,
 nor Puck's the plugins. WHY translators, not each component's own adapter code: the adapters
 were the same pattern four times over (Card's and the Highlight's save.tsx differed in four
-comment lines); a fix or a new editing feature now lands in every component at once. What stays
-in a component's `integrations/`: `block.json` (PHP reads it from disk), deprecations (a frozen
-copy of an old save() is that block's own history), and stories of its own. A need one component
-has (an image picker) is declared in its definition (`control: 'media'`), and the translator
-draws it. The Card is made this way; the Highlight, Hero and Section follow (docs/todo.md).
+comment lines); a fix or a new editing feature now lands in every component at once.
+
+Every component keeps its `integrations/` folder, with each environment's usual files: for a
+block, `block.json`, `index.tsx`, `edit.tsx` and `save.tsx`, each a one-line call to the
+translator. WHY not generate them away: they are signposts. A WordPress developer finds the
+files WordPress documents, where they expect them, and `save.tsx` is where to look for what a
+post stores (and where its deprecations go). WHY overrides go there, not in the definition: a
+need one component has is handled in its own file (wrap or replace the call); only a need several
+components share becomes a definition option, so the definition doesn't grow into a language of
+its own. An interactive component's folder also holds what is truly its own (`render.php`,
+`view.tsx`, its settings).
 
 ### How content reaches a frame
 
@@ -443,7 +450,7 @@ Decided 2026-11-04. A frame has three layers, designed from the React render out
 ```
 integrations   each environment stores one layer: data, or open content
      │
-content        preset + content → the preset's parts, filled        (integrations/react/with-presets.tsx)
+content        preset + content → the preset's parts, filled        (integrations/react/component.tsx)
      │ children
 frame          the component: the box, and whatever is inside it    ({Name}.tsx)
 ```

@@ -1,38 +1,31 @@
 /**
- * CONTEXT: a component's presets in Puck, as data: a preset picker, and a field for each part's
- * content. Puck stores `{ preset, content }`, the same props a plain React site passes
- * (integrations/react/with-presets.tsx), and renders through the same wrapper, so a Card in Puck
- * and a Card on a Next site are one model.
+ * Puck: a component's presets, as data.
  *
- * The "Open" preset (an empty name) is the frame with a slot instead: the editor places any
- * components inside, as `children` replace the parts in React.
- *
- * WHY Puck fills content from fields, where WordPress keeps inner blocks: Puck stores props
- * directly, so it can store the data the component takes. docs/architecture.md, "The three
- * layers", says which environment binds to which layer.
+ * A Design picker and a field per part; Puck stores `{ preset, content }`, as a React site passes
+ * them. The "Open" design is a slot instead.
  */
-import type { Kind, Looks } from '../schema/parts.ts';
+
+import type { Kind, PartDefinitions } from '../schema/parts.ts';
 import { findPreset } from '../schema/presets.ts';
-import type { ContentOf } from '../react/with-presets.tsx';
+import type { ContentOf } from '../react/component.tsx';
 import type {
 	PuckObjectField,
 	PuckScalarField,
 	PuckSlot,
 	PuckSlotField,
-} from './config.ts';
+} from './types.ts';
 
-/**
- * The props a component's presets add in Puck. WHY listed: they are Puck's and React's, not
- * block attributes; integrations/tests/parity.test.tsx leaves them out of its comparison.
- */
+// ── Fields ─────────────────────────────────────────────────────────────────────────────────────
+
+/** The props a component's presets add in Puck. */
 export const PRESET_FIELDS = [ 'preset', 'content', 'blocks' ] as const;
 
 /** The props a component with presets stores in Puck, besides its own. */
-export type PresetPuckProps< L extends Looks > = {
+export type PresetPuckProps< Parts extends PartDefinitions > = {
 	/** A preset's name, or '' for the open frame. */
 	preset: string;
 	/** Each part's content, by its name in the component's PARTS. */
-	content: ContentOf< L >;
+	content: ContentOf< Parts >;
 	/** The open frame's components. */
 	blocks: PuckSlot;
 };
@@ -84,15 +77,15 @@ function fieldFor( kind: Kind, label: string ) {
 /**
  * The preset picker, a field for each part's content, and the open frame's slot.
  *
- * @param looks   The component's PARTS.
- * @param presets Its PRESETS.
+ * @param partDefinitions The component's PARTS.
+ * @param presets         Its PRESETS.
  */
-export function presetFields< L extends Looks >(
-	looks: L,
+export function presetFields< Parts extends PartDefinitions >(
+	partDefinitions: Parts,
 	presets: readonly { name: string; title: string }[]
 ): {
 	preset: PuckScalarField;
-	content: PuckObjectField< ContentOf< L > >;
+	content: PuckObjectField< ContentOf< Parts > >;
 	blocks: PuckSlotField;
 } {
 	return {
@@ -112,29 +105,37 @@ export function presetFields< L extends Looks >(
 			type: 'object',
 			label: 'Content',
 			objectFields: Object.fromEntries(
-				Object.entries( looks ).map( ( [ name, look ] ) => [
-					name,
-					fieldFor( look.kind, labelOf( name ) ),
-				] )
-			) as PuckObjectField< ContentOf< L > >[ 'objectFields' ],
+				Object.entries( partDefinitions ).map(
+					( [ name, definition ] ) => [
+						name,
+						fieldFor( definition.kind, labelOf( name ) ),
+					]
+				)
+			) as PuckObjectField< ContentOf< Parts > >[ 'objectFields' ],
 		},
 		blocks: { type: 'slot' },
 	};
 }
 
+// ── When a field changes ───────────────────────────────────────────────────────────────────────
+//
+// Puck calls these as the editor works.
+
 /**
- * Puck's `resolveData`: when the editor picks a preset, its props replace the look's fields
- * (they may change them after). The content stays: parts with the same name keep their text.
+ * Puck's `resolveData`: when the editor picks a preset, its props replace the look's fields (they
+ * may change them after).
  *
  * @param presets The component's PRESETS.
  */
-export function applyPreset< Props extends { preset: string } >(
-	presets: readonly { name: string; props: Partial< Props > }[]
+export function applyPreset< StoredProps extends { preset: string } >(
+	presets: readonly { name: string; props: Partial< StoredProps > }[]
 ) {
 	return (
-		data: { props: Props },
-		{ changed }: { changed: Partial< Record< keyof Props, boolean > > }
-	): { props: Partial< Props > } =>
+		data: { props: StoredProps },
+		{
+			changed,
+		}: { changed: Partial< Record< keyof StoredProps, boolean > > }
+	): { props: Partial< StoredProps > } =>
 		changed.preset && data.props.preset
 			? {
 					props: {
@@ -146,20 +147,20 @@ export function applyPreset< Props extends { preset: string } >(
 }
 
 /**
- * Puck's `resolveFields`: the current preset's parts only, or, for the open frame, the slot and
- * no content fields.
+ * Puck's `resolveFields`: the current preset's parts only, or, for the open frame, the slot and no
+ * content fields.
  *
  * @param presets The component's PRESETS.
  * @param fields  Its fields, all of them: presetFields() and its own.
  */
 export function presetFieldsFor<
-	Props extends { preset: string },
+	StoredProps extends { preset: string },
 	Fields extends { content: { objectFields: object } },
 >(
 	presets: readonly { name: string; parts: { part: string }[] }[],
 	fields: Fields
 ) {
-	return ( data: { props: Props } ): Fields => {
+	return ( data: { props: StoredProps } ): Fields => {
 		const { content, blocks, ...rest } = fields as Fields & {
 			blocks: unknown;
 		};

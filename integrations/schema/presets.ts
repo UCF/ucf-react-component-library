@@ -1,25 +1,14 @@
 /**
- * CONTEXT: what a component's presets (`{Name}.presets.ts`) look like. A preset is a named
- * combination of the component's props (`{Name}.props.ts`) and the parts placed inside it
- * (`{Name}.parts.ts`): "Card: Pathway", "Highlight: Key figure". A component's presets file
- * holds only its list; the shape and the lookup are here.
+ * Presets: named mixes of a component's props and parts ("Card: Pathway").
  *
- * Each environment reads the same list: WordPress registers each preset as a block variation
- * and the default one as the block's template and inserter preview; Puck builds each with
- * `withPreset( name )` and starts the slot with the default's parts; the stories render them.
- * integrations/tests/presets.test.tsx checks every component's presets reach WordPress whole.
+ * integrations/tests/presets.test.tsx checks each reaches WordPress whole.
  */
 
-/**
- * A preset of a component whose props are `Props` and whose parts are `Part`.
- */
+/** A preset of a component with props `Props` and parts `Part`. */
 export type Preset< Props, Part > = {
 	/** Its key: the WordPress variation's name and withPreset()'s argument. */
 	name: string;
-	/**
-	 * Its name in the inserter and Puck, after the block's: "Card: Pathway". WHY the prefix: in
-	 * a search or a list of blocks, it says which block the preset is.
-	 */
+	/** "Card: Pathway". WHY the block's name first: in a list of blocks, it says whose it is. */
 	title: string;
 	/** One line for the inserter. */
 	description: string;
@@ -30,26 +19,22 @@ export type Preset< Props, Part > = {
 	wpIcon: string;
 	/** The props it sets; the rest keep their defaults. */
 	props: Partial< Props >;
-	/**
-	 * For a component with a background image: whether this preset has one. WHY a flag, not an
-	 * image: a preset with a background shows a sample in Puck and the stories, but WordPress
-	 * must not save a sample into a post; there the editor picks one.
-	 */
+	/** Whether it has a background image. WHY a flag: WordPress must not save a sample one. */
 	background?: boolean;
 	/** What it starts with inside, in order. */
 	parts: Part[];
 };
 
 /**
- * A preset by its name, or an error that lists the names there are.
+ * A preset by its name, or an error listing the names there are.
  *
  * @param presets A component's presets.
  * @param name    A preset's name.
  */
-export function findPreset< P extends { name: string } >(
-	presets: readonly P[],
+export function findPreset< SomePreset extends { name: string } >(
+	presets: readonly SomePreset[],
 	name: string
-): P {
+): SomePreset {
 	const preset = presets.find( ( item ) => item.name === name );
 	if ( ! preset ) {
 		throw new Error(

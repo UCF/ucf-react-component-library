@@ -442,7 +442,7 @@ import ${ n.Name } from '../../${ n.Name }.tsx';
 // WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
 // without it.
 import example from '../../example.json' with { type: 'json' };
-import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	text: string;
@@ -456,7 +456,7 @@ const config: PuckComponentConfig< Props > = {
 	defaultProps: example,
 	// FIX: pass only the core's own props. It spreads the rest onto its <div>, so Puck's \`id\`,
 	// \`puck\` and \`editMode\` would end up in the markup (see PuckRenderProps in
-	// integrations/puck/config.ts).
+	// integrations/puck/types.ts).
 	render: ( { text } ) => <${ n.Name } text={ text } />,
 };
 
@@ -671,7 +671,7 @@ export const Default: Story = {};
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { DEFAULTS } from '../../defaults.ts';
-import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	/** The label, or '' for the default. */
@@ -954,7 +954,7 @@ describe( '${ n.Name }', () => {
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	text: string;

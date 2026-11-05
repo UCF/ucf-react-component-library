@@ -11,12 +11,12 @@ import Highlight from '../../Highlight.tsx';
 import { PARTS } from '../../Highlight.parts.ts';
 import { DEFAULT_PRESET, presetNamed } from '../../Highlight.presets.ts';
 import { PROPS } from '../../Highlight.props.ts';
+import { puckFields } from '../../../../../integrations/puck/config.tsx';
 import {
-	puckFields,
 	type PuckComponentConfig,
 	type PuckSlot,
-} from '../../../../../integrations/puck/config.ts';
-import { toPrimitives } from '../../../../../integrations/puck/primitives.mapper.ts';
+} from '../../../../../integrations/puck/types.ts';
+import { toPrimitives } from '../../../../../integrations/puck/parts.ts';
 import { resolveParts } from '../../../../../integrations/schema/parts.ts';
 import {
 	defaultsIn,

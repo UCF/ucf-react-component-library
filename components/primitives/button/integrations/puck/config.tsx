@@ -7,7 +7,7 @@
 import Button from '../../Button.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
 
 type Props = {
 	text: string;
@@ -58,7 +58,7 @@ const config: PuckComponentConfig< Props > = {
 		className: '',
 	},
 	// FIX: only the Button's own props; Puck's `id`, `puck` and `editMode` would reach the
-	// markup (see PuckRenderProps in integrations/puck/config.ts).
+	// markup (see PuckRenderProps in integrations/puck/types.ts).
 	render: ( { text, url, linkTarget, variant, fontSize, className } ) => (
 		<Button
 			className={ className || undefined }

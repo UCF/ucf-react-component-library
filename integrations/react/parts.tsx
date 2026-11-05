@@ -1,20 +1,11 @@
 /**
- * CONTEXT: how a component's presets render on a plain React site (Next, or any React app), with
- * no CMS. A preset's parts (integrations/schema/parts.ts) drawn with the library's primitives,
- * as Puck places them (integrations/puck/primitives.mapper.ts builds the same parts as Puck data)
- * and as the stories show them (integrations/storybook/parts.tsx).
+ * React: parts as React elements.
  *
- *   import { Card, CARD_PARTS, CARD_PRESETS } from '@ucf/components/card';
- *   import { findPreset, presetContent } from '@ucf/components/react';
- *
- *   const pathway = findPreset( CARD_PRESETS, 'pathway' );
- *   <Card { ...pathway.props }>{ presetContent( CARD_PARTS, pathway ) }</Card>
- *
- * WHY no CSS imports here: a site loads `@ucf/components/ucf.css` once, which holds every
- * primitive's and component's styles; Next refuses global CSS imported from a package.
- * WHY a preset's text as it is: it is sample content, the same the stories and Puck start with.
- * A site with its own content writes the parts itself, with the classes in `{NAME}_PARTS`.
+ * For a site that places them itself: `<Card { ...pathway.props }>{ presetContent( CARD_PARTS,
+ * pathway ) }</Card>`.
+ * WHY no CSS imports: a site loads ucf.css once; Next refuses CSS imported from a package.
  */
+
 import type { ReactElement } from 'react';
 
 import Button from '../../components/primitives/button/Button.tsx';
@@ -24,12 +15,14 @@ import Paragraph from '../../components/primitives/paragraph/Paragraph.tsx';
 import {
 	resolveParts,
 	unhandledPart,
-	type Looks,
+	type PartDefinitions,
 	type PartOf,
 	type ResolvedPart,
 } from '../schema/parts.ts';
 
 export { findPreset } from '../schema/presets.ts';
+
+// ── Rendering parts ────────────────────────────────────────────────────────────────────────────
 
 /** How to fill parts that carry no content of their own. */
 export type PartOptions = {
@@ -104,18 +97,23 @@ export function renderParts(
 	} );
 }
 
+// ── A preset's parts ───────────────────────────────────────────────────────────────────────────
+
 /**
  * A preset's parts, ready to place inside its component.
  *
- * @param looks        The component's PARTS (`CARD_PARTS`).
- * @param preset       One of its presets (`CARD_PRESETS`), or anything with parts.
- * @param preset.parts Its parts, in order.
- * @param options      How to fill them.
+ * @param partDefinitions The component's PARTS (`CARD_PARTS`).
+ * @param preset          One of its presets (`CARD_PRESETS`), or anything with parts.
+ * @param preset.parts    Its parts, in order.
+ * @param options         How to fill them.
  */
-export function presetContent< L extends Looks >(
-	looks: L,
-	preset: { parts: PartOf< L >[] },
+export function presetContent< Parts extends PartDefinitions >(
+	partDefinitions: Parts,
+	preset: { parts: PartOf< Parts >[] },
 	options?: PartOptions
 ): ReactElement[] {
-	return renderParts( resolveParts( looks, preset.parts ), options );
+	return renderParts(
+		resolveParts( partDefinitions, preset.parts ),
+		options
+	);
 }

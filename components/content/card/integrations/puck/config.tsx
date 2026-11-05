@@ -1,5 +1,5 @@
-/** The Card in Puck, made from its definition (integrations/puck/translate.tsx). */
-import { puckConfig } from '../../../../../integrations/puck/translate.tsx';
+/** The Card in Puck, made from its definition (integrations/puck/config.tsx). */
+import { puckConfig } from '../../../../../integrations/puck/config.tsx';
 import { card } from '../../Card.definition.ts';
 
 const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( card );

@@ -9,7 +9,10 @@
  *
  * SYNC: style.css styles every class here; tests/Highlight.test.tsx checks.
  */
-import type { Looks, PartOf } from '../../../integrations/schema/parts.ts';
+import type {
+	PartDefinitions,
+	PartOf,
+} from '../../../integrations/schema/parts.ts';
 
 /**
  * The Highlight's parts: each look, its kind and the class that styles it. A preset names a part
@@ -33,7 +36,7 @@ export const PARTS = {
 	 * so it keeps its own.
 	 */
 	logo: { kind: 'image', className: 'ucf-c-highlight__logo' },
-} as const satisfies Looks;
+} as const satisfies PartDefinitions;
 
 /** A part as a preset writes it: `{ part: 'figure', text: 'Nov 1' }`. */
 export type Part = PartOf< typeof PARTS >;

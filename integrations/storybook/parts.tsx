@@ -1,10 +1,7 @@
 /**
- * CONTEXT: parts drawn for the stories: the plain React renderer (integrations/react/parts.tsx)
- * with the primitives' styles loaded and the sample photo in every image part.
- *
- * WHY a wrapper: the stories load each component's own style.css so a CSS edit shows without a
- * rebuild, where a site loads ucf.css; and they show the placeholder photo.
+ * Storybook: parts drawn for the stories, with the primitives' styles and the sample photo.
  */
+
 import '../../components/primitives/button/style.css';
 import '../../components/primitives/heading/style.css';
 import '../../components/primitives/image/style.css';

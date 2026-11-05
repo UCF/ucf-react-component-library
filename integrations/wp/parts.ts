@@ -1,16 +1,16 @@
 /**
- * CONTEXT: parts (integrations/schema/parts.ts) as core blocks, for every component's block
- * variations, block template and inserter preview. SYNC: integrations/puck/primitives.mapper.ts
- * builds the same parts as primitives.
+ * WordPress: parts as core blocks.
  *
- * WHY placeholders, not content: a variation inserts real blocks; text that looks written
- * would be published by an editor who missed it. Placeholders show the intent and save nothing.
- * The link and the button are the exceptions: core has no placeholder for a link's address.
- * The inserter's preview is the other exception (`sample`): it is never saved, and an empty
- * placeholder previews as nothing.
+ * For variations, the block template and the inserter preview.
+ * SYNC: puck/parts.ts builds the same parts as primitives.
+ * WHY placeholders, not text: a variation inserts real blocks, and text that looks written would
+ * get published by an editor who missed it. The preview (`sample`) is never saved, so it has text.
  */
+
 import imageExample from '../../components/primitives/image/example.json';
 import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
+
+// ── Parts → blocks ─────────────────────────────────────────────────────────────────────────────
 
 // WordPress's block template: a block's name, its attributes, and the blocks inside it.
 export type BlockTemplate = [
@@ -24,8 +24,8 @@ export type BlockTemplate = [
  *
  * @param parts          Parts, from resolveParts().
  * @param options        How to fill them.
- * @param options.sample Real text and a sample image instead of placeholders, for a preview
- *                       that is never saved.
+ * @param options.sample Real text and a sample image instead of placeholders, for a preview that is
+ *                       never saved.
  */
 export function toBlocks(
 	parts: ResolvedPart[],
@@ -35,7 +35,7 @@ export function toBlocks(
 	const text = ( value: string ) =>
 		sample ? { content: value } : { placeholder: value };
 	// The part's class, when its look has one.
-	const look = ( className: string ) => ( className ? { className } : {} );
+	const classOf = ( className: string ) => ( className ? { className } : {} );
 
 	return parts.map( ( part ): BlockTemplate[ number ] => {
 		switch ( part.kind ) {
@@ -48,7 +48,7 @@ export function toBlocks(
 							aspectRatio: part.aspectRatio,
 							scale: 'cover',
 						} ),
-						...look( part.className ),
+						...classOf( part.className ),
 						...( part.alt !== undefined && { alt: part.alt } ),
 						...( part.url !== undefined && { url: part.url } ),
 						...( sample && {
@@ -63,19 +63,19 @@ export function toBlocks(
 					{
 						level: part.level,
 						...text( part.text ),
-						...look( part.className ),
+						...classOf( part.className ),
 					},
 				];
 			case 'text':
 				return [
 					'core/paragraph',
-					{ ...text( part.text ), ...look( part.className ) },
+					{ ...text( part.text ), ...classOf( part.className ) },
 				];
 			case 'link':
 				return [
 					'core/paragraph',
 					{
-						...look( part.className ),
+						...classOf( part.className ),
 						content: `<a href="${ part.url }">${ part.text }</a>`,
 					},
 				];
@@ -89,7 +89,7 @@ export function toBlocks(
 							{
 								text: part.text,
 								url: part.url,
-								...look( part.className ),
+								...classOf( part.className ),
 							},
 						],
 					],
@@ -99,6 +99,8 @@ export function toBlocks(
 		}
 	} );
 }
+
+// ── The inserter preview ───────────────────────────────────────────────────────────────────────
 
 /** A block as `registerBlockType()`'s `example` takes it. */
 type ExampleBlock = {

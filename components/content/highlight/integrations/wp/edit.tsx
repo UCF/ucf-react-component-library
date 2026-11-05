@@ -13,7 +13,7 @@ import { PROPS, type HighlightEditableProps } from '../../Highlight.props.ts';
 import { resolveParts } from '../../../../../integrations/schema/parts.ts';
 import { panelsOf } from '../../../../../integrations/schema/props.ts';
 import { ownAttributes } from '../../../../../integrations/wp/attributes.ts';
-import { toBlocks } from '../../../../../integrations/wp/blocks.mapper.ts';
+import { toBlocks } from '../../../../../integrations/wp/parts.ts';
 import { FieldControl } from '../../../../../integrations/wp/inspector.tsx';
 import metadata from './block.json';
 

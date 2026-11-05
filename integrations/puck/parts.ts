@@ -1,15 +1,13 @@
 /**
- * CONTEXT: parts (integrations/schema/parts.ts) as the library's primitives, for every
- * component's Puck template and presets. SYNC: integrations/wp/blocks.mapper.ts builds the same
- * parts as core blocks.
+ * Puck: parts as primitives, for Puck's templates.
  *
- * SYNC: each `type` is the key a host registers the primitive under (README: `Image`,
- * `Heading`, `Paragraph`, `Button`). Every item sets every prop its primitive has: Puck doesn't
- * merge a template item with the component's defaults.
+ * SYNC: wp/parts.ts builds the same parts as core blocks; each `type` is the key the README tells
+ * hosts to register the primitive under.
  */
+
 import imageExample from '../../components/primitives/image/example.json' with { type: 'json' };
 import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
-import type { PuckSlot } from './config.ts';
+import type { PuckSlot } from './types.ts';
 
 /**
  * Parts as the library's primitives.

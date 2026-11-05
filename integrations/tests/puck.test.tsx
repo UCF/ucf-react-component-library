@@ -1,6 +1,6 @@
 /**
  * CONTEXT: checks every Puck config against the real Puck, which the library itself never
- * imports (integrations/puck/config.ts).
+ * imports (integrations/puck/types.ts).
  *
  *   - Types: each config must be assignable to Puck's own `ComponentConfig`. This is checked by
  *     `npm run typecheck`, not by the test run: a config that no longer fits Puck's shape is a
@@ -40,7 +40,7 @@ import highlight, {
 } from '../../components/content/highlight/integrations/puck/config.tsx';
 import { PARTS as HIGHLIGHT_PARTS } from '../../components/content/highlight/Highlight.parts.ts';
 import { PRESETS as HIGHLIGHT_PRESETS } from '../../components/content/highlight/Highlight.presets.ts';
-import type { PuckComponentConfig } from '../puck/config.ts';
+import type { PuckComponentConfig } from '../puck/types.ts';
 import type { Kind } from '../schema/parts.ts';
 
 type PropsOf< Config > =
@@ -154,7 +154,7 @@ const PRIMITIVES: Record< string, { defaultProps: object } > = {
 	Paragraph: paragraph,
 };
 
-// Which primitive each kind of part is (integrations/puck/primitives.mapper.ts).
+// Which primitive each kind of part is (integrations/puck/parts.ts).
 const PRIMITIVE_OF: Record< Kind, string > = {
 	image: 'Image',
 	heading: 'Heading',

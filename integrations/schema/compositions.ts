@@ -1,16 +1,10 @@
 /**
- * CONTEXT: the compositions (a section's colors: Light, Dark, Bold Gold…), with their editor
- * labels: a choice any component's props can offer. The Section applies one to its band; the
- * Card offers one as its own colors.
+ * Compositions: a section's colors, a choice any component's props can offer.
  *
- * WHY here, not in the Section: the list is the tokens', not the Section's, and a component
- * imports shared code, never another component.
- * SYNC: tokens/tokens.json `composition`. integrations/tests/compositions.test.ts fails when
- * the two differ.
- * WHY a copy, not read from tokens.json: the npm package ships integrations/schema but not
- * tokens.json, and a content component may import only its own files and this shared code at
- * runtime.
+ * SYNC: tokens/tokens.json `composition`; integrations/tests/compositions.test.ts checks.
+ * WHY a copy: the npm package ships this folder but not tokens.json.
  */
+
 export const COMPOSITIONS = [
 	{ value: 'light', label: 'Light - Default' },
 	{ value: 'alt', label: 'Light Alt' },

@@ -1,42 +1,24 @@
 /**
- * CONTEXT: what a component's prop definitions (`PROPS` in `{Name}.props.ts`) look
- * like. They hold every prop the component's editors can set, once: its type, its values, its
- * default, and its field (how an editor sees it: label, control, panel). Each consumer builds
- * what it needs from them:
+ * Props: what a component's PROPS may hold.
  *
- *   - the component: its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)
- *   - WordPress: block.json's attributes (`blockAttributes()` in integrations/wp/attributes.ts,
- *     checked by integrations/tests/parity.test.tsx) and the sidebar (`FieldControl` in
- *     integrations/wp/inspector.tsx, and `panelsOf()` here)
- *   - Puck: its fields (`puckFields()` in integrations/puck/config.ts) and defaults
- *     (`defaultsIn()` here)
- *   - Storybook: the controls (integrations/storybook/arg-types.ts)
- *
- * WHY one place: the names, values, defaults and labels were written into the component's
- * props, an options file, block.json, and each adapter's own copy of the props type. Nothing
- * tied the prop's values to the editor's options, or the component's defaults to block.json's.
- * WHY plain data with no runtime imports: the content component reads its defaults from here,
- * and a content component may import nothing at runtime but its own files and this folder
- * (docs/architecture.md).
- *
- * A prop's key is its block attribute name, saved in every post that uses the block, so it is
- * permanent once a site uses it (docs/architecture.md, "Naming").
+ * Each prop's type, values and default, and how an editor sees it. Each environment builds its own
+ * fields from them (docs/architecture.md, "One definition, one translator per environment").
+ * SYNC: each key is a saved block attribute, permanent once a site uses it.
  */
 
-/** A host a prop is edited in. */
+// ── Shapes ─────────────────────────────────────────────────────────────────────────────────────
+//
+// What a prop can be: its type, values and default, and how an editor sees it.
+
+/** An environment that edits props. */
 export type Host = 'wp' | 'puck';
 
 /** How an editor sees a prop. */
 type Field = {
-	/** What an editor sees. Required for a prop either host shows. */
 	label?: string;
 	/** A line under the field. */
 	help?: string;
-	/**
-	 * The WordPress sidebar panel it sits in, by title. Panels appear in the order their first
-	 * prop does. A prop with no panel has no field of its own in WordPress (the image ID, which
-	 * the media picker sets).
-	 */
+	/** Its WordPress sidebar panel. None: no field of its own (set by another, as an image ID). */
 	panel?: string;
 	/** Only these hosts have it. Both when left out. */
 	hosts?: readonly Host[];
@@ -50,100 +32,97 @@ export type ChoiceProp = Field & {
 	default: string;
 };
 
-/**
- * Free text. `control: 'media'` marks an image's URL: WordPress shows its media library picker
- * there (integrations/wp/register.tsx draws it, from `media`), Puck a text field.
- */
+/** Free text. `control: 'media'`: an image's URL, which WordPress picks from its media library. */
 export type TextProp = Field & {
 	type: 'text';
 	control?: 'text' | 'media';
-	/**
-	 * For `control: 'media'`: what the image is for, in the picker's button ("background
-	 * image"), and the props the picker sets beside the URL: the media library's ID, and the
-	 * alt text it clears.
-	 */
+	/** For a media control: what the image is for, and the ID and alt props it also sets. */
 	media?: { what: string; id: string; alt: string };
 	default: string;
 };
 
-/** A number: the media library's attachment ID. */
+/** A number: a media library ID. */
 export type NumberProp = Field & { type: 'number'; default: number };
 
 export type PropDefinition = ChoiceProp | TextProp | NumberProp;
 
 export type PropDefinitions = Record< string, PropDefinition >;
 
-/** A prop's value: one of its options' values, or a string or number. */
-type ValueOf< S > = S extends {
+// ── Types ──────────────────────────────────────────────────────────────────────────────────────
+//
+// The props a component gets from its PROPS.
+
+type ValueOf< Definition > = Definition extends {
 	type: 'choice';
 	options: readonly ( infer Option )[];
 }
 	? Option extends { value: infer Value }
 		? Value
 		: never
-	: S extends { type: 'number' }
+	: Definition extends { type: 'number' }
 		? number
 		: string;
 
-/**
- * Every prop's value, by key: the props the definitions give a component. WHY a mapped type
- * over the definitions: each prop keeps the doc comment written on its definition.
- */
-export type PropsOf< S extends PropDefinitions > = {
-	[ Key in keyof S ]: ValueOf< S[ Key ] >;
+/** The props, typed. WHY a mapped type: each prop keeps the doc comment on its definition. */
+export type PropsOf< Props extends PropDefinitions > = {
+	[ Key in keyof Props ]: ValueOf< Props[ Key ] >;
 };
 
-/** The keys of the props a host has. */
-type KeysIn< S extends PropDefinitions, H extends Host > = {
-	[ Key in keyof S ]: S[ Key ] extends { hosts: readonly ( infer Only )[] }
-		? H extends Only
+type KeysIn< Props extends PropDefinitions, InHost extends Host > = {
+	[ Key in keyof Props ]: Props[ Key ] extends {
+		hosts: readonly ( infer Hosts )[];
+	}
+		? InHost extends Hosts
 			? Key
 			: never
 		: Key;
-}[ keyof S ];
+}[ keyof Props ];
 
-/** The props a host has: Puck's leave out WordPress's media library ID. */
-export type PropsIn< S extends PropDefinitions, H extends Host > = Pick<
-	PropsOf< S >,
-	KeysIn< S, H >
->;
+/** The props one host has. */
+export type PropsIn<
+	Props extends PropDefinitions,
+	InHost extends Host,
+> = Pick< PropsOf< Props >, KeysIn< Props, InHost > >;
+
+// ── Reading props ──────────────────────────────────────────────────────────────────────────────
+//
+// What the components and environments call.
 
 /**
  * Whether a host has a prop.
  *
- * @param definition The prop's definition.
- * @param host       The host.
+ * @param definition A prop.
+ * @param host       A host.
  */
 export const inHost = ( definition: PropDefinition, host: Host ) =>
 	! definition.hosts || definition.hosts.includes( host );
 
 /**
- * Every default a host has, by key: a new component's starting props in that host.
+ * A new component's starting props, in one host.
  *
- * @param definitions A component's prop definitions.
- * @param host        The host.
+ * @param definitions A component's PROPS.
+ * @param host        A host.
  */
-export function defaultsIn< S extends PropDefinitions, H extends Host >(
-	definitions: S,
-	host: H
-): PropsIn< S, H > {
+export function defaultsIn<
+	Props extends PropDefinitions,
+	InHost extends Host,
+>( definitions: Props, host: InHost ): PropsIn< Props, InHost > {
 	return Object.fromEntries(
 		Object.entries( definitions )
 			.filter( ( [ , definition ] ) => inHost( definition, host ) )
 			.map( ( [ key, definition ] ) => [ key, definition.default ] )
-	) as PropsIn< S, H >;
+	) as PropsIn< Props, InHost >;
 }
 
 /**
- * The WordPress sidebar's panels: each panel's title and its props' keys, in the order the
- * definitions first name each panel.
+ * The WordPress sidebar's panels and their props, in order.
  *
- * @param definitions A component's prop definitions.
+ * @param definitions A component's PROPS.
  */
-export function panelsOf< S extends PropDefinitions >(
-	definitions: S
-): { title: string; keys: ( keyof S & string )[] }[] {
-	const panels = new Map< string, ( keyof S & string )[] >();
+export function panelsOf< Props extends PropDefinitions >(
+	definitions: Props
+): { title: string; keys: ( keyof Props & string )[] }[] {
+	const panels = new Map< string, ( keyof Props & string )[] >();
 	for ( const [ key, definition ] of Object.entries( definitions ) ) {
 		if ( definition.panel && inHost( definition, 'wp' ) ) {
 			panels.set( definition.panel, [

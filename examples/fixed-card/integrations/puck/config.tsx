@@ -12,7 +12,7 @@ import { CHOICES, type ChoiceKey } from '../../options.ts';
 import type {
 	PuckComponentConfig,
 	PuckScalarField,
-} from '../../../../integrations/puck/config.ts';
+} from '../../../../integrations/puck/types.ts';
 
 type Props = {
 	title: string;
@@ -55,7 +55,7 @@ const config: PuckComponentConfig< Props > = {
 	},
 	defaultProps: example as Props,
 	// FIX: only the Card's own props; Puck's `id`, `puck` and `editMode` would reach the
-	// markup (see PuckRenderProps in integrations/puck/config.ts).
+	// markup (see PuckRenderProps in integrations/puck/types.ts).
 	render: ( { id, puck, editMode, ...props } ) => <FixedCard { ...props } />,
 };
 

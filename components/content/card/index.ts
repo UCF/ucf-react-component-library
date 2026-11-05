@@ -5,7 +5,7 @@ import {
 	presetComponent,
 	type PresetComponent,
 	type WithPresetsProps,
-} from '../../../integrations/react/with-presets.tsx';
+} from '../../../integrations/react/component.tsx';
 import { card } from './Card.definition.ts';
 import type { PARTS } from './Card.parts.ts';
 import type { CardProps } from './Card.tsx';

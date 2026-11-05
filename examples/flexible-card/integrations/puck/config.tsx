@@ -11,7 +11,7 @@ import { VARIANTS, type Variant } from '../../options.ts';
 import type {
 	PuckComponentConfig,
 	PuckSlot,
-} from '../../../../integrations/puck/config.ts';
+} from '../../../../integrations/puck/types.ts';
 
 type Props = {
 	variant: Variant;
