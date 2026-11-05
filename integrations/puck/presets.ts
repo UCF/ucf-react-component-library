@@ -7,7 +7,7 @@
 
 import type { Kind, PartDefinitions } from '../schema/parts.ts';
 import { findPreset } from '../schema/presets.ts';
-import type { ContentOf } from '../react/component.tsx';
+import type { ContentOf } from '../react/frame.tsx';
 import type {
 	PuckObjectField,
 	PuckScalarField,
@@ -157,7 +157,7 @@ export function presetFieldsFor<
 	StoredProps extends { preset: string },
 	Fields extends { content: { objectFields: object } },
 >(
-	presets: readonly { name: string; parts: { part: string }[] }[],
+	presets: readonly { name: string; parts: readonly { part: string }[] }[],
 	fields: Fields
 ) {
 	return ( data: { props: StoredProps } ): Fields => {

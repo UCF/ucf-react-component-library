@@ -8,5 +8,10 @@ export {
 	renderParts,
 	type PartOptions,
 } from './parts.tsx';
-export { withPresets, type ContentOf, type PresetProps } from './component.tsx';
+export {
+	frame,
+	type ContentOf,
+	type FrameProps,
+	type PresetProps,
+} from './frame.tsx';
 export { resolveParts } from '../schema/parts.ts';

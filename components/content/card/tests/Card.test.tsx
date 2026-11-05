@@ -9,7 +9,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Card, { type CardProps } from '../Card.tsx';
-import { PRESETS } from '../Card.presets.ts';
+import { PRESETS, type Preset } from '../Card.presets.ts';
 import { PARTS } from '../Card.parts.ts';
 
 // What `useBlockProps.save()` adds for this block.
@@ -20,7 +20,7 @@ const cases: Record< string, CardProps > = {
 	defaults: {},
 	// Each preset's props, with a background image where the preset has one.
 	...Object.fromEntries(
-		PRESETS.map( ( preset ) => [
+		PRESETS.map( ( preset: Preset ) => [
 			`the ${ preset.name } preset`,
 			{
 				...preset.props,
@@ -47,13 +47,17 @@ describe( 'Card', () => {
 
 	// WHY: WordPress and Puck each edit the content through their own element. If the frame
 	// rendered its children anywhere else, blocks dropped in would land outside the box.
-	it( 'renders its content in the element a host passes as innerAs', () => {
+	it( 'renders its content area as the element a host passes for it', () => {
 		const Zone = ( props: object ) => (
 			<div data-zone="" { ...props }>
 				<p>Dropped in</p>
 			</div>
 		);
-		expect( renderToStaticMarkup( <Card innerAs={ Zone } /> ) ).toContain(
+		expect(
+			renderToStaticMarkup(
+				<Card.port.Frame areas={ { content: Zone } } />
+			)
+		).toContain(
 			'<div data-zone="" class="ucf-c-card__content"><p>Dropped in</p></div>'
 		);
 	} );

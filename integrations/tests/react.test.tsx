@@ -89,16 +89,15 @@ describe.each( withPresets.map( ( item ) => [ item.component, item ] ) )(
 	}
 );
 
-// --- Components that take `preset` and `content` (integrations/react/component.tsx).
+// --- Components built with frame(): they take `preset` and `content` (integrations/react/frame.tsx).
 
 type Wrapped = ComponentType< Record< string, unknown > > & {
-	presets: Preset[];
-	partDefinitions: PartDefinitions;
+	port: { presets: Preset[]; parts: PartDefinitions };
 };
 
 const wrapped = withPresets.flatMap( ( { component, entry } ) => {
 	const Component = entry[ pascal( component ) ] as Partial< Wrapped >;
-	return Component.presets
+	return Component.port
 		? [ [ component, Component as Wrapped ] as const ]
 		: [];
 } );
@@ -135,11 +134,11 @@ const sampleTextIn = ( html: string, preset: Preset ) =>
 		.filter( ( text ) => html.includes( text ) );
 
 describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
-	const partDefinitions = Component.partDefinitions;
+	const { presets, parts: partDefinitions } = Component.port;
 	const render = ( props: Record< string, unknown > ) =>
 		renderToStaticMarkup( <Component { ...props } /> );
 
-	describe.each( Component.presets )( 'the $name preset', ( preset ) => {
+	describe.each( presets )( 'the $name preset', ( preset ) => {
 		const content = Object.fromEntries(
 			preset.parts.map( ( { part } ) => [
 				part,
@@ -203,13 +202,13 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 		} );
 	} );
 
-	const [ first ] = Component.presets;
+	const [ first ] = presets;
 
 	// A prop one preset sets and another sets differently: the override to try.
-	const override = Component.presets
+	const override = presets
 		.flatMap( ( preset ) =>
 			Object.entries( preset.props ).flatMap( ( [ key, value ] ) =>
-				Component.presets
+				presets
 					.filter(
 						( other ) =>
 							key in other.props && other.props[ key ] !== value
@@ -255,15 +254,25 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 	} );
 } );
 
-// The content's types follow each part's kind (checked by `npm run typecheck`, not at run time).
+// The props' types follow the presets (checked by `npm run typecheck`, not at run time).
 export const typeChecks = [
 	<CardWithPresets
 		key="ok"
 		preset="pathway"
 		content={ { eyebrow: 'Transfer', link: { text: 'Go', url: '/' } } }
 	/>,
-	// @ts-expect-error: a part the Card doesn't have.
-	<CardWithPresets key="name" content={ { eyebrowz: 'Transfer' } } />,
+	<CardWithPresets key="plain" variant="boxed">
+		<p>Anything</p>
+	</CardWithPresets>,
+	<CardWithPresets key="attrs" className="x" aria-label="x" data-x="y" />,
+	// @ts-expect-error: only a site's attributes (class, id, style, aria-*, data-*); hosts use the port.
+	<CardWithPresets key="html" contentEditable />,
+	// @ts-expect-error: a preset the Card doesn't have.
+	<CardWithPresets key="preset" preset="pathways" />,
+	// @ts-expect-error: a part the pathway card doesn't hold (the media tile's tag).
+	<CardWithPresets key="part" preset="pathway" content={ { tag: 'x' } } />,
 	// @ts-expect-error: a link is its text and its address, not a string.
-	<CardWithPresets key="kind" content={ { link: 'Go' } } />,
+	<CardWithPresets key="kind" preset="pathway" content={ { link: 'Go' } } />,
+	// @ts-expect-error: content with no preset: there are no parts to fill.
+	<CardWithPresets key="none" content={ { eyebrow: 'Transfer' } } />,
 ];

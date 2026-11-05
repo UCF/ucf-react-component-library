@@ -133,3 +133,16 @@ export function panelsOf< Props extends PropDefinitions >(
 	}
 	return [ ...panels ].map( ( [ title, keys ] ) => ( { title, keys } ) );
 }
+
+/**
+ * The props that hold an image's URL (`control: 'media'`), in order.
+ *
+ * @param definitions A component's prop definitions.
+ */
+export const mediaProps = ( definitions: PropDefinitions ) =>
+	Object.entries( definitions )
+		.filter(
+			( [ , definition ] ) =>
+				'control' in definition && definition.control === 'media'
+		)
+		.map( ( [ key ] ) => key );

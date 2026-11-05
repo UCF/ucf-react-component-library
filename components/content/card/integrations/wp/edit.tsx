@@ -1,6 +1,6 @@
-/** The Card's editor view: its sidebar and its content, from its definition. */
+/** The Card's editor view: its sidebar and its content, from its port. */
 import { blockEdit } from '../../../../../integrations/wp/block.tsx';
-import { card } from '../../Card.definition.ts';
+import Card from '../../Card.tsx';
 import metadata from './block.json';
 
-export default blockEdit( card, metadata );
+export default blockEdit( Card, metadata );

@@ -1,20 +1,21 @@
 /**
- * Puck: a component's definition as a Puck config.
+ * Puck: a framed component as a Puck config, read through its port.
  *
- * `puckConfig( card )` in a component's puck/config.tsx. Its props become fields, its presets a
- * Design picker; it renders the same component a React site does. "Open" is a slot instead.
+ * `puckConfig( Card )` in a component's puck/config.tsx. Its props become fields, its presets a
+ * Design picker; it renders the same component a React site does. "Open" fills its content area
+ * with a slot instead.
  */
 
 import type { ComponentType } from 'react';
 
 import imageExample from '../../components/primitives/image/example.json' with { type: 'json' };
-import { presetComponent, mediaProps } from '../react/component.tsx';
-import type { ComponentDefinition } from '../schema/definition.ts';
+import type { Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import { findPreset } from '../schema/presets.ts';
 import {
 	defaultsIn,
 	inHost,
+	mediaProps,
 	type PropDefinitions,
 	type PropsIn,
 } from '../schema/props.ts';
@@ -71,25 +72,27 @@ export type PuckPropsOf<
 /**
  * A component's Puck config, and the variants a host registers.
  *
- * @param definition The component's definition.
+ * @param component The component, from frame().
  */
 export function puckConfig<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
->( definition: ComponentDefinition< Props, Parts > ) {
+>( component: Ported< Props, Parts > ) {
 	type StoredProps = PuckPropsOf< Props, Parts >;
 	const {
-		component: Frame,
 		title,
 		props: definitions,
 		parts,
 		presets,
 		defaultPreset,
-	} = definition;
+	} = component.port;
 	// WHY loosely typed: render passes whatever props Puck stored for this component.
-	const WithPresets = presetComponent(
-		definition
-	) as unknown as ComponentType< Record< string, unknown > >;
+	const Component = component as unknown as ComponentType<
+		Record< string, unknown >
+	>;
+	const Frame = component.port.Frame as unknown as ComponentType<
+		Record< string, unknown >
+	>;
 	const images = mediaProps( definitions );
 
 	const fields = {
@@ -131,7 +134,7 @@ export function puckConfig<
 			...props
 		} ) =>
 			preset ? (
-				<WithPresets
+				<Component
 					{ ...props }
 					// WHY: an empty image field means none, not "override the preset's sample".
 					{ ...Object.fromEntries(
@@ -151,7 +154,7 @@ export function puckConfig<
 					) }
 				/>
 			) : (
-				<Frame { ...props } innerAs={ blocks } />
+				<Frame { ...props } areas={ { content: blocks } } />
 			),
 	};
 

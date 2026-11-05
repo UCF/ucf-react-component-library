@@ -11,7 +11,9 @@ import {
 
 export type Preset = PresetOf< CardEditableProps, Part >;
 
-export const PRESETS: Preset[] = [
+// WHY `as const`: the names and parts stay exact, so `<Card preset="pathway" content={ … } />`
+// offers only the pathway card's parts.
+export const PRESETS = [
 	{
 		name: 'story',
 		title: 'Card: Story',
@@ -113,7 +115,7 @@ export const PRESETS: Preset[] = [
 			},
 		],
 	},
-];
+] as const satisfies readonly Preset[];
 
 // A preset by its name.
 export const presetNamed = ( name: string ): Preset =>

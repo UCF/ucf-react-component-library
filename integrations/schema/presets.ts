@@ -22,7 +22,7 @@ export type Preset< Props, Part > = {
 	/** Whether it has a background image. WHY a flag: WordPress must not save a sample one. */
 	background?: boolean;
 	/** What it starts with inside, in order. */
-	parts: Part[];
+	parts: readonly Part[];
 };
 
 /**

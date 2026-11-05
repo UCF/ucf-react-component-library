@@ -121,8 +121,7 @@ block.json against them. Still to do:
   page (or move the list) after deploying.
 - **WordPress at the content layer:** prototype pattern overrides (6.6+) for the Card's presets
   (docs/architecture.md, "How content reaches a frame").
-- **The Highlight's `preset` and `content` props:** export it wrapped by `withPresets()`, as
-  the Card is. integrations/tests/react.test.tsx then checks it with no other change.
+- **The Highlight on `frame()`:** as the Card is, which gives it `preset` and `content`. integrations/tests/react.test.tsx then checks it with no other change.
 - **Drop the deprecated `withVariation`** from the Card's and Highlight's Puck configs once
   ucf-puck-demo uses `withPreset`.
 - **block.json stays hand-written** (decided 2026-11-05): generating it, and the integration

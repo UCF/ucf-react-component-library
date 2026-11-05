@@ -189,7 +189,7 @@ Puck started with while WordPress started plain.
 **Files are named `{Name}.{role}.{ext}`,** as `Card.test.tsx` and `Card.stories.tsx` already
 were: the first word is the component, the suffix is what the file defines. Typing `Card.` in
 a file finder lists everything that defines the Card. In `integrations/`, each environment's folder has a
-main file named for what it produces (`wp/block.tsx`, `puck/config.tsx`, `react/component.tsx`)
+main file named for what it produces (`wp/block.tsx`, `puck/config.tsx`, `react/frame.tsx`)
 and a `parts` file for how parts render there, mirroring `schema/`.
 
 ### The object model
@@ -269,14 +269,12 @@ use it with no CMS:
 | `{NAME}_PARTS`   | it has `{Name}.parts.ts`   | `CARD_PARTS`: each part's class      |
 | `{NAME}_PRESETS` | it has `{Name}.presets.ts` | `CARD_PRESETS`: its designs, as data |
 
-A component with presets exports its `{Name}` wrapped by `withPresets()`
-(integrations/react/component.tsx), so it also takes `preset`, `content` and `sample`: a plain
-React site passes data (`<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`) and gets
-the preset's props and parts, filled. WHY a wrapper in the package entry, not props on the
-component: the component's markup is what WordPress saves, and WordPress and Puck import the
-component file itself, so nothing they store changes. WHY not a stored `preset` attribute in the
-CMSs: there an editor changes the content, so it must stay inner blocks or a slot; a preset only
-starts it. The Card has it; the Highlight next (docs/todo.md).
+A component built with `frame()` (integrations/react/frame.tsx; see "Built with frame()") takes
+`preset`, `content` and `sample` besides its props: a plain React site passes data
+(`<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`) and gets the preset's props and
+parts, filled. WHY not a stored `preset` attribute in the CMSs: there an editor changes the
+content, so it must stay inner blocks or a slot; a preset only starts it. The Card has it; the
+Highlight next (docs/todo.md).
 
 integrations/tests/exports.test.ts checks every component's entry. WHY the name in the constant:
 a site imports several components' parts into one file. `@ucf/components/react`
@@ -290,11 +288,11 @@ every preset that way. The Hero and Section still export their older extras (`HE
 A slot is a prop that takes something each host provides. The core never checks which host
 it is in.
 
-| Slot      | Next passes          | WordPress passes                          | Puck passes |
-| --------- | -------------------- | ----------------------------------------- | ----------- |
-| `innerAs` | nothing (`<div>`)    | its inner-blocks element                  | its slot    |
-| text      | a string             | a string in `save()`, a field in `edit()` | a string    |
-| `client`  | a client for its API | nothing (default client)                  | nothing     |
+| Slot                          | Next passes          | WordPress passes                          | Puck passes |
+| ----------------------------- | -------------------- | ----------------------------------------- | ----------- |
+| `innerAs` or a `content` area | nothing (`<div>`)    | its inner-blocks element                  | its slot    |
+| text                          | a string             | a string in `save()`, a field in `edit()` | a string    |
+| `client`                      | a client for its API | nothing (default client)                  | nothing     |
 
 A slot only covers what was made a slot. A core that imports `next/link` directly is tied to
 Next, and the WordPress build fails on it.
@@ -384,7 +382,8 @@ Decided 2026-11-02. A content component is one of two shapes:
 | **Fixed** | Its markup, its parts as fields, how they fit | Fields (attributes in WordPress, Puck props) | examples/fixed-card                                    |
 | **Frame** | The box: layout, band, image, rule, spacing   | Open: inner blocks in WordPress, a Puck slot | Section, Hero, Highlight, Card; examples/flexible-card |
 
-- **A frame renders its content in one element, `innerAs`.** WordPress passes its inner-blocks
+- **A frame renders its content in one element:** its `content` area (built with `frame()`), or
+  `innerAs` (the frames not moved yet). WordPress passes its inner-blocks
   element (in `edit()` and `save()`), Puck its slot, plain React a `<div>`. The markup is the
   same in every host, and each host's editing area is the frame's own element.
 - **A new frame starts with a template, never a lock.** WordPress: `useInnerBlocksProps( props,
@@ -410,25 +409,61 @@ Decided 2026-11-02. A content component is one of two shapes:
   class, and nothing else can read the parts as fields. Choose fixed when something must read a
   part (a listing, search) or the design depends on how parts fit (the fixed card's image bleed
   and whole-card link, in examples/fixed-card); choose a frame when the content is meant to vary.
-- **Tests:** a frame's markup test renders content through `innerAs`; blocks.test.tsx checks
+- **Tests:** a frame's markup test renders content through its `content` area (or `innerAs`); blocks.test.tsx checks
   each frame saves and reads back blocks placed inside it; puck.test.tsx checks each template
   names primitives that exist and sets every prop they have.
 
+### Built with frame()
+
+Decided 2026-11-05. A content component's `{Name}.tsx` is a plain React component, passed to
+`frame()` (integrations/react/frame.tsx) with what it is (slug, title, kind, `wpIcon`, props,
+parts, presets; `ComponentDefinition` in integrations/schema/definition.ts). That gives back a
+React component that works on its own, presets included, and `{Name}.port`: the definition, and
+`Frame`, the same markup with its areas open for a host to fill.
+
+```tsx
+function CardMarkup( { variant, children, area, ...props }: FrameProps< typeof PROPS > ) {
+	return (
+		<div className="ucf-c-card" …>
+			{ area( 'content', { className: 'ucf-c-card__content' }, children ) }
+		</div>
+	);
+}
+
+/** A box with any content inside. … */
+const Card = frame( CardMarkup, { slug: 'card', title: 'Card', props: PROPS, parts: PARTS, … } );
+export default Card;
+```
+
+WHY the component first and frame() last: it reads as the React component it is, as
+`memo( Card )` would. WHY a named `const Card`: a hover on `<Card` then lists its props, each
+with its values, and the doc comment above it. The props follow the presets: `preset` takes only a preset's name, and
+`content` only the parts that preset holds, so `<Card preset="pathway" content={ { tag } } />`
+is a type error (the tag is the media tile's). WHY `as const` on `{Name}.presets.ts`: it keeps the
+names and parts exact for those types. An area is where content goes: a `<div>` on a React site, or the element a
+host passes (`<Card.port.Frame areas={ { content: InnerBlocksArea } } />`). Hosts fill the one
+named `content`. WHY: host-only props (`innerAs`, `media`) had become part of the React API;
+areas keep them on the port, so every prop a React site sees means something there. WHY `area`
+a function, not an `<Area>` component: it needs no React context, so nothing happens that the
+file doesn't show. The component may not use hooks: WordPress saves its markup.
+
+The rules that keep frame() small: an area is a name, a class and its children, nothing more; the
+port is plain data plus `Frame`; frame() takes no per-component options (a need one component
+has goes in its own file).
+
 ### One definition, one translator per environment
 
-Decided 2026-11-04. A component writes what it is once, in `{Name}.definition.ts`
-(`defineComponent()` in integrations/schema/definition.ts): its slug, title, kind, WordPress icon (`wpIcon`), React
-component, prop definitions, parts and presets. Each environment has one translator that turns
-any definition into its integration:
+Decided 2026-11-04. Each environment has one translator that turns any framed component into its
+integration, reading its port:
 
 | Environment | Translator                                                                 | A component's file becomes                                        |
 | ----------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| React site  | `presetComponent()`, integrations/react/component.tsx                      | `export const Card = presetComponent( card )` in index.ts         |
-| Puck        | `puckConfig()`, integrations/puck/config.tsx                               | `puckConfig( card )` in integrations/puck/config.tsx              |
+| React site  | `frame()`, integrations/react/frame.tsx                                    | `const Card = frame( CardMarkup, { … } )` in Card.tsx             |
+| Puck        | `puckConfig()`, integrations/puck/config.tsx                               | `puckConfig( Card )` in integrations/puck/config.tsx              |
 | WordPress   | `blockEdit()`, `blockSave()`, `blockSettings()`, integrations/wp/block.tsx | one line each in integrations/wp/edit.tsx, save.tsx and index.tsx |
 
-WHY one translator per environment, not one file for all: the definition is plain data and a
-React component, safe to import anywhere; WordPress's code must never reach the npm package,
+WHY one translator per environment, not one file for all: the component and its port are plain
+data and React, safe to import anywhere; WordPress's code must never reach the npm package,
 nor Puck's the plugins. WHY translators, not each component's own adapter code: the adapters
 were the same pattern four times over (Card's and the Highlight's save.tsx differed in four
 comment lines); a fix or a new editing feature now lands in every component at once.
@@ -450,7 +485,7 @@ Decided 2026-11-04. A frame has three layers, designed from the React render out
 ```
 integrations   each environment stores one layer: data, or open content
      │
-content        preset + content → the preset's parts, filled        (integrations/react/component.tsx)
+content        preset + content → the preset's parts, filled        (integrations/react/frame.tsx)
      │ children
 frame          the component: the box, and whatever is inside it    ({Name}.tsx)
 ```

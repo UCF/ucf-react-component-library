@@ -67,7 +67,7 @@ export type ResolvedPart = {
  */
 export function resolveParts< Parts extends PartDefinitions >(
 	partDefinitions: Parts,
-	parts: PartOf< Parts >[]
+	parts: readonly PartOf< Parts >[]
 ): ResolvedPart[] {
 	return parts.map( ( { part, ...content } ) => {
 		const definition = partDefinitions[ part ] as PartDefinition;

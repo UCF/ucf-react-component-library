@@ -1,12 +1,11 @@
 /**
- * Definition: everything a component is, in one object.
+ * Definition: what a component is, as data.
  *
- * Each environment reads it: wp/block.tsx, puck/config.tsx, react/component.tsx.
- * WHY one reader per environment: WordPress's code must never reach the npm package, nor Puck's the
- * plugins; the definition is safe to import anywhere.
+ * frame() takes it with the markup (integrations/react/frame.tsx), and hands it to hosts as the
+ * component's port: wp/block.tsx and puck/config.tsx read it there.
+ * WHY data only: WordPress's code must never reach the npm package, nor Puck's the plugins; this
+ * is safe to import anywhere.
  */
-
-import type { ComponentType } from 'react';
 
 import type { PartDefinitions, PartOf } from './parts.ts';
 import type { Preset } from './presets.ts';
@@ -15,8 +14,10 @@ import type { PropDefinitions, PropsOf } from './props.ts';
 export type ComponentDefinition<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
-	// WHY `any` by default: a translator takes any component; each definition keeps its own.
-	ComponentProps = any,
+	// WHY its own parameter: kept exact (`as const`), the presets type the names and content a
+	// site may pass (react/frame.tsx).
+	Presets extends readonly Preset< PropsOf< Props >, PartOf< Parts > >[] =
+		readonly Preset< PropsOf< Props >, PartOf< Parts > >[],
 > = {
 	// Who it is
 
@@ -27,16 +28,14 @@ export type ComponentDefinition<
 	/** Content (saved as HTML) or interactive (built in the browser): its bucket. */
 	kind: 'content' | 'interactive';
 
-	// What it renders and takes
+	// What it takes
 
-	/** The React component: the frame. It takes its props, and `className`, `children`. */
-	component: ComponentType< ComponentProps >;
 	/** {Name}.props.ts */
 	props: Props;
 	/** {Name}.parts.ts */
 	parts: Parts;
 	/** {Name}.presets.ts */
-	presets: readonly Preset< PropsOf< Props >, PartOf< Parts > >[];
+	presets: Presets;
 	/** The preset a new one starts with. */
 	defaultPreset: Preset< PropsOf< Props >, PartOf< Parts > >;
 
@@ -45,16 +44,3 @@ export type ComponentDefinition<
 	/** Its icon in the inserter, by its name in integrations/wp/icons.ts. */
 	wpIcon: string;
 };
-
-/**
- * A component's definition, with each piece's exact types kept.
- *
- * @param definition Everything the component is.
- */
-export const defineComponent = <
-	Props extends PropDefinitions,
-	Parts extends PartDefinitions,
-	ComponentProps,
->(
-	definition: ComponentDefinition< Props, Parts, ComponentProps >
-) => definition;

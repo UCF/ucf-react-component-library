@@ -2,6 +2,8 @@
  * Storybook: a component's props as story controls, with the values editors get.
  */
 
+import type { ArgTypes } from '@storybook/react-vite';
+
 import type { PropDefinitions } from '../schema/props.ts';
 
 /**
@@ -9,7 +11,7 @@ import type { PropDefinitions } from '../schema/props.ts';
  *
  * @param definitions A component's prop definitions.
  */
-export function argTypesOf( definitions: PropDefinitions ) {
+export function argTypesOf( definitions: PropDefinitions ): ArgTypes {
 	return Object.fromEntries(
 		Object.entries( definitions ).flatMap( ( [ key, definition ] ) =>
 			definition.type === 'choice'
@@ -19,8 +21,8 @@ export function argTypesOf( definitions: PropDefinitions ) {
 							{
 								control:
 									definition.control === 'radio'
-										? 'inline-radio'
-										: 'select',
+										? ( 'inline-radio' as const )
+										: ( 'select' as const ),
 								options: definition.options.map(
 									( option ) => option.value
 								),

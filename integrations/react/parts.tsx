@@ -109,7 +109,7 @@ export function renderParts(
  */
 export function presetContent< Parts extends PartDefinitions >(
 	partDefinitions: Parts,
-	preset: { parts: PartOf< Parts >[] },
+	preset: { parts: readonly PartOf< Parts >[] },
 	options?: PartOptions
 ): ReactElement[] {
 	return renderParts(

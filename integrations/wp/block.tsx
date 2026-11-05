@@ -1,11 +1,11 @@
 /**
- * WordPress: a component's definition as a block.
+ * WordPress: a framed component as a block, read through its port.
  *
  * A block keeps WordPress's usual files, each a one-line call:
  *
- *   edit.tsx    export default blockEdit( card, metadata );
- *   save.tsx    export default blockSave( card, metadata );
- *   index.tsx   registerBlockType( metadata, { ...blockSettings( card ), edit, save } );
+ *   edit.tsx    export default blockEdit( Card, metadata );
+ *   save.tsx    export default blockSave( Card, metadata );
+ *   index.tsx   registerBlockType( metadata, { ...blockSettings( Card ), edit, save } );
  *
  * A block that needs something of its own wraps or replaces the call in its file.
  */
@@ -27,7 +27,7 @@ import { __ } from '@wordpress/i18n';
 import ImageEdit, {
 	type ImageValue,
 } from '../../components/primitives/image/integrations/wp/edit.tsx';
-import type { ComponentDefinition } from '../schema/definition.ts';
+import type { Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import {
 	panelsOf,
@@ -111,25 +111,23 @@ const attributesOf = ( metadata: object ) =>
 // The editor view.
 
 /**
- * A block's edit(): the frame, its content editable as inner blocks, its props' fields in the
+ * A block's edit(): the markup, its content editable as inner blocks, its props' fields in the
  * sidebar by panel.
  *
- * @param definition The component's definition.
- * @param metadata   Its block.json.
+ * @param component The component, from frame().
+ * @param metadata  Its block.json.
  */
 export function blockEdit<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
->( definition: ComponentDefinition< Props, Parts >, metadata: object ) {
-	const { component: Component, props: definitions } = definition;
+>( component: Ported< Props, Parts >, metadata: object ) {
+	const { Frame, props: definitions, parts, defaultPreset } = component.port;
 	const json = attributesOf( metadata );
 	const panels = panelsOf( definitions );
 	// What a block inserted without picking a preset starts with: a start, not a lock.
-	const template = toBlocks(
-		resolveParts( definition.parts, definition.defaultPreset.parts )
-	);
+	const template = toBlocks( resolveParts( parts, defaultPreset.parts ) );
 
-	// WHY passed as `innerAs`: the inner-blocks area is the frame's own element, no wrapper.
+	// WHY the content area itself: the inner blocks sit in the frame's own element, no wrapper.
 	const InnerBlocksArea = ( props: object ) => (
 		<div { ...useInnerBlocksProps( props, { template } ) } />
 	);
@@ -171,10 +169,10 @@ export function blockEdit<
 					) ) }
 				</InspectorControls>
 
-				<Component
+				<Frame
 					{ ...useBlockProps() }
 					{ ...ownAttributes( attributes, json ) }
-					innerAs={ InnerBlocksArea }
+					areas={ { content: InnerBlocksArea } }
 				/>
 			</>
 		);
@@ -186,17 +184,17 @@ export function blockEdit<
 // What a post stores.
 
 /**
- * A block's save(): the frame, its attributes as props, its inner blocks inside.
+ * A block's save(): the markup, its attributes as props, its inner blocks inside.
  * SYNC: what this returns is stored in every post; the markup snapshots check it.
  *
- * @param definition The component's definition.
- * @param metadata   Its block.json.
+ * @param component The component, from frame().
+ * @param metadata  Its block.json.
  */
 export function blockSave<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
->( definition: ComponentDefinition< Props, Parts >, metadata: object ) {
-	const { component: Component } = definition;
+>( component: Ported< Props, Parts >, metadata: object ) {
+	const { Frame } = component.port;
 	const json = attributesOf( metadata );
 
 	const InnerBlocksContent = ( props: Record< string, unknown > ) => (
@@ -205,10 +203,10 @@ export function blockSave<
 
 	return function save( { attributes }: BlockSaveProps< Attributes > ) {
 		return (
-			<Component
+			<Frame
 				{ ...useBlockProps.save() }
 				{ ...ownAttributes( attributes, json ) }
-				innerAs={ InnerBlocksContent }
+				areas={ { content: InnerBlocksContent } }
 			/>
 		);
 	};
@@ -222,18 +220,18 @@ export function blockSave<
  * A block's settings besides edit() and save(): its icon, its inserter preview (the default preset
  * with sample content), and its presets as variations.
  *
- * @param definition The component's definition.
+ * @param component The component, from frame().
  */
 export function blockSettings<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
 >(
-	definition: ComponentDefinition< Props, Parts >
+	component: Ported< Props, Parts >
 ): Pick< BlockConfiguration< Attributes >, 'icon' | 'example' | 'variations' > {
-	const { parts, presets, defaultPreset } = definition;
+	const { parts, presets, defaultPreset, wpIcon } = component.port;
 	// UPSTREAM: @wordpress/blocks types `example` and variations' inner blocks loosely.
 	return {
-		icon: ICONS[ definition.wpIcon ],
+		icon: ICONS[ wpIcon ],
 		example: {
 			attributes: defaultPreset.props,
 			innerBlocks: toExampleBlocks(

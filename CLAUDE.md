@@ -19,6 +19,7 @@ restate them. Read `README.md` first for what the repo is and where each file li
 | Core blocks and our primitives        | Core for plain text; we own Section, Columns, Button, Image…    |
 | Primitives                            | A component's own markup is built from `primitives/`            |
 | Frames                                | Fixed vs frame; `innerAs`, templates, parts named by class      |
+| Built with frame()                    | `frame()`: the component, its markup, its port; areas           |
 | Distribution                          | One npm package; one plugin per content type                    |
 | Tokens, roles and fonts               | `--ucf-*` only; who sets roles; who loads fonts                 |
 | Changing a content component's markup | Major version plus a block deprecation                          |

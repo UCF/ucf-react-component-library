@@ -1,8 +1,8 @@
-/** The Card in Puck, made from its definition (integrations/puck/config.tsx). */
+/** The Card in Puck, from its port (integrations/puck/config.tsx). */
 import { puckConfig } from '../../../../../integrations/puck/config.tsx';
-import { card } from '../../Card.definition.ts';
+import Card from '../../Card.tsx';
 
-const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( card );
+const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( Card );
 
 export default config;
 export { TEMPLATE, withTemplate, withPreset };

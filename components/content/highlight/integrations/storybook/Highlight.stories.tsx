@@ -17,7 +17,7 @@ import '../../style.css';
  * @param name    A preset's name in Highlight.presets.ts.
  * @param content Parts in place of the preset's own, for a row of different ones.
  */
-function preset( name: string, content?: Part[][] ): Story {
+function preset( name: string, content?: ( readonly Part[] )[] ): Story {
 	const { props, parts } = presetNamed( name );
 	const all = content ?? [ parts ];
 	return {
