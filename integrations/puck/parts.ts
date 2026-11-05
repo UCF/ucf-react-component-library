@@ -3,9 +3,12 @@
  *
  * SYNC: wp/parts.ts builds the same parts as core blocks; each `type` is the key the README tells
  * hosts to register the primitive under.
+ * WHY each part's name, not its preset's sample copy: Puck has no placeholders, so whatever a
+ * template holds is published if an editor misses it. A label ("Title") is plainly unfinished;
+ * sample copy reads as written, and its facts ("70,674 students") go stale. No sample image and
+ * no `#` address, for the same reason.
  */
 
-import imageExample from '../../components/primitives/image/example.json' with { type: 'json' };
 import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
 import type { PuckSlot } from './types.ts';
 
@@ -22,6 +25,16 @@ const variantOf = ( part: ResolvedPart ) => {
 };
 
 /**
+ * `secondaryButton` → `Secondary button`: a part's name as the text a template starts with.
+ *
+ * @param part A part.
+ */
+const labelOf = ( part: ResolvedPart ) => {
+	const words = part.part.replace( /([A-Z])/g, ' $1' ).toLowerCase();
+	return words.charAt( 0 ).toUpperCase() + words.slice( 1 );
+};
+
+/**
  * Parts as the library's primitives.
  *
  * @param parts Parts, from resolveParts().
@@ -33,8 +46,8 @@ export function toPrimitives( parts: ResolvedPart[] ): PuckSlot {
 				return {
 					type: 'Image',
 					props: {
-						url: part.url ?? imageExample.url,
-						alt: part.alt ?? '',
+						url: '',
+						alt: '',
 						aspectRatio: part.aspectRatio ?? '',
 						className: part.className,
 					},
@@ -43,7 +56,7 @@ export function toPrimitives( parts: ResolvedPart[] ): PuckSlot {
 				return {
 					type: 'Heading',
 					props: {
-						content: part.text,
+						content: labelOf( part ),
 						level: String( part.level ),
 						className: part.className,
 					},
@@ -51,7 +64,10 @@ export function toPrimitives( parts: ResolvedPart[] ): PuckSlot {
 			case 'text':
 				return {
 					type: 'Paragraph',
-					props: { content: part.text, className: part.className },
+					props: {
+						content: labelOf( part ),
+						className: part.className,
+					},
 				};
 			// Both the Button primitive: a link is its text variant.
 			case 'link':
@@ -59,8 +75,8 @@ export function toPrimitives( parts: ResolvedPart[] ): PuckSlot {
 				return {
 					type: 'Button',
 					props: {
-						text: part.text,
-						url: part.url,
+						text: labelOf( part ),
+						url: '',
 						linkTarget: '',
 						variant: variantOf( part ),
 						fontSize: '',

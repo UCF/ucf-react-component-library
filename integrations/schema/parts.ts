@@ -52,6 +52,8 @@ export type PartOf< Parts extends PartDefinitions > = {
 /** A part as each environment's parts.ts reads it: kind, class ('' for none) and content. */
 export type ResolvedPart = {
 	[ KindName in Kind ]: {
+		/** Its name in the component's PARTS: `eyebrow`. */
+		part: string;
 		kind: KindName;
 		className: string;
 	} & KindContent[ KindName ];
@@ -75,6 +77,7 @@ export function resolveParts< Parts extends PartDefinitions >(
 		const definition = partDefinitions[ part ] as PartDefinition;
 		// UPSTREAM: TypeScript can't follow a look's kind to its content through the table.
 		return {
+			part,
 			kind: definition.kind,
 			className: definition.className ?? '',
 			...content,

@@ -8,7 +8,6 @@
 
 import type { ComponentType } from 'react';
 
-import imageExample from '../../components/primitives/image/example.json' with { type: 'json' };
 import type { Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import { findPreset } from '../schema/presets.ts';
@@ -153,14 +152,13 @@ export function puckConfig<
 		} ) =>
 			preset ? (
 				<Component
-					{ ...props }
-					// WHY: an empty image field means none, not "override the preset's sample".
+					// WHY empty image fields left out: so the preset's sample background shows in
+					// the editor (`sample`), and none is published.
 					{ ...Object.fromEntries(
-						images.map( ( key ) => [
-							key,
-							( props as Record< string, unknown > )[ key ] ||
-								undefined,
-						] )
+						Object.entries( props ).filter(
+							( [ key, value ] ) =>
+								value || ! images.includes( key )
+						)
 					) }
 					preset={ preset }
 					content={ content }
@@ -203,8 +201,9 @@ export function puckConfig<
 	} );
 
 	/**
-	 * The component starting on one of its presets: its props, a sample background image when it has
-	 * one, and its title as the label.
+	 * The component starting on one of its presets: its props, and its title as the label.
+	 * FIX: no sample background in its props. Puck saves defaults into the page, so a sample there
+	 * was published; render() shows one in the editor only.
 	 *
 	 * @param name A preset's name.
 	 */
@@ -217,14 +216,6 @@ export function puckConfig<
 				...config.defaultProps,
 				...preset.props,
 				preset: preset.name,
-				...Object.fromEntries(
-					images
-						.slice( 0, 1 )
-						.map( ( key ) => [
-							key,
-							preset.background ? imageExample.url : '',
-						] )
-				),
 			} as StoredProps,
 		};
 	};

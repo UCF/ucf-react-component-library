@@ -9,6 +9,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { Preset as PresetOf } from '../schema/presets.ts';
 import { ICONS } from '../wp/icons.ts';
+import { toBlocks, type BlockTemplate } from '../wp/parts.ts';
+import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import type { PropDefinitions } from '../schema/props.ts';
 
 type Preset = PresetOf< Record< string, unknown >, unknown >;
@@ -41,6 +43,40 @@ const blockJsons = byComponent(
 		{ eager: true, import: 'default' }
 	)
 );
+const partFiles = byComponent(
+	import.meta.glob< PartDefinitions >(
+		'../../components/{content,interactive}/*/*.parts.ts',
+		{ eager: true, import: 'PARTS' }
+	)
+);
+
+type Block = { name: string; attributes?: object; innerBlocks?: Block[] };
+
+/**
+ * Every attribute an editor could publish without seeing it: text, an address, an image.
+ *
+ * @param blocks Blocks, with the blocks inside them.
+ */
+const written = ( blocks: Block[] = [] ): string[] =>
+	blocks.flatMap( ( block ) => [
+		...Object.keys( block.attributes ?? {} )
+			.filter( ( key ) => [ 'content', 'text', 'url' ].includes( key ) )
+			.map( ( key ) => `${ block.name } ${ key }` ),
+		...written( block.innerBlocks ),
+	] );
+
+/**
+ * A block template as blocks.
+ *
+ * @param template From toBlocks().
+ */
+const asBlocks = ( template: BlockTemplate ): Block[] =>
+	template.map( ( [ name, attributes = {}, inner = [] ] ) => ( {
+		name,
+		attributes,
+		innerBlocks: asBlocks( inner ),
+	} ) );
+
 const definitions = byComponent(
 	import.meta.glob< PropDefinitions >(
 		'../../components/{content,interactive}/*/*.props.ts',
@@ -68,9 +104,38 @@ describe.each( Object.keys( presetFiles ).sort() )( '%s', ( component ) => {
 		).toBe( PRESETS.length ? DEFAULT_PRESET?.name : undefined );
 	} );
 
+	// WHY: whatever a new block starts with is published if an editor misses it. Placeholders
+	// show what goes where and are never saved (integrations/wp/parts.ts).
+	it( 'starts a new block with placeholders only: no text, address or image', () => {
+		const parts = partFiles[ component ] ?? {};
+		expect(
+			written(
+				asBlocks(
+					toBlocks(
+						resolveParts(
+							parts,
+							( DEFAULT_PRESET?.parts ?? [] ) as never
+						)
+					)
+				)
+			)
+		).toEqual( [] );
+	} );
+
 	describe.each( PRESETS )( 'the $name preset', ( preset ) => {
 		const inWordPress = () =>
 			registered().find( ( item ) => item.name === preset.name );
+
+		it( 'inserts placeholders only: no text, address or image', () => {
+			expect(
+				written(
+					asBlocks(
+						( inWordPress()?.innerBlocks ??
+							[] ) as unknown as BlockTemplate
+					)
+				)
+			).toEqual( [] );
+		} );
 
 		it( 'starts with a block for each of its parts', () => {
 			expect( inWordPress()?.innerBlocks ).toHaveLength(

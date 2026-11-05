@@ -39,6 +39,7 @@ import highlight, {
 	withPreset as highlightWithPreset,
 } from '../../components/content/highlight/integrations/puck/config.tsx';
 import { PRESETS as HIGHLIGHT_PRESETS } from '../../components/content/highlight/Highlight.presets.ts';
+import imageExample from '../../components/primitives/image/example.json';
 import type { PuckComponentConfig } from '../puck/types.ts';
 
 type PropsOf< Config > =
@@ -187,6 +188,23 @@ describe.each< TemplateCase >( [
 		expect( content.map( ( item ) => item.type ) ).toEqual( types );
 	} );
 
+	// WHY: Puck has no placeholders, so a template's text is published if an editor misses it.
+	// A part's name ("Title") is plainly unfinished; sample copy and its facts are not.
+	it( 'holds each part’s name only: no sample copy, address or image', () => {
+		for ( const item of content ) {
+			const props = item.props as Record< string, string >;
+			expect( [
+				item.type,
+				props.content ?? props.text ?? '',
+				props.url ?? '',
+			] ).toEqual( [
+				item.type,
+				expect.stringMatching( /^([A-Z][a-z]*( [a-z]+)*)?$/ ),
+				'',
+			] );
+		}
+	} );
+
 	it( 'sets every prop of each primitive, and only props it has', () => {
 		for ( const item of content ) {
 			// WHY every prop: Puck doesn't merge a template item with the component's defaults.
@@ -307,5 +325,31 @@ describe( 'the Highlight’s presets in Puck', () => {
 		expect( Object.keys( fields.content?.objectFields ?? {} ) ).toEqual( [
 			...new Set( first.parts.map( ( { part } ) => part ) ),
 		] );
+	} );
+} );
+
+// FIX: a preset's sample background was in its default props, and Puck saves those into the page.
+describe( 'a preset with a background in Puck', () => {
+	const render = ( isEditing: boolean ) =>
+		renderToStaticMarkup(
+			card.render( {
+				...cardWithPreset( 'audience' ).defaultProps,
+				blocks: () => null,
+				...puckProps,
+				puck: { ...puckProps.puck, isEditing },
+			} as never )
+		);
+
+	it( 'saves no sample image', () => {
+		expect(
+			CARD_PRESETS.find( ( preset ) => preset.name === 'audience' )
+				?.background
+		).toBe( true );
+		expect( cardWithPreset( 'audience' ).defaultProps.imageSrc ).toBe( '' );
+	} );
+
+	it( 'shows the sample in the editor only', () => {
+		expect( render( true ) ).toContain( imageExample.url );
+		expect( render( false ) ).not.toContain( imageExample.url );
 	} );
 } );

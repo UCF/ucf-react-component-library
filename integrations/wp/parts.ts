@@ -4,7 +4,9 @@
  * For variations, the block template and the inserter preview.
  * SYNC: puck/parts.ts builds the same parts as primitives.
  * WHY placeholders, not text: a variation inserts real blocks, and text that looks written would
- * get published by an editor who missed it. The preview (`sample`) is never saved, so it has text.
+ * get published by an editor who missed it. That goes for links and buttons too: no text, and no
+ * `#` address to publish as a link to nowhere. The preview (`sample`) is never saved, so it has
+ * text.
  */
 
 import imageExample from '../../components/primitives/image/example.json';
@@ -76,7 +78,11 @@ export function toBlocks(
 					'core/paragraph',
 					{
 						...classOf( part.className ),
-						content: `<a href="${ part.url }">${ part.text }</a>`,
+						...( sample
+							? {
+									content: `<a href="${ part.url }">${ part.text }</a>`,
+								}
+							: { placeholder: part.text } ),
 					},
 				];
 			case 'button':
@@ -87,8 +93,9 @@ export function toBlocks(
 						[
 							'core/button',
 							{
-								text: part.text,
-								url: part.url,
+								...( sample
+									? { text: part.text, url: part.url }
+									: { placeholder: part.text } ),
 								...classOf(
 									[
 										part.className,
