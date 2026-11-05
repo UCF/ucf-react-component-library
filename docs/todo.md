@@ -58,12 +58,12 @@ The playground first, then the schema, which is easiest to verify once the playg
 
 ### 1. A Puck playground
 
-The Puck configs (`adapters/puck/config.tsx`) are checked against Puck's own types, and their
-`render` against Puck's extra props (`components/_config/puck.test.tsx`). Nothing renders them
+The Puck configs (`integrations/puck/config.tsx`) are checked against Puck's own types, and their
+`render` against Puck's extra props (`integrations/tests/puck.test.tsx`). Nothing renders them
 in the real Puck editor yet.
 
 - **A small app in `playground/`,** with Vite and `@puckeditor/core` as dev dependencies only, so
-  the library itself stays free of Puck. It loads every `adapters/puck/config.tsx`, opens the real
+  the library itself stays free of Puck. It loads every `integrations/puck/config.tsx`, opens the real
   Puck editor on a saved sample page, and loads `dist/ucf.css` and the compositions so
   sections can be tried.
 - **A check:** a test renders each config through Puck's `<Render>` with sample data, so a
@@ -93,7 +93,44 @@ committed. Still to do:
 - **Ownership** is still an open question for Jim (below): this works with this repo as the
   source, and he should agree to that before the branch merges.
 
-### 2. One schema per component
+### 2. Prop definitions for every component
+
+**Started 2026-11-04: the Card has them** (`PROPS` in `components/content/card/Card.props.ts`,
+with `integrations/schema/props.ts`; docs/architecture.md, "A component's folder"), with its
+parts in `Card.parts.ts` and its presets in `Card.presets.ts`. Its props, Puck fields and
+defaults, sidebar panels and story controls come from them, and parity.test.tsx checks
+block.json against them. Still to do:
+
+- **Move the Hero and the Section** to the same files, as the Card and the Highlight have:
+  the Hero's `options.ts` (`CHOICES`/`TEXTS`) into `Hero.props.ts` and its `PARTS` into
+  `Hero.parts.ts`; each `example.json` into the defaults (and presets, if it has designs); the
+  stories and tests to `{Name}.*` names; a README.md each. Then drop `example.json` from
+  blocks.test.tsx, parity.test.tsx, scripts/build-package.mjs and package.json's exports, and
+  `imageId` from `WORDPRESS_ONLY` in parity.test.tsx (the Hero has one).
+- **The primitives** to the same files: each one's props in `{Name}.props.ts` (now written out
+  in its adapters) and its `example.json` into its defaults.
+- **The other components onto definitions and translators,** as the Card is
+  (docs/architecture.md, "One definition, one translator per environment"): the Highlight first
+  (its adapters are the Card's pattern), then the Hero (its edit.tsx is the biggest: the test of
+  the translator's override points), the Section, the primitives, and the Degree Finder (the
+  WordPress translator's interactive path: render.php and view.tsx). Then the scaffolder writes a
+  definition instead of adapter files.
+- **The Highlight in Puck as data,** as the Card is (integrations/puck/presets.ts): a Design
+  picker, a field per part, and `blocks` for the open frame.
+- **ucf-puck-demo:** its saved page keeps a Card's slot under `content`, now `blocks`. Reset the
+  page (or move the list) after deploying.
+- **WordPress at the content layer:** prototype pattern overrides (6.6+) for the Card's presets
+  (docs/architecture.md, "How content reaches a frame").
+- **The Highlight's `preset` and `content` props:** export it wrapped by `withPresets()`, as
+  the Card is. integrations/tests/react.test.tsx then checks it with no other change.
+- **Drop the deprecated `withVariation`** from the Card's and Highlight's Puck configs once
+  ucf-puck-demo uses `withPreset`.
+- **Generate block.json's attributes** in the webpack copy step, instead of checking a
+  hand-written copy. Needs webpack's config to load the TypeScript definitions.
+- **scripts/new-component.mjs** still scaffolds the old layout (props written out in each
+  adapter, `example.json`), though in the new folders.
+
+The original note:
 
 A component's props are written twice: as `block.json` attributes and as Puck fields. A
 `schema.ts` per component would hold them once:
@@ -111,7 +148,7 @@ export const schema = {
 
 - **`block.json` attributes,** filled in at build time by the webpack copy step (`block.json`
   itself must stay plain JSON).
-- **Puck `fields` and `defaultProps`,** built from it in `adapters/puck/config.tsx` at runtime.
+- **Puck `fields` and `defaultProps`,** built from it in `integrations/puck/config.tsx` at runtime.
 - **The editor's settings panel** in `edit.tsx`, as select and text controls.
 - **The TypeScript prop type,** inferred from it.
 
@@ -142,10 +179,10 @@ would use the schema for attributes only. Verify the generated Puck fields in th
 ## Primitives to build
 
 Per docs/architecture.md, "Primitives": our components are built from primitives in
-`primitives/`, never from core blocks, and each primitive's settings follow its core
+`components/primitives/`, never from core blocks, and each primitive's settings follow its core
 equivalent. Roughly in order of need:
 
-1. **Button: built** (`primitives/button`), used by the Hero. Still to do: a Buttons group,
+1. **Button: built** (`components/primitives/button`), used by the Hero. Still to do: a Buttons group,
    the trailing-arrow variant from the hero screenshots, and `RichText` for the label if
    editors need bold or italics in it.
     - **Its measurements are shared tokens (done 2026-11-02).** `tokens.json` `custom`
@@ -162,7 +199,7 @@ equivalent. Roughly in order of need:
     - **Behavior for interactive pieces:** pick the unstyled library (React Aria first, Base UI
       the fallback) by trying it on the Degree Finder's interest combobox: bundle size, the
       story accessibility checks, how styling it with our CSS feels.
-2. **Image: built** (`primitives/image`), used by the Card. It keeps `wp-image-{id}`, so
+2. **Image: built** (`components/primitives/image`), used by the Card. It keeps `wp-image-{id}`, so
    WordPress adds responsive sizes, and edits through the media library. Still to do: a
    Figure with a caption; the host's image component (`next/image`) through a slot in React;
    and moving the Hero to it (the Hero still draws its own `<img>`).
@@ -173,7 +210,7 @@ equivalent. Roughly in order of need:
 5. **Lock core down** in the plugin: the allowed block list and core's design controls off.
    Do it alongside the first primitive so editors meet ours, not core's.
 
-The Section already exists (frozen until compared with P1's Container, below). 6. **Heading and Paragraph: built as examples** (`primitives/heading`, `primitives/paragraph`),
+The Section already exists (frozen until compared with P1's Container, below). 6. **Heading and Paragraph: built as examples** (`components/primitives/heading`, `components/primitives/paragraph`),
 so the frames' Puck templates (`withTemplate()`) is made of library pieces, as
 WordPress's is of core blocks. Props are core's (`content`, `level`). Still to do: their
 rules copy styles/elements.css (`SYNC:`); generate one from the other, or have
@@ -206,7 +243,7 @@ theme's theme.json `styles.elements` and src/scss/_typography.scss, so they can 
 
 ## Section
 
-Built: `components/section`, with a WordPress block (`ucf-content/section`, inner blocks), a
+Built: `components/content/section`, with a WordPress block (`ucf-content/section`, inner blocks), a
 Puck config (a slot) and its composition classes in the plugins' `base.css`.
 
 **On hold (2026-10-30): don't extend the Section further yet.** UCF will likely build on
@@ -243,7 +280,7 @@ From reviewing whether this works equally well for WordPress and Puck:
   the Degree Finder here) or the Search Service (the theme). This repo had a Search Service
   client in the Program picker, removed on 2026-10-29 without being committed; switching
   means writing one again.
-- **His Degree Picker block, now that this copy is the source.** `components/degree-finder` was
+- **His Degree Picker block, now that this copy is the source.** `components/interactive/degree-finder` was
   ported from his `wp-block` branch (commit 43b23e3) and renamed, so it is the copy that keeps
   going here. His plugin still has its own copy and block (`ucf-degree-search/degree-picker`);
   with both plugins active, the inserter shows a Degree Picker and a Degree Finder. Decide

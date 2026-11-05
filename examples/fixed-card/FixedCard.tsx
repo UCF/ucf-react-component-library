@@ -1,7 +1,8 @@
 /**
  * CONTEXT: an example, not shipped: the Card as a *fixed* component, kept to show that shape
  * beside the frames (docs/architecture.md, "Frames"). The shipped Card is a frame
- * (components/card). This one owns its parts as fields: one linked card with an image, a meta
+ * (components/content/card). This one owns its parts as fields: one linked card with an image, a
+ * meta
  * line, a title and a sentence. Every host renders this one file.
  *
  * Not in Storybook, the npm package, a plugin or the Puck demo; its tests keep it working.
@@ -22,13 +23,14 @@
  * WHY a heading level setting: level is structure, not size. A card title is an h3 under a
  * section's h2 and looks the same at h2 or h4 (the theme's rule, _text.scss).
  *
- * Built from the Image primitive (primitives/image). Content rules apply: plain React, no
+ * Built from the Image primitive (components/primitives/image). Content rules apply: plain React,
+ * no
  * runtime imports besides primitives. SYNC: WordPress stores this markup, with the Image's,
  * in every post that uses the block.
  */
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
-import Image from '../../primitives/image/Image.tsx';
+import Image from '../../components/primitives/image/Image.tsx';
 
 export type FixedCardProps = {
 	/** The title, under about eight words. */

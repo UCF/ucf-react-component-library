@@ -2,7 +2,7 @@
  * CONTEXT: builds the npm package, `@ucf/components`, into dist/.
  *
  *   1. `tsc -p tsconfig.build.json` writes the JavaScript and the `.d.ts` type files, rewriting
- *      `./Highlight.tsx` imports to `./Highlight.js`. Then every example.json is copied beside them.
+ * `./Highlight.tsx` imports to `./Highlight.js`. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
@@ -23,6 +23,10 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import plugins from './plugins.cjs';
+
+const { componentDirs } = plugins;
 
 const root = path.dirname( path.dirname( fileURLToPath( import.meta.url ) ) );
 const dist = path.join( root, 'dist' );
@@ -51,31 +55,34 @@ execFileSync(
 // WHY primitives first: components are built from them, so a component's rule that adjusts a
 // primitive inside it comes later and wins at equal specificity.
 const parts = [ readFileSync( path.join( dist, 'tokens/base.css' ), 'utf8' ) ];
-for ( const tier of [ 'primitives', 'components' ] ) {
-	const tierDir = path.join( root, tier );
-	for ( const name of readdirSync( tierDir ).sort() ) {
-		const css = path.join( tierDir, name, 'style.css' );
-		if ( existsSync( css ) ) {
-			parts.push(
-				`\n/* ── ${ tier }/${ name }/style.css ── */\n`,
-				readFileSync( css, 'utf8' )
-			);
-		}
+// Primitives, then every other component by name, whatever its bucket: a component's place in
+// ucf.css doesn't change when it moves between content and interactive.
+const ordered = [ ...componentDirs() ].sort(
+	( [ a, x ], [ b, y ] ) =>
+		Number( x.bucket !== 'primitives' ) -
+			Number( y.bucket !== 'primitives' ) || a.localeCompare( b )
+);
+for ( const [ , { dir } ] of ordered ) {
+	const css = path.join( dir, 'style.css' );
+	if ( existsSync( css ) ) {
+		const from = path.relative( root, css );
+		parts.push(
+			`\n/* ── ${ from.replace( /^components\//, '' ) } ── */\n`,
+			readFileSync( css, 'utf8' )
+		);
 	}
 }
 writeFileSync( path.join( dist, 'ucf.css' ), parts.join( '' ) );
 
 // WHY copied, not left to tsc: tsc writes a JSON file only when code imports it, and a frame's
 // code doesn't read its example. Every example.json is a package export.
-for ( const tier of [ 'primitives', 'components' ] ) {
-	for ( const name of readdirSync( path.join( root, tier ) ) ) {
-		const example = path.join( root, tier, name, 'example.json' );
-		if ( existsSync( example ) ) {
-			copyFileSync(
-				example,
-				path.join( dist, tier, name, 'example.json' )
-			);
-		}
+for ( const { dir } of componentDirs().values() ) {
+	const example = path.join( dir, 'example.json' );
+	if ( existsSync( example ) ) {
+		copyFileSync(
+			example,
+			path.join( dist, path.relative( root, dir ), 'example.json' )
+		);
 	}
 }
 

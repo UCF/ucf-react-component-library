@@ -13,6 +13,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 
+import plugins from './plugins.cjs';
+
 import {
 	compositions,
 	loadTokens,
@@ -22,6 +24,8 @@ import {
 	treatments,
 	wpName,
 } from './tokens.mjs';
+
+const { componentDirs } = plugins;
 
 const tokens = loadTokens();
 
@@ -175,15 +179,10 @@ describe( 'roles contract', () => {
 		...roles.map( ( role ) => `c-bar-${ role }` ),
 	] );
 
-	// The primitives', components' and examples' CSS and the opt-in element styles
+	// The components' (primitives included) and examples' CSS and the opt-in element styles
 	// (styles/elements.css). WHY examples: they are written to be copied, so they follow the
 	// same rules.
-	const cssFiles = [
-		'primitives',
-		'components',
-		'examples',
-		'styles',
-	].flatMap( ( dir ) =>
+	const cssFiles = [ 'components', 'examples', 'styles' ].flatMap( ( dir ) =>
 		readdirSync( path.join( root, dir ), { recursive: true } )
 			.filter( ( file ) => file.endsWith( '.css' ) )
 			.map( ( file ) => path.join( dir, file ) )
@@ -217,13 +216,16 @@ describe( 'roles contract', () => {
 describe( 'component layer', () => {
 	// FIX: `--ucf-c-*` is set only on an element with `ucf-c` or `ucf-c-panel`. A component that
 	// reads it without carrying either class gets unset values and loses its colors silently.
-	// Every primitive, component and example folder, as `primitives/button`, `components/highlight`.
-	const folders = [ 'primitives', 'components', 'examples' ].flatMap(
-		( tier ) =>
-			readdirSync( path.join( root, tier ) ).map( ( name ) =>
-				path.join( tier, name )
-			)
-	);
+	// Every component (primitives included) and example folder, as
+	// `components/primitives/button`, `components/content/highlight`, `examples/fixed-card`.
+	const folders = [
+		...[ ...componentDirs().values() ].map( ( { dir } ) =>
+			path.relative( root, dir )
+		),
+		...readdirSync( path.join( root, 'examples' ) ).map( ( name ) =>
+			path.join( 'examples', name )
+		),
+	];
 	const users = folders.filter( ( folder ) => {
 		const css = path.join( root, folder, 'style.css' );
 		try {
@@ -248,7 +250,8 @@ describe( 'component layer', () => {
 						file.endsWith( '.tsx' ) &&
 						! file.includes( 'stories' ) &&
 						! file.includes( 'test' ) &&
-						! file.includes( 'adapters' )
+						// The component's own files, not its integrations (WordPress, Puck, stories).
+						! /^integrations\//.test( file )
 				)
 				.map( ( file ) =>
 					readFileSync( path.join( root, folder, file ), 'utf8' )

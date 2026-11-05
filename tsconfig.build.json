@@ -1,10 +1,14 @@
 {
 	// Emits the npm package to dist/: JavaScript, type files, and (via resolveJsonModule) the
 	// example data. Run by scripts/build-package.mjs.
-	// WHY rootDir is the repo: primitives/ and components/ build side by side, into
-	// dist/primitives/ and dist/components/. package.json `exports` maps the public paths.
-	// WHY adapters/wp is left out: it imports @wordpress/*, which only exists inside WordPress, and
-	// wp-scripts builds it into the plugins instead.
+	// WHY rootDir is the repo: components/ and integrations/ build side by side, into
+	// dist/components/ and dist/integrations/. package.json `exports` maps the
+	// public paths.
+	// WHY only integrations/schema, puck and react: the components' shipped code imports the
+	// first two, and react/ is what a plain React site imports (`@ucf/components/react`).
+	// integrations/wp is the WordPress adapters' (it imports @wordpress/*, which only exists inside
+	// WordPress, and wp-scripts builds it into the plugins), as wp is, left out below.
+	// integrations/storybook and integrations/tests are never shipped.
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"noEmit": false,
@@ -15,10 +19,19 @@
 		"outDir": "dist"
 	},
 	"include": [
-		"primitives/**/*.ts",
-		"primitives/**/*.tsx",
 		"components/**/*.ts",
-		"components/**/*.tsx"
+		"components/**/*.tsx",
+		"integrations/schema/**/*.ts",
+		"integrations/puck/**/*.ts",
+		"integrations/react/**/*.ts",
+		"integrations/react/**/*.tsx"
 	],
-	"exclude": [ "*/*/adapters/wp/**", "**/*.test.*", "**/*.stories.*" ]
+	// WHY a component's storybook/ whole: its stories may share a helper file
+	// (components/content/card/integrations/storybook/shared.tsx).
+	"exclude": [
+		"components/*/*/integrations/wp/**",
+		"**/storybook/**",
+		"**/*.test.*",
+		"**/*.stories.*"
+	]
 }

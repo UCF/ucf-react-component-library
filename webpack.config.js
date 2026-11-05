@@ -2,7 +2,8 @@
  * CONTEXT: builds every WordPress plugin under plugins/, one webpack config per plugin.
  *
  * The wp-scripts default finds blocks by searching one source folder for block.json files and
- * writes them all to one build folder. Here the blocks live in components/{name}/adapters/wp/ and
+ * writes them all to one build folder. Here the blocks live in
+ * components/{bucket}/{name}/integrations/wp/ and
  * are split across several plugins, so this keeps the default's loaders and plugins and
  * replaces only three things per plugin: the entries, the output folder, and what gets copied.
  *
@@ -10,7 +11,7 @@
  *
  *   plugins/{plugin}/build/{component}/   block.json, its scripts and styles, render.php
  *   plugins/{plugin}/build/shared.php     from plugins/shared/
- *   plugins/{plugin}/build/editor.css     from plugins/shared/: our blocks' text fields, editor only
+ * plugins/{plugin}/build/editor.css     from plugins/shared/: our blocks' text fields, editor only
  *   plugins/{plugin}/build/base.css       from dist/tokens/base-wp.css (run build:tokens first):
  *                                         tokens pointing at the theme, and the component layer
  */
@@ -21,6 +22,7 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
 const {
 	root,
+	componentDir,
 	getPlugins,
 	assertEveryBlockHasOnePlugin,
 } = require( './scripts/plugins.cjs' );
@@ -29,7 +31,7 @@ const {
 const SCRIPT_FIELDS = [ 'editorScript', 'script', 'viewScript' ];
 
 const blockDir = ( name ) =>
-	path.join( root, 'components', name, 'adapters/wp' );
+	path.join( componentDir( name ), 'integrations/wp' );
 
 const readBlockJson = ( name ) =>
 	JSON.parse( readFileSync( path.join( blockDir( name ), 'block.json' ) ) );

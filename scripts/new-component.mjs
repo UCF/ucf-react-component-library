@@ -1,5 +1,6 @@
 /**
- * CONTEXT: starts a new component. `npm run new:component -- <name> --kind <kind> --plugin <plugin>`
+ * CONTEXT: starts a new component. `npm run new:component -- <name> --kind <kind> --plugin
+ * <plugin>`
  *
  *   name     kebab-case, the one name in every layer (docs/architecture.md, "Naming").
  *   --kind   `content` (works without JavaScript; saved as HTML), `interactive` (built in the
@@ -11,10 +12,11 @@
  *
  * Asks for whichever of kind and plugin is missing when run in a terminal.
  *
- * It writes components/{name}/ (or primitives/{name}/), a working copy of the closest of `highlight`,
+ * It writes components/{bucket}/{name}/ (content, interactive or primitives, by kind), a working
+ * copy of the closest of `highlight`,
  * `degree-finder` and `button` reduced to one prop, and adds it to every list that names
  * components by hand: package.json `exports`, the plugin's plugin.json, and the lists in
- * components/_config/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
+ * integrations/tests/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
  * `npm run test:stories` as written, so every later failure is the new code's.
  *
  * WHY all or nothing: every change is worked out before any file is written, so a bad name or
@@ -34,8 +36,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const KINDS = [ 'content', 'interactive', 'primitive' ];
 
+// Each kind's bucket under components/. SYNC: BUCKETS in scripts/plugins.cjs.
+const BUCKET_OF = {
+	content: 'content',
+	interactive: 'interactive',
+	primitive: 'primitives',
+};
+const BUCKETS = Object.values( BUCKET_OF );
+
 // WHY: `ucf-c-panel` is the component layer's panel class (docs/architecture.md).
-// components/_config/ needs no entry: a name must start with a letter.
 const RESERVED = new Set( [ 'panel' ] );
 
 /**
@@ -104,14 +113,18 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 			`--plugin must be one of ${ plugins.join( ', ' ) }, not "${ plugin }".`
 		);
 	}
-	// WHY both folders: one name may mean one thing only, in Puck's list and in imports.
-	for ( const tier of [ 'components', 'primitives' ] ) {
-		if ( existsSync( path.join( root, tier, name ) ) ) {
-			throw new Error( `${ tier }/${ name } already exists.` );
+	// WHY every bucket: one name may mean one thing only, in Puck's list, in imports and in
+	// the package's paths, which leave the bucket out.
+	for ( const bucket of BUCKETS ) {
+		if ( existsSync( path.join( root, 'components', bucket, name ) ) ) {
+			throw new Error(
+				`components/${ bucket }/${ name } already exists.`
+			);
 		}
 	}
 
-	const tier = primitive ? 'primitives' : 'components';
+	// The component's folder: its kind's bucket (docs/architecture.md, "A component's folder").
+	const tier = `components/${ BUCKET_OF[ kind ] }`;
 	const n = { ...names, tier, plugin, block: `${ plugin }/${ name }` };
 	const files = new Map();
 	const templates = {
@@ -132,7 +145,7 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 	};
 
 	edit( 'package.json', ( source ) => addExports( source, n, kind ) );
-	edit( 'components/_config/parity.test.tsx', ( source, file ) =>
+	edit( 'integrations/tests/parity.test.tsx', ( source, file ) =>
 		addToList(
 			source,
 			file,
@@ -148,11 +161,11 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 			json.blocks = [ ...json.blocks, name ];
 			return JSON.stringify( json, null, '\t' ) + '\n';
 		} );
-		edit( 'components/_config/blocks.test.tsx', ( source, file ) =>
+		edit( 'integrations/tests/blocks.test.tsx', ( source, file ) =>
 			addToList( source, file, "test( 'finds every block'", name )
 		);
 	}
-	edit( 'components/_config/puck.test.tsx', ( source, file ) =>
+	edit( 'integrations/tests/puck.test.tsx', ( source, file ) =>
 		addPuckConfig( source, file, n )
 	);
 
@@ -186,8 +199,8 @@ function addExports( source, n, kind ) {
 		default: `${ dist }/index.js`,
 	};
 	json.exports[ `${ entry }/puck` ] = {
-		types: `${ dist }/adapters/puck/config.d.ts`,
-		default: `${ dist }/adapters/puck/config.js`,
+		types: `${ dist }/integrations/puck/config.d.ts`,
+		default: `${ dist }/integrations/puck/config.js`,
 	};
 	if ( kind !== 'interactive' ) {
 		json.exports[ `${ entry }/example.json` ] = `${ dist }/example.json`;
@@ -226,7 +239,7 @@ function addToList( source, file, anchor, name ) {
 function addPuckConfig( source, file, n ) {
 	const imports = [
 		...source.matchAll(
-			/^import \w+ from '\.\.\/[^']+\/adapters\/puck\/config\.tsx';\n/gm
+			/^import \w+ from '\.\.\/[^']+\/puck\/config\.tsx';\n/gm
 		),
 	];
 	const configs = source.indexOf( 'const CONFIGS = {' );
@@ -243,9 +256,7 @@ function addPuckConfig( source, file, n ) {
 	// FIX: insert the one new line in its sorted place. Rewriting the block from the lines the
 	// pattern matched dropped any import between them that it didn't match (one split over
 	// several lines, as `import card, { withTemplate }` is).
-	const configPath = `${
-		n.tier === 'primitives' ? '../../primitives' : '..'
-	}/${ n.name }/adapters/puck/config.tsx`;
+	const configPath = `${ `../../${ n.tier }` }/${ n.name }/integrations/puck/config.tsx`;
 	const before = imports.find(
 		( match ) =>
 			match[ 0 ].split( "'" )[ 1 ].localeCompare( configPath ) > 0
@@ -276,7 +287,8 @@ function addPuckConfig( source, file, n ) {
 }
 
 // ── Templates ────────────────────────────────────────────────────────────────────────────
-// SYNC: modeled on components/highlight (content) and components/degree-finder (interactive). When
+// SYNC: modeled on components/content/highlight (content) and components/interactive/degree-finder
+// (interactive). When
 // a convention changes there, change it here too.
 
 const blockJson = ( n, attributes, extra ) =>
@@ -318,7 +330,7 @@ function contentFiles( n ) {
  *
  * SYNC: WordPress stores what this returns in every post that uses the block. Once a site uses
  * it, changing the markup needs a major version and a \`deprecated\` entry in
- * adapters/wp/index.tsx (docs/architecture.md, "Changing a content component's markup").
+ * wp/index.tsx (docs/architecture.md, "Changing a content component's markup").
  */
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
@@ -367,11 +379,11 @@ export default function ${ n.Name }( {
 	margin: 0;
 }
 `,
-		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import ${ n.Name } from '../${ n.Name }.tsx';
-import example from '../example.json';
-import '../style.css';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import example from '../../example.json';
+import '../../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
@@ -390,7 +402,8 @@ export const Default: Story = {};
 `,
 		[ `tests/${ n.Name }.test.tsx` ]: `/**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
- * matches the committed snapshot. See components/highlight/tests/Highlight.test.tsx for why.
+ * matches the committed snapshot. See components/content/highlight/tests/Highlight.test.tsx for
+ * why.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -400,7 +413,7 @@ import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
 import example from '../example.json';
 
 // What \`useBlockProps.save()\` adds for this block.
-// SYNC: the block name in adapters/wp/block.json.
+// SYNC: the block name in wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-${ n.block.replace( '/', '-' ) }' };
 
 const cases: Record< string, ${ n.Name }Props > = {
@@ -419,7 +432,7 @@ describe( '${ n.Name }', () => {
 	}
 } );
 `,
-		'adapters/puck/config.tsx': `/**
+		'integrations/puck/config.tsx': `/**
  * The ${ n.title } for Puck: a plain config object, so this library needs no Puck dependency.
  *
  * WHY only string props: the same plain strings are what the WordPress block stores, so
@@ -429,7 +442,7 @@ import ${ n.Name } from '../../${ n.Name }.tsx';
 // WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
 // without it.
 import example from '../../example.json' with { type: 'json' };
-import type { PuckComponentConfig } from '../../../_config/puck.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
 
 type Props = {
 	text: string;
@@ -442,16 +455,17 @@ const config: PuckComponentConfig< Props > = {
 	},
 	defaultProps: example,
 	// FIX: pass only the core's own props. It spreads the rest onto its <div>, so Puck's \`id\`,
-	// \`puck\` and \`editMode\` would end up in the markup (see PuckRenderProps in _config/puck.ts).
+	// \`puck\` and \`editMode\` would end up in the markup (see PuckRenderProps in
+	// integrations/puck/config.ts).
 	render: ( { text } ) => <${ n.Name } text={ text } />,
 };
 
 export default config;
 `,
-		'adapters/wp/block.json': blockJson( n, [ 'text' ], {
+		'integrations/wp/block.json': blockJson( n, [ 'text' ], {
 			style: 'file:./style-index.css',
 		} ),
-		'adapters/wp/index.tsx': `/**
+		'integrations/wp/index.tsx': `/**
  * Editor entry: registers the ${ n.title } block.
  */
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
@@ -462,7 +476,7 @@ import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';
 import save from './save.tsx';
 
-// UPSTREAM: see the same casts in components/highlight/adapters/wp/index.tsx.
+// UPSTREAM: see the same casts in components/content/highlight/integrations/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {
@@ -473,7 +487,7 @@ registerBlockType< Attributes >( blockMetadata, {
 	save,
 } );
 `,
-		'adapters/wp/edit.tsx': `import { __ } from '@wordpress/i18n';
+		'integrations/wp/edit.tsx': `import { __ } from '@wordpress/i18n';
 import {
 	PlainText as UntypedPlainText,
 	useBlockProps,
@@ -522,7 +536,7 @@ export default function Edit( {
 	);
 }
 `,
-		'adapters/wp/save.tsx': `import { useBlockProps } from '@wordpress/block-editor';
+		'integrations/wp/save.tsx': `import { useBlockProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
 import ${ n.Name } from '../../${ n.Name }.tsx';
@@ -549,7 +563,7 @@ function interactiveFiles( n ) {
  * CONTEXT: the ${ n.title }, an interactive component.
  *
  * An interactive component may hold state, run effects and fetch data, because no host saves
- * its HTML. WordPress mounts it from adapters/wp/view.tsx into the container render.php writes;
+ * its HTML. WordPress mounts it from wp/view.tsx into the container render.php writes;
  * Next, Puck and other React hosts render it directly. The \`'use client'\` above is what Next
  * needs.
  *
@@ -634,10 +648,10 @@ export { DEFAULTS } from './defaults.ts';
 	outline-offset: 2px;
 }
 `,
-		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import ${ n.Name } from '../${ n.Name }.tsx';
-import '../style.css';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import '../../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
@@ -652,12 +666,12 @@ type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {};
 `,
-		'adapters/puck/config.tsx': `/**
+		'integrations/puck/config.tsx': `/**
  * The ${ n.title } for Puck: a plain config object, so this library needs no Puck dependency.
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { DEFAULTS } from '../../defaults.ts';
-import type { PuckComponentConfig } from '../../../_config/puck.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
 
 type Props = {
 	/** The label, or '' for the default. */
@@ -675,12 +689,12 @@ const config: PuckComponentConfig< Props > = {
 
 export default config;
 `,
-		'adapters/wp/block.json': blockJson( n, [ 'label' ], {
+		'integrations/wp/block.json': blockJson( n, [ 'label' ], {
 			viewScript: 'file:./view.tsx',
 			style: 'file:./style-view.css',
 			render: 'file:./render.php',
 		} ),
-		'adapters/wp/index.tsx': `/**
+		'integrations/wp/index.tsx': `/**
  * Editor entry: registers the ${ n.title } block.
  */
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
@@ -688,7 +702,7 @@ import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 import metadata from './block.json';
 import Edit, { type Attributes } from './edit.tsx';
 
-// UPSTREAM: see the same cast in components/highlight/adapters/wp/index.tsx.
+// UPSTREAM: see the same cast in components/content/highlight/integrations/wp/index.tsx.
 const blockMetadata = metadata as unknown as BlockConfiguration< Attributes >;
 
 registerBlockType< Attributes >( blockMetadata, {
@@ -698,7 +712,7 @@ registerBlockType< Attributes >( blockMetadata, {
 	save: () => null,
 } );
 `,
-		'adapters/wp/edit.tsx': `import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+		'integrations/wp/edit.tsx': `import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { PanelBody, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -741,7 +755,7 @@ export default function Edit( {
 	);
 }
 `,
-		'adapters/wp/settings.ts': `/**
+		'integrations/wp/settings.ts': `/**
  * The props WordPress hands the ${ n.title }: the block's attributes, which render.php writes
  * on the container as JSON.
  */
@@ -769,7 +783,7 @@ export function readSettings( json: string | null ): ${ n.Name }Props {
 	}
 }
 `,
-		'adapters/wp/view.tsx': `/**
+		'integrations/wp/view.tsx': `/**
  * Front end: mounts the ${ n.title } in every block on the page.
  *
  * WHY createRoot from \`@wordpress/element\`: it is WordPress's copy of React, so the page loads
@@ -803,7 +817,7 @@ if ( document.readyState === 'loading' ) {
 	start();
 }
 `,
-		'adapters/wp/render.php': `<?php
+		'integrations/wp/render.php': `<?php
 /**
  * Front-end markup for the ${ n.title } block.
  *
@@ -886,11 +900,11 @@ export default function ${ n.Name }( {
 	color: var(--ucf-c-body);
 }
 `,
-		[ `stories/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import ${ n.Name } from '../${ n.Name }.tsx';
-import example from '../example.json';
-import '../style.css';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import example from '../../example.json';
+import '../../style.css';
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
@@ -934,13 +948,13 @@ describe( '${ n.Name }', () => {
 	}
 } );
 `,
-		'adapters/puck/config.tsx': `/**
+		'integrations/puck/config.tsx': `/**
  * The ${ n.title } for Puck, where editors place it on its own: Puck has no core blocks.
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../components/_config/puck.ts';
+import type { PuckComponentConfig } from '../../../../../integrations/puck/config.ts';
 
 type Props = {
 	text: string;
@@ -959,7 +973,7 @@ const config: PuckComponentConfig< Props > = {
 
 export default config;
 `,
-		'adapters/wp/edit.tsx': `/**
+		'integrations/wp/edit.tsx': `/**
  * The ${ n.title } as our blocks edit it: the primitive itself, with WordPress's editing tools
  * in its slots. A block's edit() renders this where its save() renders the plain primitive.
  *
@@ -1091,9 +1105,7 @@ async function main() {
 	);
 
 	const { Name } = componentNames( options.name );
-	const folder = `${
-		options.kind === 'primitive' ? 'primitives' : 'components'
-	}/${ options.name }/`;
+	const folder = `components/${ BUCKET_OF[ options.kind ] }/${ options.name }/`;
 	const created = [ ...files.keys() ].filter( ( file ) =>
 		file.startsWith( folder )
 	);
@@ -1109,7 +1121,7 @@ async function main() {
 Next:
   1. Replace the placeholder prop and markup in ${ Name }.tsx, with props named after core's
      equivalent block's attributes, and keep the Puck fields and example.json naming the same.
-  2. Give adapters/wp/edit.tsx the same editing tools core's block has.
+  2. Give wp/edit.tsx the same editing tools core's block has.
   3. Run \`npm test\` to write the new markup snapshot, then review it: every block that uses
      this primitive will save it.
   Then: npm run check && npm run test:stories` );
@@ -1118,8 +1130,8 @@ Next:
 	console.log( `
 Next:
   1. Replace the placeholder prop and markup in ${ Name }.tsx, and keep the block attributes
-     (adapters/wp/block.json), the Puck fields and ${ options.kind === 'content' ? 'example.json' : 'defaults.ts' } naming the same props.
-  2. Write the block's description in adapters/wp/block.json.${
+     (wp/block.json), the Puck fields and ${ options.kind === 'content' ? 'example.json' : 'defaults.ts' } naming the same props.
+  2. Write the block's description in wp/block.json.${
 		options.kind === 'interactive'
 			? `
   3. If it fetches data, add client.ts, tests/client.test.ts and sample-client.ts like degree-finder's.

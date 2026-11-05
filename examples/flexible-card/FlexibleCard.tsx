@@ -1,7 +1,7 @@
 /**
  * CONTEXT: an example, not shipped: the Card as a *frame*, kept beside examples/fixed-card so
  * the two shapes sit together (docs/architecture.md, "Frames"). A copy of the shipped Card
- * (components/card) as of 2026-11-02, renamed so the two never clash; it is a reference and
+ * (components/content/card) as of 2026-11-02, renamed so the two never clash; it is a reference and
  * does not follow later changes to the shipped one. Not in Storybook, the npm package, a
  * plugin or the Puck demo; its tests keep it working.
  *

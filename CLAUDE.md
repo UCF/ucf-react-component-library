@@ -14,6 +14,7 @@ restate them. Read `README.md` first for what the repo is and where each file li
 | Two kinds of component                | Content (server) vs interactive (client); authored vs live data |
 | Naming                                | One name in every layer; which names are permanent              |
 | A component's folder                  | What each file is; why there is no `next/` adapter              |
+| What a component exports              | Its package entry: the component, its parts, its presets        |
 | Slots                                 | How host-specific pieces get in                                 |
 | Core blocks and our primitives        | Core for plain text; we own Section, Columns, Button, Image…    |
 | Primitives                            | A component's own markup is built from `primitives/`            |

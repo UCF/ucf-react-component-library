@@ -41,7 +41,7 @@ tokens/tokens.json ──► npm run build:tokens ──► dist/tokens/base.css
         │                                                │
         │                                                └──► block theme: its tokens/ folder
         ▼
-components/{name}/ ──┬► npm run build:package ──► dist/{name}/ + dist/ucf.css   npm package
+components/*/{name}/ ┬► npm run build:package ──► dist/components/ + dist/ucf.css   npm package
                      │                                 └─► Next, Puck: import from @ucf/components
                      ├► npm run build:plugins ──► plugins/{plugin}/build/       WordPress plugins
                      │                                 └─► npm run release:temp: temp-release/wordpress/*.zip
@@ -60,14 +60,16 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
-primitives/        the pieces components are built from: Button, Image, Heading,
-                   Paragraph (Puck places them; WordPress editors use core's blocks instead)
-components/        one self-contained folder per component
-  _config/         the tests every component must pass, and the Puck config shape (written
-                   out so the library needs no Puck dependency)
-  section/         the band other components sit in: sets their composition
-  highlight/       a content component and a frame: works without JavaScript, saved as HTML
-  degree-finder/   an interactive component: built in the browser
+integrations/      how a component works in WordPress, Puck and Storybook, written once
+                   for every component: what props and parts may declare (schema/), how each
+                   environment reads it (wp/, puck/, storybook/), and the tests every
+                   component must pass (tests/)
+components/        one self-contained folder per component, in a bucket by role:
+  primitives/      the pieces components are built from: Button, Image, Heading, Paragraph
+                   (Puck places them; WordPress editors use core's blocks instead)
+  content/         what editors place, saved as HTML, works without JavaScript: Section,
+                   Highlight, Hero, Card
+  interactive/     what editors place, built in the browser: Degree Finder
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
   fixed-card/      a Card that owns its parts as fields, with the Image primitive built in
@@ -133,7 +135,7 @@ names go away when a release pipeline replaces them.
 
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
 activate, then add blocks from the inserter's **UCF Content** and **UCF Interactive**
-categories (grouped by kind, as Storybook groups them). A design such as "Card: Pathway" is
+categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
 a variation of its block, listed under the block's name.
 
 To work on blocks in a development WordPress, see "Working against local sites" below.
@@ -174,6 +176,35 @@ import '@ucf/components/elements.css'; // optional: the block theme's headings a
 </Section>
 ```
 
+No CMS is needed: every component is plain React. A component with presets (the Card, so far)
+also takes a preset by name and each part's content, so a site passes data and gets the same
+design WordPress and Puck offer:
+
+```tsx
+import { Card } from '@ucf/components/card';
+
+<Card
+	preset="pathway"
+	content={ {
+		eyebrow: 'Transfer',
+		display: 'I am transferring from a college',
+		description: 'Credits, deadlines and the advisors who help.',
+		link: { text: 'Transfer admission', url: '/transfer' },
+	} }
+/>
+// Props win over the preset's: the pathway card on Bold Gold.
+<Card preset="pathway" composition="gold" content={ { … } } />
+// Children replace the preset's parts: the Card is still an open frame.
+<Card preset="pathway">…</Card>
+```
+
+The preset sets the starting props and the parts, in its order and looks; `content` fills each
+part by its name in `CARD_PARTS` (TypeScript checks the names, and that a link is
+`{ text, url }`). A part with no content is left out, so sample copy can't reach a live page;
+`sample` shows the preset's sample text and images, for prototyping. To place the parts yourself,
+use the classes in `CARD_PARTS` (`CARD_PARTS.eyebrow.className`), or `presetContent()` from
+`@ucf/components/react`.
+
 The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). In Puck, each component's
 config is the default export of `@ucf/components/{name}/puck`:
 
@@ -196,21 +227,20 @@ Primitives are at `@ucf/components/primitives/{name}/puck`. Register them as `Bu
 `Heading` and `Paragraph`: the frames' starting templates name them by those keys.
 
 ```tsx
-import { withTemplate, withVariation } from '@ucf/components/card/puck';
-import heading from '@ucf/components/primitives/heading/puck';
-import image from '@ucf/components/primitives/image/puck';
-import paragraph from '@ucf/components/primitives/paragraph/puck';
+import card, { withPreset, withTemplate } from '@ucf/components/card/puck';
 
 const config = {
 	components: {
-		Image: image,
-		Heading: heading,
-		Paragraph: paragraph,
-		// A new Card starts with an image, a heading and a paragraph. With other keys,
-		// pass a template of your own: withTemplate( [ { type: 'MyHeading', props: {} } ] ).
-		Card: withTemplate(),
-		// Each UCF card design as its own Puck component (card/variations.ts).
-		PathwayCard: withVariation( 'pathway' ),
+		// The Card stores its design and its content as data: a Design picker and a field for
+		// each of the design's parts, rendered as the Card is on a React site. It needs no
+		// primitives registered. In the editor, an empty part shows the design's sample text;
+		// published, it is left out.
+		Card: card,
+		// Each design as its own Puck component, starting on it.
+		PathwayCard: withPreset( 'pathway' ),
+		// The "Open" design is the frame with a slot, for any components: this one starts
+		// with the default design's parts as primitives (register them, as above).
+		OpenCard: withTemplate(),
 	},
 };
 ```
@@ -253,18 +283,19 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 
 ## Anatomy of a component
 
-A component is one folder, `components/{name}/`. One file in it is the component itself, the
+A component is one folder, `components/{bucket}/{name}/`, where the bucket is its role:
+`primitives`, `content` or `interactive`. One file in it is the component itself, the
 **core**. Every other file either connects the core to a platform (an **adapter**, for a
 **host** such as WordPress or Puck) or ships it to an output. Nothing outside the folder needs to change except two lists (step 4 below).
 
 ```
-components/{name}/
+components/{bucket}/{name}/
   {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
-   the core               ├─► adapters/puck/ ───────► npm: @ucf/components/{name}/puck
-                          ├─► adapters/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
-                          └─► stories/ ──────────► Storybook
+   the core               ├─► integrations/puck/ ─────► npm: @ucf/components/{name}/puck
+                          ├─► integrations/wp/ ───────► WordPress: the plugin whose plugin.json lists it
+                          └─► integrations/storybook/ ► Storybook
   style.css ──────────────┬─► npm: concatenated into ucf.css
-                          └─► WordPress: imported by adapters/wp/, built into the block's CSS
+                          └─► WordPress: imported by integrations/wp/, built into the block's CSS
 ```
 
 ### The core
@@ -272,13 +303,13 @@ components/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `highlight`          | **Interactive (client)**: `degree-finder`      |
-| --------------- | ------------------------------------------ | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs          | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                  | `react` and its own files                      |
-| First line      | Nothing special                            | `'use client';`                                |
-| Extra files     | `example.json`: sample props               | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`             | **Interactive (client)**: `degree-finder`      |
+| --------------- | --------------------------------------------- | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs             | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else    | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                     | `react` and its own files                      |
+| First line      | Nothing special                               | `'use client';`                                |
+| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in as a prop, a **slot**: a frame's `innerAs` (the
 Section, Hero, Highlight, Card) takes WordPress's inner-blocks element or Puck's slot, and
@@ -290,12 +321,12 @@ something a host has, add a slot.
 
 A **host** is a platform that renders components: WordPress, Puck, Next. An **adapter** is the
 thin layer between a host and the core: it takes content from wherever that host keeps it and
-passes it to the core as props. A host gets a folder in `adapters/` only when it needs files
-besides props.
+passes it to the core as props. A host gets an adapter folder (`integrations/wp/`,
+`integrations/puck/`) only when it needs files besides props.
 
-- **`adapters/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
+- **`integrations/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
   **UCF Content** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
-  registers it, with its icon from `@wordpress/icons` (and its designs as variations, if it
+  registers it, with its icon from `@wordpress/icons` (and its templates as variations, if it
   has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
@@ -303,8 +334,8 @@ besides props.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
-- **`adapters/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([components/_config/puck.ts](components/_config/puck.ts)): `fields` for the editor,
+- **`integrations/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
+  ([integrations/puck/config.ts](integrations/puck/config.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.
@@ -356,12 +387,12 @@ posts, so they are permanent once a site uses them. Settle them first
 ```sh
 npm run new:component -- pull-quote --kind content --plugin ucf-content
 npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
-npm run new:component -- badge --kind primitive   # primitives/badge: no plugin, no block
+npm run new:component -- badge --kind primitive   # components/primitives/badge: no plugin, no block
 ```
 
-It writes `components/{name}/` (a primitive: `primitives/{name}/`, see "Primitives" in
-[architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
-in step 4 and to the lists in `components/_config/`, so it passes `npm run check` and `npm run test:stories`
+It writes `components/{bucket}/{name}/`, in its kind's bucket (`content`, `interactive`, or for a
+primitive `primitives`; see "Primitives" in [architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
+in step 4 and to the lists in `integrations/tests/`, so it passes `npm run check` and `npm run test:stories`
 as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
 display name. Then replace the placeholder prop and markup. Every component has:
 
@@ -369,15 +400,19 @@ display name. Then replace the placeholder prop and markup. Every component has:
 {Name}.tsx            the core
 index.ts              what the npm package exports
 style.css             colors as var(--ucf-c-{role}) only
-stories/              {Name}.stories.tsx: title 'Content (Server)/{Name}' or
+integrations/storybook/ {Name}.stories.tsx: title 'Content (Server)/{Name}' or
                       'Interactive (Client)/{Name}',
                       tags [ 'server' ] or [ 'client' ], first story `Default`
-adapters/puck/config.tsx also add it to CONFIGS in components/_config/puck.test.tsx
-adapters/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
+integrations/puck/config.tsx also add it to CONFIGS in integrations/tests/puck.test.tsx
+integrations/wp/       block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
 ```
 
-Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
-`tests/{Name}.test.tsx`, the markup contract (copy `highlight/tests/Highlight.test.tsx`). For interactive: `defaults.ts`,
+Plus, for content: `tests/{Name}.test.tsx`, the markup contract (copy
+`card/tests/Card.test.tsx`), and `{Name}.props.ts` (its prop definitions), a frame's `{Name}.parts.ts`,
+`{Name}.presets.ts` if it has designs, and a `README.md` with its object model: copy the
+Card's, and see "A component's folder" in [architecture.md](docs/architecture.md). The script
+still writes the older layout (`example.json` for sample props, props written out in each
+adapter); move the props into `{Name}.props.ts` and the samples into presets as the Card does. For interactive: `defaults.ts`,
 `client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
 `fetch`) and `sample-client.ts` (the same interface with no network, for stories).
 
@@ -388,19 +423,41 @@ Plus, for content: `example.json` (shared by the story, the test and the inserte
 it on their own; these don't:
 
 - **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
-  for content). This is what makes it importable from `@ucf/components`.
+  for a component that still has one). This is what makes it importable from `@ucf/components`.
 - **One `plugins/*/plugin.json`:** add the name to `blocks`, and name the block after that
   plugin (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two. An
   interactive block with site settings also gets a settings function in that plugin's main PHP
   file, like `ucf_degrees_degree_finder_settings()`.
 
-**5. Check it.** The tests in `components/_config/` pick it up on their own: the block round-trip, WordPress and
+**5. Check it.** The tests in `integrations/tests/` pick it up on their own: the block round-trip, WordPress and
 Puck parity, and its stories on every composition and width. Review the new snapshot in
-`components/_config/__snapshots__/`: it is what every post using the block will store. In
+`integrations/tests/__snapshots__/`: it is what every post using the block will store. In
 Storybook, open it on every composition from the toolbar. Run
 `npm run release:temp` and try the block in WordPress's editor (never judge a block from the
 front end). Then run everything below. New tests must be shown to fail: break the code, watch
 it go red, restore.
+
+## Changing a component
+
+What to edit for each change, in a component laid out as the Card is
+([components/content/card/README.md](components/content/card/README.md) and
+[components/content/highlight/README.md](components/content/highlight/README.md) show their objects). The tests named
+fail until every copy agrees.
+
+| To…                                       | Edit                                                                                                                                                          | Checked by                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Add a prop                                | `{Name}.props.ts` (type, default, field); its attribute in `integrations/wp/block.json`; use it in `{Name}.tsx` and `style.css`                               | `parity.test.tsx` (block.json, labels)                   |
+| Change a label, help text, control, panel | `{Name}.props.ts` only                                                                                                                                        |                                                          |
+| Change a default                          | `{Name}.props.ts` and `block.json`. A saved block that never set the prop takes the new default                                                               | `parity.test.tsx`                                        |
+| Add a preset                              | `{Name}.presets.ts`; a story in `integrations/storybook/{Name}.presets.stories.tsx`; `ICONS` in `integrations/wp/icons.ts` only if its icon is new            | `integrations/tests/presets.test.tsx`                    |
+| Change what a new one starts with         | `DEFAULT_PRESET` in `{Name}.presets.ts`: also the inserter's preview                                                                                          |                                                          |
+| Add a part (a new look)                   | an entry in `PARTS` in `{Name}.parts.ts` (its kind and class), and the class's rule in `style.css`                                                            | `tests/{Name}.test.tsx` (every class styled)             |
+| Add a kind of part (for every component)  | `KindContent` in `integrations/schema/parts.ts`; TypeScript then lists every switch that needs a case: the two mappers and `integrations/storybook/parts.tsx` | `npm run typecheck`                                      |
+| Rename it on screen                       | `title` in `block.json` and `label` in `integrations/puck/config.tsx`; each preset's title prefix; the stories' titles                                        | `parity.test.tsx`, `integrations/tests/presets.test.tsx` |
+| Change the markup                         | `{Name}.tsx`, following "Changing a content component's markup" in [architecture.md](docs/architecture.md): every saved post with the block changes           | the markup snapshot                                      |
+
+A prop's key is its block attribute, saved in every post that uses the block: renaming one
+needs a block deprecation ([architecture.md](docs/architecture.md), "Naming").
 
 ## Before committing
 

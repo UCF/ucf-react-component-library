@@ -1,6 +1,7 @@
 /**
  * The markup contract: WordPress's serializer and React DOM's produce the same HTML, and it
- * matches the committed snapshot. See components/highlight/tests/Highlight.test.tsx for why.
+ * matches the committed snapshot. See components/content/highlight/tests/Highlight.test.tsx for
+ * why.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -11,7 +12,7 @@ import example from '../example.json';
 import type { Variant } from '../options.ts';
 
 // What `useBlockProps.save()` adds for this block.
-// SYNC: the block name in adapters/wp/block.json.
+// SYNC: the block name in wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-ucf-content-flexible-card' };
 
 const cases: Record< string, FlexibleCardProps > = {
