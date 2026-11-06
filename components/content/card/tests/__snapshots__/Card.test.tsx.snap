@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Card > renders the same in WordPress and React: defaults 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="plain"><div class="ucf-c-card__content"><p>Content</p></div></div>"`;
+
+exports[`Card > renders the same in WordPress and React: the audience preset 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-gold" data-variant="plain" data-composed="" data-align="center" data-position="center" data-ratio="1-1"><div class="ucf-c-card__background"><img class="ucf-c-card__image ucf-c-image" src="/photo.jpg" alt=""/></div><div class="ucf-c-card__overlay" data-overlay="tint"></div><div class="ucf-c-card__content"><p>Content</p></div></div>"`;
+
+exports[`Card > renders the same in WordPress and React: the media preset 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-dark" data-variant="plain" data-composed="" data-position="bottom" data-ratio="4-3"><div class="ucf-c-card__background"><img class="ucf-c-card__image ucf-c-image" src="/photo.jpg" alt=""/></div><div class="ucf-c-card__overlay" data-overlay="gradient"></div><div class="ucf-c-card__content"><p>Content</p></div></div>"`;
+
+exports[`Card > renders the same in WordPress and React: the next-step preset 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="boxed"><div class="ucf-c-card__content"><p>Content</p></div></div>"`;
+
+exports[`Card > renders the same in WordPress and React: the pathway preset 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-dark" data-variant="plain" data-composed=""><div class="ucf-c-card__content"><p>Content</p></div></div>"`;
+
+exports[`Card > renders the same in WordPress and React: the story preset 1`] = `"<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="plain"><div class="ucf-c-card__content"><p>Content</p></div></div>"`;

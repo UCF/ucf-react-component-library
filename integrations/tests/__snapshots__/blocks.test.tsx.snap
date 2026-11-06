@@ -1,0 +1,135 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ucf-content/card > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="plain"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card > the audience preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card {"composition":"gold","contentAlign":"center","contentPosition":"center","aspectRatio":"1/1"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-gold" data-variant="plain" data-composed="" data-align="center" data-position="center" data-ratio="1-1"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card > the media preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card {"composition":"dark","overlay":"gradient","contentPosition":"bottom","aspectRatio":"4/3"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-dark" data-variant="plain" data-composed="" data-position="bottom" data-ratio="4-3"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card > the next-step preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card {"variant":"boxed"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="boxed"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card > the pathway preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card {"composition":"dark"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card ucf-composition-dark" data-variant="plain" data-composed=""><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card > the story preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/card -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="plain"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/card holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/card {"variant":"boxed"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="boxed"><div class="ucf-c-card__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div>
+<!-- /wp:ucf-content/card -->"
+`;
+
+exports[`ucf-content/hero > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/hero -->
+<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"></div></div></section>
+<!-- /wp:ucf-content/hero -->"
+`;
+
+exports[`ucf-content/hero holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/hero -->
+<section class="wp-block-ucf-content-hero alignfull ucf-c ucf-c-hero ucf-composition-gold" data-layout="split" data-height="regular"><div class="ucf-c-hero__inner"><div class="ucf-c-hero__copy" data-align="left"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div></section>
+<!-- /wp:ucf-content/hero -->"
+`;
+
+exports[`ucf-content/highlight > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > the bracket preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight {"rule":"corner"} -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="corner"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > the centered preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight {"rule":"divider","contentAlign":"center"} -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="divider" data-align="center"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > the key-figure preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > the side-rule preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight {"rule":"side"} -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="side"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight > the statement preset > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/highlight holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/highlight -->
+<div class="wp-block-ucf-content-highlight ucf-c ucf-c-highlight" data-rule="top"><div class="ucf-c-highlight__content"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></div>
+<!-- /wp:ucf-content/highlight -->"
+`;
+
+exports[`ucf-content/section > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/section -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
+exports[`ucf-content/section holding other blocks > saves them inside its inner element 1`] = `
+"<!-- wp:ucf-content/section {"composition":"dark"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-dark"><div class="ucf-section__inner ucf-section__inner--default"><!-- wp:ucf-content/section {"composition":"gold"} -->
+<section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-gold"><div class="ucf-section__inner ucf-section__inner--default"></div></section>
+<!-- /wp:ucf-content/section -->
+
+<!-- wp:ucf-content/card {"variant":"ruled"} -->
+<div class="wp-block-ucf-content-card ucf-c ucf-c-card" data-variant="ruled"><div class="ucf-c-card__content"></div></div>
+<!-- /wp:ucf-content/card --></div></section>
+<!-- /wp:ucf-content/section -->"
+`;
+
+exports[`ucf-degrees/degree-finder > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-finder /-->"`;

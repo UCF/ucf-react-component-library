@@ -1,7 +1,7 @@
 {
 	"name": "ucf/components",
 	"description": "PHP linting for the UCF component plugins.",
-	"license": "GPL-2.0-or-later",
+	"license": "GPL-3.0-or-later",
 	"require-dev": {
 		"wp-coding-standards/wpcs": "^3.1",
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"

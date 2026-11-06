@@ -84,28 +84,36 @@ if ( ! function_exists( 'ucf_components_register_plugin' ) ) {
 
 if ( ! function_exists( 'ucf_components_block_category' ) ) {
 	/**
-	 * Add the UCF inserter category unless something already has.
+	 * Add the UCF inserter categories, one per kind of block, as Storybook groups them: UCF
+	 * Content (content components) and UCF Interactive (interactive ones). Each is added unless
+	 * something already has, and both go first.
 	 *
-	 * SYNC: the block theme registers the same `ucf` slug (includes/blocks.php there); whichever
-	 * runs first wins and the other leaves it alone.
+	 * SYNC: the kinds in docs/architecture.md, "Two kinds of component", and Storybook's groups
+	 * (.storybook/preview.ts). blocks.test.tsx checks each block is in its kind's category.
+	 * WHY not the theme's `ucf` category: the theme fills it with its patterns; our blocks are
+	 * easier to find grouped by kind on their own.
 	 *
 	 * @param array<int, array<string, mixed>> $categories Registered categories.
-	 * @return array<int, array<string, mixed>> Categories, with UCF first.
+	 * @return array<int, array<string, mixed>> Categories, with UCF's first.
 	 */
 	function ucf_components_block_category( $categories ) {
-		if ( in_array( 'ucf', array_column( $categories, 'slug' ), true ) ) {
-			return $categories;
+		$slugs = array_column( $categories, 'slug' );
+		$ours  = array();
+		foreach (
+			array(
+				'ucf-content'     => __( 'UCF Content', 'ucf-components' ),
+				'ucf-interactive' => __( 'UCF Interactive', 'ucf-components' ),
+			) as $slug => $title
+		) {
+			if ( ! in_array( $slug, $slugs, true ) ) {
+				$ours[] = array(
+					'slug'  => $slug,
+					'title' => $title,
+					'icon'  => null,
+				);
+			}
 		}
 
-		array_unshift(
-			$categories,
-			array(
-				'slug'  => 'ucf',
-				'title' => __( 'UCF', 'ucf-components' ),
-				'icon'  => null,
-			)
-		);
-
-		return $categories;
+		return array_merge( $ours, $categories );
 	}
 }

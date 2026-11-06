@@ -10,8 +10,12 @@ Components are written once in React and shipped to every place UCF builds pages
 - **The UCF block theme:** as a token kit, so its sections share the same colors and roles.
 - **Storybook:** the catalog where every component can be seen on every section color.
 
-How it works and why: [docs/architecture.md](docs/architecture.md). What's next:
-[docs/todo.md](docs/todo.md).
+| Read                                               | For                                                  |
+| -------------------------------------------------- | ---------------------------------------------------- |
+| [docs/first-component.md](docs/first-component.md) | Building a component, step by step: start here       |
+| [docs/architecture.md](docs/architecture.md)       | How the library is built, and the rules it follows   |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                 | Issues, pull requests, and what tests a change needs |
+| [docs/todo.md](docs/todo.md)                       | Open work                                            |
 
 ## Quick start
 
@@ -41,7 +45,7 @@ tokens/tokens.json ──► npm run build:tokens ──► dist/tokens/base.css
         │                                                │
         │                                                └──► block theme: its tokens/ folder
         ▼
-components/{name}/ ──┬► npm run build:package ──► dist/{name}/ + dist/ucf.css   npm package
+components/*/{name}/ ┬► npm run build:package ──► dist/components/ + dist/ucf.css   npm package
                      │                                 └─► Next, Puck: import from @ucf/components
                      ├► npm run build:plugins ──► plugins/{plugin}/build/       WordPress plugins
                      │                                 └─► npm run release:temp: temp-release/wordpress/*.zip
@@ -60,26 +64,29 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
-primitives/        the pieces components are built from: Button, Image, Heading,
-                   Paragraph (Puck places them; WordPress editors use core's blocks instead)
-components/        one self-contained folder per component
-  _config/         the tests every component must pass, and the Puck config shape (written
-                   out so the library needs no Puck dependency)
-  section/         the band other components sit in: sets their composition
-  stat/            a content component and a frame: works without JavaScript, saved as HTML
-  degree-finder/   an interactive component: built in the browser
+integrations/      how a component works in WordPress, Puck and Storybook, written once
+                   for every component: what props and parts may declare (schema/), how each
+                   environment reads it (wp/, puck/, storybook/), and the tests every
+                   component must pass (tests/)
+components/        one self-contained folder per component, in a bucket by role:
+  primitives/      the pieces components are built from: Button, Image, Heading, Paragraph
+                   (Puck places them; WordPress editors use core's blocks instead)
+  content/         what editors place, saved as HTML, works without JavaScript: Section,
+                   Highlight, Hero, Card
+  interactive/     what editors place, built in the browser: Degree Finder
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
   fixed-card/      a Card that owns its parts as fields, with the Image primitive built in
   flexible-card/   the same Card as a frame (a copy of the shipped Card), to compare with
 plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
-  ucf-content/     plugin.json lists its blocks: section, stat, hero, card
+  ucf-content/     plugin.json lists its blocks: section, highlight, hero, card
   ucf-degrees/     degree-finder
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
 .storybook/        the catalog: theme, toolbar, logo
-docs/              architecture.md (how and why), todo.md (what's next)
+docs/              first-component.md (a walkthrough), architecture.md (how it works),
+                   todo.md (open work)
 ```
 
 ## Commands
@@ -90,7 +97,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | `npm run deploy:watch`  | Rebuild on every change and copy into your local sites (below) |
 | `npm run deploy`        | Build once and copy into your local sites (below)              |
 | `npm start`             | Rebuild the plugins on every change, without copying them      |
-| `npm run new:component` | Start a component: its folder, and every list that names it    |
+| `npm run new:component` | Start a component (see docs/first-component.md)                |
 
 | Build                     | Does                                                              |
 | ------------------------- | ----------------------------------------------------------------- |
@@ -132,7 +139,9 @@ names go away when a release pipeline replaces them.
 ### In WordPress
 
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
-activate, then add blocks from the **UCF** category of the inserter.
+activate, then add blocks from the inserter's **UCF Content** and **UCF Interactive**
+categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
+a variation of its block, listed under the block's name.
 
 To work on blocks in a development WordPress, see "Working against local sites" below.
 
@@ -157,31 +166,64 @@ npm install ./ucf-components-{version}.tgz
 
 ```tsx
 import { Section } from '@ucf/components/section';
-import { Stat } from '@ucf/components/stat';
+import { Highlight } from '@ucf/components/highlight';
 import { DegreeFinder } from '@ucf/components/degree-finder';
 import '@ucf/components/ucf.css'; // tokens, compositions, the component layer, every component
 import '@ucf/components/elements.css'; // optional: the block theme's headings and copy, in a Section
 
 <Section composition="dark">
-	<Stat>
-		<p className="ucf-c-stat__statement">Florida’s largest university</p>
-	</Stat>
+	<Highlight>
+		<p className="ucf-c-highlight__statement">Florida’s largest university</p>
+	</Highlight>
 </Section>
 <Section composition="light" width="wide">
 	<DegreeFinder programType="master" />
 </Section>
 ```
 
+No CMS is needed: every component is plain React. A component with presets (the Card, so far)
+also takes a preset by name and each part's content, so a site passes data and gets the same
+design WordPress and Puck offer:
+
+```tsx
+import { Card } from '@ucf/components/card';
+
+<Card
+	preset="pathway"
+	content={ {
+		eyebrow: 'Transfer',
+		display: 'I am transferring from a college',
+		description: 'Credits, deadlines and the advisors who help.',
+		link: { text: 'Transfer admission', url: '/transfer' },
+	} }
+/>
+// Props win over the preset's: the pathway card on Bold Gold.
+<Card preset="pathway" composition="gold" content={ { … } } />
+// Children replace the preset's parts: the Card is still an open frame.
+<Card preset="pathway">…</Card>
+```
+
+The preset sets the starting props and the parts, in its order and looks; `content` fills each
+part by its name in `CARD_PARTS` (TypeScript checks the names, and that a link is
+`{ text, url }`). A part with no content is left out, so sample copy can't reach a live page;
+`sample` shows the preset's sample text and images, for prototyping. To place the parts yourself,
+use the classes in `CARD_PARTS` (`CARD_PARTS.eyebrow.className`), or `presetContent()` from
+`@ucf/components/react`.
+
 The site loads the UCF fonts (Oswald, Montserrat, Roboto Mono). In Puck, each component's
 config is the default export of `@ucf/components/{name}/puck`:
 
 ```tsx
 import section from '@ucf/components/section/puck';
-import stat from '@ucf/components/stat/puck';
+import highlight from '@ucf/components/highlight/puck';
 import degreeFinder from '@ucf/components/degree-finder/puck';
 
 const config = {
-	components: { Section: section, Stat: stat, DegreeFinder: degreeFinder },
+	components: {
+		Section: section,
+		Highlight: highlight,
+		DegreeFinder: degreeFinder,
+	},
 };
 // Section has a slot: other components are dropped inside it and take on its composition.
 ```
@@ -190,19 +232,20 @@ Primitives are at `@ucf/components/primitives/{name}/puck`. Register them as `Bu
 `Heading` and `Paragraph`: the frames' starting templates name them by those keys.
 
 ```tsx
-import { withTemplate } from '@ucf/components/card/puck';
-import heading from '@ucf/components/primitives/heading/puck';
-import image from '@ucf/components/primitives/image/puck';
-import paragraph from '@ucf/components/primitives/paragraph/puck';
+import card, { withPreset, withTemplate } from '@ucf/components/card/puck';
 
 const config = {
 	components: {
-		Image: image,
-		Heading: heading,
-		Paragraph: paragraph,
-		// A new Card starts with an image, a heading and a paragraph. With other keys,
-		// pass a template of your own: withTemplate( [ { type: 'MyHeading', props: {} } ] ).
-		Card: withTemplate(),
+		// The Card stores its design and its content as data: a Design picker and a field for
+		// each of the design's parts, rendered as the Card is on a React site. It needs no
+		// primitives registered. In the editor, an empty part shows the design's sample text;
+		// published, it is left out.
+		Card: card,
+		// Each design as its own Puck component, starting on it.
+		PathwayCard: withPreset( 'pathway' ),
+		// The "Open" design is the frame with a slot, for any components: this one starts
+		// with the default design's parts as primitives (register them, as above).
+		OpenCard: withTemplate(),
 	},
 };
 ```
@@ -245,18 +288,21 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 
 ## Anatomy of a component
 
-A component is one folder, `components/{name}/`. One file in it is the component itself, the
+A component is one folder, `components/{bucket}/{name}/`, where the bucket is its role:
+`primitives`, `content` or `interactive`. One file in it is the component itself, the
 **core**. Every other file either connects the core to a platform (an **adapter**, for a
-**host** such as WordPress or Puck) or ships it to an output. Nothing outside the folder needs to change except two lists (step 4 below).
+**host** such as WordPress or Puck) or ships it to an output. Outside the folder, only two lists
+name it: `package.json` `exports` and one plugin's `plugin.json` (`npm run new:component`
+adds both).
 
 ```
-components/{name}/
+components/{bucket}/{name}/
   {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
-   the core               ├─► adapters/puck/ ───────► npm: @ucf/components/{name}/puck
-                          ├─► adapters/wp/ ─────────► WordPress: the plugin whose plugin.json lists it
-                          └─► stories/ ──────────► Storybook
+   the core               ├─► integrations/puck/ ─────► npm: @ucf/components/{name}/puck
+                          ├─► integrations/wp/ ───────► WordPress: the plugin whose plugin.json lists it
+                          └─► integrations/storybook/ ► Storybook
   style.css ──────────────┬─► npm: concatenated into ucf.css
-                          └─► WordPress: imported by adapters/wp/, built into the block's CSS
+                          └─► WordPress: imported by integrations/wp/, built into the block's CSS
 ```
 
 ### The core
@@ -264,38 +310,39 @@ components/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `stat`               | **Interactive (client)**: `degree-finder`      |
-| --------------- | ------------------------------------------ | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs          | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                  | `react` and its own files                      |
-| First line      | Nothing special                            | `'use client';`                                |
-| Extra files     | `example.json`: sample props               | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`             | **Interactive (client)**: `degree-finder`      |
+| --------------- | --------------------------------------------- | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs             | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else    | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                     | `react` and its own files                      |
+| First line      | Nothing special                               | `'use client';`                                |
+| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
-Anything that differs between hosts comes in as a prop, a **slot**: a frame's `innerAs` (the
-Section, Hero, Stat, Card) takes WordPress's inner-blocks element or Puck's slot, and
-defaults to a `<div>` elsewhere; the Card's `title` takes a string when saved and a text field
-in the WordPress editor. A core never imports a host or checks which one it is in. If it needs
+Anything that differs between hosts comes in through a **slot**: a content component's areas
+(`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks
+element or Puck's slot, and are a `<div>` elsewhere; the Hero's `media` area takes WordPress's
+image picker. A core never imports a host or checks which one it is in. If it needs
 something a host has, add a slot.
 
 ### Adapters
 
 A **host** is a platform that renders components: WordPress, Puck, Next. An **adapter** is the
 thin layer between a host and the core: it takes content from wherever that host keeps it and
-passes it to the core as props. A host gets a folder in `adapters/` only when it needs files
-besides props.
+passes it to the core as props. A host gets an adapter folder (`integrations/wp/`,
+`integrations/puck/`) only when it needs files besides props.
 
-- **`adapters/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
-  **UCF** inserter category) and declares the attributes WordPress stores. `index.tsx`
-  registers it. `edit.tsx` renders the core in the editor, with fields in its slots. Then,
+- **`integrations/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
+  **UCF Content** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
+  registers it, with its icon from `@wordpress/icons` (and its templates as variations, if it
+  has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
       in the post, which is why a content component's markup is frozen once a site uses it.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
-- **`adapters/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([components/_config/puck.ts](components/_config/puck.ts)): `fields` for the editor,
+- **`integrations/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
+  ([integrations/puck/types.ts](integrations/puck/types.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.
@@ -335,63 +382,9 @@ The roles themselves live in `tokens/tokens.json`. See "Tokens, roles and fonts"
 
 ## Adding a component
 
-**1. Decide its kind and name.** Kind is the table above: does its HTML need to exist before
-JavaScript runs? Content is a plain noun (Quote, Card); interactive is subject plus task
-(Tuition Calculator). One name everywhere: folder `quote`, React `Quote`, CSS `ucf-c-quote`,
-block `ucf-content/quote`. Block names and a content block's attribute names are stored in
-posts, so they are permanent once a site uses them. Settle them first
-([architecture.md](docs/architecture.md), "Two kinds of component" and "Naming").
-
-**2. Start it with the script:**
-
-```sh
-npm run new:component -- pull-quote --kind content --plugin ucf-content
-npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
-npm run new:component -- badge --kind primitive   # primitives/badge: no plugin, no block
-```
-
-It writes `components/{name}/` (a primitive: `primitives/{name}/`, see "Primitives" in
-[architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
-in step 4 and to the lists in `components/_config/`, so it passes `npm run check` and `npm run test:stories`
-as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
-display name. Then replace the placeholder prop and markup. Every component has:
-
-```
-{Name}.tsx            the core
-index.ts              what the npm package exports
-style.css             colors as var(--ucf-c-{role}) only
-stories/              {Name}.stories.tsx: title 'Content (Server)/{Name}' or
-                      'Interactive (Client)/{Name}',
-                      tags [ 'server' ] or [ 'client' ], first story `Default`
-adapters/puck/config.tsx also add it to CONFIGS in components/_config/puck.test.tsx
-adapters/wp/             block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
-```
-
-Plus, for content: `example.json` (shared by the story, the test and the inserter preview) and
-`tests/{Name}.test.tsx`, the markup contract (copy `stat/tests/Stat.test.tsx`). For interactive: `defaults.ts`,
-`client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
-`fetch`) and `sample-client.ts` (the same interface with no network, for stories).
-
-**3. Apply the section colors:** `ucf-c` or `ucf-c-panel` on the outer element, roles only in
-`style.css` (see "Section colors" above).
-
-**4. Check it is in the two lists** (the script adds it). Storybook and the package build find
-it on their own; these don't:
-
-- **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
-  for content). This is what makes it importable from `@ucf/components`.
-- **One `plugins/*/plugin.json`:** add the name to `blocks`, and name the block after that
-  plugin (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two. An
-  interactive block with site settings also gets a settings function in that plugin's main PHP
-  file, like `ucf_degrees_degree_finder_settings()`.
-
-**5. Check it.** The tests in `components/_config/` pick it up on their own: the block round-trip, WordPress and
-Puck parity, and its stories on every composition and width. Review the new snapshot in
-`components/_config/__snapshots__/`: it is what every post using the block will store. In
-Storybook, open it on every composition from the toolbar. Run
-`npm run release:temp` and try the block in WordPress's editor (never judge a block from the
-front end). Then run everything below. New tests must be shown to fail: break the code, watch
-it go red, restore.
+**[docs/first-component.md](docs/first-component.md) walks you through it,** from
+`npm run new:component` to a block in WordPress, step by step. It ends with a table of what to
+edit for each later change.
 
 ## Before committing
 

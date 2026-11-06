@@ -1,0 +1,62 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/fixed-card",
+	"title": "Fixed card (example)",
+	"category": "ucf-content",
+	"description": "One linked card: image, meta line, title and a sentence. The whole card links through its title.",
+	"keywords": [ "card", "link", "news", "program" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"url": {
+			"type": "string",
+			"default": ""
+		},
+		"linkTarget": {
+			"type": "string",
+			"default": ""
+		},
+		"meta": {
+			"type": "string",
+			"default": ""
+		},
+		"description": {
+			"type": "string",
+			"default": ""
+		},
+		"imageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"headingLevel": {
+			"type": "string",
+			"default": "h3"
+		},
+		"variant": {
+			"type": "string",
+			"default": "plain"
+		},
+		"layout": {
+			"type": "string",
+			"default": "vertical"
+		},
+		"imageId": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

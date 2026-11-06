@@ -1,0 +1,66 @@
+# Card
+
+A content component and a frame: a card's box with any content inside. Block
+`ucf-content/card`; Puck `@ucf/components/card/puck`. What each word means, and why the files
+are split this way: [docs/architecture.md](../../../docs/architecture.md), "A component's
+folder". What to edit for each change: [docs/first-component.md](../../../docs/first-component.md),
+"Changing it later". That guide also walks through every file here.
+
+On a React site, `<Card preset="pathway" content={ { eyebrow: 'Transfer', … } } />`; in Puck, a Design
+picker and a field per part, stored the same way. Either way, the preset's
+props and parts, each part filled by its name below ([README.md](../../../README.md), "In Next,
+Puck or another React site").
+
+## Why it's built this way
+
+- **A frame, not fixed fields:** a card's content varies (an image and a link, a list, two
+  buttons, a stat). The cost: the result is only as consistent as what's put in it, and nothing
+  else can read its title or link. `examples/fixed-card` shows the other shape, for when a
+  listing must read them or the whole card must be one link.
+- **No image bleed:** the frame doesn't know what its first block is; reaching into a core
+  Image's markup would tie its CSS to core's classes. The fixed example can, because it owns
+  its image.
+- **Props that combine, not one per design:** the five designs are the same few choices
+  (a look, its own colors, a background under a tint or gradient, where the content sits, a
+  shape) in different mixes. A new design is a new mix first.
+- **The background image is the Card's, not a block inside:** it sits under the content and
+  the overlay, as the Hero's full image does; a block inside can't.
+
+## Object model
+
+```
+Card
+├─ Card.props.ts      variant · composition                          panel "Card"
+│                     contentAlign · contentPosition · aspectRatio   panel "Layout"
+│                     imageSrc (media) · imageAlt · overlay          panel "Background image"
+│                     imageId                                        WordPress only, set by the picker
+├─ Card.parts.ts      image                                          image
+│                     tag · eyebrow · meta · description             text
+│                     title · display · label                        heading
+│                     link                                           link
+│                     button                                         button
+└─ Card.presets.ts    the data
+    └─ presets        story (DEFAULT_PRESET) · next-step · audience · pathway · media
+```
+
+| Preset      | Props                                                                 | Parts                               |
+| ----------- | --------------------------------------------------------------------- | ----------------------------------- |
+| `story`     | plain                                                                 | image, meta, title, description     |
+| `next-step` | boxed                                                                 | title, description, button          |
+| `audience`  | plain, Bold Gold, tint, centered, square; a background image          | label, description                  |
+| `pathway`   | plain, Dark                                                           | eyebrow, heading, description, link |
+| `media`     | plain, Dark, gradient, content at the bottom, 4:3; a background image | tag, description                    |
+
+## Files
+
+| File                      | What it holds                                                                                                                                                  |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card.tsx`                | the component: a plain React component, passed to `frame()` with what the Card is; `Card.port` is what hosts read                                              |
+| `Card.props.ts`           | the props: each one's type, values, default and field                                                                                                          |
+| `Card.parts.ts`           | the parts: each one's kind and the class that styles it                                                                                                        |
+| `Card.presets.ts`         | the data: the presets, and `DEFAULT_PRESET` (what a new Card starts with, and the inserter's preview)                                                          |
+| `style.css`               | the box, the background, and every class in PARTS                                                                                                              |
+| `integrations/wp/`        | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
+| `integrations/puck/`      | `config.tsx`: `puckConfig( Card )`, with `withTemplate()` and `withPreset()`                                                                                   |
+| `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
+| `tests/`                  | `Card.test.tsx` (markup); its presets are checked by `integrations/tests/presets.test.tsx`                                                                     |

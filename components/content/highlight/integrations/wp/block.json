@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/highlight",
+	"title": "Highlight",
+	"category": "ucf-content",
+	"description": "Something pulled out of the page to stand on its own: a fact, a key figure or a ranking, with its source. Pick a design or start from a statement.",
+	"keywords": [
+		"stat",
+		"fact",
+		"number",
+		"source",
+		"highlight",
+		"proof point"
+	],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"rule": {
+			"type": "string",
+			"default": "top"
+		},
+		"contentAlign": {
+			"type": "string",
+			"default": "start"
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

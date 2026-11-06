@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"description": "A framework-agnostic, React-based component library and testbench for UCF websites and applications",
 	"private": true,
-	"license": "GPL-2.0-or-later",
+	"license": "GPL-3.0-or-later",
 	"engines": {
 		"node": "^22.22.2 || ^24.15.0 || >=26.0.0"
 	},
@@ -11,85 +11,86 @@
 		"./ucf.css": "./dist/ucf.css",
 		"./elements.css": "./dist/elements.css",
 		"./theme/*": "./dist/theme/*",
-		"./stat": {
-			"types": "./dist/components/stat/index.d.ts",
-			"default": "./dist/components/stat/index.js"
+		"./react": {
+			"types": "./dist/integrations/react/index.d.ts",
+			"default": "./dist/integrations/react/index.js"
 		},
-		"./stat/puck": {
-			"types": "./dist/components/stat/adapters/puck/config.d.ts",
-			"default": "./dist/components/stat/adapters/puck/config.js"
+		"./highlight": {
+			"types": "./dist/components/content/highlight/index.d.ts",
+			"default": "./dist/components/content/highlight/index.js"
 		},
-		"./stat/example.json": "./dist/components/stat/example.json",
+		"./highlight/puck": {
+			"types": "./dist/components/content/highlight/integrations/puck/config.d.ts",
+			"default": "./dist/components/content/highlight/integrations/puck/config.js"
+		},
 		"./section": {
-			"types": "./dist/components/section/index.d.ts",
-			"default": "./dist/components/section/index.js"
+			"types": "./dist/components/content/section/index.d.ts",
+			"default": "./dist/components/content/section/index.js"
 		},
 		"./section/puck": {
-			"types": "./dist/components/section/adapters/puck/config.d.ts",
-			"default": "./dist/components/section/adapters/puck/config.js"
+			"types": "./dist/components/content/section/integrations/puck/config.d.ts",
+			"default": "./dist/components/content/section/integrations/puck/config.js"
 		},
 		"./degree-finder": {
-			"types": "./dist/components/degree-finder/index.d.ts",
-			"default": "./dist/components/degree-finder/index.js"
+			"types": "./dist/components/interactive/degree-finder/index.d.ts",
+			"default": "./dist/components/interactive/degree-finder/index.js"
 		},
 		"./degree-finder/puck": {
-			"types": "./dist/components/degree-finder/adapters/puck/config.d.ts",
-			"default": "./dist/components/degree-finder/adapters/puck/config.js"
+			"types": "./dist/components/interactive/degree-finder/integrations/puck/config.d.ts",
+			"default": "./dist/components/interactive/degree-finder/integrations/puck/config.js"
 		},
 		"./hero": {
-			"types": "./dist/components/hero/index.d.ts",
-			"default": "./dist/components/hero/index.js"
+			"types": "./dist/components/content/hero/index.d.ts",
+			"default": "./dist/components/content/hero/index.js"
 		},
 		"./hero/puck": {
-			"types": "./dist/components/hero/adapters/puck/config.d.ts",
-			"default": "./dist/components/hero/adapters/puck/config.js"
+			"types": "./dist/components/content/hero/integrations/puck/config.d.ts",
+			"default": "./dist/components/content/hero/integrations/puck/config.js"
 		},
-		"./hero/example.json": "./dist/components/hero/example.json",
 		"./primitives/button": {
-			"types": "./dist/primitives/button/index.d.ts",
-			"default": "./dist/primitives/button/index.js"
+			"types": "./dist/components/primitives/button/index.d.ts",
+			"default": "./dist/components/primitives/button/index.js"
 		},
 		"./primitives/button/puck": {
-			"types": "./dist/primitives/button/adapters/puck/config.d.ts",
-			"default": "./dist/primitives/button/adapters/puck/config.js"
+			"types": "./dist/components/primitives/button/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/button/integrations/puck/config.js"
 		},
-		"./primitives/button/example.json": "./dist/primitives/button/example.json",
+		"./primitives/button/example.json": "./dist/components/primitives/button/example.json",
 		"./primitives/image": {
-			"types": "./dist/primitives/image/index.d.ts",
-			"default": "./dist/primitives/image/index.js"
+			"types": "./dist/components/primitives/image/index.d.ts",
+			"default": "./dist/components/primitives/image/index.js"
 		},
 		"./primitives/image/puck": {
-			"types": "./dist/primitives/image/adapters/puck/config.d.ts",
-			"default": "./dist/primitives/image/adapters/puck/config.js"
+			"types": "./dist/components/primitives/image/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/image/integrations/puck/config.js"
 		},
-		"./primitives/image/example.json": "./dist/primitives/image/example.json",
+		"./primitives/image/example.json": "./dist/components/primitives/image/example.json",
 		"./card": {
-			"types": "./dist/components/card/index.d.ts",
-			"default": "./dist/components/card/index.js"
+			"types": "./dist/components/content/card/index.d.ts",
+			"default": "./dist/components/content/card/index.js"
 		},
 		"./card/puck": {
-			"types": "./dist/components/card/adapters/puck/config.d.ts",
-			"default": "./dist/components/card/adapters/puck/config.js"
+			"types": "./dist/components/content/card/integrations/puck/config.d.ts",
+			"default": "./dist/components/content/card/integrations/puck/config.js"
 		},
-		"./card/example.json": "./dist/components/card/example.json",
 		"./primitives/heading": {
-			"types": "./dist/primitives/heading/index.d.ts",
-			"default": "./dist/primitives/heading/index.js"
+			"types": "./dist/components/primitives/heading/index.d.ts",
+			"default": "./dist/components/primitives/heading/index.js"
 		},
 		"./primitives/heading/puck": {
-			"types": "./dist/primitives/heading/adapters/puck/config.d.ts",
-			"default": "./dist/primitives/heading/adapters/puck/config.js"
+			"types": "./dist/components/primitives/heading/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/heading/integrations/puck/config.js"
 		},
-		"./primitives/heading/example.json": "./dist/primitives/heading/example.json",
+		"./primitives/heading/example.json": "./dist/components/primitives/heading/example.json",
 		"./primitives/paragraph": {
-			"types": "./dist/primitives/paragraph/index.d.ts",
-			"default": "./dist/primitives/paragraph/index.js"
+			"types": "./dist/components/primitives/paragraph/index.d.ts",
+			"default": "./dist/components/primitives/paragraph/index.js"
 		},
 		"./primitives/paragraph/puck": {
-			"types": "./dist/primitives/paragraph/adapters/puck/config.d.ts",
-			"default": "./dist/primitives/paragraph/adapters/puck/config.js"
+			"types": "./dist/components/primitives/paragraph/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/paragraph/integrations/puck/config.js"
 		},
-		"./primitives/paragraph/example.json": "./dist/primitives/paragraph/example.json"
+		"./primitives/paragraph/example.json": "./dist/components/primitives/paragraph/example.json"
 	},
 	"files": [
 		"dist"
@@ -110,14 +111,15 @@
 		"deploy": "npm run build && node --env-file-if-exists=.env scripts/deploy.mjs",
 		"deploy:watch": "node --env-file-if-exists=.env scripts/deploy.mjs --watch",
 		"new:component": "node scripts/new-component.mjs",
+		"sync:blocks": "node --no-warnings scripts/sync-blocks.mjs",
 		"storybook": "npm run build:tokens && storybook dev -p 6006",
 		"build:storybook": "npm run build:tokens && storybook build -o storybook-static",
 		"test": "wp-scripts test-unit-js --project=unit",
 		"test:stories": "wp-scripts test-unit-js --project='storybook:*'",
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-		"lint:js": "wp-scripts lint-js primitives components examples scripts .storybook webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"primitives/**/*.css\" \"components/**/*.css\" \"examples/**/*.css\" \"styles/**/*.css\"",
+		"lint:js": "wp-scripts lint-js integrations components examples scripts .storybook webpack.config.js",
+		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\" \"styles/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
@@ -137,6 +139,7 @@
 		"@wordpress/components": "^43.0.0",
 		"@wordpress/element": "^10.0.0",
 		"@wordpress/i18n": "^7.0.0",
+		"@wordpress/icons": "^19.0.0",
 		"@wordpress/scripts": "^37.0.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"playwright": "^1.64.1",
