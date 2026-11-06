@@ -1,0 +1,179 @@
+/*
+ * CONTEXT: the Event List's styles, for every host.
+ *
+ * SPEC: the UCF Brand Block Theme's Events block (`.ucf-events` in src/scss/_data.scss there):
+ * hairline rules between events, a square date block in the inverse of the section, the title,
+ * then when and where in the muted voice.
+ * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles.
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ */
+/* WHY a container: two columns follow the list's own width, so a list in a narrow column of a
+   page stays one column even on a wide screen. */
+.ucf-c-event-list {
+	color: var(--ucf-c-body);
+	container: ucf-c-event-list / inline-size;
+}
+
+/*
+ * SPEC: two columns from 40rem of list, each wide enough for a date block and a title; from
+ * 52rem at the large size, whose date block and title need more.
+ * WHY the rules twice: a container query can't read a custom property for its width.
+ */
+@container ucf-c-event-list (min-width: 40rem) {
+	.ucf-c-event-list[data-columns="2"]:not([data-size="large"])
+		.ucf-c-event-list__items {
+		border-top: 0;
+		column-gap: var(--ucf-spacing-70);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	/* WHY on the first row, not the list: the list's rule would run across the gap, unlike the
+	   rules under each event. */
+	.ucf-c-event-list[data-columns="2"]:not([data-size="large"])
+		.ucf-c-event-list__item:nth-child(-n + 2) {
+		border-top: 1px solid var(--ucf-c-line);
+	}
+}
+
+@container ucf-c-event-list (min-width: 52rem) {
+	.ucf-c-event-list[data-columns="2"][data-size="large"]
+		.ucf-c-event-list__items {
+		border-top: 0;
+		column-gap: var(--ucf-spacing-70);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.ucf-c-event-list[data-columns="2"][data-size="large"]
+		.ucf-c-event-list__item:nth-child(-n + 2) {
+		border-top: 1px solid var(--ucf-c-line);
+	}
+}
+
+.ucf-c-event-list__heading {
+	margin: 0 0 var(--ucf-spacing-50);
+}
+
+.ucf-c-event-list__items {
+	border-top: 1px solid var(--ucf-c-line);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ucf-c-event-list__item {
+	border-bottom: 1px solid var(--ucf-c-line);
+	display: grid;
+	gap: var(--ucf-spacing-50);
+	grid-template-columns: 4.5rem minmax(0, 1fr);
+	padding-block: var(--ucf-spacing-50);
+}
+
+/* SPEC: the date block, the inverse of the section, the day in the display face. */
+.ucf-c-event-list__date {
+	align-items: center;
+	aspect-ratio: 1;
+	background-color: var(--ucf-c-body);
+	color: var(--ucf-c-surface);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.ucf-c-event-list__month {
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.ucf-c-event-list__day {
+	font-family: var(--ucf-font-family-display);
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	margin-top: 2px;
+}
+
+/* WHY two classes: the Heading primitive sizes `h3.ucf-c-heading`; an event's title is smaller. */
+.ucf-c-event-list .ucf-c-event-list__title {
+	font-size: var(--ucf-font-size-heading-5);
+	margin: 0 0 var(--ucf-spacing-10);
+}
+
+.ucf-c-event-list__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ucf-c-event-list__title a:hover {
+	text-decoration: underline;
+}
+
+.ucf-c-event-list__title a:focus-visible {
+	outline: 2px solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+.ucf-c-event-list__meta {
+	color: var(--ucf-c-muted);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: var(--ucf-font-size-small);
+	gap: var(--ucf-spacing-10) var(--ucf-spacing-50);
+	margin: 0;
+}
+
+.ucf-c-event-list__description {
+	margin: var(--ucf-spacing-30) 0 0;
+}
+
+.ucf-c-event-list__empty {
+	margin: 0;
+}
+
+/*
+ * The large size: a bigger date block and title, for a list that leads a page or section.
+ * WHY the meta at body size: under a heading-3 title, the small meta read as a footnote.
+ */
+.ucf-c-event-list[data-size="large"] .ucf-c-event-list__item {
+	gap: var(--ucf-spacing-60);
+	grid-template-columns: 6.5rem minmax(0, 1fr);
+	padding-block: var(--ucf-spacing-60);
+}
+
+.ucf-c-event-list[data-size="large"] .ucf-c-event-list__month {
+	font-size: 1rem;
+}
+
+.ucf-c-event-list[data-size="large"] .ucf-c-event-list__day {
+	font-size: 3.25rem;
+}
+
+.ucf-c-event-list[data-size="large"] .ucf-c-event-list__title {
+	font-size: var(--ucf-font-size-heading-3);
+	margin-bottom: var(--ucf-spacing-20);
+}
+
+.ucf-c-event-list[data-size="large"] .ucf-c-event-list__meta {
+	font-size: var(--ucf-font-size-body);
+}
+
+/* SPEC: on a phone, the large date block would leave the title too little room. */
+@container ucf-c-event-list (max-width: 30rem) {
+	.ucf-c-event-list[data-size="large"] .ucf-c-event-list__item {
+		gap: var(--ucf-spacing-50);
+		grid-template-columns: 5rem minmax(0, 1fr);
+	}
+
+	.ucf-c-event-list[data-size="large"] .ucf-c-event-list__day {
+		font-size: 2.5rem;
+	}
+
+	.ucf-c-event-list[data-size="large"] .ucf-c-event-list__title {
+		font-size: var(--ucf-font-size-heading-4);
+	}
+}

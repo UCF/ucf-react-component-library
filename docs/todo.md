@@ -153,13 +153,37 @@ For content blocks, attribute names are saved in posts, so the schema carries th
 "permanent once used" rule (docs/architecture.md, "Naming"). Highlight edits its text inline, so it
 would use the schema for attributes only. Verify the generated Puck fields in the playground.
 
+### Done: live components, and the Event List
+
+Started 2026-11-06. Live is the third kind (docs/architecture.md, "Three kinds of component"):
+fetched data that must be in the page, written by the server. `components/live/`, the UCF Live
+inserter category, the `Live (Server)` Storybook group and `--kind live` in the scaffolder.
+`components/live/event-list` (block `ucf-events/event-list`, plugin `ucf-events`) replaces
+the UCF Events Plugin's `[ucf-events]` shortcode: the same feed, settings and 3-hour cache,
+plus past events dropping off and a failed fetch cached for 5 minutes, not 3 hours. Its
+`tests/EventList.php.test.tsx` runs the real PHP on a saved copy of the feed. Still to do:
+
+- **Check it in a real WordPress.** Install `ucf-events`, add the block, and check
+  `getBlocks()` in the editor and the page's HTML. Nothing has run it against real WordPress
+  yet; its PHP test runs against stubs. Also check the editor preview loads the feed from the
+  editor's origin (the feed allows any origin).
+- **Settle its names before any site uses it:** the block `ucf-events/event-list` and its
+  attributes (`feedUrl`, `limit`, `offset`, `title`, `descriptions`, `emptyMessage`) are
+  permanent once saved in a post.
+- **Its look against the theme's Events block,** in Storybook and on a page: the date block,
+  spacing, and the AP date and time.
+- **Event structured data.** The theme writes schema.org `Event` nodes for its mock events
+  (`ucf_theme_structured_data()`). Decide who writes them for this block: render.php when the
+  theme's function exists, or the theme from a filter.
+- **Puck on the server.** The Puck config fetches in the browser, which is right in the
+  editor; a Puck site rendering a saved page should fetch on the server (Puck's async
+  `resolveData`, or the site's Server Component). Work it out in the playground.
+- **Migrating shortcodes.** Pages that use `[ucf-events]` keep working while both plugins are
+  active. A transform from the shortcode block to this one would move them over.
+- **The degree facts** are the next live component, in `ucf-degrees`.
+
 ## Noted, not started
 
-- **Live content: content whose data is fetched, rendered on the server.** Once WordPress is split into
-  content-type plugins, `ucf-degrees` will need blocks like the theme's degree facts, where
-  live data has to be in the HTML. PHP renders it, and a test checks the PHP output against
-  the React component's snapshot. It's the hardest of the three kinds. Add a small example
-  to `ucf-degrees` to work out the pattern.
 - **Plugin distribution through Composer.** UCF sites install plugins with Composer from
   GitHub releases, one plugin per repo. The likely answer: CI pushes each built plugin to its
   own release repo (`ucf-degrees`, `ucf-content`), and sites install from those as they do

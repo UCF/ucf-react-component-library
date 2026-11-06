@@ -25,8 +25,11 @@ export type ComponentDefinition<
 	slug: string;
 	/** Its name on screen: the inserter, Puck, Storybook. SYNC: block.json's `title`. */
 	title: string;
-	/** Content (saved as HTML) or interactive (built in the browser): its bucket. */
-	kind: 'content' | 'interactive';
+	/**
+	 * Content (saved as HTML), live (written by the server on each request) or interactive
+	 * (built in the browser): its bucket. SYNC: Kind in integrations/wp/kind.ts.
+	 */
+	kind: 'content' | 'live' | 'interactive';
 
 	// What it takes
 

@@ -69,6 +69,8 @@ components/        one self-contained folder per component, in a bucket by role:
                    (Puck places them; WordPress editors use core's blocks instead)
   content/         what editors place, saved as HTML, works without JavaScript: Section,
                    Highlight, Hero, Card
+  live/            what editors place, fetched and written by the server, works without
+                   JavaScript: Event List
   interactive/     what editors place, built in the browser: Degree Finder
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
@@ -78,6 +80,7 @@ plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
   ucf-content/     plugin.json lists its blocks: section, highlight, hero, card
   ucf-degrees/     degree-finder
+  ucf-events/      event-list
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
 .storybook/        the catalog: theme, toolbar, logo
@@ -134,8 +137,8 @@ names go away when a release pipeline replaces them.
 ### In WordPress
 
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
-activate, then add blocks from the inserter's **UCF Content** and **UCF Interactive**
-categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
+activate, then add blocks from the inserter's **UCF Content**, **UCF Live** and **UCF
+Interactive** categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
 a variation of its block, listed under the block's name.
 
 To work on blocks in a development WordPress, see "Working against local sites" below.
@@ -284,7 +287,7 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 ## Anatomy of a component
 
 A component is one folder, `components/{bucket}/{name}/`, where the bucket is its role:
-`primitives`, `content` or `interactive`. One file in it is the component itself, the
+`primitives`, `content`, `live` or `interactive`. One file in it is the component itself, the
 **core**. Every other file either connects the core to a platform (an **adapter**, for a
 **host** such as WordPress or Puck) or ships it to an output. Nothing outside the folder needs to change except two lists (step 4 below).
 
@@ -303,13 +306,13 @@ components/{bucket}/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `highlight`             | **Interactive (client)**: `degree-finder`      |
-| --------------- | --------------------------------------------- | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs             | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else    | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                     | `react` and its own files                      |
-| First line      | Nothing special                               | `'use client';`                                |
-| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`             | **Live (server)**: `event-list`                              | **Interactive (client)**: `degree-finder`      |
+| --------------- | --------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs             | Must exist before JavaScript runs, from fetched data         | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else    | The same: the fetched data arrives as a prop                 | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                     | None (`import type` only)                                    | `react` and its own files                      |
+| First line      | Nothing special                               | Nothing special                                              | `'use client';`                                |
+| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `{Name}.props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in through a **slot**: a content component's areas
 (`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks
@@ -325,12 +328,16 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
 `integrations/puck/`) only when it needs files besides props.
 
 - **`integrations/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
-  **UCF Content** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
+  **UCF Content**, **UCF Live** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
   registers it, with its icon from `@wordpress/icons` (and its templates as variations, if it
   has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
       in the post, which is why a content component's markup is frozen once a site uses it.
+    - **Live: `render.php` + `client.php` + `markup.php`.** On each request PHP fetches the
+      data (cached), and writes the whole HTML: the same markup as the core, in PHP, because
+      PHP can't run React. `tests/{Name}.php.test.tsx` runs the PHP and fails when its HTML
+      differs from the core's. Nothing is saved but the attributes, so the markup isn't frozen.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
@@ -376,21 +383,23 @@ The roles themselves live in `tokens/tokens.json`. See "Tokens, roles and fonts"
 ## Adding a component
 
 **1. Decide its kind and name.** Kind is the table above: does its HTML need to exist before
-JavaScript runs? Content is a plain noun (Quote, Card); interactive is subject plus task
+JavaScript runs, and is what it shows fetched? Content and live are a plain noun (Quote, Card,
+Event List); interactive is subject plus task
 (Tuition Calculator). One name everywhere: folder `quote`, React `Quote`, CSS `ucf-c-quote`,
 block `ucf-content/quote`. Block names and a content block's attribute names are stored in
 posts, so they are permanent once a site uses them. Settle them first
-([architecture.md](docs/architecture.md), "Two kinds of component" and "Naming").
+([architecture.md](docs/architecture.md), "Three kinds of component" and "Naming").
 
 **2. Start it with the script:**
 
 ```sh
 npm run new:component -- pull-quote --kind content --plugin ucf-content
+npm run new:component -- news-list --kind live --plugin ucf-content
 npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
 npm run new:component -- badge --kind primitive   # components/primitives/badge: no plugin, no block
 ```
 
-It writes `components/{bucket}/{name}/`, in its kind's bucket (`content`, `interactive`, or for a
+It writes `components/{bucket}/{name}/`, in its kind's bucket (`content`, `live`, `interactive`, or for a
 primitive `primitives`; see "Primitives" in [architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
 in step 4 and to the lists in `integrations/tests/`, so it passes `npm run check` and `npm run test:stories`
 as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
@@ -400,11 +409,12 @@ display name. Then replace the placeholder prop and markup. Every component has:
 {Name}.tsx            the core
 index.ts              what the npm package exports
 style.css             colors as var(--ucf-c-{role}) only
-integrations/storybook/ {Name}.stories.tsx: title 'Content (Server)/{Name}' or
-                      'Interactive (Client)/{Name}',
+integrations/storybook/ {Name}.stories.tsx: title 'Content (Server)/{Name}',
+                      'Live (Server)/{Name}' or 'Interactive (Client)/{Name}',
                       tags [ 'server' ] or [ 'client' ], first story `Default`
 integrations/puck/config.tsx also add it to CONFIGS in integrations/tests/puck.test.tsx
-integrations/wp/       block.json, index.tsx, edit.tsx, and save.tsx or render.php + view.tsx
+integrations/wp/       block.json, index.tsx, edit.tsx, and save.tsx, render.php + client.php +
+                      markup.php, or render.php + view.tsx
 ```
 
 Plus, for content: `tests/{Name}.test.tsx`, the markup contract (copy
@@ -412,6 +422,10 @@ Plus, for content: `tests/{Name}.test.tsx`, the markup contract (copy
 `{Name}.presets.ts` if it has designs, and a `README.md` with its object model: copy the
 Card's, and see "A component's folder" in [architecture.md](docs/architecture.md). The script
 writes a content component in the Card's layout, built with `frame()` ("Built with frame()").
+For live: `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again in
+`integrations/wp/markup.php`, `tests/{Name}.php.test.tsx` comparing the two (copy
+`event-list/tests/EventList.php.test.tsx`), `tests/client.test.ts`, and a saved copy of the real
+feed in `tests/fixtures/`. A new plugin's PHP prefix and text domain go in `phpcs.xml.dist`.
 For interactive: `defaults.ts`,
 `client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
 `fetch`) and `sample-client.ts` (the same interface with no network, for stories).

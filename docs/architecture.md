@@ -29,35 +29,46 @@ Read from most portable to least. Each layer works without the ones below it.
 host that can't run React still gets layers 1 and 2: the markup snapshot in each content
 component's test is the HTML to copy.
 
-## Two kinds of component
+## Three kinds of component
 
-Decided by one question: **does the component's HTML need to be on the page before JavaScript
-runs** (for search engines, for visitors without JavaScript, for WordPress to save it)?
+Decided by two questions. First: **does the component's HTML need to be on the page before
+JavaScript runs** (for search engines, for visitors without JavaScript, for WordPress to save
+it)? Then, if it does: **is what it shows typed in by an editor, or fetched?**
 
-- **Content (server): works without JavaScript.** Something people read: a stat, a card, a
-  quote, a section. Its HTML is complete before any script runs.
+- **Content (server): works without JavaScript, shows what an editor wrote.** Something people
+  read: a stat, a card, a quote, a section. WordPress saves its HTML in the post.
+- **Live (server): works without JavaScript, shows fetched data.** Something people read that
+  changes on its own: an event list, a news feed, the degree facts. The server writes its HTML
+  on each request.
 - **Interactive (client): needs JavaScript.** Something people use: a degree finder, a search,
   a filter, a form. Its real UI is built in the browser.
 
-|                 | Content component                                   | Interactive component                                                     |
-| --------------- | --------------------------------------------------- | ------------------------------------------------------------------------- |
-| Example         | `highlight`                                         | `degree-finder`                                                           |
-| Renders         | Server: saved in the post or server-rendered        | Client: the browser builds what a visitor uses                            |
-| In Next         | Can be a Server Component                           | Needs `'use client'`                                                      |
-| Needs its HTML? | Yes                                                 | No: what a visitor uses is what its script builds                         |
-| The core may    | Take props and return markup. Nothing else.         | Hold state, run effects, fetch data                                       |
-| Runtime imports | None (`import type` only)                           | `react`, and its own modules                                              |
-| WordPress block | Static: `save()` stores the core's HTML in the post | Dynamic: `render.php` writes a container, `view.tsx` mounts the component |
-| Changing markup | Breaks every saved post without a deprecation       | Free: nothing is saved                                                    |
-| Non-React hosts | Copy the markup from its test snapshot              | Not supported; mount it as an island if needed                            |
+|                 | Content component                                   | Live component                                                   | Interactive component                                                     |
+| --------------- | --------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Example         | `highlight`                                         | `event-list`                                                     | `degree-finder`                                                           |
+| Renders         | Server: saved in the post                           | Server: written on each request, from fetched data               | Client: the browser builds what a visitor uses                            |
+| In Next         | Can be a Server Component                           | A Server Component fetches (its `client.ts`) and passes the data | Needs `'use client'`                                                      |
+| Needs its HTML? | Yes                                                 | Yes                                                              | No: what a visitor uses is what its script builds                         |
+| The core may    | Take props and return markup. Nothing else.         | The same: the data arrives as a prop                             | Hold state, run effects, fetch data                                       |
+| Runtime imports | None (`import type` only)                           | None (`import type` only)                                        | `react`, and its own modules                                              |
+| WordPress block | Static: `save()` stores the core's HTML in the post | Dynamic: `render.php` fetches and writes the whole HTML          | Dynamic: `render.php` writes a container, `view.tsx` mounts the component |
+| Its markup      | Once, in React                                      | Twice: React, and PHP (`markup.php`), compared by a test         | Once, in React                                                            |
+| Changing markup | Breaks every saved post without a deprecation       | Free: nothing is saved (change React and PHP together)           | Free: nothing is saved                                                    |
+| Non-React hosts | Copy the markup from its test snapshot              | Copy the markup from its test snapshot, and fetch the data       | Not supported; mount it as an island if needed                            |
+| block.json      | No `render`                                         | `render`, no `viewScript`                                        | `render` and `viewScript`                                                 |
 
-**WHY a content core imports nothing at runtime:** WordPress's `save()` renders it
-synchronously, once, to a string, and stores the result. Anything that varies between renders
-(state, effects, data) would produce HTML that no longer matches what was saved. "Nothing"
-means no host or library code (`react`, `@wordpress/*`, `next/*`); its own files and the plain
-data in `integrations/schema/` (its prop definitions' shape, the compositions) are fine, since
-they render the same every time. A component never imports another component: what two share
-goes in `integrations/`.
+The kind is read from block.json (`kindOf()` in `integrations/wp/kind.ts`), so it can't
+disagree with how the block is built. It is also the component's bucket (`components/live/`),
+its Storybook group (`Live (Server)`) and its inserter category (UCF Live).
+
+**WHY a content or live core imports nothing at runtime:** WordPress's `save()` renders a
+content core synchronously, once, to a string, and stores the result. Anything that varies
+between renders (state, effects, data) would produce HTML that no longer matches what was saved.
+A live core's HTML is written on the server, by PHP in WordPress and by a Server Component in
+Next, neither of which waits for an effect. "Nothing" means no host or library code (`react`,
+`@wordpress/*`, `next/*`); its own files and the plain data in `integrations/schema/` (its prop
+definitions' shape, the compositions) are fine, since they render the same every time. A
+component never imports another component: what two share goes in `integrations/`.
 
 **WHY an interactive component may share its whole tree:** nothing stores its HTML, so there is nothing for a
 later render to disagree with. That is what lets one stateful component run unchanged in the
@@ -67,13 +78,37 @@ WordPress editor, on the WordPress front end, in Next and in Puck.
 but their text must be in the page. The core still only returns markup, with every panel in
 it; a separate script (the block's `viewScript`) adds the behavior on top, and the core gets no
 state or effects. The rule: **if the behavior only shows or hides what is already in the HTML,
-it's content. If it fetches, computes or builds what is shown, it's interactive.**
+it's content. If it fetches, computes or builds what is shown in the browser, it's
+interactive.** If it fetches but the result must be in the page, it's live.
+
+**WHY live is a kind of its own, not content with data:** it was planned that way ("live
+content"), but the two differ in everything a bucket decides: a live block has `render.php` and
+no `save()`, nothing saved to deprecate, and markup in two languages that a test must compare.
+Nor is it interactive: it has no `view.tsx`, and its core may not fetch. Each of the three
+buckets has its own scaffold (`npm run new:component -- --kind live`) and its own checks.
+
+**A live component's two copies,** and what keeps them the same:
+
+| In JavaScript                     | In PHP (WordPress)           | Compared by                 |
+| --------------------------------- | ---------------------------- | --------------------------- |
+| `client.ts`: fetch, clean up data | `integrations/wp/client.php` | `tests/{Name}.php.test.tsx` |
+| `{Name}.tsx`: the markup          | `integrations/wp/markup.php` | `tests/{Name}.php.test.tsx` |
+| (the host fetches and renders)    | `integrations/wp/render.php` | the same test, with stubs   |
+
+The test runs the real PHP under plain `php`, with WordPress's few functions stubbed
+(`integrations/tests/live.ts`), on a saved copy of the real feed (`tests/fixtures/`), and
+compares the HTML as a browser parses it. WHY written out step for step in both languages, not
+left to each one's helpers: PHP's and JavaScript's differ (which entities they decode, what
+counts as a space, which time zone a date is shown in), and the two must agree exactly. WHY a
+date is read from its string: a `Date` or `DateTime` shows it in the zone of whatever runs it.
+In the editors (WordPress and Puck) the browser fetches through the same `client.ts` and renders
+the React core, so an editor sees what the page will show.
 
 **WHY "interactive", not "app", "widget", "tool" or "dynamic":** "app" sounds like a whole
 application; older WordPress uses "widget" for sidebar widgets, which readers still know;
 "tool" sounds internal. "Dynamic" (and "static" for content) is the trap: WordPress and Next
-already use both words for how a host builds HTML, not for what a component does. The planned
-live content (below) would be a WordPress dynamic block yet follow content rules.
+already use both words for how a host builds HTML, not for what a component does. A live
+component is a WordPress dynamic block, and so is an interactive one.
 
 **"Server" and "client" mean where the HTML a visitor needs comes from,** not which machine
 runs the code. UPSTREAM: Next renders `'use client'` components on the server too, for the
@@ -82,18 +117,15 @@ interactive component is still "client."
 
 ### A second label: where the data comes from
 
-Kind (content or interactive) says what a component is. **Data** says where what it shows
-comes from: **authored** (an editor types it in, it arrives as props) or **live** (fetched from
-an API). Together they describe every component, and how each host renders it follows:
+Kind says what a component is. **Data** says where what it shows comes from: **authored** (an
+editor types it in, it arrives as props) or **live** (fetched from an API). A component that
+needs its HTML in the page is content when its data is authored and live when it is fetched;
+one built in the browser is interactive either way:
 
-|                 | Authored                          | Live                                              |
-| --------------- | --------------------------------- | ------------------------------------------------- |
-| **Content**     | `highlight`, a quote, a card      | **Live content**, not built yet: the degree facts |
-| **Interactive** | A calculator that fetches nothing | `degree-finder`                                   |
-
-**Live content is the hard corner.** Its live data must be in the HTML (it is content), so in
-WordPress PHP renders it on each request, and PHP can't run React. Its markup exists twice, in
-React and in PHP, and a test must compare the two. See `docs/todo.md`.
+|                      | Authored                     | Fetched                      |
+| -------------------- | ---------------------------- | ---------------------------- |
+| **HTML in page**     | Content: `highlight`, a card | Live: `event-list`           |
+| **Built in browser** | Interactive: a calculator    | Interactive: `degree-finder` |
 
 ## Naming
 
@@ -113,8 +145,8 @@ One name per component, spelled the same way in every layer:
   Event Search. WHY not "picker": it reads as one form control, like a date picker, not a
   whole tool.
 - **In Storybook, a component sits under its kind** and carries the matching tag:
-  `Content (Server)/Highlight` with `tags: [ 'server' ]`, `Interactive (Client)/Degree Finder`
-  with `tags: [ 'client' ]`. Its first story is `Default`. A component whose stories are split
+  `Content (Server)/Highlight` and `Live (Server)/Event List` with `tags: [ 'server' ]`,
+  `Interactive (Client)/Degree Finder` with `tags: [ 'client' ]`. Its first story is `Default`. A component whose stories are split
   into several files is a group: `Content (Server)/Card/Props`, `…/Card/Presets`,
   `…/Card/Checks`. Section colors are not separate
   stories; the Composition toolbar sets them.
@@ -134,26 +166,31 @@ components/{bucket}/{name}/
   style.css              reads --ucf-* only
   README.md              its object model, filled in
   defaults.ts            interactive components: default props, read by every host
-  client.ts              interactive components: the only file that knows its API's response shape
+  client.ts              interactive and live components: the only file that knows its API's
+                         response shape
   sample-client.ts       interactive components: the same interface with no network
+  sample-data.ts         live components: sample data for its stories and tests
   types.ts
   integrations/          where the component runs, one folder per environment:
     wp/                  the WordPress adapter: block.json, index.tsx, edit.tsx, and save.tsx
-                         or render.php + view.tsx
+                         (content), render.php + client.php + markup.php (live), or
+                         render.php + view.tsx (interactive)
     puck/                the Puck adapter: config.tsx, a plain object in Puck's
                          ComponentConfig shape
     storybook/           {Name}.stories.tsx. Split into {Name}.presets.stories.tsx and
                          {Name}.checks.stories.tsx, with shared.tsx, when it has presets or
                          measured checks
   tests/                 every test, mirroring the folder it tests (tests/utils/…), and
-                         __snapshots__/; {Name}.test.tsx, {Name}.presets.test.tsx
+                         __snapshots__/; {Name}.test.tsx, {Name}.presets.test.tsx; a live
+                         component's {Name}.php.test.tsx and fixtures/
 ```
 
 **Components sit in a bucket by role:** `components/primitives/` (the pieces: no block of their
-own), `components/content/` (placed by editors, saved as HTML) and `components/interactive/`
-(placed by editors, built in the browser). The bucket is the kind, so the folder says which
+own), `components/content/` (placed by editors, saved as HTML), `components/live/` (placed by
+editors, fetched and written by the server) and `components/interactive/` (placed by editors,
+built in the browser). The bucket is the kind, so the folder says which
 rules apply (save.tsx or render.php, presets or a client); integrations/tests/parity.test.tsx
-fails when a component sits in the wrong one. WHY buckets now, with one interactive component:
+fails when a component sits in the wrong one. WHY buckets now, with one live and one interactive component:
 more are coming, and moving five is cheaper than moving fifty. WHY the bucket is left out of
 every name (block names, `@ucf/components/{name}`, plugin.json): a component that changes kind
 moves folder without breaking a site. Names are unique across buckets; scripts/plugins.cjs
@@ -335,7 +372,7 @@ deprecation each time; our named classes leave the styling in CSS. Interactive w
 menus, comboboxes, React-only tabs) may use Radix, unstyled, with our CSS: they are built in the
 browser and nothing is saved. Content that only shows or hides what is already in the HTML (tabs
 and accordions with editorial text) stays a content block with a small script on top (the
-Interactivity API in WordPress), per "Two kinds of component".
+Interactivity API in WordPress), per "Three kinds of component".
 
 ## Primitives
 
@@ -540,6 +577,7 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 | ------------- | ---------------------------------------------- |
 | `ucf-content` | `ucf-content/section`, `ucf-content/highlight` |
 | `ucf-degrees` | `ucf-degrees/degree-finder`                    |
+| `ucf-events`  | `ucf-events/event-list`                        |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
   fails if a component with an `integrations/wp/` is in no plugin or in two.
@@ -713,7 +751,12 @@ covered with nothing to add. They are modeled on the UCF Brand Block Theme's sui
 - **Markup contract** (`highlight/tests/Highlight.test.tsx`): WordPress's serializer and React DOM produce the
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`degree-finder/tests/client.test.ts`): what it requests and what it keeps, with a fake
-  `fetch`. Every interactive component's client needs one.
+  `fetch`. Every interactive and live component's client needs one.
+- **Live markup contract** (`event-list/tests/EventList.php.test.tsx`): the real `client.php`
+  and `markup.php` under plain `php`, on a saved copy of the feed, write the same HTML as
+  `client.ts` and the React core, case by case; and `render.php` fetches, caches and writes it.
+  Every live component needs one ("Three kinds of component"). Skipped where `php` isn't
+  installed; CI has it.
 - **Puck configs** (`integrations/tests/puck.test.tsx`): each config fits Puck's own `ComponentConfig`
   (checked by `npm run typecheck`), and its `render` gives the same markup with Puck's extra
   props (`id`, `puck`, `editMode`) as without. Add every new config to the file's list.
@@ -732,7 +775,8 @@ key. Behavior tests (keyboard, focus, announcements) are on the to-do list, as s
 functions so they run in the same real browser.
 
 The block round-trip covers what the editor would flag on a saved post. A block's behavior in a
-running WordPress (render.php, the plugin's PHP) is still checked by hand. Never verify a block
+running WordPress (render.php against real WordPress, the plugin's PHP) is still checked by
+hand; a live block's render.php runs only against stubs. Never verify a block
 through the front end: an invalid block still renders there. Ask the editor's store
 (`wp.data.select( 'core/block-editor' ).getBlocks()`).
 

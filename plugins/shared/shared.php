@@ -85,11 +85,15 @@ if ( ! function_exists( 'ucf_components_register_plugin' ) ) {
 if ( ! function_exists( 'ucf_components_block_category' ) ) {
 	/**
 	 * Add the UCF inserter categories, one per kind of block, as Storybook groups them: UCF
-	 * Content (content components) and UCF Interactive (interactive ones). Each is added unless
-	 * something already has, and both go first.
+	 * Content, UCF Live and UCF Interactive. Each is added unless something already has, and
+	 * all three go first.
 	 *
-	 * SYNC: the kinds in docs/architecture.md, "Two kinds of component", and Storybook's groups
-	 * (.storybook/preview.ts). blocks.test.tsx checks each block is in its kind's category.
+	 * SYNC: the kinds in docs/architecture.md, "Three kinds of component", CATEGORY_OF in
+	 * integrations/wp/kind.ts, and Storybook's groups (.storybook/preview.ts). blocks.test.tsx
+	 * checks each block is in its kind's category.
+	 * UPSTREAM: an older copy of this file, loaded first, has no UCF Live; WordPress then lists
+	 * a live block under no category (a console warning, not an error). Release the plugins
+	 * together.
 	 * WHY not the theme's `ucf` category: the theme fills it with its patterns; our blocks are
 	 * easier to find grouped by kind on their own.
 	 *
@@ -102,6 +106,7 @@ if ( ! function_exists( 'ucf_components_block_category' ) ) {
 		foreach (
 			array(
 				'ucf-content'     => __( 'UCF Content', 'ucf-components' ),
+				'ucf-live'        => __( 'UCF Live', 'ucf-components' ),
 				'ucf-interactive' => __( 'UCF Interactive', 'ucf-components' ),
 			) as $slug => $title
 		) {

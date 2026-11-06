@@ -28,6 +28,7 @@ import {
 	PRESETS as CARD_PRESETS,
 } from '../../components/content/card/Card.presets.ts';
 import degreeFinder from '../../components/interactive/degree-finder/integrations/puck/config.tsx';
+import eventList from '../../components/live/event-list/integrations/puck/config.tsx';
 import hero, {
 	withTemplate as heroWithTemplate,
 } from '../../components/content/hero/integrations/puck/config.tsx';
@@ -48,6 +49,7 @@ type PropsOf< Config > =
 const CONFIGS = {
 	Highlight: highlight,
 	'Degree Finder': degreeFinder,
+	'Event List': eventList,
 	Section: section,
 	Hero: hero,
 	Button: button,
@@ -61,6 +63,7 @@ const CONFIGS = {
 // the config that broke.
 highlight satisfies ComponentConfig< PropsOf< typeof highlight > >;
 degreeFinder satisfies ComponentConfig< PropsOf< typeof degreeFinder > >;
+eventList satisfies ComponentConfig< PropsOf< typeof eventList > >;
 section satisfies ComponentConfig< PropsOf< typeof section > >;
 hero satisfies ComponentConfig< PropsOf< typeof hero > >;
 button satisfies ComponentConfig< PropsOf< typeof button > >;

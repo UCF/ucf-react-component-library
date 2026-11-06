@@ -89,10 +89,10 @@ const preview: Preview = {
 	parameters: {
 		// WHY fullscreen: the Section is a full-width band with its own padding.
 		layout: 'fullscreen',
-		// WHY: content before interactive, the order the architecture doc explains them in.
-		// Each group says where its components render (docs/architecture.md, "Two kinds of
-		// component"): Content (Server) works without JavaScript; Interactive (Client) needs
-		// it. Each component's meta also carries a `server` or `client` tag, so the sidebar's
+		// WHY: content, live, interactive, the order the architecture doc explains them in.
+		// Each group says where its components render (docs/architecture.md, "Three kinds of
+		// component"): Content (Server) and Live (Server) work without JavaScript; Interactive
+		// (Client) needs it. Each component's meta also carries a `server` or `client` tag, so the sidebar's
 		// tag filter can show one kind. Primitives (primitives/), the pieces components are
 		// built from, come first and carry `server`: they render without JavaScript.
 		options: {
@@ -100,6 +100,7 @@ const preview: Preview = {
 				order: [
 					'Primitives',
 					'Content (Server)',
+					'Live (Server)',
 					'Interactive (Client)',
 				],
 			},

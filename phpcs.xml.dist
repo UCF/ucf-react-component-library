@@ -30,6 +30,7 @@
 			<property name="text_domain" type="array">
 				<element value="ucf-content"/>
 				<element value="ucf-degrees"/>
+				<element value="ucf-events"/>
 				<element value="ucf-components"/>
 			</property>
 		</properties>
@@ -45,6 +46,7 @@
 				<element value="ucf_components"/>
 				<element value="ucf_content"/>
 				<element value="ucf_degrees"/>
+				<element value="ucf_events"/>
 			</property>
 		</properties>
 	</rule>

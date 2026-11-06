@@ -28,9 +28,11 @@ import {
 } from '@wordpress/blocks';
 import { describe, expect, test } from 'vitest';
 
+import { CATEGORY_OF, kindOf } from '../wp/kind.ts';
+
 // Registers every block, as each plugin's editor script does.
 import.meta.glob(
-	'../../components/{content,interactive}/*/integrations/wp/index.tsx',
+	'../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
 	{
 		eager: true,
 	}
@@ -40,11 +42,12 @@ type BlockJson = {
 	name: string;
 	category: string;
 	render?: string;
+	viewScript?: string | string[];
 	attributes: Record< string, { default?: unknown } >;
 };
 
 const blockJsons = import.meta.glob< BlockJson >(
-	'../../components/{content,interactive}/*/integrations/wp/block.json',
+	'../../components/{content,live,interactive}/*/integrations/wp/block.json',
 	{
 		eager: true,
 		import: 'default',
@@ -60,7 +63,7 @@ const examples: Record<
 > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< Record< string, unknown > >(
-			'../../components/{content,interactive}/*/example.json',
+			'../../components/{content,live,interactive}/*/example.json',
 			{
 				eager: true,
 				import: 'default',
@@ -74,7 +77,7 @@ type Preset = { name: string; props: Record< string, unknown > };
 const presets: Record< string, Preset[] > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< Preset[] >(
-			'../../components/{content,interactive}/*/*.presets.ts',
+			'../../components/{content,live,interactive}/*/*.presets.ts',
 			{
 				eager: true,
 				import: 'PRESETS',
@@ -89,7 +92,8 @@ const blocks = Object.entries( blockJsons ).map( ( [ file, json ] ) => {
 	return {
 		component,
 		json,
-		// A dynamic block has render.php and saves no markup, only its attributes.
+		// A dynamic block (live or interactive) has render.php and saves no markup, only its
+		// attributes.
 		dynamic: Boolean( json.render ),
 		// The defaults, then its example or each of its presets' props.
 		cases: {
@@ -111,6 +115,7 @@ test( 'finds every block', () => {
 	expect( blocks.map( ( block ) => block.component ).sort() ).toEqual( [
 		'card',
 		'degree-finder',
+		'event-list',
 		'hero',
 		'highlight',
 		'section',
@@ -124,14 +129,12 @@ describe.each( blocks )(
 			expect( getBlockType( json.name ) ).toBeDefined();
 		} );
 
-		// WHY: the inserter groups blocks by kind, as Storybook does: an interactive block (one
-		// render.php renders) in UCF Interactive, the rest in UCF Content (plugins/shared).
+		// WHY: the inserter groups blocks by kind, as Storybook does: UCF Content, UCF Live and
+		// UCF Interactive (integrations/wp/kind.ts, plugins/shared).
 		// WHY block.json, not the registered block: the categories are registered in PHP, so
 		// here WordPress drops a category it doesn't know.
 		test( 'sits in its kind’s inserter category', () => {
-			expect( json.category ).toBe(
-				dynamic ? 'ucf-interactive' : 'ucf-content'
-			);
+			expect( json.category ).toBe( CATEGORY_OF[ kindOf( json ) ] );
 		} );
 
 		describe.each( Object.entries( cases ) )( '%s', ( _, attributes ) => {

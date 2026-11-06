@@ -135,6 +135,38 @@ describe( 'planComponent', () => {
 		);
 	} );
 
+	test( 'a live component gets render.php with its PHP copies, and no save or view', () => {
+		const files = plan( {
+			name: 'news-list',
+			kind: 'live',
+			plugin: 'ucf-content',
+		} );
+		const names = [ ...files.keys() ];
+		expect( names ).toEqual(
+			expect.arrayContaining( [
+				'components/live/news-list/client.ts',
+				'components/live/news-list/integrations/wp/render.php',
+				'components/live/news-list/integrations/wp/client.php',
+				'components/live/news-list/integrations/wp/markup.php',
+				'components/live/news-list/tests/NewsList.php.test.tsx',
+			] )
+		);
+		for ( const absent of [ 'save.tsx', 'view.tsx' ] ) {
+			expect( names ).not.toContain(
+				`components/live/news-list/integrations/wp/${ absent }`
+			);
+		}
+		const block = JSON.parse(
+			files.get( 'components/live/news-list/integrations/wp/block.json' )
+		);
+		expect( block.category ).toBe( 'ucf-live' );
+		expect( block.viewScript ).toBeUndefined();
+		// WHY: PHP functions are prefixed by their plugin (phpcs.xml.dist).
+		expect(
+			files.get( 'components/live/news-list/integrations/wp/client.php' )
+		).toContain( 'function ucf_content_news_list_items( $feed )' );
+	} );
+
 	test( 'names the block after its plugin', () => {
 		const block = JSON.parse(
 			plan().get(
@@ -200,7 +232,7 @@ describe( 'planComponent', () => {
 
 	// FIX: the templates are template literals, so a backtick in them is written \`. Written
 	// \\\` it came out as a backslash and a backtick in the new files' comments.
-	test.each( [ 'content', 'interactive', 'primitive' ] )(
+	test.each( [ 'content', 'live', 'interactive', 'primitive' ] )(
 		'writes no stray backslash before a backtick: %s',
 		( kind ) => {
 			const files = planComponent( {

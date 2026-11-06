@@ -1,0 +1,162 @@
+[
+	{
+		"event_id": "1155606",
+		"eventinstance_id": "4223708",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4223708",
+		"title": "PAWS-a-tively Stress Free",
+		"subtitle": null,
+		"description": "<p>Need a stress break as we head into the last few weeks of the semester? Stop by CAPS and meet our therapy dog friends. The dogs will be at CAPS from 11:00 am to 1:00 pm and ready for snuggles.</p>",
+		"location": "Counseling and Psychological Services",
+		"location_url": "https://map.ucf.edu/locations/27/counseling-and-psychological-services-caps/",
+		"virtual_url": null,
+		"registration_link": null,
+		"registration_info": null,
+		"starts": "Fri, 06 Nov 2026 11:00:00 -0500",
+		"ends": "Fri, 06 Nov 2026 13:00:00 -0500",
+		"ongoing": "False",
+		"category": "Health & Well-being",
+		"tags": [ "Stress Management", "therapy dog", "Counseling" ],
+		"url": "https://events.ucf.edu/event/4223708/paws-a-tively-stress-free/"
+	},
+	{
+		"event_id": "1155624",
+		"eventinstance_id": "4223733",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4223733",
+		"title": "Guest Artist Masterclass: John Bruce Yeh, clarinet",
+		"subtitle": null,
+		"description": "<p><span>Please join us at UCF for a clarinet masterclass with the highly regarded and versatile clarinetist John Bruce Yeh, Assistant Principal Clarinet and E-flat Clarinet of the Chicago Symphony Orchestra.</span></p>\n<p>Admission is Free.</p>",
+		"location": "PAC-Music, M120: 120",
+		"location_url": "https://map.ucf.edu/locations/m119/performing-arts-center-music-pac/",
+		"virtual_url": null,
+		"registration_link": null,
+		"registration_info": null,
+		"starts": "Fri, 06 Nov 2026 11:30:00 -0500",
+		"ends": "Fri, 06 Nov 2026 12:30:00 -0500",
+		"ongoing": "False",
+		"category": "Workshop/Conference",
+		"tags": [ "Music", "ucf music" ],
+		"url": "https://events.ucf.edu/event/4223733/guest-artist-masterclass-john-bruce-yeh-clarinet/"
+	},
+	{
+		"event_id": "1139329",
+		"eventinstance_id": "4197667",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4197667",
+		"title": "Belay Class",
+		"subtitle": null,
+		"description": "<p>One of the best ways to make the most of the UCF Climbing Tower is to become belay certified! This Climbing Tower-specific certification allows you to belay your friends while continuing to build your climbing skills.&nbsp;</p>\n<p><strong>The Process:</strong></p>\n<p>1. <strong>Take a<span>&nbsp;</span>belay class</strong></p>\n<p>Start with a<span>&nbsp;</span>belay class, where you'll learn the basics of belaying and climbing safety, including the belay method accepted at the UCF Climbing Tower. You'll also get to practice one-on-one with the UCF Climbing Tower staff.<span>&nbsp;</span></p>\n<p><span>Please wear comfortable athletic clothing. Long athletic pants are recommended but not required. You'll be required to climb during the class. If you have your own climbing equipment, we encourage you to bring it.</span><span>&nbsp;</span></p>\n<p><span>2. <strong>Pass the belay test</strong></span></p>\n<p>After demonstrating competency in the required safety and climbing skills, you'll complete a belay test. The test includes questions about the information covered in class and a skills test.</p>\n<p>You must demonstrate all technical aspects of the UCF Climbing Tower belay procedure correctly to pass. If you don't pass the first time, you'll be required to retake the test before becoming certified.&nbsp;</p>\n<p>3. <strong>Complete&nbsp;five&nbsp;belay check-offs</strong></p>\n<p>Once you've completed the class and passed the test, you'll need to complete<span>&nbsp;</span>five&nbsp;belay check-offs at the UCF Climbing Tower during normal operating hours. These check-offs ensure you can consistently and safely perform the UCF Climbing Tower belay procedure.</p>\n<p>When you're ready to complete a check-off, let a Climbing Tower staff member know, and they'll help you get started.</p>\n<p>4. <strong>Get your belay certification card</strong></p>\n<p>After completing all the steps, you'll receive your<span>&nbsp;</span>belay certification card. Be sure to bring it with you whenever you visit the Climbing Tower!&nbsp;</p>\n<p><strong>How To Register for a Belay Class:</strong></p>\n<p><span>Register for a belay class at the Recreation and Wellness Center (RWC) Climbing Tower front desk during normal business hours. Students can take the stairs or elevators to the first floor, then go left. The desk is behind the stairs in the northeast corner of the main building.</span></p>\n<p><span>Registration opens two weeks before each class, and participants must register&nbsp;at least 48 hours in advance. Space is limited to eight people per class.</span></p>\n<p><span>Belay classes are free for current UCF students and RWC members with an active membership. </span></p>\n<p><span>Need to cancel your registration?&nbsp;<strong>You must cancel at least 48 hours before the class to avoid a $30.00 forfeiture fee. No-shows for belay or climbing technique classes and late cancellations will also result in the fee.</strong></span></p>\n<p><strong>How to Cancel:</strong></p>\n<p>Cancel your registration by visiting the Climbing Tower or the Outdoor Adventure Center during open hours, or by emailing outdoor@ucf.edu.</p>\n<p><strong>Fall 2026 Belay Classes:&nbsp;</strong></p>\n<ul>\n<li><span>Friday, Sept. 11: Noon&ndash;2 p.m.</span></li>\n<li><span>Sunday, Sept. 27: 4&ndash;6 p.m.</span></li>\n<li><span>Friday, Oct. 2: 7&ndash;9 p.m.</span></li>\n<li><span>Sunday, Oct. 18: 4&ndash;6 p.m.</span></li>\n<li><span>Friday, Nov. 6: Noon&ndash;2 p.m.</span></li>\n</ul>",
+		"location": "UCF Climbing Tower",
+		"location_url": "https://rwc.sdes.ucf.edu/programs/outdoor-adventure/rock-climbing-tower/",
+		"virtual_url": null,
+		"registration_link": "https://ucfrwc.org/Program/GetProgramDetails?courseId=5e15dc1b-10b2-42be-a6b8-4ad27361cc6a",
+		"registration_info": null,
+		"starts": "Fri, 06 Nov 2026 12:00:00 -0500",
+		"ends": "Fri, 06 Nov 2026 14:00:00 -0500",
+		"ongoing": "True",
+		"category": "Recreation & Exercise",
+		"tags": [ "Climbing", "Outdoor", "belay", "Outdoor Adventure" ],
+		"url": "https://events.ucf.edu/event/4197667/belay-class/"
+	},
+	{
+		"event_id": "1139023",
+		"eventinstance_id": "4198196",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4198196",
+		"title": "Virtual Career Drop-In",
+		"subtitle": null,
+		"description": "<p>Join us this fall semester (Aug. 31&ndash;Nov. 20) on Fridays, any time between 1 and 3 p.m., via <a href=\"go.ucf.edu/CareerDropin\" target=\"_blank\">Zoom</a>.</p>\n<p>Ask quick career questions, or we can critique your:</p>\n<ul>\n<li>Resume</li>\n<li>LinkedIn/Handshake profile</li>\n<li>Cover letter</li>\n<li>Elevator pitch</li>\n</ul>\n<p>Can't come during this time? Visit us for in-person drop-ins Mondays and Wednesdays 10 a.m.-12 p.m., then again 1-3 p.m. Schedule an appointment on Handshake or through the <a href=\"https://career.ucf.edu/vmock/\" target=\"_blank\">VMock SMART Career Platform</a>.</p>",
+		"location": "Virtual",
+		"location_url": null,
+		"virtual_url": "http://go.ucf.edu/CareerDropIn",
+		"registration_link": "http://go.ucf.edu/CareerDropIn",
+		"registration_info": null,
+		"starts": "Fri, 06 Nov 2026 13:00:00 -0500",
+		"ends": "Fri, 06 Nov 2026 15:00:00 -0500",
+		"ongoing": "True",
+		"category": "Career/Jobs",
+		"tags": [
+			"resume",
+			"internships and jobs",
+			"cover letter",
+			"dixon career development center",
+			"career prep"
+		],
+		"url": "https://events.ucf.edu/event/4198196/virtual-career-drop-in/"
+	},
+	{
+		"event_id": "1161401",
+		"eventinstance_id": "4232030",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4232030",
+		"title": "UCF Men's Basketball vs. Yale",
+		"subtitle": null,
+		"description": "<p>The UCF men's basketball team hosts Yale at Addition Financial Arena.&nbsp;</p>\n<p>For the most up-to-date information, visit <a href=\"https://ucfknights.com/sports/mens-basketball\" target=\"_blank\">ucfknights.com/sports/mens-basketball</a>.</p>\n<p><strong>Tickets: <a href=\"https://ucfknights.com/athletics-ticketing-central\" target=\"_blank\">General Public</a> | <a href=\"https://ucfknights.com/studenttix\" target=\"_blank\">Students</a></strong></p>\n<p><strong>Follow UCF Men's Basketball on Social Media:</strong></p>\n<ul>\n<li>X/Twitter: <a href=\"https://x.com/UCF_MBB\" target=\"_blank\">@UCF_MBB</a></li>\n<li>Instagram: <a href=\"https://www.instagram.com/ucf.mbb/?hl=en\" target=\"_blank\">@ucf.mbb</a></li>\n<li>Facebook: <a href=\"https://www.facebook.com/UCFMensBasketball\" target=\"_blank\">UCF Men's Basketball page</a></li>\n</ul>",
+		"location": "Addition Financial Arena",
+		"location_url": "https://maps.app.goo.gl/ckEjpwWkRra5LCUF8",
+		"virtual_url": null,
+		"registration_link": null,
+		"registration_info": null,
+		"starts": "Fri, 06 Nov 2026 19:00:00 -0500",
+		"ends": "Fri, 06 Nov 2026 21:30:00 -0500",
+		"ongoing": "False",
+		"category": "Sports",
+		"tags": [
+			"UCF Athletics",
+			"Addition Financial Arena",
+			"UCF Men's Basketball"
+		],
+		"url": "https://events.ucf.edu/event/4232030/ucf-mens-basketball-vs-yale/"
+	},
+	{
+		"event_id": "1137539",
+		"eventinstance_id": "4225904",
+		"calendar": {
+			"id": 1,
+			"title": "Events at UCF",
+			"slug": "events-at-ucf",
+			"url": "https://events.ucf.edu/calendar/1/events-at-ucf/"
+		},
+		"id": "4225904",
+		"title": "RWC's MidKnight 5k",
+		"subtitle": null,
+		"description": "<p>Join us for the Recreation and Wellness Center's Annual MidKnight 5K event. Participants will walk, jog or run 3.1 miles (5 kilometers) around UCF's campus at midnight. We will meet at the reflecting pond, there will be a DJ, snacks and the first 300 registered participants to arrive will receive T-shirts when checking into the event.&nbsp;</p>\n<p></p>",
+		"location": "UCF Reflecting Pond",
+		"location_url": "https://www.google.com/maps/place/4365+Andromeda+Loop+N,+Orlando,+FL+32816/data=!4m2!3m1!1s0x88e7685dd887c7ff:0xcf709adf2e93f5d2?sa=X&ved=0ahUKEwjYxO7qo5LSAhUBdSYKHQgVAOkQ8gEIGzAA",
+		"virtual_url": null,
+		"registration_link": "https://ucfrwc.org/Program/GetProgramDetails?courseId=73f3c74a-de04-47d3-a18b-9fa900be0ccc",
+		"registration_info": "Registration opens October 19th!",
+		"starts": "Fri, 06 Nov 2026 22:30:00 -0500",
+		"ends": "Sat, 07 Nov 2026 01:00:00 -0500",
+		"ongoing": "True",
+		"category": "Recreation & Exercise",
+		"tags": [ "midnight", "race", "Fitness", "running" ],
+		"url": "https://events.ucf.edu/event/4225904/rwcs-midknight-5k/"
+	}
+]

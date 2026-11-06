@@ -56,7 +56,7 @@ export function syncAttributes( json, attributes ) {
  * @return {{ props: string, blockJson: string }[]} Absolute paths.
  */
 function components( root ) {
-	return [ 'content', 'interactive' ].flatMap( ( bucket ) => {
+	return [ 'content', 'live', 'interactive' ].flatMap( ( bucket ) => {
 		const dir = path.join( root, 'components', bucket );
 		if ( ! existsSync( dir ) ) {
 			return [];
