@@ -70,7 +70,7 @@ Generated output is **never committed** and never edited by hand: `dist/`, `plug
 
 Other useful scripts:
 
-- `npm run new:component` — start a component: its folder, and every list that names it. See "Adding a component" in the README.
+- `npm run new:component` — start a component. [`docs/first-component.md`](docs/first-component.md) walks you through it.
 - `npm run deploy:watch` — rebuild on every change and copy into your local WordPress and React sites. Copy `.env.example` to `.env` and set your paths first.
 - `npm run build` — tokens, then the npm package, then the plugins.
 - `npm run release:temp` — build, then collect every output into `temp-release/`.
@@ -84,6 +84,8 @@ Other useful scripts:
 `composer.json` pins `config.platform.php` to **8.1**. Without it, Composer resolves against whatever PHP the developer happens to be running and can lock a package that needs something newer. Run `composer update` on the pinned platform, not on your own.
 
 ### Before you write a component
+
+New to the library? Build one with [`docs/first-component.md`](docs/first-component.md) first.
 
 Decide its **kind** and its **name** first ([`docs/architecture.md`](docs/architecture.md), "Two kinds of component" and "Naming"):
 
@@ -104,14 +106,14 @@ Decide its **kind** and its **name** first ([`docs/architecture.md`](docs/archit
 
 New code ships with its test. The suites in `integrations/tests/` find every component on their own, and `npm run new:component` adds a new one to every list, so much of this is automatic:
 
-| You added                        | You write                                                                                                                                               |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A content component              | Its markup contract, `tests/{Name}.test.tsx` (copy `highlight/tests/Highlight.test.tsx`), and stories for its states                                    |
-| An interactive component         | A test for its data client with a fake `fetch` (see `degree-finder/tests/client.test.ts`), and stories for its states                                   |
-| A design (variation) for a frame | Nothing, if the frame already has designs: its `tests/variations.test.tsx` reads every entry. A frame's first designs need that test (copy Highlight's) |
-| A primitive                      | Stories for its states. The parity and Puck suites pick it up                                                                                           |
-| A script in `scripts/`           | A `scripts/{name}.test.mjs`                                                                                                                             |
-| A token or role in `tokens.json` | Nothing. The token tests read `tokens.json` and check the contrast of every role pair                                                                   |
+| You added                        | You write                                                                                                             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| A content component              | Its markup contract, `tests/{Name}.test.tsx` (copy `highlight/tests/Highlight.test.tsx`), and stories for its states  |
+| An interactive component         | A test for its data client with a fake `fetch` (see `degree-finder/tests/client.test.ts`), and stories for its states |
+| A design (preset) for a frame    | A story for it. `integrations/tests/presets.test.tsx` checks every preset on its own                                  |
+| A primitive                      | Stories for its states. The parity and Puck suites pick it up                                                         |
+| A script in `scripts/`           | A `scripts/{name}.test.mjs`                                                                                           |
+| A token or role in `tokens.json` | Nothing. The token tests read `tokens.json` and check the contrast of every role pair                                 |
 
 [`docs/architecture.md`](docs/architecture.md), "Tests", covers what each suite checks.
 

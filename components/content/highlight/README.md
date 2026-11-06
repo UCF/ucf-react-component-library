@@ -4,7 +4,7 @@ A content component and a frame: something pulled out of the page to stand on it
 a key figure, a ranking), with its source. Block `ucf-content/highlight`; Puck
 `@ucf/components/highlight/puck`. What each word means, and why the files are split this way:
 [docs/architecture.md](../../../docs/architecture.md), "A component's folder". What to edit for
-each change: [README.md](../../../README.md), "Changing a component".
+each change: [docs/first-component.md](../../../docs/first-component.md), "Changing it later".
 
 ## Object model
 

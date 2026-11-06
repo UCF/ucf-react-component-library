@@ -3,7 +3,8 @@
 **Read [`docs/architecture.md`](docs/architecture.md) before changing anything.** It is the
 single source for this repo's conventions and the reasoning behind them; this file does not
 restate them. Read `README.md` first for what the repo is and where each file lives.
-[`docs/todo.md`](docs/todo.md) lists what is deliberately not done yet.
+[`docs/first-component.md`](docs/first-component.md) walks a new developer through the Card and
+then their own component. [`docs/todo.md`](docs/todo.md) lists open work.
 
 ## What is in the architecture doc
 
@@ -24,7 +25,7 @@ restate them. Read `README.md` first for what the repo is and where each file li
 | Tokens, roles and fonts               | `--ucf-*` only; who sets roles; who loads fonts                 |
 | Changing a content component's markup | Major version plus a block deprecation                          |
 | Tests                                 | What each component needs                                       |
-| Gotchas that have already bitten      | The list not to "clean up"                                      |
+| Gotchas                               | The list not to "clean up"                                      |
 | Comments                              | The tag vocabulary                                              |
 
 ## Working practices
@@ -49,3 +50,11 @@ restate them. Read `README.md` first for what the repo is and where each file li
   `storybook-static/`.
 - **Comments say why, and are tagged.** The vocabulary is in the architecture doc. Keep a
   comment with its code when moving it, including the file paths it names.
+- **Docs describe the code as it is now, for someone reading it cold.** No dates, "decided",
+  "used to", "we tried", "now" or "no longer" in `README.md`, `CONTRIBUTING.md`, `docs/` or a
+  component's `README.md`. How a decision was reached belongs in the commit message and the
+  pull request. A `WHY` in a doc is one or two sentences on the current rule, not its history.
+  When work in `docs/todo.md` is done, delete it; don't mark it done. Code comments keep the
+  tag vocabulary (`FIX:` names a bug the line prevents).
+- **`docs/first-component.md` quotes the Card and `npm run new:component`'s output.** Update it
+  when either changes, and check its commands still run as written.

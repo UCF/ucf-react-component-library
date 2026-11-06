@@ -3,7 +3,8 @@
 A content component and a frame: a card's box with any content inside. Block
 `ucf-content/card`; Puck `@ucf/components/card/puck`. What each word means, and why the files
 are split this way: [docs/architecture.md](../../../docs/architecture.md), "A component's
-folder". What to edit for each change: [README.md](../../../README.md), "Changing a component".
+folder". What to edit for each change: [docs/first-component.md](../../../docs/first-component.md),
+"Changing it later". That guide also walks through every file here.
 
 On a React site, `<Card preset="pathway" content={ { eyebrow: 'Transfer', … } } />`; in Puck, a Design
 picker and a field per part, stored the same way. Either way, the preset's
@@ -62,4 +63,4 @@ Card
 | `integrations/wp/`        | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
 | `integrations/puck/`      | `config.tsx`: `puckConfig( Card )`, with `withTemplate()` and `withPreset()`                                                                                   |
 | `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
-| `tests/`                  | `Card.test.tsx` (markup), `presets.test.tsx`                                                                                                                   |
+| `tests/`                  | `Card.test.tsx` (markup); its presets are checked by `integrations/tests/presets.test.tsx`                                                                     |
