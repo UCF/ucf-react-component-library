@@ -51,13 +51,16 @@ export const PROPS = {
 		options: counts( 0, 12 ),
 		default: '0',
 	},
-	/** A heading above the list, or '' for none. */
+	/**
+	 * The list's heading, an h2 above the event titles (h3s). A11Y: required, so the titles
+	 * always sit under a heading one level up; an empty or blank one shows the default.
+	 */
 	title: {
 		type: 'text',
 		label: 'Heading',
-		help: 'Shown above the list. Leave empty when the section already has one.',
+		help: 'Every event list has a heading. Leave empty to use “Upcoming events”.',
 		panel: 'Display',
-		default: '',
+		default: 'Upcoming events',
 	},
 	/**
 	 * One column, or two side by side where the list is wide enough (one again on a phone or in
@@ -74,17 +77,20 @@ export const PROPS = {
 		],
 		default: '1',
 	},
-	/** Standard, or a larger date block and title, for a list that leads a page or section. */
-	size: {
+	/**
+	 * Whether each event shows its date block, the square with the month and day. Hidden, the
+	 * date is still in the line under the title.
+	 */
+	dates: {
 		type: 'choice',
-		label: 'Size',
+		label: 'Date blocks',
 		panel: 'Display',
 		control: 'radio',
 		options: [
-			{ value: 'standard', label: 'Standard' },
-			{ value: 'large', label: 'Large date and title' },
+			{ value: 'show', label: 'Show' },
+			{ value: 'hide', label: 'Hide' },
 		],
-		default: 'standard',
+		default: 'show',
 	},
 	/** Whether each event shows the start of its description. */
 	descriptions: {

@@ -13,14 +13,14 @@
  * date block, the title, then when and where.
  */
 import Heading from '../../primitives/heading/Heading.tsx';
-import type { EventListEditableProps } from './EventList.props.ts';
+import { PROPS, type EventListEditableProps } from './EventList.props.ts';
 import type { EventItem } from './types.ts';
 import { dateBlock, whenText } from './utils/dates.ts';
 
 export type EventListProps = Partial<
 	Pick<
 		EventListEditableProps,
-		'title' | 'columns' | 'size' | 'descriptions' | 'emptyMessage'
+		'title' | 'columns' | 'dates' | 'descriptions' | 'emptyMessage'
 	>
 > & {
 	/** The events to show, already fetched, in order (client.ts). */
@@ -29,11 +29,23 @@ export type EventListProps = Partial<
 	className?: string;
 };
 
+/**
+ * The heading to show: the one given, or the default when it is empty or only spaces.
+ * SYNC: ucf_events_event_list_markup() in integrations/wp/markup.php trims the same four
+ * characters. WHY not trim(): JavaScript's and PHP's differ in which spaces they remove.
+ *
+ * @param title The heading an editor set.
+ */
+function headingOf( title: string ) {
+	const trimmed = title.replace( /^[ \t\n\r]+|[ \t\n\r]+$/g, '' );
+	return trimmed || PROPS.title.default;
+}
+
 export default function EventList( {
 	events = [],
-	title = '',
+	title = PROPS.title.default,
 	columns = '1',
-	size = 'standard',
+	dates = 'show',
 	descriptions = 'hide',
 	emptyMessage = '',
 	className,
@@ -45,15 +57,13 @@ export default function EventList( {
 				.join( ' ' ) }
 			// WHY only when not the default: the default has no attribute to style.
 			data-columns={ columns === '2' ? '2' : undefined }
-			data-size={ size === 'large' ? 'large' : undefined }
+			data-dates={ dates === 'hide' ? 'hide' : undefined }
 		>
-			{ title ? (
-				<Heading
-					level={ 2 }
-					className="ucf-c-event-list__heading"
-					content={ title }
-				/>
-			) : null }
+			<Heading
+				level={ 2 }
+				className="ucf-c-event-list__heading"
+				content={ headingOf( title ) }
+			/>
 			{ events.length ? (
 				<ul className="ucf-c-event-list__items">
 					{ events.map( ( event ) => {
@@ -65,17 +75,19 @@ export default function EventList( {
 							>
 								{ /* A11Y: the date block is for the eye; the full date is in
 								     the <time> beside it, so it is hidden rather than read twice. */ }
-								<div
-									className="ucf-c-event-list__date"
-									aria-hidden="true"
-								>
-									<span className="ucf-c-event-list__month">
-										{ month }
-									</span>
-									<span className="ucf-c-event-list__day">
-										{ day }
-									</span>
-								</div>
+								{ dates === 'hide' ? null : (
+									<div
+										className="ucf-c-event-list__date"
+										aria-hidden="true"
+									>
+										<span className="ucf-c-event-list__month">
+											{ month }
+										</span>
+										<span className="ucf-c-event-list__day">
+											{ day }
+										</span>
+									</div>
+								) }
 								<div className="ucf-c-event-list__body">
 									<Heading
 										level={ 3 }

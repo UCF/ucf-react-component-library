@@ -78,7 +78,7 @@ export default function Edit( {
 						events={ state.events }
 						title={ attributes.title }
 						columns={ attributes.columns }
-						size={ attributes.size }
+						dates={ attributes.dates }
 						descriptions={ attributes.descriptions }
 						emptyMessage={ attributes.emptyMessage }
 					/>

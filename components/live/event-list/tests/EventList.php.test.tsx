@@ -36,13 +36,13 @@ const fixture = JSON.parse(
 
 type Props = Pick<
 	EventListEditableProps,
-	'title' | 'columns' | 'size' | 'descriptions' | 'emptyMessage'
+	'title' | 'columns' | 'dates' | 'descriptions' | 'emptyMessage'
 >;
 
 const DISPLAY: Props = {
 	title: '',
 	columns: '1',
-	size: 'standard',
+	dates: 'show',
 	descriptions: 'hide',
 	emptyMessage: 'There are no upcoming events.',
 };
@@ -114,8 +114,23 @@ const cases: Record<
 		...DISPLAY,
 		title: 'Upcoming “events” & more',
 		columns: '2',
-		size: 'large',
 		descriptions: 'show',
+	},
+	'a blank heading, which falls back to the default': {
+		feed: fixture,
+		limit: 1,
+		offset: 0,
+		now: MORNING,
+		...DISPLAY,
+		title: '  ',
+	},
+	'no date blocks': {
+		feed: fixture,
+		limit: 3,
+		offset: 0,
+		now: MORNING,
+		...DISPLAY,
+		dates: 'hide',
 	},
 	'an offset': {
 		feed: fixture,

@@ -52,8 +52,8 @@ UCF Events Plugin's `[ucf-events]` shortcode. To finish:
   `getBlocks()` in the editor and the page's HTML. Its PHP test runs against stubs. Also check
   the editor preview loads the feed from the editor's origin (the feed allows any origin).
 - **Settle its names before any site uses it:** the block `ucf-events/event-list` and its
-  attributes (`feedUrl`, `limit`, `offset`, `title`, `descriptions`, `emptyMessage`) are
-  permanent once saved in a post.
+  attributes (`feedUrl`, `limit`, `offset`, `title`, `columns`, `dates`,
+  `descriptions`, `emptyMessage`) are permanent once saved in a post.
 - **Its look against the theme's Events block,** in Storybook and on a page: the date block,
   spacing, and the AP date and time.
 - **Event structured data.** The theme writes schema.org `Event` nodes for its mock events

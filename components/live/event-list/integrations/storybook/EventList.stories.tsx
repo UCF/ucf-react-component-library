@@ -23,7 +23,7 @@ const meta = {
 		events: SAMPLE_EVENTS.slice( 0, Number( defaults.limit ) ),
 		title: defaults.title,
 		columns: defaults.columns,
-		size: defaults.size,
+		dates: defaults.dates,
 		descriptions: defaults.descriptions,
 		emptyMessage: defaults.emptyMessage,
 	},
@@ -35,8 +35,8 @@ type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {};
 
-export const WithHeadingAndDescriptions: Story = {
-	args: { title: 'Upcoming events', descriptions: 'show' },
+export const WithDescriptions: Story = {
+	args: { descriptions: 'show' },
 };
 
 export const Six: Story = {
@@ -48,12 +48,8 @@ export const TwoColumns: Story = {
 	args: { events: SAMPLE_EVENTS, columns: '2', descriptions: 'show' },
 };
 
-export const Large: Story = {
-	args: { title: 'Upcoming events', size: 'large' },
-};
-
-export const LargeInTwoColumns: Story = {
-	args: { events: SAMPLE_EVENTS.slice( 0, 4 ), columns: '2', size: 'large' },
+export const NoDateBlocks: Story = {
+	args: { dates: 'hide' },
 };
 
 export const NoEvents: Story = {

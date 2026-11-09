@@ -65,7 +65,7 @@ if ( ! function_exists( 'ucf_events_event_list_markup' ) ) {
 	 * The list.
 	 *
 	 * @param array<int, array<string, string>> $events  From ucf_events_event_list_events().
-	 * @param array<string, string>             $props   title, columns, size, descriptions,
+	 * @param array<string, string>             $props   title, columns, dates, descriptions,
 	 *                                                   emptyMessage.
 	 * @param string                            $wrapper The root's attributes, escaped:
 	 *                                                   get_block_wrapper_attributes().
@@ -76,17 +76,19 @@ if ( ! function_exists( 'ucf_events_event_list_markup' ) ) {
 		$ap_months    = array( 'Jan.', 'Feb.', 'March', 'April', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.' );
 		$short_months = array( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' );
 
-		$title         = (string) ( $props['title'] ?? '' );
+		// A11Y: every list has a heading; an empty or blank one shows the default.
+		// SYNC: headingOf() and PROPS.title.default in EventList.tsx and EventList.props.ts.
+		$title         = trim( (string) ( $props['title'] ?? '' ), " \t\n\r" );
+		$title         = '' === $title ? 'Upcoming events' : $title;
+		$show_dates    = 'hide' !== ( $props['dates'] ?? 'show' );
 		$show_summary  = 'show' === ( $props['descriptions'] ?? 'hide' );
 		$empty_message = (string) ( $props['emptyMessage'] ?? '' );
-		// SYNC: data-columns and data-size in EventList.tsx, written only when not the default.
+		// SYNC: data-columns and data-dates in EventList.tsx, written only when not the default.
 		$columns = '2' === ( $props['columns'] ?? '1' ) ? ' data-columns="2"' : '';
-		$size    = 'large' === ( $props['size'] ?? 'standard' ) ? ' data-size="large"' : '';
+		$dates   = $show_dates ? '' : ' data-dates="hide"';
 
-		$html = '<div ' . $wrapper . $columns . $size . '>';
-		if ( '' !== $title ) {
-			$html .= '<h2 class="ucf-c-event-list__heading ucf-c ucf-c-heading">' . esc_html( $title ) . '</h2>';
-		}
+		$html  = '<div ' . $wrapper . $columns . $dates . '>';
+		$html .= '<h2 class="ucf-c-event-list__heading ucf-c ucf-c-heading">' . esc_html( $title ) . '</h2>';
 
 		if ( $events ) {
 			$html .= '<ul class="ucf-c-event-list__items">';
@@ -100,10 +102,12 @@ if ( ! function_exists( 'ucf_events_event_list_markup' ) ) {
 
 				$html .= '<li class="ucf-c-event-list__item">';
 				// A11Y: the date block is for the eye; the full date is in the <time> beside it.
-				$html .= '<div class="ucf-c-event-list__date" aria-hidden="true">'
-					. '<span class="ucf-c-event-list__month">' . esc_html( $month ) . '</span>'
-					. '<span class="ucf-c-event-list__day">' . esc_html( $day ) . '</span>'
-					. '</div>';
+				if ( $show_dates ) {
+					$html .= '<div class="ucf-c-event-list__date" aria-hidden="true">'
+						. '<span class="ucf-c-event-list__month">' . esc_html( $month ) . '</span>'
+						. '<span class="ucf-c-event-list__day">' . esc_html( $day ) . '</span>'
+						. '</div>';
+				}
 				$html .= '<div class="ucf-c-event-list__body">';
 				$html .= '<h3 class="ucf-c-event-list__title ucf-c ucf-c-heading"><a href="' . esc_url( $event['url'] ) . '">' . esc_html( $event['title'] ) . '</a></h3>';
 				$html .= '<p class="ucf-c-event-list__meta">'

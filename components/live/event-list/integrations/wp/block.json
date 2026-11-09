@@ -20,10 +20,6 @@
 			"type": "string",
 			"default": "0"
 		},
-		"title": {
-			"type": "string",
-			"default": ""
-		},
 		"descriptions": {
 			"type": "string",
 			"default": "hide"
@@ -36,9 +32,13 @@
 			"type": "string",
 			"default": "1"
 		},
-		"size": {
+		"dates": {
 			"type": "string",
-			"default": "standard"
+			"default": "show"
+		},
+		"title": {
+			"type": "string",
+			"default": "Upcoming events"
 		}
 	},
 	"supports": {

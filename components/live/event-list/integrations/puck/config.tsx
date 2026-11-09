@@ -29,7 +29,7 @@ function Preview( props: EventListEditableProps ) {
 			events={ events }
 			title={ props.title }
 			columns={ props.columns }
-			size={ props.size }
+			dates={ props.dates }
 			descriptions={ props.descriptions }
 			emptyMessage={ props.emptyMessage }
 		/>
@@ -47,7 +47,7 @@ const config: PuckComponentConfig< EventListEditableProps > = {
 		offset,
 		title,
 		columns,
-		size,
+		dates,
 		descriptions,
 		emptyMessage,
 	} ) => (
@@ -57,7 +57,7 @@ const config: PuckComponentConfig< EventListEditableProps > = {
 			offset={ offset }
 			title={ title }
 			columns={ columns }
-			size={ size }
+			dates={ dates }
 			descriptions={ descriptions }
 			emptyMessage={ emptyMessage }
 		/>

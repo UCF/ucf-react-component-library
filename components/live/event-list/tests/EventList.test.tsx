@@ -19,7 +19,7 @@ const cases: Record< string, EventListProps > = {
 		descriptions: 'show',
 	},
 	'two columns': { events: SAMPLE_EVENTS.slice( 0, 2 ), columns: '2' },
-	large: { events: SAMPLE_EVENTS.slice( 0, 2 ), size: 'large' },
+	'no date blocks': { events: SAMPLE_EVENTS.slice( 0, 2 ), dates: 'hide' },
 	'no events, with a message': {
 		events: [],
 		emptyMessage: 'There are no upcoming events.',
@@ -35,11 +35,43 @@ describe( 'EventList', () => {
 		} );
 	}
 
-	it( 'shows nothing in place of the list when there are no events and no message', () => {
-		expect( renderToStaticMarkup( <EventList /> ) ).toBe(
-			'<div class="ucf-c ucf-c-event-list"></div>'
+	// A11Y: the event titles are h3s, so the list's own heading is the h2 above them.
+	it( 'writes its heading as an h2 before the list', () => {
+		const html = renderToStaticMarkup(
+			<EventList
+				events={ SAMPLE_EVENTS.slice( 0, 1 ) }
+				title="Upcoming events"
+			/>
+		);
+		expect( html ).toMatch(
+			/^<div[^>]*><h2 class="ucf-c-event-list__heading[^"]*">Upcoming events<\/h2><ul/
 		);
 	} );
+
+	it( 'leaves out the date blocks when they are hidden', () => {
+		const html = renderToStaticMarkup(
+			<EventList events={ SAMPLE_EVENTS.slice( 0, 2 ) } dates="hide" />
+		);
+		expect( html ).toContain( 'data-dates="hide"' );
+		expect( html ).not.toContain( 'ucf-c-event-list__date' );
+		// The full date is still there, in the meta line.
+		expect( html ).toContain( '<time' );
+	} );
+
+	it( 'shows only its heading when there are no events and no message', () => {
+		expect( renderToStaticMarkup( <EventList /> ) ).toBe(
+			'<div class="ucf-c ucf-c-event-list"><h2 class="ucf-c-event-list__heading ucf-c ucf-c-heading">Upcoming events</h2></div>'
+		);
+	} );
+
+	// A11Y: every list has a heading. An emptied or blank one falls back to the default.
+	for ( const title of [ '', '  ' ] ) {
+		it( `uses the default heading for ${ JSON.stringify( title ) }`, () => {
+			expect(
+				renderToStaticMarkup( <EventList title={ title } /> )
+			).toContain( '>Upcoming events</h2>' );
+		} );
+	}
 
 	// A11Y: the date block repeats what the <time> says, so it is hidden from screen readers.
 	it( 'gives each event its full start time, read once', () => {
