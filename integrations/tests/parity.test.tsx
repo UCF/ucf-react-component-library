@@ -241,6 +241,39 @@ test( 'every component has a WordPress block', () => {
 // saves its markup; a live one is written whole by render.php; an interactive one is a
 // render.php container the browser builds (integrations/wp/kind.ts). A component in the wrong
 // bucket would be built, documented and scaffolded as another kind.
+// Each component's core and block entry, as text, to read their imports.
+const coreSources = import.meta.glob< string >(
+	'../../components/{content,live,interactive}/*/*.tsx',
+	{ eager: true, query: '?raw', import: 'default' }
+);
+const blockEntrySources = import.meta.glob< string >(
+	'../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	{ eager: true, query: '?raw', import: 'default' }
+);
+
+// FIX: a primitive has no block of its own, so its rules reach WordPress only through the
+// block entry of each component that uses it (webpack builds a block's stylesheet from what
+// its script imports). Without the import, the primitive is unstyled on any theme that
+// doesn't style the same elements.
+test( 'every block imports the styles of the primitives its core uses', () => {
+	const missing = new Set< string >();
+	for ( const [ file, source ] of Object.entries( coreSources ) ) {
+		const component = componentOf( file );
+		const entry = fileOf( blockEntrySources, component );
+		if ( entry === undefined ) {
+			continue;
+		}
+		for ( const [ , primitive ] of source.matchAll(
+			/from '\.\.\/\.\.\/primitives\/([a-z-]+)\//g
+		) ) {
+			if ( ! entry.includes( `primitives/${ primitive }/style.css'` ) ) {
+				missing.add( `${ component } uses ${ primitive }` );
+			}
+		}
+	}
+	expect( [ ...missing ] ).toEqual( [] );
+} );
+
 test( 'every component sits in the bucket for its kind', () => {
 	const misplaced = Object.entries( blockJsons )
 		.map( ( [ file, json ] ) => ( {

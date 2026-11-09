@@ -395,6 +395,9 @@ content, so in WordPress it holds core blocks (see "Frames").
   where Puck editors place it, since Puck has no core blocks. It has **no WordPress block**:
   WordPress editors use core's equivalent. Instead it has `integrations/wp/edit.tsx`, its editing
   version, which our blocks' `edit()` renders where their `save()` renders the plain primitive.
+  With no block, its `style.css` reaches WordPress only through each block that uses it: that
+  block's `integrations/wp/index.tsx` imports it before the component's own `style.css`
+  (`integrations/tests/parity.test.tsx` fails when one is missing).
 - **Its settings are core's.** Props are named after the equivalent core block's attributes
   (the Button's `text`, `url`, `linkTarget`, and core's Fill and Outline styles), and its editing
   version uses core's tools (`PlainText` or `RichText`, `LinkControl`, `MediaUpload`). An editor

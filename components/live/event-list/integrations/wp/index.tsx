@@ -1,5 +1,6 @@
 /** Registers the Event List's block. */
 // WHY imported here: webpack builds the block's stylesheet from what its script imports.
+import '../../../../primitives/heading/style.css';
 import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 

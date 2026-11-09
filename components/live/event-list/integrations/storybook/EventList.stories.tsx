@@ -5,6 +5,9 @@ import { argTypesOf } from '../../../../../integrations/storybook/arg-types.ts';
 import EventList from '../../EventList.tsx';
 import { PROPS } from '../../EventList.props.ts';
 import { SAMPLE_EVENTS } from '../../sample-data.ts';
+// FIX: the Heading primitive's rules, first, so the list's overrides follow them. Without it
+// they arrived only once another story (the Hero's) had loaded them.
+import '../../../../primitives/heading/style.css';
 import '../../style.css';
 
 const defaults = defaultsIn( PROPS, 'wp' );
