@@ -7,10 +7,7 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
-	stories: [
-		'../primitives/**/*.stories.@(ts|tsx)',
-		'../components/**/*.stories.@(ts|tsx)',
-	],
+	stories: [ '../components/**/*.stories.@(ts|tsx)' ],
 	addons: [ '@storybook/addon-a11y', '@storybook/addon-vitest' ],
 	// WHY: serves .storybook/public/ at the root, so the logo and favicon load by name.
 	staticDirs: [ './public' ],

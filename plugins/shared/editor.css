@@ -44,7 +44,7 @@
 /*
  * The Button's label field sizes to its text, as the label on the page does. A textarea can't
  * size to its content in every browser yet, so a hidden copy of the text beside it (the
- * wrapper's data-value) sets the width. SYNC: primitives/button/adapters/wp/edit.tsx.
+ * wrapper's data-value) sets the width. SYNC: components/primitives/button/integrations/wp/edit.tsx.
  */
 .ucf-c-button__field {
 	display: inline-grid;

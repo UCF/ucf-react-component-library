@@ -6,7 +6,7 @@
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: UCF Web Communications
- * License: GPL-2.0-or-later
+ * License: GPL-3.0-or-later
  * Text Domain: ucf-degrees
  *
  * @package ucf-degrees
@@ -23,7 +23,7 @@ ucf_components_register_plugin( __DIR__ . '/build', plugins_url( 'build', __FILE
 /**
  * Site-wide settings for the Degree Finder, passed to the component as props.
  *
- * WHY only overrides: the component's own defaults (components/degree-finder/defaults.ts)
+ * WHY only overrides: the component's own defaults (components/interactive/degree-finder/defaults.ts)
  * apply to anything this leaves out, so the default API address lives in one place. The one
  * exception is the search page, which render.php also needs for its no-JavaScript link.
  *
@@ -39,7 +39,7 @@ function ucf_degrees_degree_finder_settings() {
 	return apply_filters(
 		'ucf_degrees_degree_finder_settings',
 		array(
-			// SYNC: DEFAULTS.searchUrl in components/degree-finder/defaults.ts.
+			// SYNC: DEFAULTS.searchUrl in components/interactive/degree-finder/defaults.ts.
 			'searchUrl' => 'https://www.ucf.edu/degree-search/',
 		)
 	);
@@ -50,7 +50,7 @@ function ucf_degrees_degree_finder_settings() {
  *
  * WHY: priority 20 runs after shared.php has registered the blocks on the default priority,
  * so their editor script handles exist.
- * SYNC: each window name is declared in that component's adapters/wp/settings.ts.
+ * SYNC: each window name is declared in that component's integrations/wp/settings.ts.
  *
  * @return void
  */

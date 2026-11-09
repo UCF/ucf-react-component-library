@@ -1,0 +1,53 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/card",
+	"title": "Card",
+	"category": "ucf-content",
+	"description": "A card: a box with any blocks inside. Pick a design (story, next step, audience tile, pathway, media tile) or start plain.",
+	"keywords": [ "card", "box", "container", "frame" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"variant": {
+			"type": "string",
+			"default": "plain"
+		},
+		"composition": {
+			"type": "string",
+			"default": ""
+		},
+		"imageSrc": {
+			"type": "string",
+			"default": ""
+		},
+		"imageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"imageId": {
+			"type": "number",
+			"default": 0
+		},
+		"overlay": {
+			"type": "string",
+			"default": "tint"
+		},
+		"contentAlign": {
+			"type": "string",
+			"default": "start"
+		},
+		"contentPosition": {
+			"type": "string",
+			"default": "top"
+		},
+		"aspectRatio": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}

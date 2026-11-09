@@ -20,10 +20,10 @@ const COPIED = [
 	'package.json',
 	'plugins/ucf-content/plugin.json',
 	'plugins/ucf-degrees/plugin.json',
-	'components/_config/parity.test.tsx',
-	'components/_config/blocks.test.tsx',
-	'components/_config/puck.test.tsx',
-	'components/stat/index.ts',
+	'integrations/tests/parity.test.tsx',
+	'integrations/tests/blocks.test.tsx',
+	'integrations/tests/puck.test.tsx',
+	'components/content/highlight/index.ts',
 ];
 
 let root;
@@ -51,7 +51,7 @@ describe( 'componentNames', () => {
 		} );
 	} );
 
-	// WHY "_config": components/_config/ is not a component, and no name may take it.
+	// WHY "_config": a name must start with a letter, so no folder for shared code is taken.
 	test.each( [
 		'Quote',
 		'pull_quote',
@@ -81,7 +81,9 @@ describe( 'planComponent', () => {
 		} );
 
 	test( 'refuses a component that already exists', () => {
-		expect( () => plan( { name: 'stat' } ) ).toThrow( /already exists/ );
+		expect( () => plan( { name: 'highlight' } ) ).toThrow(
+			/already exists/
+		);
 	} );
 
 	test( 'refuses an unknown kind or plugin', () => {
@@ -91,7 +93,7 @@ describe( 'planComponent', () => {
 
 	// WHY: all or nothing. A list it can't find must stop it before anything is written.
 	test( 'stops when a list it edits is missing', () => {
-		rmSync( path.join( root, 'components/_config/blocks.test.tsx' ) );
+		rmSync( path.join( root, 'integrations/tests/blocks.test.tsx' ) );
 		expect( () => plan() ).toThrow( /blocks\.test\.tsx is missing/ );
 	} );
 
@@ -99,15 +101,17 @@ describe( 'planComponent', () => {
 		const files = [ ...plan().keys() ];
 		expect( files ).toEqual(
 			expect.arrayContaining( [
-				'components/pull-quote/PullQuote.tsx',
-				'components/pull-quote/tests/PullQuote.test.tsx',
-				'components/pull-quote/stories/PullQuote.stories.tsx',
-				'components/pull-quote/example.json',
-				'components/pull-quote/adapters/wp/save.tsx',
+				'components/content/pull-quote/PullQuote.tsx',
+				'components/content/pull-quote/tests/PullQuote.test.tsx',
+				'components/content/pull-quote/integrations/storybook/PullQuote.stories.tsx',
+				'components/content/pull-quote/PullQuote.props.ts',
+				'components/content/pull-quote/PullQuote.parts.ts',
+				'components/content/pull-quote/PullQuote.presets.ts',
+				'components/content/pull-quote/integrations/wp/save.tsx',
 			] )
 		);
 		expect( files ).not.toContain(
-			'components/pull-quote/adapters/wp/render.php'
+			'components/content/pull-quote/integrations/wp/render.php'
 		);
 	} );
 
@@ -121,19 +125,21 @@ describe( 'planComponent', () => {
 		];
 		expect( files ).toEqual(
 			expect.arrayContaining( [
-				'components/tuition-calculator/defaults.ts',
-				'components/tuition-calculator/adapters/wp/render.php',
-				'components/tuition-calculator/adapters/wp/view.tsx',
+				'components/interactive/tuition-calculator/defaults.ts',
+				'components/interactive/tuition-calculator/integrations/wp/render.php',
+				'components/interactive/tuition-calculator/integrations/wp/view.tsx',
 			] )
 		);
 		expect( files ).not.toContain(
-			'components/tuition-calculator/adapters/wp/save.tsx'
+			'components/interactive/tuition-calculator/integrations/wp/save.tsx'
 		);
 	} );
 
 	test( 'names the block after its plugin', () => {
 		const block = JSON.parse(
-			plan().get( 'components/pull-quote/adapters/wp/block.json' )
+			plan().get(
+				'components/content/pull-quote/integrations/wp/block.json'
+			)
 		);
 		expect( block.name ).toBe( 'ucf-content/pull-quote' );
 		expect( block.textdomain ).toBe( 'ucf-content' );
@@ -149,13 +155,13 @@ describe( 'planComponent', () => {
 
 		expect( [ ...files.keys() ] ).toEqual(
 			expect.arrayContaining( [
-				'primitives/badge/Badge.tsx',
-				'primitives/badge/adapters/puck/config.tsx',
-				'primitives/badge/adapters/wp/edit.tsx',
+				'components/primitives/badge/Badge.tsx',
+				'components/primitives/badge/integrations/puck/config.tsx',
+				'components/primitives/badge/integrations/wp/edit.tsx',
 			] )
 		);
 		expect( [ ...files.keys() ] ).not.toContain(
-			'primitives/badge/adapters/wp/block.json'
+			'components/primitives/badge/integrations/wp/block.json'
 		);
 		expect(
 			JSON.parse( read( 'plugins/ucf-content/plugin.json' ) ).blocks
@@ -163,20 +169,20 @@ describe( 'planComponent', () => {
 
 		const exports = JSON.parse( read( 'package.json' ) ).exports;
 		expect( exports[ './primitives/badge' ].default ).toBe(
-			'./dist/primitives/badge/index.js'
+			'./dist/components/primitives/badge/index.js'
 		);
-		expect( read( 'components/_config/parity.test.tsx' ) ).toMatch(
+		expect( read( 'integrations/tests/parity.test.tsx' ) ).toMatch(
 			/expect\( primitives \)\.toEqual\(\s*\[[^\]]*'badge'/
 		);
-		expect( read( 'components/_config/puck.test.tsx' ) ).toContain(
-			"import badge from '../../primitives/badge/adapters/puck/config.tsx';"
+		expect( read( 'integrations/tests/puck.test.tsx' ) ).toContain(
+			"import badge from '../../components/primitives/badge/integrations/puck/config.tsx';"
 		);
 	} );
 
 	// FIX: adding an import once rewrote the block from the one-line imports it recognized,
 	// and dropped one that spans three lines (`import card, { withTemplate }`).
 	test( 'keeps every import already in puck.test.tsx', () => {
-		const file = 'components/_config/puck.test.tsx';
+		const file = 'integrations/tests/puck.test.tsx';
 		const importsIn = ( source ) =>
 			source.match( /^import [\s\S]*? from '[^']+';$/gm ) ?? [];
 		const before = importsIn( read( file ) );
@@ -218,7 +224,7 @@ describe( 'planComponent', () => {
 			planComponent( { root, name: 'badge', kind: 'primitive' } )
 		);
 		expect( () => plan( { name: 'badge' } ) ).toThrow(
-			/primitives\/badge already exists/
+			/components\/primitives\/badge already exists/
 		);
 	} );
 
@@ -227,14 +233,13 @@ describe( 'planComponent', () => {
 
 		const exports = JSON.parse( read( 'package.json' ) ).exports;
 		expect( exports[ './pull-quote' ].default ).toBe(
-			'./dist/components/pull-quote/index.js'
+			'./dist/components/content/pull-quote/index.js'
 		);
 		expect( exports[ './pull-quote/puck' ].default ).toBe(
-			'./dist/components/pull-quote/adapters/puck/config.js'
+			'./dist/components/content/pull-quote/integrations/puck/config.js'
 		);
-		expect( exports[ './pull-quote/example.json' ] ).toBe(
-			'./dist/components/pull-quote/example.json'
-		);
+		// A content component's sample is its presets.
+		expect( exports[ './pull-quote/example.json' ] ).toBeUndefined();
 
 		expect(
 			JSON.parse( read( 'plugins/ucf-content/plugin.json' ) ).blocks
@@ -250,7 +255,7 @@ describe( 'planComponent', () => {
 			[ 'parity', 'expect( components ).toEqual( [' ],
 			[ 'blocks', '.sort() ).toEqual( [' ],
 		] ) {
-			const source = read( `components/_config/${ file }.test.tsx` );
+			const source = read( `integrations/tests/${ file }.test.tsx` );
 			const list = source.slice( source.indexOf( start ) + start.length );
 			const names = list
 				.slice( 0, list.indexOf( ']' ) )
@@ -261,9 +266,9 @@ describe( 'planComponent', () => {
 			expect( names ).toEqual( [ ...names ].sort() );
 		}
 
-		const puck = read( 'components/_config/puck.test.tsx' );
+		const puck = read( 'integrations/tests/puck.test.tsx' );
 		expect( puck ).toContain(
-			"import pullQuote from '../pull-quote/adapters/puck/config.tsx';"
+			"import pullQuote from '../../components/content/pull-quote/integrations/puck/config.tsx';"
 		);
 		expect( puck ).toContain( "'Pull Quote': pullQuote," );
 		expect( puck ).toContain(

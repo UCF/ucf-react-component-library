@@ -26,10 +26,10 @@
 		}
 	},
 	"include": [
-		"primitives/**/*.ts",
-		"primitives/**/*.tsx",
 		"components/**/*.ts",
 		"components/**/*.tsx",
+		"integrations/**/*.ts",
+		"integrations/**/*.tsx",
 		"examples/**/*.ts",
 		"examples/**/*.tsx",
 		".storybook/*.ts",

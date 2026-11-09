@@ -86,3 +86,30 @@ echo json_encode( array( 'actions' => $GLOBALS['actions'] ) );
 		expect( JSON.parse( output ) ).toEqual( { actions: 4 } );
 	}
 );
+
+// WHY: two plugins each add the categories through their copy of shared.php. Each must appear
+// once, first, and in the order Storybook groups them.
+test.skipIf( ! hasPhp )(
+	'adds the UCF categories once each, first, whatever already holds them',
+	() => {
+		const script = path.join( tmp, 'categories.php' );
+		writeFileSync(
+			script,
+			`<?php
+define( 'ABSPATH', __DIR__ );
+function __( $text ) { return $text; }
+require_once ${ JSON.stringify( path.join( repo, 'plugins/shared/shared.php' ) ) };
+
+$once  = ucf_components_block_category( array( array( 'slug' => 'text' ) ) );
+$twice = ucf_components_block_category( $once );
+echo json_encode( array_column( $twice, 'slug' ) );
+`
+		);
+
+		expect(
+			JSON.parse(
+				execFileSync( 'php', [ script ], { encoding: 'utf8' } )
+			)
+		).toEqual( [ 'ucf-content', 'ucf-interactive', 'text' ] );
+	}
+);

@@ -1,6 +1,7 @@
 /**
  * The Card's markup contract: WordPress's serializer and React DOM's give the same HTML, and it
- * matches the snapshot. See components/stat/tests/Stat.test.tsx for why. Then the rules that
+ * matches the snapshot. See components/content/highlight/tests/Highlight.test.tsx for why. Then
+ * the rules that
  * make the card accessible, which a snapshot alone wouldn't explain if one broke.
  */
 import { describe, expect, it } from 'vitest';
@@ -11,7 +12,7 @@ import FixedCard, { type FixedCardProps } from '../FixedCard.tsx';
 import example from '../example.json';
 
 // What `useBlockProps.save()` adds for this block.
-// SYNC: the block name in adapters/wp/block.json.
+// SYNC: the block name in wp/block.json.
 const WP_WRAPPER = { className: 'wp-block-ucf-content-fixed-card' };
 
 const base = example as FixedCardProps;

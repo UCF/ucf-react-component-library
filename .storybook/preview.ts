@@ -6,10 +6,10 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { createElement } from 'react';
 
-import Section from '../components/section/Section.tsx';
-import type { SectionProps } from '../components/section/Section.tsx';
-import type { Composition } from '../components/section/compositions.ts';
-import '../components/section/style.css';
+import Section from '../components/content/section/Section.tsx';
+import type { SectionProps } from '../components/content/section/Section.tsx';
+import type { Composition } from '../integrations/schema/compositions.ts';
+import '../components/content/section/style.css';
 import tokens from '../tokens/tokens.json';
 // WHY base.css, not the package's ucf.css: stories import their component's source style.css,
 // so a CSS edit shows without rebuilding the package.
@@ -32,7 +32,8 @@ const compositions = Object.entries( tokens.composition )
 // WHY every story inside the real Section: that is how a page places a component, in a band
 // that sets the composition, so a story shows the component as it will look. Every role in it
 // re-resolves from the Section, and the element styles apply inside it.
-// A story that is a Section itself (components/section/stories/) sets `parameters.section: false`.
+// A story that is a Section itself (components/content/section/integrations/storybook/) sets
+// `parameters.section: false`.
 // A story that is a band of its own (the Hero) sets `parameters.section` to the Section props
 // it needs, e.g. `{ width: 'wide', spacing: 'compact' }`, so it isn't framed like a card.
 const withSection: Decorator = ( Story, context ) =>

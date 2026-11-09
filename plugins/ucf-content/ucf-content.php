@@ -6,7 +6,7 @@
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: UCF Web Communications
- * License: GPL-2.0-or-later
+ * License: GPL-3.0-or-later
  * Text Domain: ucf-content
  *
  * @package ucf-content
