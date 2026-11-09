@@ -10,30 +10,32 @@ The current goal is a correct development process, not a pipeline.
 1. **A Puck playground.** The Puck configs are checked against Puck's types
    (`integrations/tests/puck.test.tsx`), but nothing renders them in the real Puck editor.
 
-   - A small app in `playground/`, with Vite and `@puckeditor/core` as dev dependencies only,
-     so the library itself stays free of Puck. It loads every `integrations/puck/config.tsx`,
-     opens the Puck editor on a saved sample page, and loads `dist/ucf.css` and the
-     compositions.
-   - A test that renders each config through Puck's `<Render>` with sample data, so a config
-     that no longer fits Puck's current shape fails.
+    - A small app in `playground/`, with Vite and `@puckeditor/core` as dev dependencies only,
+      so the library itself stays free of Puck. It loads every `integrations/puck/config.tsx`,
+      opens the Puck editor on a saved sample page, and loads `dist/ucf.css` and the
+      compositions.
+    - A test that renders each config through Puck's `<Render>` with sample data, so a config
+      that no longer fits Puck's current shape fails.
+
 1. **Finish moving every component onto prop definitions and `frame()`.**
 
-   - Remove the `example.json` handling for content components from `blocks.test.tsx`,
-     `parity.test.tsx` and `scripts/build-package.mjs` (only primitives have one), and
-     `imageId` from `WORDPRESS_ONLY` in `parity.test.tsx` (the Hero's and Card's are in their
-     props).
-   - A `README.md` for the Hero and the Section, as the Card has.
-   - The Hero's designs as presets; it has only `DEFAULT_PRESET`. P1's layouts (split, full
-     image, text only) may be worth naming.
-   - The examples (`examples/fixed-card`, `examples/flexible-card`) use `innerAs`; move them to
-     areas.
-   - The primitives: each one's props in `{Name}.props.ts` (they are written out in its
-     adapters today) and its `example.json` into its defaults.
-   - The primitives and the Degree Finder onto the translators (architecture.md, "One
-     definition, one translator per environment"). The Degree Finder is the WordPress
-     translator's interactive path (`render.php` and `view.tsx`).
-   - Drop the deprecated `withVariation` from the Card's and Highlight's Puck configs once
-     ucf-puck-demo uses `withPreset`.
+    - Remove the `example.json` handling for content components from `blocks.test.tsx`,
+      `parity.test.tsx` and `scripts/build-package.mjs` (only primitives have one), and
+      `imageId` from `WORDPRESS_ONLY` in `parity.test.tsx` (the Hero's and Card's are in their
+      props).
+    - A `README.md` for the Hero and the Section, as the Card has.
+    - The Hero's designs as presets; it has only `DEFAULT_PRESET`. P1's layouts (split, full
+      image, text only) may be worth naming.
+    - The examples (`examples/fixed-card`, `examples/flexible-card`) use `innerAs`; move them to
+      areas.
+    - The primitives: each one's props in `{Name}.props.ts` (they are written out in its
+      adapters today) and its `example.json` into its defaults.
+    - The primitives and the Degree Finder onto the translators (architecture.md, "One
+      definition, one translator per environment"). The Degree Finder is the WordPress
+      translator's interactive path (`render.php` and `view.tsx`).
+    - Drop the deprecated `withVariation` from the Card's and Highlight's Puck configs once
+      ucf-puck-demo uses `withPreset`.
+
 1. **ucf-puck-demo:** its saved page keeps the Card's, Highlight's, Hero's and Section's slots
    under `content`; they are `blocks` now. The Highlight's designs are data (a Design picker),
    and `HERO_PARTS` is each part's kind and class. Reset the page after deploying.
@@ -100,16 +102,17 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
 1. **Button** (built, used by the Hero). Still to do:
 
-   - A Buttons group, the trailing-arrow variant from the hero designs, and `RichText` for the
-     label if editors need bold or italics.
-   - Its measurements are shared tokens (`tokens.json` `custom` `button-*`), but its rules are
-     written both here and in the theme. Generate the theme's button CSS from ours, with a
-     screenshot test comparing a core Button and ours. Show Jim first: it moves the core
-     Button's look from the theme to the library.
-   - PERF: its CSS ships with each block that uses it. Once several blocks use primitives, put
-     every primitive's `style.css` in the plugins' shared `base.css`, which loads once.
-   - Behavior for interactive pieces: pick an unstyled library (React Aria first, Base UI as
-     the fallback) by trying it on the Degree Finder's interest combobox.
+    - A Buttons group, the trailing-arrow variant from the hero designs, and `RichText` for the
+      label if editors need bold or italics.
+    - Its measurements are shared tokens (`tokens.json` `custom` `button-*`), but its rules are
+      written both here and in the theme. Generate the theme's button CSS from ours, with a
+      screenshot test comparing a core Button and ours. Show Jim first: it moves the core
+      Button's look from the theme to the library.
+    - PERF: its CSS ships with each block that uses it. Once several blocks use primitives, put
+      every primitive's `style.css` in the plugins' shared `base.css`, which loads once.
+    - Behavior for interactive pieces: pick an unstyled library (React Aria first, Base UI as
+      the fallback) by trying it on the Degree Finder's interest combobox.
+
 1. **Image** (built, used by the Card). Still to do: a Figure with a caption; the host's image
    component (`next/image`) through a slot; and moving the Hero onto it.
 1. **Columns and Column:** a column count, ratio, gap and stacking width, with a Puck slot per
