@@ -980,7 +980,7 @@ function liveFiles( n ) {
  * Content rules apply to this core: props in, markup out, no state, no effects, no fetching.
  * Whoever renders it fetches first (client.ts, or client.php in WordPress) and passes \`items\`.
  *
- * SYNC: integrations/wp/markup.php writes this same markup in PHP. tests/${ n.Name }.php.test.tsx
+ * SYNC: integrations/wp/render.php writes this same markup in PHP. tests/${ n.Name }.php.test.tsx
  * fails when the two differ; change both together. Nothing stores it, so a change needs no
  * block deprecation.
  *
@@ -1285,7 +1285,7 @@ registerBlockType< Attributes >(
 `,
 		'integrations/wp/edit.tsx': `import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
-import { Notice, PanelBody } from '@wordpress/components';
+import { Disabled, Notice, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { panelsOf } from '#integrations/schema/props.js';
@@ -1333,7 +1333,12 @@ export default function Edit( {
 						{ __( 'The feed could not be loaded.', '${ n.plugin }' ) }
 					</Notice>
 				) : null }
-				<${ n.Name } items={ items } title={ attributes.title } />
+				{ /* WHY Disabled: WordPress's way to show a preview that can't be used. A link in it
+				     can't navigate away from the editor or take focus, and a click selects the
+				     block. The notice above stays outside: it's for the editor. */ }
+				<Disabled>
+					<${ n.Name } items={ items } title={ attributes.title } />
+				</Disabled>
 			</div>
 		</>
 	);
@@ -1410,49 +1415,17 @@ if ( ! function_exists( '${ fn }_items' ) ) {
 	}
 }
 `,
-		'integrations/wp/markup.php': `<?php
-/**
- * The ${ n.title }'s markup, in PHP.
- *
- * SYNC: ${ n.Name }.tsx, element for element. tests/${ n.Name }.php.test.tsx fails when they
- * differ. WHY no whitespace between tags: React writes none.
- *
- * @package ${ n.plugin }
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
-if ( ! function_exists( '${ fn }_markup' ) ) {
-	/**
-	 * The list.
-	 *
-	 * @param array<int, array<string, string>> $items   From ${ fn }_items().
-	 * @param array<string, string>             $props   title.
-	 * @param string                            $wrapper The root's attributes, escaped.
-	 * @return string Markup.
-	 */
-	function ${ fn }_markup( $items, $props, $wrapper ) {
-		$title = (string) ( $props['title'] ?? '' );
-		$html  = '<div ' . $wrapper . '>';
-		if ( '' !== $title ) {
-			$html .= '<p class="ucf-c-${ n.name }__title">' . esc_html( $title ) . '</p>';
-		}
-		$html .= '<ul class="ucf-c-${ n.name }__items">';
-		foreach ( $items as $item ) {
-			$html .= '<li class="ucf-c-${ n.name }__item"><a href="' . esc_url( $item['url'] ) . '">' . esc_html( $item['title'] ) . '</a></li>';
-		}
-		return $html . '</ul></div>';
-	}
-}
-`,
 		'integrations/wp/render.php': `<?php
 /**
- * Front-end markup for the ${ n.title } block.
+ * The ${ n.title } on the page.
  *
  * CONTEXT: a live block. On each request this fetches the feed (cached; client.php) and writes
- * the whole list (markup.php), so it is in the page with no JavaScript.
+ * the whole list, so it is in the page with no JavaScript.
+ *
+ * SYNC: ${ n.Name }.tsx, element for element. tests/${ n.Name }.php.test.tsx runs this file and
+ * fails when its HTML differs from React's. Whitespace between tags doesn't count: each sits
+ * between block items, where browsers don't show it. Functions the markup needs go in
+ * helpers.php (docs/architecture.md, "Three kinds of component").
  *
  * @package ${ n.plugin }
  *
@@ -1464,18 +1437,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/client.php';
-require_once __DIR__ . '/markup.php';
 
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup.php escapes every value it writes, and get_block_wrapper_attributes() escapes each attribute itself.
-echo ${ fn }_markup(
-	${ fn }_items( ${ fn }_feed( (string) ( $attributes['feedUrl'] ?? '' ) ) ),
-	$attributes,
-	get_block_wrapper_attributes( array( 'class' => 'ucf-c ucf-c-${ n.name }' ) )
-);
+$${ fn }_items = ${ fn }_items( ${ fn }_feed( (string) ( $attributes['feedUrl'] ?? '' ) ) );
+$${ fn }_title = (string) ( $attributes['title'] ?? '' );
+?>
+<div <?php echo get_block_wrapper_attributes( array( 'class' => 'ucf-c ucf-c-${ n.name }' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress escapes each attribute. ?>>
+	<?php if ( '' !== $${ fn }_title ) : ?>
+		<p class="ucf-c-${ n.name }__title"><?php echo esc_html( $${ fn }_title ); ?></p>
+	<?php endif; ?>
+	<ul class="ucf-c-${ n.name }__items">
+		<?php foreach ( $${ fn }_items as $${ fn }_item ) : ?>
+			<li class="ucf-c-${ n.name }__item"><a href="<?php echo esc_url( $${ fn }_item['url'] ); ?>"><?php echo esc_html( $${ fn }_item['title'] ); ?></a></li>
+		<?php endforeach; ?>
+	</ul>
+</div>
 `,
 		[ `tests/${ n.Name }.test.tsx` ]: `/**
  * The ${ n.title }'s markup, the record of it. A change here changes what every site shows, and
- * integrations/wp/markup.php must change with it (tests/${ n.Name }.php.test.tsx).
+ * integrations/wp/render.php must change with it (tests/${ n.Name }.php.test.tsx).
  */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, it } from 'vitest';
@@ -1528,11 +1507,13 @@ describe.runIf( hasPhp )( 'the ${ n.title } in PHP', () => {
 	test.each( Object.entries( cases ) )(
 		'writes the markup React does: %s',
 		( _, { feed, title } ) => {
+			// render.php as WordPress runs it, with the fetch stubbed.
 			const html = php( \`
-require \${ phpString( path.join( wp, 'client.php' ) ) };
-require \${ phpString( path.join( wp, 'markup.php' ) ) };
-$feed = json_decode( file_get_contents( \${ phpString( tempFile( JSON.stringify( feed ) ) ) } ), true );
-echo ${ fn }_markup( ${ fn }_items( $feed ), array( 'title' => \${ phpString( title ) } ), 'class="ucf-c ucf-c-${ n.name }"' );
+function wp_safe_remote_get( $url, $args ) {
+	return array( 'body' => file_get_contents( \${ phpString( tempFile( JSON.stringify( feed ) ) ) } ), 'response' => array( 'code' => 200 ) );
+}
+$attributes = array( 'feedUrl' => 'https://example.test/feed.json', 'title' => \${ phpString( title ) } );
+require \${ phpString( path.join( wp, 'render.php' ) ) };
 \` );
 			const expected = renderToStaticMarkup(
 				<${ n.Name } items={ normalizeItems( feed ) } title={ title } />
@@ -1879,7 +1860,7 @@ Next (docs/architecture.md, "Built with frame()"):
 Next (docs/architecture.md, "Three kinds of component"; components/live/event-list is the model):
   1. Replace the placeholder feed in client.ts and types.ts, and the same steps in
      wp/client.php. Write tests/fixtures/ from the real feed.
-  2. Replace the markup in ${ Name }.tsx, and the same markup in wp/markup.php.
+  2. Replace the markup in ${ Name }.tsx, and the same markup in wp/render.php.
   3. Add props to ${ Name }.props.ts, then run \`npm run sync:blocks\`.
   4. Add the plugin's PHP prefix and text domain to phpcs.xml.dist if they're new.
   5. Run \`npm test\`: tests/${ Name }.php.test.tsx fails while the PHP and React markup differ.

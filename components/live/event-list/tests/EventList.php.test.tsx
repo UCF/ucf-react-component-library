@@ -3,10 +3,11 @@
  * The live markup contract: WordPress's PHP and React write the same list from the same feed.
  *
  * A live block's markup exists twice: EventList.tsx (every React host) and
- * integrations/wp/markup.php (WordPress, which can't run React on the server), each fed by its own
+ * integrations/wp/render.php (WordPress, which can't run React on the server), each fed by its own
  * copy of the feed rules (client.ts and client.php). This runs the real PHP under plain `php`,
- * with WordPress's few functions stubbed (integrations/tests/live.ts), and compares its HTML
- * with React's for each case, as a browser reads them.
+ * with WordPress's few functions stubbed (integrations/tests/live.ts), and for each case
+ * compares the cleaned-up events with JavaScript's, and render.php's HTML with React's, as a
+ * browser reads them.
  *
  * WHY no snapshot here: tests/EventList.test.tsx keeps React's; this only says PHP matches it.
  */
@@ -181,20 +182,88 @@ const cases: Record<
 };
 
 describe.runIf( hasPhp )( 'the Event List in PHP', () => {
+	/**
+	 * Run render.php as WordPress would, with the fetch stubbed.
+	 *
+	 * @param attributes The block's attributes.
+	 * @param response   What wp_safe_remote_get() returns, as PHP.
+	 */
+	const run = ( attributes: object, response: string ) =>
+		JSON.parse(
+			php( `
+function ucf_events_event_list_settings() {
+	return array( 'feedUrl' => 'https://events.ucf.edu/upcoming/feed.json', 'cacheHours' => 3, 'timeout' => 5 );
+}
+function wp_safe_remote_get( $url, $args ) {
+	$GLOBALS['ucf_test']['requests'][] = array( $url, $args['timeout'] );
+	return ${ response };
+}
+$attributes = json_decode( ${ phpString( JSON.stringify( attributes ) ) }, true );
+ob_start();
+require ${ phpString( path.join( wp, 'render.php' ) ) };
+echo json_encode( array( 'html' => ob_get_clean() ) + $GLOBALS['ucf_test'] );
+` )
+		) as {
+			html: string;
+			requests: [ string, number ][];
+			cached: [ string, number, number ][];
+		};
+
+	/**
+	 * A feed as a 200 response, its dates moved to 2099.
+	 * WHY 2099: render.php reads the real clock, so the events stay upcoming whenever this runs.
+	 * Which events "now" drops is checked with a fixed clock, in the test above the markup's.
+	 *
+	 * @param feed The feed's JSON.
+	 */
+	const future = ( feed: unknown ) =>
+		JSON.stringify( feed ).replace( / 2026 /g, ' 2099 ' );
+	const ok = ( body: string ) =>
+		`array( 'body' => file_get_contents( ${ phpString(
+			tempFile( body )
+		) } ), 'response' => array( 'code' => 200 ) )`;
+
+	test.each( Object.entries( cases ) )(
+		'cleans up the feed as JavaScript does: %s',
+		( _, { feed, limit, offset, now } ) => {
+			const feedFile = tempFile( JSON.stringify( feed ) );
+			const events = JSON.parse(
+				php( `
+require ${ phpString( path.join( wp, 'client.php' ) ) };
+$feed = json_decode( file_get_contents( ${ phpString( feedFile ) } ), true );
+echo json_encode( ucf_events_event_list_events( $feed, ${ limit }, ${ offset }, ${ Math.floor(
+					now.getTime() / 1000
+				) } ) );
+` )
+			);
+			expect( events ).toEqual(
+				JSON.parse(
+					JSON.stringify(
+						normalizeEvents( feed, { limit, offset, now } )
+					)
+				)
+			);
+		}
+	);
+
 	test.each( Object.entries( cases ) )(
 		'writes the markup React does: %s',
-		( _, { feed, limit, offset, now, ...display } ) => {
-			const feedFile = tempFile( JSON.stringify( feed ) );
-			const html = php( `
-require ${ phpString( path.join( wp, 'client.php' ) ) };
-require ${ phpString( path.join( wp, 'markup.php' ) ) };
-$feed   = json_decode( file_get_contents( ${ phpString( feedFile ) } ), true );
-$events = ucf_events_event_list_events( $feed, ${ limit }, ${ offset }, ${ Math.floor(
-				now.getTime() / 1000
-			) } );
-echo ucf_events_event_list_markup( $events, json_decode( ${ phpString( JSON.stringify( display ) ) }, true ), 'class="ucf-c ucf-c-event-list"' );
-` );
-			const expected = react( feed, { limit, offset, now, ...display } );
+		( _, { feed, limit, offset, ...display } ) => {
+			const body = future( feed );
+			const { html } = run(
+				{
+					limit: String( limit ),
+					offset: String( offset ),
+					...display,
+				},
+				ok( body )
+			);
+			const expected = react( JSON.parse( body ), {
+				limit,
+				offset,
+				...display,
+				now: new Date(),
+			} );
 
 			// FIX: guards against two empty outputs matching.
 			expect( expected ).toContain( 'ucf-c-event-list' );
@@ -225,36 +294,11 @@ echo ucf_events_event_list_plain_text( ${ phpString( text ) } );
 	} );
 
 	// The glue: render.php reads the attributes and settings, fetches once and caches.
-	// WHY the fixture moved to 2099: render.php uses the real clock, so these events stay
-	// upcoming whenever this runs.
 	describe( 'render.php', () => {
-		const future = JSON.stringify( fixture ).replace( / 2026 /g, ' 2099 ' );
-		const run = ( attributes: object, response: string ) =>
-			JSON.parse(
-				php( `
-function ucf_events_event_list_settings() {
-	return array( 'feedUrl' => 'https://events.ucf.edu/upcoming/feed.json', 'cacheHours' => 3, 'timeout' => 5 );
-}
-function wp_safe_remote_get( $url, $args ) {
-	$GLOBALS['ucf_test']['requests'][] = array( $url, $args['timeout'] );
-	return ${ response };
-}
-$attributes = json_decode( ${ phpString( JSON.stringify( attributes ) ) }, true );
-ob_start();
-require ${ phpString( path.join( wp, 'render.php' ) ) };
-echo json_encode( array( 'html' => ob_get_clean() ) + $GLOBALS['ucf_test'] );
-` )
-			) as {
-				html: string;
-				requests: [ string, number ][];
-				cached: [ string, number, number ][];
-			};
-
 		test( 'writes the list from the site’s default feed, and caches it for the setting’s hours', () => {
-			const futureFile = tempFile( future );
 			const result = run(
 				{ limit: '2', offset: '1', descriptions: 'show' },
-				`array( 'body' => file_get_contents( ${ phpString( futureFile ) } ), 'response' => array( 'code' => 200 ) )`
+				ok( future( fixture ) )
 			);
 
 			expect( result.requests ).toEqual( [
@@ -271,7 +315,7 @@ echo json_encode( array( 'html' => ob_get_clean() ) + $GLOBALS['ucf_test'] );
 			] );
 			expect( sameHtml( result.html ) ).toBe(
 				sameHtml(
-					react( JSON.parse( future ), {
+					react( JSON.parse( future( fixture ) ), {
 						limit: 2,
 						offset: 1,
 						now: new Date(),

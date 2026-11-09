@@ -3,7 +3,7 @@
  *
  * WHY read from the string, not a Date: a Date shows the time in the zone of whatever runs it.
  * The parts here are the event's own wall-clock time, so every host shows the same thing.
- * SYNC: integrations/wp/markup.php formats the same way; tests/EventList.php.test.tsx compares.
+ * SYNC: integrations/wp/helpers.php formats the same way; tests/EventList.php.test.tsx compares.
  */
 
 // SPEC: AP style abbreviates these months and spells out the rest.

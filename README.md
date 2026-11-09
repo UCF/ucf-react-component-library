@@ -341,9 +341,9 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
       in the post, which is why a content component's markup is frozen once a site uses it.
-    - **Live: `render.php` + `client.php` + `markup.php`.** On each request PHP fetches the
-      data (cached), and writes the whole HTML: the same markup as the core, in PHP, because
-      PHP can't run React. `tests/{Name}.php.test.tsx` runs the PHP and fails when its HTML
+    - **Live: `render.php` + `client.php` + `helpers.php`.** On each request PHP fetches the
+      data (cached), and `render.php` writes the whole HTML: the same markup as the core, as a
+      PHP template, because PHP can't run React. `tests/{Name}.php.test.tsx` runs the PHP and fails when its HTML
       differs from the core's. Nothing is saved but the attributes, so the markup isn't frozen.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
