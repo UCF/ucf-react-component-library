@@ -83,12 +83,24 @@ export function tempFile( contents: string ): string {
 /**
  * Run PHP after the stubs, and return what it printed.
  *
- * @param body PHP, without `<?php`.
+ * @param body            PHP, without `<?php`.
+ * @param options         How to run it.
+ * @param options.disable Functions to remove, as on a host without their extension.
+ *                        WHY disable_functions: extensions such as mbstring are often built
+ *                        into PHP, so they can't be left out with `-n`.
  */
-export function php( body: string ): string {
+export function php(
+	body: string,
+	{ disable = [] }: { disable?: readonly string[] } = {}
+): string {
 	return execFileSync(
 		'php',
-		[ tempFile( `<?php\n${ WP_STUBS }\n${ body }` ) ],
+		[
+			...( disable.length
+				? [ '-d', `disable_functions=${ disable.join( ',' ) }` ]
+				: [] ),
+			tempFile( `<?php\n${ WP_STUBS }\n${ body }` ),
+		],
 		{ encoding: 'utf8' }
 	);
 }

@@ -27,6 +27,7 @@ import {
 import EventList from '../EventList.tsx';
 import type { EventListEditableProps } from '../EventList.props.ts';
 import { normalizeEvents } from '../client.ts';
+import { plainText } from '../utils/text.ts';
 
 const here = path.dirname( fileURLToPath( import.meta.url ) );
 const wp = path.join( here, '../integrations/wp' );
@@ -200,6 +201,28 @@ echo ucf_events_event_list_markup( $events, json_decode( ${ phpString( JSON.stri
 			expect( sameHtml( html ) ).toBe( sameHtml( expected ) );
 		}
 	);
+
+	// FIX: mbstring is optional in PHP, and the plugin doesn't require it. Every numeric entity
+	// length (1 to 4 bytes of UTF-8), and the invalid ones left as written, without it.
+	test( 'decodes numeric entities without mbstring, as JavaScript does', () => {
+		const mbstring = JSON.parse(
+			php(
+				`echo json_encode( extension_loaded( 'mbstring' ) ? get_extension_funcs( 'mbstring' ) : array() );`
+			)
+		) as string[];
+		const text =
+			'&#65;&#xE9;&#8211;&#x1F393; &#0;&#xD800;&#x110000;&#99999999999999999999; &#X10FFFF;';
+		const decoded = php(
+			`
+require ${ phpString( path.join( wp, 'client.php' ) ) };
+echo ucf_events_event_list_plain_text( ${ phpString( text ) } );
+`,
+			{ disable: mbstring }
+		);
+
+		expect( decoded ).toBe( plainText( text ) );
+		expect( decoded ).toContain( 'Aé–🎓' );
+	} );
 
 	// The glue: render.php reads the attributes and settings, fetches once and caches.
 	// WHY the fixture moved to 2099: render.php uses the real clock, so these events stay

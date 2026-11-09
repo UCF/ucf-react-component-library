@@ -80,6 +80,31 @@ if ( ! function_exists( 'ucf_events_event_list_iso_date' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ucf_events_event_list_utf8' ) ) {
+	/**
+	 * One Unicode code point as UTF-8.
+	 *
+	 * FIX: not mb_chr(). mbstring is an optional extension this plugin doesn't require, and
+	 * without it a numeric entity in the feed was a fatal error while the page rendered.
+	 * The caller checks the point is a valid scalar value (1 to 0x10FFFF, not a surrogate).
+	 *
+	 * @param int $point The code point.
+	 * @return string Its UTF-8 bytes.
+	 */
+	function ucf_events_event_list_utf8( $point ) {
+		if ( $point < 0x80 ) {
+			return chr( $point );
+		}
+		if ( $point < 0x800 ) {
+			return chr( 0xC0 | ( $point >> 6 ) ) . chr( 0x80 | ( $point & 0x3F ) );
+		}
+		if ( $point < 0x10000 ) {
+			return chr( 0xE0 | ( $point >> 12 ) ) . chr( 0x80 | ( ( $point >> 6 ) & 0x3F ) ) . chr( 0x80 | ( $point & 0x3F ) );
+		}
+		return chr( 0xF0 | ( $point >> 18 ) ) . chr( 0x80 | ( ( $point >> 12 ) & 0x3F ) ) . chr( 0x80 | ( ( $point >> 6 ) & 0x3F ) ) . chr( 0x80 | ( $point & 0x3F ) );
+	}
+}
+
 if ( ! function_exists( 'ucf_events_event_list_plain_text' ) ) {
 	/**
 	 * One line of plain text: tags removed, entities decoded, runs of space made one.
@@ -114,7 +139,7 @@ if ( ! function_exists( 'ucf_events_event_list_plain_text' ) ) {
 				if ( '#' === $code[0] ) {
 					$point = ( 'x' === $code[1] || 'X' === $code[1] ) ? hexdec( substr( $code, 2 ) ) : (int) substr( $code, 1 );
 					$valid = $point > 0 && $point <= 0x10FFFF && ( $point < 0xD800 || $point > 0xDFFF );
-					return $valid ? mb_chr( (int) $point, 'UTF-8' ) : $m[0];
+					return $valid ? ucf_events_event_list_utf8( (int) $point ) : $m[0];
 				}
 				return $named[ $code ] ?? $m[0];
 			},
