@@ -38,13 +38,14 @@ components/content/card/
 
 ### 1. Its kind and name
 
-Every component is one of three kinds. The kind decides which rules apply.
+Every component is one of four kinds. The kind decides which rules apply.
 
-| Kind            | Its HTML                                    | Examples              |
-| --------------- | ------------------------------------------- | --------------------- |
-| **Content**     | Saved in the post; works without JavaScript | Card, Highlight, Hero |
-| **Interactive** | Built in the browser by JavaScript          | Degree Finder         |
-| **Primitive**   | A small piece other components are built of | Button, Image         |
+| Kind            | Its HTML                                               | Examples              |
+| --------------- | ------------------------------------------------------ | --------------------- |
+| **Content**     | Saved in the post; works without JavaScript            | Card, Highlight, Hero |
+| **Live**        | Fetched and written by the server on each page request | Event List            |
+| **Interactive** | Built in the browser by JavaScript                     | Degree Finder         |
+| **Primitive**   | A small piece other components are built of            | Button, Image         |
 
 A card is something people read, so it's **content**. Its React code may only turn props into
 markup: no state, no effects, no fetching. WordPress saves that markup into every post that
@@ -479,7 +480,7 @@ isn't tested automatically yet (see [todo.md](todo.md)).
 ### 1. Decide its kind and name
 
 Use the table in Part 1, step 1. Content components are named for what a reader sees, as a
-plain noun (Card, Quote). Interactive ones are named for the subject and task (Degree Finder,
+plain noun (Card, Quote), and so are live ones (Event List). Interactive ones are named for the subject and task (Degree Finder,
 Tuition Calculator). Settle the name before anything is deployed: it's permanent.
 
 ### 2. Create it
@@ -576,6 +577,12 @@ Both must be clean. CI runs the same checks on your pull request.
 
 The same command starts the other kinds:
 
+- **Live** (`--kind live`, with the plugin for its data, such as `ucf-events`): you get
+  `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again as a template in
+  `integrations/wp/render.php`, and `tests/{Name}.php.test.tsx`, which fails while the PHP and
+  React markup differ. Replace the placeholder feed, save a copy of the real one in
+  `tests/fixtures/`, and follow `components/live/event-list`. A new plugin's PHP prefix and text
+  domain go in `phpcs.xml.dist`. Like interactive, it has no parts or presets.
 - **Interactive** (`--kind interactive`): you get `render.php`, `view.tsx`, `settings.ts` and
   `defaults.ts`, with a click counter as a placeholder. Replace the counter with your component,
   and if it fetches data, add `types.ts`, `client.ts`, `sample-client.ts` and a client test, as

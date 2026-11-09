@@ -32,6 +32,7 @@ wp/             WordPress                                   (the plugins only)
   attributes.ts   blockAttributes(), ownAttributes()
   inspector.tsx   FieldControl: a prop as a sidebar control
   icons.ts        every icon a block or preset names
+  kind.ts         kindOf(): content, live or interactive, from block.json; CATEGORY_OF
 
 puck/           Puck                                        (shipped with the Puck configs)
   config.tsx      puckConfig(): a framed component as a Puck config; puckFields()
@@ -49,6 +50,7 @@ storybook/      the stories                                 (never shipped)
   contrast.ts     contrast measured in the browser
 
 tests/          run against every component                 (never shipped)
+  live.ts         running a live component's PHP for its markup test: stubs, php(), sameHtml()
 ```
 
 The dependency goes one way: components and primitives import from here; nothing here imports

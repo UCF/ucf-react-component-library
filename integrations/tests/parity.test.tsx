@@ -12,8 +12,9 @@
  *     from the same props are the same HTML, for every choice of every select and radio
  *     field, apart from the classes WordPress adds for the block.
  *
- * Interactive blocks are left out of the markup check: WordPress renders them with render.php
- * and mounts the component in the browser, so there is no saved markup to compare.
+ * Live and interactive blocks are left out of the markup check: WordPress renders them with
+ * render.php, so there is no saved markup to compare. A live block's PHP markup is compared with
+ * its React markup in its own tests/{Name}.php.test.tsx instead.
  */
 import { getSaveContent } from '@wordpress/blocks';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -23,9 +24,10 @@ import type { PuckComponentConfig, PuckField } from '../puck/types.ts';
 import { defaultsIn, inHost, type PropDefinitions } from '../schema/props.ts';
 import { PRESET_FIELDS } from '../puck/presets.ts';
 import { blockAttributes } from '../wp/attributes.ts';
+import { kindOf } from '../wp/kind.ts';
 
 import.meta.glob(
-	'../../components/{content,interactive}/*/integrations/wp/index.tsx',
+	'../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
 	{
 		eager: true,
 	}
@@ -35,11 +37,12 @@ type BlockJson = {
 	name: string;
 	title: string;
 	render?: string;
+	viewScript?: string | string[];
 	attributes: Record< string, unknown >;
 };
 
 const blockJsons = import.meta.glob< BlockJson >(
-	'../../components/{content,interactive}/*/integrations/wp/block.json',
+	'../../components/{content,live,interactive}/*/integrations/wp/block.json',
 	{
 		eager: true,
 		import: 'default',
@@ -52,7 +55,7 @@ type AnyPuckConfig = Omit<
 > & { fields: Record< string, PuckField > };
 
 const puckConfigs = import.meta.glob< AnyPuckConfig >(
-	'../../components/{content,interactive}/*/integrations/puck/config.tsx',
+	'../../components/{content,live,interactive}/*/integrations/puck/config.tsx',
 	{
 		eager: true,
 		import: 'default',
@@ -78,7 +81,7 @@ const fileOf = < T, >( glob: Record< string, T >, component: string ) =>
 const examples: Record< string, Record< string, string > > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< Record< string, string > >(
-			'../../components/{content,interactive}/*/example.json',
+			'../../components/{content,live,interactive}/*/example.json',
 			{
 				eager: true,
 				import: 'default',
@@ -93,7 +96,7 @@ const examples: Record< string, Record< string, string > > = Object.fromEntries(
 const propsByComponent: Record< string, PropDefinitions > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< PropDefinitions >(
-			'../../components/{content,interactive}/*/*.props.ts',
+			'../../components/{content,live,interactive}/*/*.props.ts',
 			{
 				eager: true,
 				import: 'PROPS',
@@ -107,7 +110,7 @@ const defaultPresets: Record< string, { props: Record< string, unknown > } > =
 	Object.fromEntries(
 		Object.entries(
 			import.meta.glob< { props: Record< string, unknown > } >(
-				'../../components/{content,interactive}/*/*.presets.ts',
+				'../../components/{content,live,interactive}/*/*.presets.ts',
 				{ eager: true, import: 'DEFAULT_PRESET' }
 			)
 		).map( ( [ file, preset ] ) => [ componentOf( file ), preset ] )
@@ -144,7 +147,7 @@ const wordPressOnly = ( component: string ) =>
 
 // Every component: each folder with a core the package exports.
 const components = Object.keys(
-	import.meta.glob( '../../components/{content,interactive}/*/index.ts' )
+	import.meta.glob( '../../components/{content,live,interactive}/*/index.ts' )
 )
 	.map( componentOf )
 	.sort();
@@ -156,7 +159,7 @@ const withStories = [
 	...new Set(
 		Object.keys(
 			import.meta.glob(
-				'../../components/{content,interactive}/*/integrations/storybook/*.stories.tsx'
+				'../../components/{content,live,interactive}/*/integrations/storybook/*.stories.tsx'
 			)
 		).map( componentOf )
 	),
@@ -166,6 +169,7 @@ test( 'finds every component', () => {
 	expect( components ).toEqual( [
 		'card',
 		'degree-finder',
+		'event-list',
 		'hero',
 		'highlight',
 		'section',
@@ -234,14 +238,48 @@ test( 'every component has a WordPress block', () => {
 } );
 
 // WHY: the bucket is the kind (docs/architecture.md, "A component's folder"). A content block
-// saves its markup; an interactive one is rendered by render.php and mounted in the browser.
-// A component in the wrong bucket would be built, documented and scaffolded as the other kind.
+// saves its markup; a live one is written whole by render.php; an interactive one is a
+// render.php container the browser builds (integrations/wp/kind.ts). A component in the wrong
+// bucket would be built, documented and scaffolded as another kind.
+// Each component's core and block entry, as text, to read their imports.
+const coreSources = import.meta.glob< string >(
+	'../../components/{content,live,interactive}/*/*.tsx',
+	{ eager: true, query: '?raw', import: 'default' }
+);
+const blockEntrySources = import.meta.glob< string >(
+	'../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	{ eager: true, query: '?raw', import: 'default' }
+);
+
+// FIX: a primitive has no block of its own, so its rules reach WordPress only through the
+// block entry of each component that uses it (webpack builds a block's stylesheet from what
+// its script imports). Without the import, the primitive is unstyled on any theme that
+// doesn't style the same elements.
+test( 'every block imports the styles of the primitives its core uses', () => {
+	const missing = new Set< string >();
+	for ( const [ file, source ] of Object.entries( coreSources ) ) {
+		const component = componentOf( file );
+		const entry = fileOf( blockEntrySources, component );
+		if ( entry === undefined ) {
+			continue;
+		}
+		for ( const [ , primitive ] of source.matchAll(
+			/from '\.\.\/\.\.\/primitives\/([a-z-]+)\//g
+		) ) {
+			if ( ! entry.includes( `primitives/${ primitive }/style.css'` ) ) {
+				missing.add( `${ component } uses ${ primitive }` );
+			}
+		}
+	}
+	expect( [ ...missing ] ).toEqual( [] );
+} );
+
 test( 'every component sits in the bucket for its kind', () => {
 	const misplaced = Object.entries( blockJsons )
 		.map( ( [ file, json ] ) => ( {
 			component: componentOf( file ),
 			bucket: file.split( '/' )[ 3 ],
-			kind: json.render ? 'interactive' : 'content',
+			kind: kindOf( json ),
 		} ) )
 		.filter( ( { bucket, kind } ) => bucket !== kind );
 	expect( misplaced ).toEqual( [] );

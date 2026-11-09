@@ -98,6 +98,7 @@ const PAIRS = [
 		4.5,
 	] ),
 	[ 'on-accent', 'accent', 4.5 ],
+	[ 'on-body', 'body', 4.5 ],
 	[ 'button-text', 'button', 4.5 ],
 	[ 'button-hover-text', 'button-hover', 4.5 ],
 	[ 'button-outline', 'surface', 4.5 ],

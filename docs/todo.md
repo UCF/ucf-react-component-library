@@ -43,6 +43,29 @@ The current goal is a correct development process, not a pipeline.
    content for named blocks inside a synced pattern, much as `content` does by part name
    (architecture.md, "How content reaches a frame").
 
+## The Event List
+
+`components/live/event-list` (block `ucf-events/event-list`, plugin `ucf-events`) replaces the
+UCF Events Plugin's `[ucf-events]` shortcode. To finish:
+
+- **Check it in a real WordPress.** Install `ucf-events`, add the block, and check
+  `getBlocks()` in the editor and the page's HTML. Its PHP test runs against stubs. Also check
+  the editor preview loads the feed from the editor's origin (the feed allows any origin).
+- **Settle its names before any site uses it:** the block `ucf-events/event-list` and its
+  attributes (`feedUrl`, `limit`, `offset`, `title`, `columns`, `dates`,
+  `descriptions`, `emptyMessage`) are permanent once saved in a post.
+- **Its look against the theme's Events block,** in Storybook and on a page: the date block,
+  spacing, and the AP date and time.
+- **Event structured data.** The theme writes schema.org `Event` nodes for its mock events
+  (`ucf_theme_structured_data()`). Decide who writes them for this block: `render.php` when the
+  theme's function exists, or the theme from a filter.
+- **Puck on the server.** The Puck config fetches in the browser, which is right in the editor;
+  a Puck site rendering a saved page should fetch on the server (Puck's async `resolveData`, or
+  the site's Server Component). Work it out in the playground.
+- **Migrating shortcodes.** Pages that use `[ucf-events]` keep working while both plugins are
+  active. A transform from the shortcode block to this one would move them over.
+- **The degree facts** are the next live component, in `ucf-degrees`.
+
 ## Release
 
 - **A release job.** CI checks every push (`ci.yml`) and pull request (`ci-full.yml`), but
@@ -88,8 +111,10 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 1. **A real-WordPress tier,** as the block themes have: wp-env with the built plugins and the
    theme, a seeded page per block per composition, axe at three widths, and the editor checked
    for invalid blocks (the `getBlocks()` check, automated).
-1. **PHP tests.** `render.php` and the plugins' PHP are only linted. Start with a unit tier
-   (PHPUnit with stubs, no WordPress) for `render.php`'s output and the settings functions.
+1. **PHP tests.** A live component's PHP markup is compared with its React markup
+   (`tests/{Name}.php.test.tsx`); the rest of `render.php` and the plugins' PHP is only linted.
+   Start with a unit tier (PHPUnit with stubs, no WordPress) for `render.php`'s output and the
+   settings functions.
 1. **An accessibility report on pull requests,** posting axe's results as a comment and keeping
    its `incomplete` results as notes.
 1. **Visual regression:** screenshot comparisons per story and composition. Worth it once there
@@ -154,9 +179,6 @@ they can drift. Two ways to fix that:
 
 ## Noted, not started
 
-- **Live content:** content whose data is fetched and must be in the HTML, such as the degree
-  facts. PHP renders it on each request, and a test compares the PHP output with the React
-  component's.
 - **The component layer, made more robust:**
     - A `ucf-c` component inside a `ucf-c-panel` one reads the section's roles, not the panel's.
     - A per-component Appearance setting (Follow section, Light, … Bold Gold) that sets

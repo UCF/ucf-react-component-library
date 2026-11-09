@@ -1,5 +1,6 @@
 /** Registers the Hero's block: its settings from its port, and its edit and save. */
 // WHY imported here: webpack builds the block's stylesheet from what its script imports.
+import '../../../../primitives/image/style.css';
 import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 

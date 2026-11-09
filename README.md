@@ -73,6 +73,8 @@ components/        one self-contained folder per component, in a bucket by role:
                    (Puck places them; WordPress editors use core's blocks instead)
   content/         what editors place, saved as HTML, works without JavaScript: Section,
                    Highlight, Hero, Card
+  live/            what editors place, fetched and written by the server, works without
+                   JavaScript: Event List
   interactive/     what editors place, built in the browser: Degree Finder
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
@@ -82,6 +84,7 @@ plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
   ucf-content/     plugin.json lists its blocks: section, highlight, hero, card
   ucf-degrees/     degree-finder
+  ucf-events/      event-list
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
 .storybook/        the catalog: theme, toolbar, logo
@@ -139,8 +142,8 @@ names go away when a release pipeline replaces them.
 ### In WordPress
 
 Upload each zip under **Plugins → Add New → Upload** (or unzip into `wp-content/plugins/`),
-activate, then add blocks from the inserter's **UCF Content** and **UCF Interactive**
-categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
+activate, then add blocks from the inserter's **UCF Content**, **UCF Live** and **UCF
+Interactive** categories (grouped by kind, as Storybook groups them). A template such as "Card: Pathway" is
 a variation of its block, listed under the block's name.
 
 To work on blocks in a development WordPress, see "Working against local sites" below.
@@ -289,7 +292,7 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 ## Anatomy of a component
 
 A component is one folder, `components/{bucket}/{name}/`, where the bucket is its role:
-`primitives`, `content` or `interactive`. One file in it is the component itself, the
+`primitives`, `content`, `live` or `interactive`. One file in it is the component itself, the
 **core**. Every other file either connects the core to a platform (an **adapter**, for a
 **host** such as WordPress or Puck) or ships it to an output. Outside the folder, only two lists
 name it: `package.json` `exports` and one plugin's `plugin.json` (`npm run new:component`
@@ -310,13 +313,13 @@ components/{bucket}/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `highlight`             | **Interactive (client)**: `degree-finder`      |
-| --------------- | --------------------------------------------- | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs             | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else    | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                     | `react` and its own files                      |
-| First line      | Nothing special                               | `'use client';`                                |
-| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`             | **Live (server)**: `event-list`                              | **Interactive (client)**: `degree-finder`      |
+| --------------- | --------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs             | Must exist before JavaScript runs, from fetched data         | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else    | The same: the fetched data arrives as a prop                 | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                     | None (`import type` only)                                    | `react` and its own files                      |
+| First line      | Nothing special                               | Nothing special                                              | `'use client';`                                |
+| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `{Name}.props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in through a **slot**: a content component's areas
 (`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks
@@ -332,12 +335,16 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
 `integrations/puck/`) only when it needs files besides props.
 
 - **`integrations/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
-  **UCF Content** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
+  **UCF Content**, **UCF Live** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
   registers it, with its icon from `@wordpress/icons` (and its templates as variations, if it
   has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
   by kind:
     - **Content: `save.tsx`** renders the core with the saved strings. WordPress stores that HTML
       in the post, which is why a content component's markup is frozen once a site uses it.
+    - **Live: `render.php` + `client.php` + `helpers.php`.** On each request PHP fetches the
+      data (cached), and `render.php` writes the whole HTML: the same markup as the core, as a
+      PHP template, because PHP can't run React. `tests/{Name}.php.test.tsx` runs the PHP and fails when its HTML
+      differs from the core's. Nothing is saved but the attributes, so the markup isn't frozen.
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.

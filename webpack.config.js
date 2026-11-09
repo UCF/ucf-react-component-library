@@ -21,14 +21,15 @@ const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 
 const {
+	BlockJsonPlugin,
+	SCRIPT_FIELDS,
+} = require( './scripts/block-json.cjs' );
+const {
 	root,
 	componentDir,
 	getPlugins,
 	assertEveryBlockHasOnePlugin,
 } = require( './scripts/plugins.cjs' );
-
-// UPSTREAM: block.json fields that point at a script wp-scripts should compile.
-const SCRIPT_FIELDS = [ 'editorScript', 'script', 'viewScript' ];
 
 const blockDir = ( name ) =>
 	path.join( componentDir( name ), 'integrations/wp' );
@@ -62,32 +63,13 @@ function entriesFor( name ) {
 	);
 }
 
-/**
- * The copied block.json points at the built `.js`, not the `.tsx` source.
- *
- * @param {Buffer} content block.json as written.
- * @return {string} block.json as shipped.
- */
-function toBuiltBlockJson( content ) {
-	const blockJson = JSON.parse( content.toString() );
-
-	for ( const field of SCRIPT_FIELDS ) {
-		if ( blockJson[ field ] ) {
-			blockJson[ field ] = []
-				.concat( blockJson[ field ] )
-				.map( ( value ) => value.replace( /\.[jt]sx?$/, '.js' ) );
-			if ( blockJson[ field ].length === 1 ) {
-				blockJson[ field ] = blockJson[ field ][ 0 ];
-			}
-		}
-	}
-
-	return JSON.stringify( blockJson, null, '\t' ) + '\n';
-}
-
 // WHY by name: wp-scripts requires its own copy of these classes, so `instanceof` against
 // ours would not match. These two are what assume a single source folder.
 const REPLACED = [ 'CopyPlugin', 'PhpFilePathsPlugin' ];
+
+const { version: packageVersion } = JSON.parse(
+	readFileSync( path.join( root, 'package.json' ) )
+);
 
 const plugins = getPlugins();
 assertEveryBlockHasOnePlugin( plugins );
@@ -104,20 +86,20 @@ module.exports = plugins.map( ( plugin ) => ( {
 		...defaultConfig.plugins.filter(
 			( p ) => p && ! REPLACED.includes( p.constructor.name )
 		),
+		// SYNC: scripts/block-json.cjs says why block.json isn't copied with the rest.
+		new BlockJsonPlugin( {
+			blocks: plugin.blocks,
+			blockJsonOf: ( name ) =>
+				path.join( blockDir( name ), 'block.json' ),
+			packageVersion,
+		} ),
 		new CopyWebpackPlugin( {
 			patterns: [
-				...plugin.blocks.flatMap( ( name ) => [
-					{
-						from: path.join( blockDir( name ), 'block.json' ),
-						to: `${ name }/block.json`,
-						transform: toBuiltBlockJson,
-					},
-					{
-						from: path.join( blockDir( name ), '*.php' ),
-						to: `${ name }/[name][ext]`,
-						noErrorOnMissing: true,
-					},
-				] ),
+				...plugin.blocks.map( ( name ) => ( {
+					from: path.join( blockDir( name ), '*.php' ),
+					to: `${ name }/[name][ext]`,
+					noErrorOnMissing: true,
+				} ) ),
 				{
 					from: path.join( root, 'plugins/shared/shared.php' ),
 					to: 'shared.php',
