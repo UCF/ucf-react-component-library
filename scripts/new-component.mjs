@@ -531,7 +531,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { defaultsIn } from '${ root }/integrations/schema/props.ts';
 import { argTypesOf } from '${ root }/integrations/storybook/arg-types.ts';
+// WHY every primitive's styles: each part kind renders as one (integrations/storybook/parts.tsx),
+// and an unstyled button fails the contrast check on dark sections.
+import '${ root }/components/primitives/button/style.css';
 import '${ root }/components/primitives/heading/style.css';
+import '${ root }/components/primitives/image/style.css';
 import '${ root }/components/primitives/paragraph/style.css';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS } from '../../${ n.Name }.props.ts';
@@ -610,14 +614,16 @@ describe( '${ n.Name }', () => {
 // WHY: a part class with no rule does nothing; an editor who picks it sees no change.
 it( 'styles every part class', () => {
 	const css = readFileSync( new URL( '../style.css', import.meta.url ), 'utf8' );
-	const classes: ( string | undefined )[] = Object.values( PARTS ).map(
-		( definition: { className?: string } ) => definition.className
-	);
-	expect(
-		classes.filter(
-			( className ) => className && ! css.includes( \`.\${ className }\` )
-		)
-	).toEqual( [] );
+	// WHY the wider type: a part with no class of its own (a button) is left out.
+	const partDefinitions: { kind: string; className?: string }[] =
+		Object.values( PARTS );
+	const unstyled = partDefinitions
+		.map( ( definition ) => definition.className )
+		.filter(
+			( className ): className is string =>
+				Boolean( className ) && ! css.includes( \`.\${ className }\` )
+		);
+	expect( unstyled ).toEqual( [] );
 } );
 `,
 		'integrations/puck/config.tsx': `/** The ${ n.title } in Puck, from its port (integrations/puck/config.tsx). */

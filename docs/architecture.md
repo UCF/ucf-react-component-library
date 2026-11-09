@@ -1,7 +1,18 @@
 # Architecture
 
-The single source for this repo's conventions and the reasoning behind them. `README.md` and
-`CLAUDE.md` point here rather than restating it.
+How the library is built, and the rules every component follows. It describes the code as it
+is today; for open work see [todo.md](todo.md). New here? Build one first with
+[first-component.md](first-component.md), then come back to the section you need.
+
+**Contents:** [One source, two outputs](#one-source-two-outputs) ·
+[The three layers](#the-three-layers) · [Three kinds of component](#three-kinds-of-component) ·
+[Naming](#naming) · [A component's folder](#a-components-folder) ·
+[What a component exports](#what-a-component-exports) · [Slots](#slots) ·
+[Core blocks and our primitives](#core-blocks-and-our-primitives) · [Primitives](#primitives) ·
+[Frames](#frames) · [Distribution](#distribution) ·
+[Tokens, roles and fonts](#tokens-roles-and-fonts) ·
+[Changing a content component's markup](#changing-a-content-components-markup) ·
+[Tests](#tests) · [Gotchas](#gotchas) · [Comments](#comments)
 
 ---
 
@@ -81,8 +92,7 @@ state or effects. The rule: **if the behavior only shows or hides what is alread
 it's content. If it fetches, computes or builds what is shown in the browser, it's
 interactive.** If it fetches but the result must be in the page, it's live.
 
-**WHY live is a kind of its own, not content with data:** it was planned that way ("live
-content"), but the two differ in everything a bucket decides: a live block has `render.php` and
+**WHY live is a kind of its own, not content with data:** the two differ in everything a bucket decides: a live block has `render.php` and
 no `save()`, nothing saved to deprecate, and markup in two languages that a test must compare.
 Nor is it interactive: it has no `view.tsx`, and its core may not fetch. Each of the three
 buckets has its own scaffold (`npm run new:component -- --kind live`) and its own checks.
@@ -104,10 +114,8 @@ date is read from its string: a `Date` or `DateTime` shows it in the zone of wha
 In the editors (WordPress and Puck) the browser fetches through the same `client.ts` and renders
 the React core, so an editor sees what the page will show.
 
-**WHY "interactive", not "app", "widget", "tool" or "dynamic":** "app" sounds like a whole
-application; older WordPress uses "widget" for sidebar widgets, which readers still know;
-"tool" sounds internal. "Dynamic" (and "static" for content) is the trap: WordPress and Next
-already use both words for how a host builds HTML, not for what a component does. A live
+**WHY not "dynamic" and "static":** WordPress and Next already use those words for how a host
+builds HTML, not for what a component does. A live
 component is a WordPress dynamic block, and so is an interactive one.
 
 **"Server" and "client" mean where the HTML a visitor needs comes from,** not which machine
@@ -142,8 +150,7 @@ One name per component, spelled the same way in every layer:
 - **Content is named for what a reader sees,** a plain noun: Highlight, Quote, Card, Section. No
   suffix; how it reads goes in the description ("a fact written as a complete statement").
 - **Interactive is named for the subject and the task:** Degree Finder, Tuition Calculator,
-  Event Search. WHY not "picker": it reads as one form control, like a date picker, not a
-  whole tool.
+  Event Search.
 - **In Storybook, a component sits under its kind** and carries the matching tag:
   `Content (Server)/Highlight` and `Live (Server)/Event List` with `tags: [ 'server' ]`,
   `Interactive (Client)/Degree Finder` with `tags: [ 'client' ]`. Its first story is `Default`. A component whose stories are split
@@ -190,8 +197,7 @@ own), `components/content/` (placed by editors, saved as HTML), `components/live
 editors, fetched and written by the server) and `components/interactive/` (placed by editors,
 built in the browser). The bucket is the kind, so the folder says which
 rules apply (save.tsx or render.php, presets or a client); integrations/tests/parity.test.tsx
-fails when a component sits in the wrong one. WHY buckets now, with one live and one interactive component:
-more are coming, and moving five is cheaper than moving fifty. WHY the bucket is left out of
+fails when a component sits in the wrong one. WHY the bucket is left out of
 every name (block names, `@ucf/components/{name}`, plugin.json): a component that changes kind
 moves folder without breaking a site. Names are unique across buckets; scripts/plugins.cjs
 (`componentDirs()`) finds a component by name and fails on a duplicate.
@@ -208,7 +214,7 @@ same name at the top holds the half every component shares. Something about Word
 one of the two `integrations/wp/` folders: `components/content/card/integrations/wp/` for the Card,
 `integrations/wp/` for every component.
 
-Every content component follows this: the Card, the Highlight, the Hero and the Section.
+Every content component follows this layout: the Card, the Highlight, the Hero and the Section.
 
 **What every component shares is in `integrations/`,** laid out in the same layers
 ([integrations/README.md](../integrations/README.md)): what a schema may declare (`schema/`), and how
@@ -217,13 +223,12 @@ holds only its own decisions.
 
 **One file per kind of definition.** The props are what an editor sets on the component, the
 parts are what goes inside it, and the presets are named combinations of the two. Each changes
-for its own reason (a new setting, a new look, a new design), so each has its own file. WHY no
-separate sample-props file: what a new one starts with is the defaults (in the props), and what
-an example looks like is a preset. The Card had one (`example.json`) that was its defaults with one change; it was the boxed card
-Puck started with while WordPress started plain.
+for its own reason (a new setting, a new look, a new design), so each has its own file. There is
+no separate sample-props file: what a new one starts with is the defaults (in the props), and
+what an example looks like is a preset.
 
-**Files are named `{Name}.{role}.{ext}`,** as `Card.test.tsx` and `Card.stories.tsx` already
-were: the first word is the component, the suffix is what the file defines. Typing `Card.` in
+**Files are named `{Name}.{role}.{ext}`:** the first word is the component, the suffix is what
+the file defines. Typing `Card.` in
 a file finder lists everything that defines the Card. In `integrations/`, each environment's folder has a
 main file named for what it produces (`wp/block.tsx`, `puck/config.tsx`, `react/frame.tsx`)
 and a `parts` file for how parts render there, mirroring `schema/`.
@@ -246,19 +251,21 @@ Component
 
 Each host reads the same objects:
 
-|           | Prop definitions                                                        | Parts                                          | Presets                                                                   |
-| --------- | ----------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
-| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)         | (its `style.css` styles PARTS)                 |                                                                           |
-| WordPress | block.json attributes (written by hand, checked); the sidebar, by panel | `integrations/wp/parts.ts`: kind → core block  | block variations; DEFAULT_PRESET is the block's template and its preview  |
-| Puck      | `puckFields()` and `defaultsIn()`                                       | `integrations/puck/parts.ts`: kind → primitive | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
-| Storybook | `argTypesOf()`, and the defaults as the starting args                   | `integrations/storybook/parts.tsx`             | `{Name}.presets.stories.tsx`                                              |
+|           | Prop definitions                                                     | Parts                                          | Presets                                                                   |
+| --------- | -------------------------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)      | (its `style.css` styles PARTS)                 |                                                                           |
+| WordPress | block.json attributes (`npm run sync:blocks`); the sidebar, by panel | `integrations/wp/parts.ts`: kind → core block  | block variations; DEFAULT_PRESET is the block's template and its preview  |
+| Puck      | `puckFields()` and `defaultsIn()`                                    | `integrations/puck/parts.ts`: kind → primitive | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
+| Storybook | `argTypesOf()`, and the defaults as the starting args                | `integrations/storybook/parts.tsx`             | `{Name}.presets.stories.tsx`                                              |
 
 `integrations/schema/` defines the shape of each: `props.ts` what prop definitions look like
 and the functions above; `parts.ts` the part kinds, and `resolveParts()`, which gives the
 mappers each part's kind and class from the component's PARTS; `presets.ts` the `Preset` type
 and `findPreset()`. A component's three files hold only its own data.
-block.json is still written by hand because PHP reads it before any script runs;
-parity.test.tsx fails while its attributes differ from the prop definitions.
+
+block.json stays a file on disk, because PHP reads it before any script runs and it is where
+WordPress developers look. Its `attributes` are written from the props by
+`npm run sync:blocks`; the rest is written by hand. parity.test.tsx fails while the two differ.
 
 ### Words
 
@@ -309,8 +316,7 @@ A component built with `frame()` (integrations/react/frame.tsx; see "Built with 
 `preset`, `content` and `sample` besides its props: a plain React site passes data
 (`<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`) and gets the preset's props and
 parts, filled. WHY not a stored `preset` attribute in the CMSs: there an editor changes the
-content, so it must stay inner blocks or a slot; a preset only starts it. The Card has it; the
-Highlight next (docs/todo.md).
+content, so it must stay inner blocks or a slot; a preset only starts it.
 
 integrations/tests/exports.test.ts checks every component's entry. WHY the name in the constant:
 a site imports several components' parts into one file. `@ucf/components/react`
@@ -335,7 +341,7 @@ Next, and the WordPress build fails on it.
 
 ## Core blocks and our primitives
 
-Decided 2026-10-30. **If a WordPress core block saves just a plain HTML element, use core. If it
+**If a WordPress core block saves just a plain HTML element, use core. If it
 needs structure WordPress invents (wrappers, layout classes, inline styles, settings that
 change its markup), we own it**, as a component here with the same markup in every host.
 
@@ -376,8 +382,7 @@ Interactivity API in WordPress), per "Three kinds of component".
 
 ## Primitives
 
-Decided 2026-11-01, refining the section above; narrowed 2026-11-02 by "Frames" below. **Core
-blocks are for content editors. The markup a component owns is built from our own
+**Core blocks are for content editors. The markup a component owns is built from our own
 primitives**, in `components/primitives/`, the bucket beside `content/` and `interactive/`. A frame's open content area is editor
 content, so in WordPress it holds core blocks (see "Frames").
 
@@ -400,7 +405,7 @@ content, so in WordPress it holds core blocks (see "Frames").
 - **The dependency goes one way:** components import primitives; primitives never import
   components. Both import `integrations/` (primitives only its type-only Puck config shape).
 - **WHY primitives rather than each component drawing its own:** one Button in every component
-  is what stops buttons and inputs drifting apart. P1 does the same with its `internal/btn`.
+  is what stops buttons and inputs drifting apart.
 - **The cost:** a component saves its primitives' markup inside its own. Changing a primitive's
   markup changes every saved block that uses it, so keep primitives small and plain, restyle in
   CSS (which never touches saved posts), and when the markup must change, keep the old version
@@ -411,7 +416,7 @@ content, so in WordPress it holds core blocks (see "Frames").
 
 ## Frames
 
-Decided 2026-11-02. A content component is one of two shapes:
+A content component is one of two shapes:
 
 | Shape     | What it owns                                  | Its content                                  | Examples                                               |
 | --------- | --------------------------------------------- | -------------------------------------------- | ------------------------------------------------------ |
@@ -436,8 +441,7 @@ Decided 2026-11-02. A content component is one of two shapes:
   is a new entry; tests check each reaches both hosts, names an icon WordPress has, and uses
   only the frame's own props.
 - **Parts are named by class.** Where a part has its own look (the Hero's title, the Highlight's
-  statement), the template sets a class on it (`PARTS`, in the Card's Card.parts.ts and
-  still in the other frames' cores) in both hosts: core's
+  statement), the template sets a class on it (`PARTS`, in `{Name}.parts.ts`) in both hosts: core's
   "Additional CSS class(es)" in WordPress, the primitive's CSS class field in Puck. The frame's
   CSS styles it as `.ucf-c-{frame} .ucf-c-{frame}__{part}`, two classes, so it wins over the one
   class a core block or a primitive styles itself with.
@@ -451,7 +455,7 @@ Decided 2026-11-02. A content component is one of two shapes:
 
 ### Built with frame()
 
-Decided 2026-11-05. A content component's `{Name}.tsx` is a plain React component, passed to
+A content component's `{Name}.tsx` is a plain React component, passed to
 `frame()` (integrations/react/frame.tsx) with what it is (slug, title, kind, `wpIcon`, props,
 parts, presets; `ComponentDefinition` in integrations/schema/definition.ts). That gives back a
 React component that works on its own, presets included, and `{Name}.port`: the definition, and
@@ -478,8 +482,8 @@ with its values, and the doc comment above it. The props follow the presets: `pr
 is a type error (the tag is the media tile's). WHY `as const` on `{Name}.presets.ts`: it keeps the
 names and parts exact for those types. An area is where content goes: a `<div>` on a React site, or the element a
 host passes (`<Card.port.Frame areas={ { content: InnerBlocksArea } } />`). Hosts fill the one
-named `content`. WHY: host-only props (`innerAs`, `media`) had become part of the React API;
-areas keep them on the port, so every prop a React site sees means something there. WHY `area`
+named `content`. WHY areas on the port, not props: a host-only piece then never appears in the
+React API, so every prop a React site sees means something there. WHY `area`
 a function, not an `<Area>` component: it needs no React context, so nothing happens that the
 file doesn't show. The component may not use hooks: WordPress saves its markup.
 
@@ -487,7 +491,7 @@ An area may name its element on a React site with `as` (the Hero's image area is
 `<Image>`), and `area.hosted( name )` says whether a host fills it (the Hero shows its image
 frame while WordPress's picker is in it). A block's own edit.tsx passes its extra areas:
 `blockEdit( Hero, { areas: { media: ImagePicker } } )`, and the picker reads the block with
-`useBlock()`. A component with no designs (the Section, the Hero for now) has an empty `PRESETS`
+`useBlock()`. A component with no designs (the Section, the Hero) has an empty `PRESETS`
 and a `DEFAULT_PRESET` outside it: what a new one starts with, and no variations or Design
 picker.
 
@@ -497,7 +501,7 @@ has goes in its own file).
 
 ### One definition, one translator per environment
 
-Decided 2026-11-04. Each environment has one translator that turns any framed component into its
+Each environment has one translator that turns any framed component into its
 integration, reading its port:
 
 | Environment | Translator                                                                 | A component's file becomes                                        |
@@ -508,9 +512,8 @@ integration, reading its port:
 
 WHY one translator per environment, not one file for all: the component and its port are plain
 data and React, safe to import anywhere; WordPress's code must never reach the npm package,
-nor Puck's the plugins. WHY translators, not each component's own adapter code: the adapters
-were the same pattern four times over (Card's and the Highlight's save.tsx differed in four
-comment lines); a fix or a new editing feature now lands in every component at once.
+nor Puck's the plugins. WHY translators, not each component's own adapter code: a fix or a new
+editing feature lands in every component at once.
 
 Every component keeps its `integrations/` folder, with each environment's usual files: for a
 block, `block.json`, `index.tsx`, `edit.tsx` and `save.tsx`, each a one-line call to the
@@ -524,7 +527,7 @@ its own. An interactive component's folder also holds what is truly its own (`re
 
 ### How content reaches a frame
 
-Decided 2026-11-04. A frame has three layers, designed from the React render out:
+A frame has three layers, designed from the React render out:
 
 ```
 integrations   each environment stores one layer: data, or open content
@@ -544,11 +547,9 @@ environment is a way to produce the frame's props:
 | Puck        | `preset`, `content` (a field per part), or `blocks` (a slot, for the "Open" design) | content, or the frame |
 | WordPress   | inner blocks (a preset inserts the starting ones)                                   | the frame             |
 
-WHY WordPress stays on inner blocks for now: an editor changes the content there, and a static
-block's content has to be blocks or attributes with an editing UI for each part. Worth
-prototyping: WordPress's pattern overrides (6.6+), which store per-instance content for named
-blocks inside a synced pattern, much as `content` does by part name. The Card is on this model;
-the Highlight follows (docs/todo.md).
+WHY inner blocks in WordPress: an editor changes the content there, and a static block's
+content has to be blocks or attributes with an editing UI for each part. Pattern overrides are
+an option to try (docs/todo.md).
 
 ## Distribution
 
@@ -560,9 +561,8 @@ the component layer and every component's styles. A site imports it once.
 
 **WHY one package, not one per component:** a package per component costs a version, a
 changelog and release tooling per component, and lets components drift onto different
-versions of the tokens. That is worth paying only once there's a catalog to manage them. The
-direction is: split into per-component packages later, together with Storybook as the
-catalog. Until then, keep every component folder self-contained so the split is a move.
+versions of the tokens. Keep every component folder self-contained, so splitting into
+per-component packages later is a move, not a rewrite.
 
 **WHY `"private": true`:** nothing publishes yet. Remove it when the release job exists.
 
@@ -589,7 +589,7 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 - **Every plugin carries `base.css`** (tokens pointing at the theme, and the component layer)
   under one style handle, so it loads once.
 
-Installed by zip for now (`npm run release:temp` writes them to `temp-release/wordpress/`), or
+Until there is a release job, they are installed by zip (`npm run release:temp` writes them to `temp-release/wordpress/`), or
 copied into a development WordPress by `npm run deploy` (or on every change,
 `npm run deploy:watch`), which reads the folder from a local `.env` (template:
 `.env.example`). The same commands copy the npm package into a local React site; see "Working
@@ -648,7 +648,7 @@ primitives it has two role groups, both references to colors and never values:
     black on light sections and gray-050 on dark ones, with no roles of their own.
     WHY one mechanism: each is "a surface that uses another composition's roles". A new kind of
     surface is a new row in build-tokens.mjs, not a set of new roles in every treatment.
-    FIX: a composition that names no panel sets each panel role to `initial`, so a Dark section
+    A composition that names no panel sets each panel role to `initial`, so a Dark section
     inside a Bold Gold one does not inherit Light Alt panels.
 
 Who sets the roles:
@@ -662,11 +662,10 @@ Who sets the roles:
 which saves `ucf-composition-{slug}` exactly as Puck and Next render it, and the plugins'
 `base.css` carries those classes, so it works on any theme. WHY not the block theme's Section
 (a core/group variation): this library manages the section so its markup and settings match
-in every host; the theme's is expected to go.
+in every host.
 
 **The light roles stay off `:root` in WordPress:** outside a Section the theme decides what the
-page is. The block theme also still sets roles for its own `.is-style-*` sections, from this
-file: the build writes `dist/theme/` (the role and composition maps as Sass, the composition
+page is. The block theme sets roles for its own `.is-style-*` sections from this file too: the build writes `dist/theme/` (the role and composition maps as Sass, the composition
 labels as JSON, the presets its `theme.json` must hold), and the theme's `npm run sync:tokens`
 copies it into its `tokens/`, so both read the same values. Its `npm run check:tokens` fails
 while its `theme.json` disagrees.
@@ -677,8 +676,7 @@ role a component's CSS reads is one `tokens.json` defines.
 
 **WHY our own script, not Style Dictionary:** three treatments and five compositions don't
 need it. The file is in the format Style Dictionary and Terrazzo read, so moving to one is a
-change of build tool, not of data. Worth it once there are more outputs than CSS (a Figma
-sync, a Sass map for the theme).
+change of build tool, not of data.
 
 ### The component layer: one class, every role
 
@@ -738,7 +736,7 @@ composition at three widths. They are separate because the browser is slow to st
 before committing a change to a story, markup or CSS.
 
 The tests in `integrations/tests/` find every component on their own, so a new one is
-covered with nothing to add. They are modeled on the UCF Brand Block Theme's suites.
+covered with nothing to add.
 
 - **Block round-trip** (`integrations/tests/blocks.test.tsx`): every block is created, serialized as a post
   stores it, parsed back and checked with `isValidBlockContent()`, the editor's own test, plus a
@@ -780,7 +778,9 @@ hand; a live block's render.php runs only against stubs. Never verify a block
 through the front end: an invalid block still renders there. Ask the editor's store
 (`wp.data.select( 'core/block-editor' ).getBlocks()`).
 
-## Gotchas that have already bitten
+## Gotchas
+
+Things in the tools that look wrong and aren't. Don't "clean them up".
 
 - **`@wordpress/scripts` 37 runs Vitest, not Jest.** `test-unit-js` needs `vitest`
   installed; `test-unit-jest` is the legacy path.

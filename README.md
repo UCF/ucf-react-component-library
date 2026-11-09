@@ -10,8 +10,12 @@ Components are written once in React and shipped to every place UCF builds pages
 - **The UCF block theme:** as a token kit, so its sections share the same colors and roles.
 - **Storybook:** the catalog where every component can be seen on every section color.
 
-How it works and why: [docs/architecture.md](docs/architecture.md). What's next:
-[docs/todo.md](docs/todo.md).
+| Read                                               | For                                                  |
+| -------------------------------------------------- | ---------------------------------------------------- |
+| [docs/first-component.md](docs/first-component.md) | Building a component, step by step: start here       |
+| [docs/architecture.md](docs/architecture.md)       | How the library is built, and the rules it follows   |
+| [CONTRIBUTING.md](CONTRIBUTING.md)                 | Issues, pull requests, and what tests a change needs |
+| [docs/todo.md](docs/todo.md)                       | Open work                                            |
 
 ## Quick start
 
@@ -84,7 +88,8 @@ plugins/           one WordPress plugin per content type
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests
 .storybook/        the catalog: theme, toolbar, logo
-docs/              architecture.md (how and why), todo.md (what's next)
+docs/              first-component.md (a walkthrough), architecture.md (how it works),
+                   todo.md (open work)
 ```
 
 ## Commands
@@ -95,7 +100,7 @@ docs/              architecture.md (how and why), todo.md (what's next)
 | `npm run deploy:watch`  | Rebuild on every change and copy into your local sites (below) |
 | `npm run deploy`        | Build once and copy into your local sites (below)              |
 | `npm start`             | Rebuild the plugins on every change, without copying them      |
-| `npm run new:component` | Start a component: its folder, and every list that names it    |
+| `npm run new:component` | Start a component (see docs/first-component.md)                |
 
 | Build                     | Does                                                              |
 | ------------------------- | ----------------------------------------------------------------- |
@@ -289,7 +294,9 @@ package. In WordPress it replaces only this repo's plugins, and skips one that i
 A component is one folder, `components/{bucket}/{name}/`, where the bucket is its role:
 `primitives`, `content`, `live` or `interactive`. One file in it is the component itself, the
 **core**. Every other file either connects the core to a platform (an **adapter**, for a
-**host** such as WordPress or Puck) or ships it to an output. Nothing outside the folder needs to change except two lists (step 4 below).
+**host** such as WordPress or Puck) or ships it to an output. Outside the folder, only two lists
+name it: `package.json` `exports` and one plugin's `plugin.json` (`npm run new:component`
+adds both).
 
 ```
 components/{bucket}/{name}/
@@ -382,96 +389,9 @@ The roles themselves live in `tokens/tokens.json`. See "Tokens, roles and fonts"
 
 ## Adding a component
 
-**1. Decide its kind and name.** Kind is the table above: does its HTML need to exist before
-JavaScript runs, and is what it shows fetched? Content and live are a plain noun (Quote, Card,
-Event List); interactive is subject plus task
-(Tuition Calculator). One name everywhere: folder `quote`, React `Quote`, CSS `ucf-c-quote`,
-block `ucf-content/quote`. Block names and a content block's attribute names are stored in
-posts, so they are permanent once a site uses them. Settle them first
-([architecture.md](docs/architecture.md), "Three kinds of component" and "Naming").
-
-**2. Start it with the script:**
-
-```sh
-npm run new:component -- pull-quote --kind content --plugin ucf-content
-npm run new:component -- news-list --kind live --plugin ucf-content
-npm run new:component -- tuition-calculator --kind interactive --plugin ucf-degrees
-npm run new:component -- badge --kind primitive   # components/primitives/badge: no plugin, no block
-```
-
-It writes `components/{bucket}/{name}/`, in its kind's bucket (`content`, `live`, `interactive`, or for a
-primitive `primitives`; see "Primitives" in [architecture.md](docs/architecture.md)) with one placeholder prop, and adds the component to every list
-in step 4 and to the lists in `integrations/tests/`, so it passes `npm run check` and `npm run test:stories`
-as soon as it is created. Leave out `--kind` or `--plugin` and it asks. `--title` sets the
-display name. Then replace the placeholder prop and markup. Every component has:
-
-```
-{Name}.tsx            the core
-index.ts              what the npm package exports
-style.css             colors as var(--ucf-c-{role}) only
-integrations/storybook/ {Name}.stories.tsx: title 'Content (Server)/{Name}',
-                      'Live (Server)/{Name}' or 'Interactive (Client)/{Name}',
-                      tags [ 'server' ] or [ 'client' ], first story `Default`
-integrations/puck/config.tsx also add it to CONFIGS in integrations/tests/puck.test.tsx
-integrations/wp/       block.json, index.tsx, edit.tsx, and save.tsx, render.php + client.php +
-                      markup.php, or render.php + view.tsx
-```
-
-Plus, for content: `tests/{Name}.test.tsx`, the markup contract (copy
-`card/tests/Card.test.tsx`), and `{Name}.props.ts` (its prop definitions), a frame's `{Name}.parts.ts`,
-`{Name}.presets.ts` if it has designs, and a `README.md` with its object model: copy the
-Card's, and see "A component's folder" in [architecture.md](docs/architecture.md). The script
-writes a content component in the Card's layout, built with `frame()` ("Built with frame()").
-For live: `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again in
-`integrations/wp/markup.php`, `tests/{Name}.php.test.tsx` comparing the two (copy
-`event-list/tests/EventList.php.test.tsx`), `tests/client.test.ts`, and a saved copy of the real
-feed in `tests/fixtures/`. A new plugin's PHP prefix and text domain go in `phpcs.xml.dist`.
-For interactive: `defaults.ts`,
-`client.ts` (the only file that knows its API's response shape), `tests/client.test.ts` (with a fake
-`fetch`) and `sample-client.ts` (the same interface with no network, for stories).
-
-**3. Apply the section colors:** `ucf-c` or `ucf-c-panel` on the outer element, roles only in
-`style.css` (see "Section colors" above).
-
-**4. Check it is in the two lists** (the script adds it). Storybook and the package build find
-it on their own; these don't:
-
-- **`package.json` `exports`:** `./{name}` and `./{name}/puck` (and `./{name}/example.json`
-  for a primitive). This is what makes it importable from `@ucf/components`.
-- **One `plugins/*/plugin.json`:** add the name to `blocks`, and name the block after that
-  plugin (`ucf-degrees/…`). The build fails if a block is in no plugin, or in two. An
-  interactive block with site settings also gets a settings function in that plugin's main PHP
-  file, like `ucf_degrees_degree_finder_settings()`.
-
-**5. Check it.** The tests in `integrations/tests/` pick it up on their own: the block round-trip, WordPress and
-Puck parity, and its stories on every composition and width. Review the new snapshot in
-`integrations/tests/__snapshots__/`: it is what every post using the block will store. In
-Storybook, open it on every composition from the toolbar. Run
-`npm run release:temp` and try the block in WordPress's editor (never judge a block from the
-front end). Then run everything below. New tests must be shown to fail: break the code, watch
-it go red, restore.
-
-## Changing a component
-
-What to edit for each change, in a component laid out as the Card is
-([components/content/card/README.md](components/content/card/README.md) and
-[components/content/highlight/README.md](components/content/highlight/README.md) show their objects). The tests named
-fail until every copy agrees.
-
-| To…                                       | Edit                                                                                                                                                          | Checked by                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Add a prop                                | `{Name}.props.ts` (type, default, field); its attribute in `integrations/wp/block.json`; use it in `{Name}.tsx` and `style.css`                               | `parity.test.tsx` (block.json, labels)                   |
-| Change a label, help text, control, panel | `{Name}.props.ts` only                                                                                                                                        |                                                          |
-| Change a default                          | `{Name}.props.ts` and `block.json`. A saved block that never set the prop takes the new default                                                               | `parity.test.tsx`                                        |
-| Add a preset                              | `{Name}.presets.ts`; a story in `integrations/storybook/{Name}.presets.stories.tsx`; `ICONS` in `integrations/wp/icons.ts` only if its icon is new            | `integrations/tests/presets.test.tsx`                    |
-| Change what a new one starts with         | `DEFAULT_PRESET` in `{Name}.presets.ts`: also the inserter's preview                                                                                          |                                                          |
-| Add a part (a new look)                   | an entry in `PARTS` in `{Name}.parts.ts` (its kind and class), and the class's rule in `style.css`                                                            | `tests/{Name}.test.tsx` (every class styled)             |
-| Add a kind of part (for every component)  | `KindContent` in `integrations/schema/parts.ts`; TypeScript then lists every switch that needs a case: the two mappers and `integrations/storybook/parts.tsx` | `npm run typecheck`                                      |
-| Rename it on screen                       | `title` in `block.json` and `label` in `integrations/puck/config.tsx`; each preset's title prefix; the stories' titles                                        | `parity.test.tsx`, `integrations/tests/presets.test.tsx` |
-| Change the markup                         | `{Name}.tsx`, following "Changing a content component's markup" in [architecture.md](docs/architecture.md): every saved post with the block changes           | the markup snapshot                                      |
-
-A prop's key is its block attribute, saved in every post that uses the block: renaming one
-needs a block deprecation ([architecture.md](docs/architecture.md), "Naming").
+**[docs/first-component.md](docs/first-component.md) walks you through it,** from
+`npm run new:component` to a block in WordPress, step by step. It ends with a table of what to
+edit for each later change.
 
 ## Before committing
 
