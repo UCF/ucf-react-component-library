@@ -9,10 +9,7 @@
  *
  * SYNC: style.css styles every class here; tests/Highlight.test.tsx checks.
  */
-import type {
-	PartDefinitions,
-	PartOf,
-} from '../../../integrations/schema/parts.ts';
+import type { PartDefinitions, PartOf } from '#integrations/schema/parts.js';
 
 /**
  * The Highlight's parts: each look, its kind and the class that styles it. A preset names a part

@@ -14,7 +14,7 @@ import type { HighlightEditableProps } from './Highlight.props.ts';
 import {
 	findPreset,
 	type Preset as PresetOf,
-} from '../../../integrations/schema/presets.ts';
+} from '#integrations/schema/presets.js';
 
 export type Preset = PresetOf< HighlightEditableProps, Part >;
 

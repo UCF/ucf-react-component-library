@@ -4,8 +4,8 @@ import { Notice, PanelBody, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { MouseEvent } from 'react';
 
-import { panelsOf } from '../../../../../integrations/schema/props.ts';
-import { FieldControl } from '../../../../../integrations/wp/inspector.tsx';
+import { panelsOf } from '#integrations/schema/props.js';
+import { FieldControl } from '#integrations/wp/inspector.js';
 import EventList from '../../EventList.tsx';
 import { PROPS, type EventListEditableProps } from '../../EventList.props.ts';
 import { useEvents } from '../../utils/useEvents.ts';

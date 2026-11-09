@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Paragraph from '../../../../primitives/paragraph/Paragraph.tsx';
-import '../../../../primitives/paragraph/style.css';
-import Highlight from '../../../highlight/Highlight.tsx';
-import { PARTS } from '../../../highlight/Highlight.parts.ts';
-import '../../../highlight/style.css';
+import Paragraph from '#primitives/paragraph/Paragraph.js';
+import '#primitives/paragraph/style.css';
+import Highlight from '#components/content/highlight/Highlight.js';
+import { PARTS } from '#components/content/highlight/Highlight.parts.js';
+import '#components/content/highlight/style.css';
 import Section from '../../Section.tsx';
-import type { Composition } from '../../../../../integrations/schema/compositions.ts';
+import type { Composition } from '#integrations/schema/compositions.js';
 import '../../style.css';
 
 const meta = {

@@ -5,12 +5,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
-import Heading from '../../../../primitives/heading/Heading.tsx';
-import Paragraph from '../../../../primitives/paragraph/Paragraph.tsx';
-import {
-	contrast,
-	over,
-} from '../../../../../integrations/storybook/contrast.ts';
+import Heading from '#primitives/heading/Heading.js';
+import Paragraph from '#primitives/paragraph/Paragraph.js';
+import { contrast, over } from '#integrations/storybook/contrast.js';
 import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
 import Card from '../../Card.tsx';
 import { PARTS } from '../../Card.parts.ts';

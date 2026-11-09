@@ -214,6 +214,16 @@ same name at the top holds the half every component shares. Something about Word
 one of the two `integrations/wp/` folders: `components/content/card/integrations/wp/` for the Card,
 `integrations/wp/` for every component.
 
+**Imports that leave a component's folder use a name, not a path.** `package.json` `imports`
+maps `#integrations/*` to `integrations/`, `#primitives/*` to `components/primitives/` and
+`#components/*` to `components/`, so `'../../../../../integrations/schema/props.ts'` is
+`'#integrations/schema/props.js'` from anywhere. Imports inside a component stay relative
+(`'../../EventList.tsx'`), as do imports between `integrations/` folders (`'../schema/props.ts'`)
+and of `.storybook/` and `tokens/tokens.json`, which are setup and data, not library code. A
+`#` name ends in `.js`, never `.ts` or `.tsx`, and a relative import ends in `.ts` or `.tsx`
+(see "Gotchas"). `scripts/build-package.mjs` writes the same map into `dist/package.json`, so
+the published package resolves the names too, and `npm run new:component` writes them.
+
 Every content component follows this layout: the Card, the Highlight, the Hero and the Section.
 
 **What every component shares is in `integrations/`,** laid out in the same layers
@@ -798,6 +808,12 @@ Things in the tools that look wrong and aren't. Don't "clean them up".
   requires its own copy of those classes, so `instanceof` against ours doesn't match.
 - **JSON imported by a published module needs `with { type: 'json' }`.** Bundlers don't
   care; plain Node refuses without it.
+- **A `#` import ends in `.js`; a relative one ends in `.ts` or `.tsx`.** The package build
+  (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports and copies a `#` import
+  as written, so a `#` import names the file that exists in `dist/`. Written `.ts`, `tsc`
+  refuses it (TS2877); written without an extension, TypeScript can't find it. TypeScript and
+  Vite find the `.ts` source behind a `.js` name on their own; webpack needs `extensionAlias`
+  in `webpack.config.js`.
 - **The root `package.json` is not `"type": "module"`.** wp-scripts loads the webpack and
   ESLint configs as CommonJS. `dist/package.json` sets it for the package instead.
 

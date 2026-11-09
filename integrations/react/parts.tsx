@@ -8,10 +8,10 @@
 
 import type { ReactElement } from 'react';
 
-import Button from '../../components/primitives/button/Button.tsx';
-import Heading from '../../components/primitives/heading/Heading.tsx';
-import Image from '../../components/primitives/image/Image.tsx';
-import Paragraph from '../../components/primitives/paragraph/Paragraph.tsx';
+import Button from '#primitives/button/Button.js';
+import Heading from '#primitives/heading/Heading.js';
+import Image from '#primitives/image/Image.js';
+import Paragraph from '#primitives/paragraph/Paragraph.js';
 import {
 	resolveParts,
 	unhandledPart,

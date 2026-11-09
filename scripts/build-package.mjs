@@ -6,7 +6,7 @@
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
- *   4. dist/package.json marks the output as ES modules.
+ *   4. dist/package.json marks the output as ES modules, and maps the `#` import names to it.
  *   5. Every file package.json exports must exist, or the build fails.
  *
  * WHY step 3 rather than `"type": "module"` in the root package.json: the root holds the
@@ -93,9 +93,16 @@ copyFileSync(
 	path.join( dist, 'elements.css' )
 );
 
+// WHY the package's `#` import names (package.json `imports`) again: Node and bundlers resolve
+// them from the nearest package.json, which for a built file is this one. dist/ mirrors the
+// repo's folders, and the names already end in `.js`, so the map is the same.
+const { imports } = JSON.parse(
+	readFileSync( path.join( root, 'package.json' ), 'utf8' )
+);
+
 writeFileSync(
 	path.join( dist, 'package.json' ),
-	JSON.stringify( { type: 'module' }, null, '\t' ) + '\n'
+	JSON.stringify( { type: 'module', imports }, null, '\t' ) + '\n'
 );
 
 // FIX: an export whose file the build never wrote. tsc copies a JSON file only when code

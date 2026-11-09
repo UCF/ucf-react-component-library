@@ -100,6 +100,11 @@
 			"default": "./dist/components/live/event-list/integrations/puck/config.js"
 		}
 	},
+	"imports": {
+		"#integrations/*": "./integrations/*",
+		"#primitives/*": "./components/primitives/*",
+		"#components/*": "./components/*"
+	},
 	"files": [
 		"dist"
 	],

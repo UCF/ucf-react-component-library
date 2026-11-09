@@ -5,10 +5,7 @@
  * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type {
-	PropDefinitions,
-	PropsOf,
-} from '../../../integrations/schema/props.ts';
+import type { PropDefinitions, PropsOf } from '#integrations/schema/props.js';
 
 export const PROPS = {
 	// Layout

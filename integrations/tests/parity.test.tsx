@@ -264,7 +264,8 @@ test( 'every block imports the styles of the primitives its core uses', () => {
 			continue;
 		}
 		for ( const [ , primitive ] of source.matchAll(
-			/from '\.\.\/\.\.\/primitives\/([a-z-]+)\//g
+			// Relative (`../../primitives/`) or by name (`#primitives/`, package.json `imports`).
+			/from '(?:\.\.\/\.\.\/|#)primitives\/([a-z-]+)\//g
 		) ) {
 			if ( ! entry.includes( `primitives/${ primitive }/style.css'` ) ) {
 				missing.add( `${ component } uses ${ primitive }` );

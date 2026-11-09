@@ -15,32 +15,32 @@ import type { ComponentConfig } from '@puckeditor/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import button from '../../components/primitives/button/integrations/puck/config.tsx';
-import heading from '../../components/primitives/heading/integrations/puck/config.tsx';
-import image from '../../components/primitives/image/integrations/puck/config.tsx';
-import paragraph from '../../components/primitives/paragraph/integrations/puck/config.tsx';
+import button from '#primitives/button/integrations/puck/config.js';
+import heading from '#primitives/heading/integrations/puck/config.js';
+import image from '#primitives/image/integrations/puck/config.js';
+import paragraph from '#primitives/paragraph/integrations/puck/config.js';
 import card, {
 	withTemplate as cardWithTemplate,
 	withPreset as cardWithPreset,
-} from '../../components/content/card/integrations/puck/config.tsx';
+} from '#components/content/card/integrations/puck/config.js';
 import {
 	DEFAULT_PRESET as DEFAULT_CARD_PRESET,
 	PRESETS as CARD_PRESETS,
-} from '../../components/content/card/Card.presets.ts';
-import degreeFinder from '../../components/interactive/degree-finder/integrations/puck/config.tsx';
-import eventList from '../../components/live/event-list/integrations/puck/config.tsx';
+} from '#components/content/card/Card.presets.js';
+import degreeFinder from '#components/interactive/degree-finder/integrations/puck/config.js';
+import eventList from '#components/live/event-list/integrations/puck/config.js';
 import hero, {
 	withTemplate as heroWithTemplate,
-} from '../../components/content/hero/integrations/puck/config.tsx';
+} from '#components/content/hero/integrations/puck/config.js';
 import section, {
 	withTemplate as sectionWithTemplate,
-} from '../../components/content/section/integrations/puck/config.tsx';
+} from '#components/content/section/integrations/puck/config.js';
 import highlight, {
 	withTemplate as highlightWithTemplate,
 	withPreset as highlightWithPreset,
-} from '../../components/content/highlight/integrations/puck/config.tsx';
-import { PRESETS as HIGHLIGHT_PRESETS } from '../../components/content/highlight/Highlight.presets.ts';
-import imageExample from '../../components/primitives/image/example.json';
+} from '#components/content/highlight/integrations/puck/config.js';
+import { PRESETS as HIGHLIGHT_PRESETS } from '#components/content/highlight/Highlight.presets.js';
+import imageExample from '#primitives/image/example.json';
 import type { PuckComponentConfig } from '../puck/types.ts';
 
 type PropsOf< Config > =

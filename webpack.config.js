@@ -82,6 +82,13 @@ module.exports = plugins.map( ( plugin ) => ( {
 		...defaultConfig.output,
 		path: path.join( plugin.dir, 'build' ),
 	},
+	resolve: {
+		...defaultConfig.resolve,
+		// UPSTREAM: a `#` import names the compiled file (`#integrations/schema/props.js`,
+		// package.json `imports`), as TypeScript expects; webpack only finds the `.ts` source
+		// behind it when told to look.
+		extensionAlias: { '.js': [ '.ts', '.tsx', '.js' ] },
+	},
 	plugins: [
 		...defaultConfig.plugins.filter(
 			( p ) => p && ! REPLACED.includes( p.constructor.name )

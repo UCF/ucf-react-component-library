@@ -16,7 +16,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '../../../integrations/react/frame.tsx';
+} from '#integrations/react/frame.js';
 import { PARTS } from './Section.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Section.presets.ts';
 import { PROPS } from './Section.props.ts';

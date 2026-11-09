@@ -5,7 +5,7 @@ import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
 // WHY the Image's styles here: the Card renders it. PERF: each block that uses a primitive
 // carries its CSS; move primitives into the plugins' shared base.css once several do.
-import '../../../../components/primitives/image/style.css';
+import '#primitives/image/style.css';
 import '../../style.css';
 import example from '../../example.json';
 import metadata from './block.json';
