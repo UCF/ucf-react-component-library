@@ -6,7 +6,7 @@
  * no effects, no fetching. Whoever renders it fetches first and passes `events`: a Next Server
  * Component through client.ts; WordPress in PHP (integrations/wp/render.php).
  *
- * SYNC: integrations/wp/markup.php writes this same markup in PHP, for WordPress.
+ * SYNC: integrations/wp/render.php writes this same markup in PHP, for WordPress.
  * tests/EventList.php.test.tsx fails when the two differ. Change both together. Nothing stores
  * this markup, so a change needs no block deprecation.
  * SPEC: the UCF Brand Block Theme's Events block (`ucf/events`, includes/events.php there): a
@@ -31,7 +31,7 @@ export type EventListProps = Partial<
 
 /**
  * The heading to show: the one given, or the default when it is empty or only spaces.
- * SYNC: ucf_events_event_list_markup() in integrations/wp/markup.php trims the same four
+ * SYNC: integrations/wp/render.php trims the same four
  * characters. WHY not trim(): JavaScript's and PHP's differ in which spaces they remove.
  *
  * @param title The heading an editor set.

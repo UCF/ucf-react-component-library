@@ -147,11 +147,11 @@ describe( 'planComponent', () => {
 				'components/live/news-list/client.ts',
 				'components/live/news-list/integrations/wp/render.php',
 				'components/live/news-list/integrations/wp/client.php',
-				'components/live/news-list/integrations/wp/markup.php',
 				'components/live/news-list/tests/NewsList.php.test.tsx',
 			] )
 		);
-		for ( const absent of [ 'save.tsx', 'view.tsx' ] ) {
+		// WHY no markup.php: the markup is render.php, as a template (docs/architecture.md).
+		for ( const absent of [ 'save.tsx', 'view.tsx', 'markup.php' ] ) {
 			expect( names ).not.toContain(
 				`components/live/news-list/integrations/wp/${ absent }`
 			);

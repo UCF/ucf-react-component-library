@@ -578,8 +578,8 @@ Both must be clean. CI runs the same checks on your pull request.
 The same command starts the other kinds:
 
 - **Live** (`--kind live`, with the plugin for its data, such as `ucf-events`): you get
-  `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again in
-  `integrations/wp/markup.php`, and `tests/{Name}.php.test.tsx`, which fails while the PHP and
+  `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again as a template in
+  `integrations/wp/render.php`, and `tests/{Name}.php.test.tsx`, which fails while the PHP and
   React markup differ. Replace the placeholder feed, save a copy of the real one in
   `tests/fixtures/`, and follow `components/live/event-list`. A new plugin's PHP prefix and text
   domain go in `phpcs.xml.dist`. Like interactive, it has no parts or presets.

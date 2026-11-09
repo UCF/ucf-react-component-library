@@ -63,7 +63,7 @@ it)? Then, if it does: **is what it shows typed in by an editor, or fetched?**
 | The core may    | Take props and return markup. Nothing else.         | The same: the data arrives as a prop                             | Hold state, run effects, fetch data                                       |
 | Runtime imports | None (`import type` only)                           | None (`import type` only)                                        | `react`, and its own modules                                              |
 | WordPress block | Static: `save()` stores the core's HTML in the post | Dynamic: `render.php` fetches and writes the whole HTML          | Dynamic: `render.php` writes a container, `view.tsx` mounts the component |
-| Its markup      | Once, in React                                      | Twice: React, and PHP (`markup.php`), compared by a test         | Once, in React                                                            |
+| Its markup      | Once, in React                                      | Twice: React, and PHP (`render.php`), compared by a test         | Once, in React                                                            |
 | Changing markup | Breaks every saved post without a deprecation       | Free: nothing is saved (change React and PHP together)           | Free: nothing is saved                                                    |
 | Non-React hosts | Copy the markup from its test snapshot              | Copy the markup from its test snapshot, and fetch the data       | Not supported; mount it as an island if needed                            |
 | block.json      | No `render`                                         | `render`, no `viewScript`                                        | `render` and `viewScript`                                                 |
@@ -99,11 +99,17 @@ buckets has its own scaffold (`npm run new:component -- --kind live`) and its ow
 
 **A live component's two copies,** and what keeps them the same:
 
-| In JavaScript                     | In PHP (WordPress)           | Compared by                 |
-| --------------------------------- | ---------------------------- | --------------------------- |
-| `client.ts`: fetch, clean up data | `integrations/wp/client.php` | `tests/{Name}.php.test.tsx` |
-| `{Name}.tsx`: the markup          | `integrations/wp/markup.php` | `tests/{Name}.php.test.tsx` |
-| (the host fetches and renders)    | `integrations/wp/render.php` | the same test, with stubs   |
+| In JavaScript                     | In PHP (WordPress)            | Compared by                 |
+| --------------------------------- | ----------------------------- | --------------------------- |
+| `client.ts`: fetch, clean up data | `integrations/wp/client.php`  | `tests/{Name}.php.test.tsx` |
+| `{Name}.tsx`: the markup          | `integrations/wp/render.php`  | `tests/{Name}.php.test.tsx` |
+| `utils/`: helpers for the markup  | `integrations/wp/helpers.php` | the same test               |
+
+**`render.php` is the markup, written as a template:** it fetches at the top, then the HTML,
+with `<?php echo esc_html( … ); ?>` where values go, so a WordPress developer finds the markup
+where WordPress puts it. Functions it needs (dates, text) go in `helpers.php`. Whitespace
+between its tags isn't compared with React's, which writes none; each `render.php` says why
+browsers don't show it there.
 
 The test runs the real PHP under plain `php`, with WordPress's few functions stubbed
 (`integrations/tests/live.ts`), on a saved copy of the real feed (`tests/fixtures/`), and
@@ -180,7 +186,7 @@ components/{bucket}/{name}/
   types.ts
   integrations/          where the component runs, one folder per environment:
     wp/                  the WordPress adapter: block.json, index.tsx, edit.tsx, and save.tsx
-                         (content), render.php + client.php + markup.php (live), or
+                         (content), render.php + client.php + helpers.php (live), or
                          render.php + view.tsx (interactive)
     puck/                the Puck adapter: config.tsx, a plain object in Puck's
                          ComponentConfig shape
@@ -753,9 +759,10 @@ covered with nothing to add.
   same HTML, and it matches the snapshot. Every content component needs one.
 - **Data client** (`degree-finder/tests/client.test.ts`): what it requests and what it keeps, with a fake
   `fetch`. Every interactive and live component's client needs one.
-- **Live markup contract** (`event-list/tests/EventList.php.test.tsx`): the real `client.php`
-  and `markup.php` under plain `php`, on a saved copy of the feed, write the same HTML as
-  `client.ts` and the React core, case by case; and `render.php` fetches, caches and writes it.
+- **Live markup contract** (`event-list/tests/EventList.php.test.tsx`): under plain `php`, on a
+  saved copy of the feed, the real `client.php` keeps the same events as `client.ts`, and the
+  real `render.php` writes the same HTML as the React core, case by case; and `render.php`
+  fetches once and caches.
   Every live component needs one ("Three kinds of component"). Skipped where `php` isn't
   installed; CI has it.
 - **Puck configs** (`integrations/tests/puck.test.tsx`): each config fits Puck's own `ComponentConfig`

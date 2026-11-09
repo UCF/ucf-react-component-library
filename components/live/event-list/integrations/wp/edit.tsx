@@ -1,8 +1,7 @@
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import type { BlockEditProps } from '@wordpress/blocks';
-import { Notice, PanelBody, Spinner } from '@wordpress/components';
+import { Disabled, Notice, PanelBody, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { MouseEvent } from 'react';
 
 import { panelsOf } from '../../../../../integrations/schema/props.ts';
 import { FieldControl } from '../../../../../integrations/wp/inspector.tsx';
@@ -32,16 +31,6 @@ export default function Edit( {
 		offset: Number( attributes.offset ),
 	} );
 
-	// WHY: an event link clicked in the canvas would navigate away from the editor.
-	// FIX: the editor canvas is an iframe with its own Element class, so `instanceof Element`
-	// is always false for targets inside it. Check for closest() instead.
-	function stopLinks( event: MouseEvent ) {
-		const target = event.target as Partial< Element >;
-		if ( typeof target.closest === 'function' && target.closest( 'a' ) ) {
-			event.preventDefault();
-		}
-	}
-
 	return (
 		<>
 			<InspectorControls>
@@ -60,9 +49,7 @@ export default function Edit( {
 					</PanelBody>
 				) ) }
 			</InspectorControls>
-			{ /* A11Y: a click handler on a wrapper, not an interactive control. It only
-			     cancels navigation for links inside, which stay keyboard-reachable. */ }
-			<div { ...blockProps } onClickCapture={ stopLinks }>
+			<div { ...blockProps }>
 				{ state.status === 'error' ? (
 					<Notice status="warning" isDismissible={ false }>
 						{ __(
@@ -74,14 +61,20 @@ export default function Edit( {
 				{ state.status === 'loading' && ! state.events.length ? (
 					<Spinner />
 				) : (
-					<EventList
-						events={ state.events }
-						title={ attributes.title }
-						columns={ attributes.columns }
-						dates={ attributes.dates }
-						descriptions={ attributes.descriptions }
-						emptyMessage={ attributes.emptyMessage }
-					/>
+					// WHY Disabled: WordPress's way to show a preview that can't be used. It makes
+					// the list inert, so an event link can't navigate away from the editor or
+					// take focus, and a click selects the block. The notice above stays outside:
+					// it's for the editor.
+					<Disabled>
+						<EventList
+							events={ state.events }
+							title={ attributes.title }
+							columns={ attributes.columns }
+							dates={ attributes.dates }
+							descriptions={ attributes.descriptions }
+							emptyMessage={ attributes.emptyMessage }
+						/>
+					</Disabled>
 				) }
 			</div>
 		</>
