@@ -1,0 +1,29 @@
+/*
+ * CONTEXT: the Code's styles, for every host and every component that uses it.
+ *
+ * SPEC: core Code as the UCF theme renders it: the mono face at the small size (theme.json
+ * `styles.blocks.core/code`), in a box with a 1px border and 4px corners, padded 0.8em by 1em,
+ * the code wrapping rather than scrolling.
+ * WHY the border in the `line` role: core draws it in a fixed #ccc, the same on a Dark section;
+ * a role follows the section, and `line` is nearly the same gray on Light.
+ */
+.ucf-c-code {
+	border: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
+	border-radius: 4px;
+	box-sizing: border-box;
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-mono);
+	font-size: var(--ucf-font-size-small);
+	line-height: 1.65;
+	margin: 0;
+	padding: 0.8em 1em;
+	white-space: pre;
+}
+
+/* SPEC: core's: the code wraps at spaces and long words break, so nothing scrolls sideways. */
+.ucf-c-code > code {
+	display: block;
+	font-family: inherit;
+	overflow-wrap: break-word;
+	white-space: break-spaces;
+}

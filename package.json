@@ -110,6 +110,22 @@
 		"./primitives/column/puck": {
 			"types": "./dist/components/primitives/column/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/column/integrations/puck/config.js"
+		},
+		"./primitives/separator": {
+			"types": "./dist/components/primitives/separator/index.d.ts",
+			"default": "./dist/components/primitives/separator/index.js"
+		},
+		"./primitives/separator/puck": {
+			"types": "./dist/components/primitives/separator/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/separator/integrations/puck/config.js"
+		},
+		"./primitives/code": {
+			"types": "./dist/components/primitives/code/index.d.ts",
+			"default": "./dist/components/primitives/code/index.js"
+		},
+		"./primitives/code/puck": {
+			"types": "./dist/components/primitives/code/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/code/integrations/puck/config.js"
 		}
 	},
 	"files": [

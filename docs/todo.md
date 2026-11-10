@@ -121,6 +121,13 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 
 ## Primitives to build
 
+**Core's text blocks as primitives, for Puck** (WordPress keeps the core blocks). Each one's CSS
+reproduces what the theme renders for the core block, measured on a page of every style, then
+becomes the theme's through `scripts/core-css.mjs`. Built: Separator and Code (their fixed core
+grays are roles here). Next: Quote (and Pullquote), List (Check, Divided, Tags, Definitions), Table
+(Stripes, the Compare style), with an items setting for list items and table rows. Then extend
+`core-css.mjs` to inner elements and pseudo-elements (`> li::before`, `> code`) and sync them.
+
 Components are built from primitives in `components/primitives/` (architecture.md,
 "Primitives"). Roughly in order of need:
 

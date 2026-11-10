@@ -16,6 +16,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import button from '@/components/primitives/button/integrations/puck/config';
+import code from '@/components/primitives/code/integrations/puck/config';
 import column from '@/components/primitives/column/integrations/puck/config';
 import columns from '@/components/primitives/columns/integrations/puck/config';
 import heading from '@/components/primitives/heading/integrations/puck/config';
@@ -31,6 +32,7 @@ import {
 } from '@/components/content/card/Card.presets';
 import degreeFinder from '@/components/interactive/degree-finder/integrations/puck/config';
 import eventList from '@/components/live/event-list/integrations/puck/config';
+import separator from '@/components/primitives/separator/integrations/puck/config';
 import hero, {
 	withTemplate as heroWithTemplate,
 } from '@/components/content/hero/integrations/puck/config';
@@ -61,6 +63,8 @@ const CONFIGS = {
 	Paragraph: paragraph,
 	Columns: columns,
 	Column: column,
+	Separator: separator,
+	Code: code,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -77,6 +81,8 @@ heading satisfies ComponentConfig< PropsOf< typeof heading > >;
 paragraph satisfies ComponentConfig< PropsOf< typeof paragraph > >;
 columns satisfies ComponentConfig< PropsOf< typeof columns > >;
 column satisfies ComponentConfig< PropsOf< typeof column > >;
+separator satisfies ComponentConfig< PropsOf< typeof separator > >;
+code satisfies ComponentConfig< PropsOf< typeof code > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

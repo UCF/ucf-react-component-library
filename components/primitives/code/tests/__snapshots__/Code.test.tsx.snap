@@ -1,0 +1,6 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Code > renders the same in WordPress and React: sample 1`] = `
+"<pre class="ucf-c ucf-c-code"><code>const credits = 120;
+console.log( credits );</code></pre>"
+`;

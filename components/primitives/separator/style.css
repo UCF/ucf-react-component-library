@@ -1,0 +1,43 @@
+/*
+ * CONTEXT: the Separator's styles, for every host and every component that uses it.
+ *
+ * SPEC: core Separator as the UCF theme renders it: a 2px rule in the section's `line` role, 100px
+ * wide and centered, the full width (Wide), or three dots (Dots). Space around it is the
+ * container's, as for every primitive.
+ * WHY the dots in `line-strong`: core draws them in a fixed mid-gray, the same on every section;
+ * a role follows the section, and `line-strong` is the one closest to that gray.
+ */
+.ucf-c-separator {
+	border: 0 solid var(--ucf-c-line);
+	border-bottom-width: var(--ucf-custom-border-control);
+	margin-block: 0;
+	margin-inline: auto;
+	overflow: hidden;
+	width: 100px;
+}
+
+/* FIX: the full width, not `auto`: with the centering margins, an empty rule in a grid (a
+   Section's content) shrank to nothing. */
+.ucf-c-separator[data-variant="wide"] {
+	margin-inline: 0;
+	width: auto;
+}
+
+/* SPEC: core's dots: three centered, 1.5em, two ems apart. */
+.ucf-c-separator[data-variant="dots"] {
+	border-style: none;
+	color: var(--ucf-c-line-strong);
+	height: auto;
+	line-height: 1;
+	margin-inline: 0;
+	text-align: center;
+	width: auto;
+}
+
+.ucf-c-separator[data-variant="dots"]::before {
+	content: "···";
+	font-family: serif;
+	font-size: 1.5em;
+	letter-spacing: 2em;
+	padding-left: 2em;
+}
