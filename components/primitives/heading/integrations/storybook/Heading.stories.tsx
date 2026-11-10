@@ -1,15 +1,28 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Heading, { type HeadingProps } from '../../Heading.tsx';
-import example from '../../example.json';
+import { defaultsIn } from '@/integrations/schema/props';
+import { PROPS } from '../../Heading.props.ts';
 import '../../style.css';
+
+// The props' defaults, as Puck starts with them, less the empty CSS class. WHY the level a number
+// and its own control: the Heading takes a number; the props hold Puck's string.
+const {
+	className,
+	level: defaultLevel,
+	...defaults
+} = defaultsIn( PROPS, 'puck' );
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
 	title: 'Primitives/Heading',
 	tags: [ 'server' ],
 	component: Heading,
-	args: example as HeadingProps,
+	args: {
+		...defaults,
+		content: 'Undergraduate degrees',
+		level: Number( defaultLevel ),
+	} as HeadingProps,
 	argTypes: {
 		level: { control: 'inline-radio', options: [ 1, 2, 3, 4, 5, 6 ] },
 	},

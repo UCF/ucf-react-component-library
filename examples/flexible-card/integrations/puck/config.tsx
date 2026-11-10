@@ -5,7 +5,7 @@
  * the frame's inner element, Puck's drop zone is that element, so the markup matches what the
  * frame renders in Next, with no extra wrapper.
  */
-import imageExample from '@/components/primitives/image/example.json' with { type: 'json' };
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import FlexibleCard from '../../FlexibleCard.tsx';
 import { VARIANTS, type Variant } from '../../options.ts';
 import type { PuckComponentConfig, PuckSlot } from '@/integrations/puck/types';
@@ -44,7 +44,10 @@ export default config;
  * WHY the h3: a card sits under its section's h2.
  */
 export const TEMPLATE: PuckSlot = [
-	{ type: 'Image', props: { ...imageExample, aspectRatio: '3/2' } },
+	{
+		type: 'Image',
+		props: { url: IMAGE_SAMPLE.url, alt: '', aspectRatio: '3/2' },
+	},
 	{ type: 'Heading', props: { content: 'Title', level: '3', className: '' } },
 	{
 		type: 'Paragraph',

@@ -20,7 +20,7 @@ The current goal is a correct development process, not a pipeline.
 1. **Finish moving every component onto prop definitions and `frame()`.**
 
     - Remove the `example.json` handling for content components from `blocks.test.tsx`,
-      `parity.test.tsx` and `scripts/build-package.mjs` (only primitives have one), and
+      `parity.test.tsx` and `scripts/build-package.mjs` (no component has one now), and
       `imageId` from `WORDPRESS_ONLY` in `parity.test.tsx` (the Hero's and Card's are in their
       props).
     - A `README.md` for the Hero and the Section, as the Card has.
@@ -28,11 +28,10 @@ The current goal is a correct development process, not a pipeline.
       image, text only) may be worth naming.
     - The examples (`examples/fixed-card`, `examples/flexible-card`) use `innerAs`; move them to
       areas.
-    - The primitives: each one's props in `{Name}.props.ts` (they are written out in its
-      adapters today) and its `example.json` into its defaults.
-    - The primitives and the Degree Finder onto the translators (architecture.md, "One
-      definition, one translator per environment"). The Degree Finder is the WordPress
-      translator's interactive path (`render.php` and `view.tsx`).
+    - The Degree Finder onto the translators (architecture.md, "One definition, one
+      translator per environment"): the WordPress translator's interactive path (`render.php`
+      and `view.tsx`). Primitives with no content of their own stay plain components
+      (architecture.md, "Primitives").
     - Drop the deprecated `withVariation` from the Card's and Highlight's Puck configs once
       ucf-puck-demo uses `withPreset`.
 

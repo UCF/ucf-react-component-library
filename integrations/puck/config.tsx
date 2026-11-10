@@ -55,7 +55,14 @@ export function puckFields< Props extends PropDefinitions >(
 								...option,
 							} ) ),
 						}
-					: { type: 'text', label: definition.label },
+					: {
+							type:
+								'control' in definition &&
+								definition.control === 'multiline'
+									? 'textarea'
+									: 'text',
+							label: definition.label,
+						},
 			] )
 	) as Record< keyof PropsIn< Props, 'puck' >, PuckScalarField >;
 }

@@ -25,7 +25,7 @@ import { Button, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, type ComponentType } from 'react';
 
-import imageExample from '@/components/primitives/image/example.json';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import ImageEdit, {
 	type ImageValue,
 } from '@/components/primitives/image/integrations/wp/edit';
@@ -281,7 +281,7 @@ export function blockSettings<
 				// A sample background, never saved: the preview shows what the block is for.
 				...( defaultPreset.background &&
 					backgroundProp && {
-						[ backgroundProp ]: imageExample.url,
+						[ backgroundProp ]: IMAGE_SAMPLE.url,
 					} ),
 			},
 			innerBlocks: toExampleBlocks(

@@ -1,23 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Button, { type ButtonProps } from '../../Button.tsx';
-import example from '../../example.json';
+import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
+import { PROPS } from '../../Button.props.ts';
 import '../../style.css';
+
+// The props' defaults, as Puck starts with them, less the empty CSS class.
+const { className, ...defaults } = defaultsIn( PROPS, 'puck' );
 
 const meta = {
 	// SYNC: the group names and tags are explained in .storybook/preview.ts.
 	title: 'Primitives/Button',
 	tags: [ 'server' ],
 	component: Button,
-	args: example as ButtonProps,
-	argTypes: {
-		variant: {
-			control: 'inline-radio',
-			options: [ 'fill', 'outline', 'text' ],
-		},
-		fontSize: { control: 'inline-radio', options: [ '', 'small', 'body' ] },
-		linkTarget: { control: 'inline-radio', options: [ '', '_blank' ] },
-	},
+	args: defaults as ButtonProps,
+	argTypes: argTypesOf( PROPS ),
 } satisfies Meta< typeof Button >;
 
 export default meta;

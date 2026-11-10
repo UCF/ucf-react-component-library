@@ -419,8 +419,11 @@ content, so in WordPress it holds core blocks (see "Frames").
 | A content editor, or a frame's area | Core blocks (Button, Image…)    | Our primitives   |
 | A component's own markup (the Card) | Our primitives, in their markup | Our primitives   |
 
-- **A primitive is a component:** a core, `style.css`, stories, a markup test and a Puck config,
-  where Puck editors place it, since Puck has no core blocks. It has **no WordPress block**:
+- **A primitive is a component:** a core, a `{Name}.props.ts`, `style.css`, stories, a markup
+  test and a Puck config, where Puck editors place it, since Puck has no core blocks. Its Puck
+  fields, its story controls and their defaults are built from its props, as a content
+  component's are; its sample is its props' defaults. The Image's sample picture is also the
+  stand-in wherever a component needs one (`IMAGE_SAMPLE`). It has **no WordPress block**:
   WordPress editors use core's equivalent. Instead it has `integrations/wp/edit.tsx`, its editing
   version, which our blocks' `edit()` renders where their `save()` renders the plain primitive.
   With no block, its `style.css` reaches WordPress only through each block that uses it: that
@@ -434,7 +437,12 @@ content, so in WordPress it holds core blocks (see "Frames").
   editor places are styled by the theme; keep the two looking alike through the tokens both
   read.
 - **The dependency goes one way:** components import primitives; primitives never import
-  components. Both import `integrations/` (primitives only its type-only Puck config shape).
+  components. Both import `integrations/`'s schema and Puck helpers, which import no component,
+  so nothing loops back.
+- **A primitive with no content of its own stays a plain component** (the Button, Heading,
+  Image, Paragraph): it takes settings and renders one element, with nothing for a host to fill,
+  so it needs no `frame()`. Its editing version for our blocks stays its own
+  `integrations/wp/edit.tsx`.
 - **WHY primitives rather than each component drawing its own:** one Button in every component
   is what stops buttons and inputs drifting apart.
 - **The cost:** a component saves its primitives' markup inside its own. Changing a primitive's

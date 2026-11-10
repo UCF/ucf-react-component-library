@@ -8,7 +8,15 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Button, { type ButtonProps } from '../Button.tsx';
-import example from '../example.json';
+// WHY written here: the sample this snapshot was taken with. The props' defaults may change;
+// the markup this checks must not.
+const example = {
+	text: 'Apply now',
+	url: '#',
+	linkTarget: '',
+	variant: 'fill',
+	fontSize: '',
+};
 
 const cases: Record< string, ButtonProps > = {
 	example: example as ButtonProps,

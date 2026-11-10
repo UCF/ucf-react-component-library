@@ -188,9 +188,14 @@ describe( 'planComponent', () => {
 		expect( [ ...files.keys() ] ).toEqual(
 			expect.arrayContaining( [
 				'components/primitives/badge/Badge.tsx',
+				'components/primitives/badge/Badge.props.ts',
 				'components/primitives/badge/integrations/puck/config.tsx',
 				'components/primitives/badge/integrations/wp/edit.tsx',
 			] )
+		);
+		// WHY: its sample is its props' defaults (Badge.props.ts), as every primitive's is.
+		expect( [ ...files.keys() ] ).not.toContain(
+			'components/primitives/badge/example.json'
 		);
 		expect( [ ...files.keys() ] ).not.toContain(
 			'components/primitives/badge/integrations/wp/block.json'
@@ -203,6 +208,7 @@ describe( 'planComponent', () => {
 		expect( exports[ './primitives/badge' ].default ).toBe(
 			'./dist/components/primitives/badge/index.js'
 		);
+		expect( exports[ './primitives/badge/example.json' ] ).toBeUndefined();
 		expect( read( 'integrations/tests/parity.test.tsx' ) ).toMatch(
 			/expect\( primitives \)\.toEqual\(\s*\[[^\]]*'badge'/
 		);

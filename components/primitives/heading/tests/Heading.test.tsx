@@ -8,7 +8,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Heading, { type HeadingProps } from '../Heading.tsx';
-import example from '../example.json';
+// WHY written here: the sample this snapshot was taken with. The props' defaults may change;
+// the markup this checks must not.
+const example = {
+	content: 'Undergraduate degrees',
+	level: 2,
+};
 
 const cases: Record< string, HeadingProps > = {
 	example: example as HeadingProps,

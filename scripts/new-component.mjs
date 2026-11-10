@@ -205,10 +205,6 @@ function addExports( source, n, kind ) {
 		types: `${ dist }/integrations/puck/config.d.ts`,
 		default: `${ dist }/integrations/puck/config.js`,
 	};
-	// WHY a primitive only: a content component's sample is its presets, not example.json.
-	if ( kind === 'primitive' ) {
-		json.exports[ `${ entry }/example.json` ] = `${ dist }/example.json`;
-	}
 	return JSON.stringify( json, null, '\t' ) + '\n';
 }
 
@@ -1595,11 +1591,33 @@ export default function ${ n.Name }( {
 	);
 }
 `,
-		'index.ts': `export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+		[ `${ n.Name }.props.ts` ]: `/**
+ * The ${ n.title }'s props, in the order Puck shows them. Its Puck fields, its story controls and
+ * their defaults are built from these (integrations/schema/props.ts says how).
+ *
+ * SPEC: named after the equivalent core block's attributes, so an editor who knows core's knows
+ * ours (docs/architecture.md, "Primitives").
+ */
+import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+
+export const PROPS = {
+	/** The text. */
+	text: {
+		type: 'text',
+		label: 'Text',
+		panel: '${ n.title }',
+		default: 'Sample text for the ${ n.title }.',
+	},
+} as const satisfies PropDefinitions;
+
+/** The props above, typed. */
+export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 `,
-		'example.json': `{
-	"text": "Sample text for the ${ n.title }."
-}
+		'index.ts': `export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+
+// Its pieces, for a site that builds its own
+
+export { PROPS as ${ n.Name.replace( /([a-z])([A-Z])/g, '$1_$2' ).toUpperCase() }_PROPS } from './${ n.Name }.props.ts';
 `,
 		'style.css': `/*
  * CONTEXT: the ${ n.title }'s styles, for every host and every component that uses it.
@@ -1613,8 +1631,10 @@ export default function ${ n.Name }( {
 `,
 		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import example from '../../example.json';
+import { PROPS } from '../../${ n.Name }.props.ts';
 import '../../style.css';
 
 const meta = {
@@ -1622,7 +1642,8 @@ const meta = {
 	title: 'Primitives/${ n.title }',
 	tags: [ 'server' ],
 	component: ${ n.Name },
-	args: example,
+	args: defaultsIn( PROPS, 'puck' ),
+	argTypes: argTypesOf( PROPS ),
 } satisfies Meta< typeof ${ n.Name } >;
 
 export default meta;
@@ -1641,10 +1662,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
-import example from '../example.json';
 
+// WHY written here, not the props' defaults: the defaults may change; the markup this checks
+// must not.
 const cases: Record< string, ${ n.Name }Props > = {
-	example,
+	sample: { text: 'Sample text for the ${ n.title }.' },
 };
 
 describe( '${ n.Name }', () => {
@@ -1660,23 +1682,20 @@ describe( '${ n.Name }', () => {
 } );
 `,
 		'integrations/puck/config.tsx': `/**
- * The ${ n.title } for Puck, where editors place it on its own: Puck has no core blocks.
+ * The ${ n.title } for Puck, where editors place it on its own: Puck has no core blocks. Its
+ * fields and defaults are its props (${ n.Name }.props.ts).
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import example from '../../example.json' with { type: 'json' };
-// WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
+import { puckFields } from '@/integrations/puck/config';
+// WHY a type from integrations/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/integrations/puck/types';
+import { defaultsIn } from '@/integrations/schema/props';
+import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
 
-type Props = {
-	text: string;
-};
-
-const config: PuckComponentConfig< Props > = {
+const config: PuckComponentConfig< ${ n.Name }EditableProps > = {
 	label: '${ n.title }',
-	fields: {
-		text: { type: 'text', label: 'Text' },
-	},
-	defaultProps: example,
+	fields: puckFields( PROPS ),
+	defaultProps: defaultsIn( PROPS, 'puck' ),
 	// FIX: only the primitive's own props; Puck's \`id\`, \`puck\` and \`editMode\` would
 	// reach the markup.
 	render: ( { text } ) => <${ n.Name } text={ text } />,
@@ -1830,8 +1849,9 @@ async function main() {
 	if ( options.kind === 'primitive' ) {
 		console.log( `
 Next:
-  1. Replace the placeholder prop and markup in ${ Name }.tsx, with props named after core's
-     equivalent block's attributes, and keep the Puck fields and example.json naming the same.
+  1. Replace the placeholder prop and markup in ${ Name }.tsx, and the prop in ${ Name }.props.ts,
+     named after core's equivalent block's attributes. Puck's fields and the story controls are
+     built from ${ Name }.props.ts.
   2. Give wp/edit.tsx the same editing tools core's block has.
   3. Run \`npm test\` to write the new markup snapshot, then review it: every block that uses
      this primitive will save it.

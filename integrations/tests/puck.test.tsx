@@ -42,7 +42,7 @@ import highlight, {
 	withPreset as highlightWithPreset,
 } from '@/components/content/highlight/integrations/puck/config';
 import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/Highlight.presets';
-import imageExample from '@/components/primitives/image/example.json';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import type { PuckComponentConfig } from '../puck/types.ts';
 
 type PropsOf< Config > =
@@ -358,7 +358,7 @@ describe( 'a preset with a background in Puck', () => {
 	} );
 
 	it( 'shows the sample in the editor only', () => {
-		expect( render( true ) ).toContain( imageExample.url );
-		expect( render( false ) ).not.toContain( imageExample.url );
+		expect( render( true ) ).toContain( IMAGE_SAMPLE.url );
+		expect( render( false ) ).not.toContain( IMAGE_SAMPLE.url );
 	} );
 } );

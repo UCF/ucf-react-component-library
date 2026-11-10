@@ -26,7 +26,7 @@ import type {
 	ReactNode,
 } from 'react';
 
-import imageExample from '@/components/primitives/image/example.json' with { type: 'json' };
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import type { ComponentDefinition } from '../schema/definition.ts';
 import {
 	resolveParts,
@@ -254,7 +254,7 @@ export function frame<
 				{ ...( sample &&
 					preset.background &&
 					backgroundProp && {
-						[ backgroundProp ]: imageExample.url,
+						[ backgroundProp ]: IMAGE_SAMPLE.url,
 					} ) }
 				{ ...( props as OwnProps< Props > ) }
 			>
@@ -293,7 +293,7 @@ function fill(
 			}
 			return [
 				part.kind === 'image'
-					? { ...part, url: part.url ?? imageExample.url }
+					? { ...part, url: part.url ?? IMAGE_SAMPLE.url }
 					: part,
 			];
 		}
