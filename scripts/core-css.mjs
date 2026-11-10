@@ -1,11 +1,16 @@
 /**
  * CONTEXT: a primitive's CSS, rewritten for the core block WordPress editors place instead, so the
- * block theme styles core's Button with the Button primitive's own rules (docs/architecture.md,
- * "Primitives"). build-tokens.mjs writes it into the theme's kit as dist/theme/_core-blocks.scss.
+ * block theme styles core's Button, List, Table, Quote, Pullquote, Separator and Code with the
+ * primitives' own rules (docs/architecture.md, "Primitives"). build-tokens.mjs writes it into the
+ * theme's kit as dist/theme/_core-blocks.scss.
  *
  *   Selectors  our class and data attributes become core's markup and classes, from MAPS below:
  *              `.ucf-c-button[data-variant="outline"]:hover` →
- *              `.wp-block-button.is-style-outline > .wp-block-button__link:hover`.
+ *              `.wp-block-button.is-style-outline > .wp-block-button__link:hover`;
+ *              `ol.ucf-c-list > li::marker` → `ol.wp-block-list > li::marker`. What follows our
+ *              class (` > li`, ` th`, `::before`) is kept: the primitives write core's elements.
+ *   Margins    a block's own top and bottom margins are dropped: in WordPress the layout spaces
+ *              blocks (blockGap), where in Puck the container does.
  *   Values     a component-layer role becomes the theme's role with its Light fallback
  *              (`var(--ucf-button, var(--wp--preset--color--gold))`), as theme.json writes them;
  *              a token becomes the theme's preset or custom property (`--wp--custom--…`).
@@ -22,9 +27,17 @@ import { roleFallback } from './elements.mjs';
 import { root, target, wpName } from './tokens.mjs';
 
 /**
- * How each primitive's markup maps to its core block's. `wrapper` is the block's own element and
- * `link` the element our class is on; each attribute value names the core class that means the
- * same thing. `skip`: properties core sets another way, so ours would fight it.
+ * How each primitive's markup maps to its core block's.
+ *
+ *   `root`         the block's own element, which our class is on (List, Table and the rest);
+ *                  each attribute value names the core class that means the same thing.
+ *   `wrapper`, `link`  for a block whose element ours is inside of (the Button): our class is on
+ *                  `link`, and each attribute adds to either.
+ *   `outrankCore`  core's own CSS for the block competes with ours: each rule names the block's
+ *                  class twice, one class above core's. Left off where it doesn't (List), so the
+ *                  theme's own variations (`.ucf-toc .wp-block-list`) still outrank ours.
+ *   `skip`         properties core sets another way, so ours would fight it.
+ *   `overrides`    the properties an editor's own color settings replace (OVERRIDES below).
  */
 const MAPS = {
 	button: {
@@ -49,6 +62,60 @@ const MAPS = {
 		// WHY width: core's Width control (25% to 100%) sets the link's width; `fit-content` would
 		// override it. Core's wrapper already keeps a lone button from stretching.
 		skip: [ 'width' ],
+		overrides: [ 'color', 'border-color', 'background-color' ],
+	},
+	list: {
+		source: 'components/primitives/list/style.css',
+		className: 'ucf-c-list',
+		root: '.wp-block-list',
+		attributes: {
+			'data-variant="check"': '.is-style-check',
+			'data-variant="divided"': '.is-style-divided',
+			'data-variant="tags"': '.is-style-tags',
+			'data-variant="definitions"': '.is-style-definitions',
+		},
+	},
+	table: {
+		source: 'components/primitives/table/style.css',
+		className: 'ucf-c-table',
+		root: '.wp-block-table',
+		outrankCore: true,
+		attributes: {
+			'data-variant="stripes"': '.is-style-stripes',
+			// WHY a class, not a style: the theme's Comparison pattern sets it.
+			'data-variant="compare"': '.ucf-compare',
+		},
+	},
+	quote: {
+		source: 'components/primitives/quote/style.css',
+		className: 'ucf-c-quote',
+		root: '.wp-block-quote',
+		outrankCore: true,
+		attributes: {},
+	},
+	pullquote: {
+		source: 'components/primitives/pullquote/style.css',
+		className: 'ucf-c-pullquote',
+		root: '.wp-block-pullquote',
+		outrankCore: true,
+		attributes: {},
+	},
+	separator: {
+		source: 'components/primitives/separator/style.css',
+		className: 'ucf-c-separator',
+		root: '.wp-block-separator',
+		outrankCore: true,
+		attributes: {
+			'data-variant="wide"': '.is-style-wide',
+			'data-variant="dots"': '.is-style-dots',
+		},
+	},
+	code: {
+		source: 'components/primitives/code/style.css',
+		className: 'ucf-c-code',
+		root: '.wp-block-code',
+		outrankCore: true,
+		attributes: {},
 	},
 };
 
@@ -95,69 +162,131 @@ function themeValue( tokens, value, where ) {
 }
 
 /**
- * The rules of a flat stylesheet, in order: its selectors and declarations. Comments are dropped.
+ * The rules of a stylesheet, in order: their selectors, declarations and `@media` condition, if
+ * any. Comments are dropped.
  *
  * @param {string} css   The stylesheet.
  * @param {string} where Its file, for errors.
+ * @param {string} media The `@media` condition the rules are inside of.
  */
-function rulesOf( css, where ) {
+function rulesOf( css, where, media = '' ) {
 	const flat = css.replace( /\/\*[\s\S]*?\*\//g, '' );
-	if ( /@[a-z]/.test( flat ) ) {
-		throw new Error(
-			`${ where } has an @-rule; scripts/core-css.mjs maps flat rules only.`
-		);
-	}
-	return [ ...flat.matchAll( /([^{}]+)\{([^}]*)\}/g ) ].map(
-		( [ , selectors, body ] ) => ( {
-			selectors: selectors
+	const rules = [];
+	let at = 0;
+	while ( at < flat.length ) {
+		const open = flat.indexOf( '{', at );
+		if ( open < 0 ) {
+			break;
+		}
+		const head = flat.slice( at, open ).trim();
+		if ( head.startsWith( '@' ) ) {
+			if ( ! head.startsWith( '@media ' ) || media ) {
+				throw new Error(
+					`${ where } has "${ head }"; scripts/core-css.mjs maps rules and one level of @media only.`
+				);
+			}
+			// The block's end: the brace that closes it, past its rules' own.
+			let depth = 1;
+			let end = open + 1;
+			while ( depth && end < flat.length ) {
+				depth += { '{': 1, '}': -1 }[ flat[ end ] ] ?? 0;
+				end++;
+			}
+			rules.push(
+				...rulesOf( flat.slice( open + 1, end - 1 ), where, head )
+			);
+			at = end;
+			continue;
+		}
+		const close = flat.indexOf( '}', open );
+		rules.push( {
+			media,
+			selectors: head
 				.split( ',' )
 				.map( ( s ) => s.trim().replace( /\s+/g, ' ' ) ),
-			declarations: body
+			declarations: flat
+				.slice( open + 1, close )
 				.split( ';' )
 				.map( ( d ) => d.trim() )
 				.filter( Boolean )
 				.map( ( d ) => {
-					const at = d.indexOf( ':' );
+					const colon = d.indexOf( ':' );
 					return [
-						d.slice( 0, at ).trim(),
+						d.slice( 0, colon ).trim(),
 						d
-							.slice( at + 1 )
+							.slice( colon + 1 )
 							.trim()
 							.replace( /\s+/g, ' ' ),
 					];
 				} ),
-		} )
-	);
+		} );
+		at = close + 1;
+	}
+	return rules;
 }
 
 /**
- * One of our selectors as core's, with an extra condition on the link (an override's `:not()`).
+ * One of our selectors as core's, with an extra condition on the element core's classes are on
+ * (an override's `:not()`).
  *
  * @param {Object} map      The primitive's map.
  * @param {string} selector Ours.
- * @param {string} extra    Added to the link, before any state.
+ * @param {string} extra    Added to that element, before any state.
  * @param {string} where    Its file, for errors.
  */
 function coreSelector( map, selector, extra, where ) {
 	const match = new RegExp(
-		`^\\.${ map.className }((?:\\[[^\\]]+\\])*)((?::[a-z-]+)*)$`
+		`^([a-z]*)\\.${ map.className }((?:\\[[^\\]]+\\])*)((?::[a-z-]+)*)(.*)$`
 	).exec( selector );
-	if ( ! match ) {
+	// The Button's rules are all on its link: nothing may follow.
+	if ( ! match || ( ! map.root && ( match[ 1 ] || match[ 4 ] ) ) ) {
 		throw new Error( `${ where }: no core selector for "${ selector }".` );
 	}
-	let wrapper = map.wrapper;
-	let link = map.link;
-	for ( const [ , attribute ] of match[ 1 ].matchAll( /\[([^\]]+)\]/g ) ) {
-		const to = map.attributes[ attribute ];
-		if ( ! to ) {
-			throw new Error(
-				`${ where }: no core class for [${ attribute }] in "${ selector }".`
-			);
+	const [ , element, attributes, state, rest ] = match;
+	const to = [ ...attributes.matchAll( /\[([^\]]+)\]/g ) ].map(
+		( [ , attribute ] ) => {
+			const found = map.attributes[ attribute ];
+			if ( ! found ) {
+				throw new Error(
+					`${ where }: no core class for [${ attribute }] in "${ selector }".`
+				);
+			}
+			return found;
 		}
-		wrapper += to.wrapper ?? '';
-		link += to.link ?? '';
+	);
+	if ( map.root ) {
+		// UPSTREAM: core's per-block CSS loads after the theme's stylesheet, with selectors as
+		// specific as ours (`.wp-block-table td`, `.wp-block-quote cite`), so it won every tie.
+		const block = map.outrankCore ? map.root.repeat( 2 ) : map.root;
+		return `${ element }${ block }${ to.join( '' ) }${ extra }${ state }${ rest }`;
 	}
-	return `${ wrapper } > ${ link }${ extra }${ match[ 2 ] }`;
+	const wrapper = map.wrapper + to.map( ( t ) => t.wrapper ?? '' ).join( '' );
+	const link = map.link + to.map( ( t ) => t.link ?? '' ).join( '' );
+	return `${ wrapper } > ${ link }${ extra }${ state }`;
+}
+
+/**
+ * A root rule's declarations for WordPress, where the layout sets a block's top and bottom
+ * margins: those are dropped, and `margin: 0` keeps only its sides.
+ *
+ * @param {string[][]} declarations Property and value pairs.
+ * @param {string}     where        Its file and rule, for errors.
+ */
+function withoutBlockMargins( declarations, where ) {
+	return declarations.flatMap( ( [ property, value ] ) => {
+		if ( /^margin-(block|top|bottom)/.test( property ) ) {
+			return [];
+		}
+		if ( property === 'margin' ) {
+			if ( value !== '0' ) {
+				throw new Error(
+					`${ where }: margin "${ value }" on the block; write its sides apart.`
+				);
+			}
+			return [ [ 'margin-inline', '0' ] ];
+		}
+		return [ [ property, value ] ];
+	} );
 }
 
 // An editor's own colors win: these properties apply only without them.
@@ -177,37 +306,45 @@ const OVERRIDES = {
 export function coreCss( tokens, name, css ) {
 	const map = MAPS[ name ];
 	const source = css ?? readFileSync( path.join( root, map.source ), 'utf8' );
+	const overrides = map.overrides ?? [ 'color', 'background-color' ];
 	const out = [];
-	for ( const { selectors, declarations } of rulesOf( source, map.source ) ) {
+	for ( const { media, selectors, declarations } of rulesOf(
+		source,
+		map.source
+	) ) {
+		const where = `${ map.source }: ${ selectors.join( ', ' ) }`;
+		// A rule on the block itself, with nothing after our class and its attributes.
+		const onBlock = selectors.every( ( s ) =>
+			new RegExp( `^[a-z]*\\.${ map.className }(\\[[^\\]]+\\])*$` ).test(
+				s
+			)
+		);
 		// Each override's declarations get their own rule; the rest share one.
 		const groups = new Map();
-		for ( const [ property, value ] of declarations ) {
-			if ( map.skip.includes( property ) ) {
+		for ( const [ property, value ] of map.root && onBlock
+			? withoutBlockMargins( declarations, where )
+			: declarations ) {
+			if ( map.skip?.includes( property ) ) {
 				continue;
 			}
-			const extra = OVERRIDES[ property ] ?? '';
+			const extra = overrides.includes( property )
+				? OVERRIDES[ property ]
+				: '';
 			if ( ! groups.has( extra ) ) {
 				groups.set( extra, [] );
 			}
 			groups
 				.get( extra )
-				.push( [
-					property,
-					themeValue(
-						tokens,
-						value,
-						`${ map.source }: ${ selectors.join( ', ' ) }`
-					),
-				] );
+				.push( [ property, themeValue( tokens, value, where ) ] );
 		}
+		const indent = media ? '\t' : '';
 		for ( const [ extra, decls ] of groups ) {
-			out.push(
-				`${ selectors
-					.map( ( s ) => coreSelector( map, s, extra, map.source ) )
-					.join( ',\n' ) } {\n${ decls
-					.map( ( [ p, v ] ) => `\t${ p }: ${ v };` )
-					.join( '\n' ) }\n}\n`
-			);
+			const rule = `${ indent }${ selectors
+				.map( ( s ) => coreSelector( map, s, extra, map.source ) )
+				.join( `,\n${ indent }` ) } {\n${ decls
+				.map( ( [ p, v ] ) => `${ indent }\t${ p }: ${ v };` )
+				.join( '\n' ) }\n${ indent }}\n`;
+			out.push( media ? `${ media } {\n${ rule }}\n` : rule );
 		}
 	}
 	return out.join( '\n' );

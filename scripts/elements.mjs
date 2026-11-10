@@ -87,8 +87,9 @@ function resolve( tokens, value, where, host ) {
 }
 
 /**
- * The color a role has outside any section: the Light composition's. A role no treatment has
- * fails the build.
+ * The color a role has outside any section: the Light composition's. `surface` is its
+ * background (build-tokens.mjs writes it per composition, not per treatment). A role no treatment
+ * has fails the build.
  *
  * @param {Object} tokens The tokens.
  * @param {string} role   A role's name.
@@ -96,6 +97,9 @@ function resolve( tokens, value, where, host ) {
  */
 export function roleFallback( tokens, role, where ) {
 	const light = compositions( tokens ).find( ( c ) => c.name === 'light' );
+	if ( role === 'surface' ) {
+		return target( tokens, light.background, where ).slug;
+	}
 	const treatment = treatments( tokens ).find(
 		( t ) => t.name === light.treatment
 	);

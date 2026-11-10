@@ -440,8 +440,10 @@ content, so in WordPress it holds core blocks (see "Frames").
   is also the theme's for that block: `scripts/core-css.mjs` rewrites it for core's markup
   (`.ucf-c-button[data-variant="outline"]` as `.wp-block-button.is-style-outline >
 .wp-block-button__link`, our roles as the theme's) into the theme's kit,
-  `dist/theme/_core-blocks.scss`. A selector or token it can't map fails the build. So far: the
-  Button.
+  `dist/theme/_core-blocks.scss`. A selector or token it can't map fails the build. It maps the
+  Button, List, Table, Quote, Pullquote, Separator and Code. In WordPress the layout spaces
+  blocks, so a block's own top and bottom margins are left out; and where core's CSS for a block
+  loads after the theme's at the same specificity, each rule names the block's class twice.
 - **The dependency goes one way:** components import primitives; primitives never import
   components. Both import `integrations/`'s schema and Puck helpers, which import no component,
   so nothing loops back.

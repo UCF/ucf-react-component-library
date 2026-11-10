@@ -123,9 +123,19 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 
 **Core's text blocks as primitives, for Puck** (WordPress keeps the core blocks). Each one's CSS
 reproduces what the theme renders for the core block, measured on a page of every style, then
-becomes the theme's through `scripts/core-css.mjs`. Built: Separator, Code, Quote, Pullquote, List
-and Table. Next: extend `core-css.mjs` to inner elements and pseudo-elements (`> li::before`,
-`> code`, `thead th`) and sync them. Where ours differs from the theme, syncing changes the theme:
+becomes the theme's through `scripts/core-css.mjs`. Built and mapped: Separator, Code, Quote,
+Pullquote, List and Table, in `dist/theme/_core-blocks.scss`.
+
+Next: the theme loads it (`tools/sync-tokens.js` copies it, `main.scss` uses it where it uses
+`lists`) in place of `src/scss/_lists.scss`, `_table.scss`, `_quote.scss` and the
+`.wp-block-separator` rule in `_base.scss`. Checked by compiling a copy of the theme's stylesheet
+that way and diffing every computed style of these blocks against the theme's own, on the style
+guide and the admissions pages at 1440px and 390px: Lists, plain Tables, the Pullquote and the
+default and Wide separators come out the same. Show Jim first, with the Button (below). What
+changes in the theme:
+
+- **The Quote's marks:** larger and fitted to the words.
+- **Separator dots and the Code border:** core's fixed grays become roles (`line-strong`, `line`).
 
 - **Stripes on a dark section:** core bands rows in a fixed light gray, so white text on them
   can't be read. Ours bands in the `raised` role.

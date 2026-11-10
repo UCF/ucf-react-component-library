@@ -54,6 +54,28 @@
 	font-weight: 800;
 }
 
+/* UPSTREAM: core rules off its header and footer with 3px borders; here the header's rule is
+   its cells', and a footer has none. */
+.ucf-c-table thead,
+.ucf-c-table tfoot {
+	border: 0;
+}
+
+/* SPEC: a row's own header cell, which core Table writes and the rows setting doesn't yet. */
+.ucf-c-table tbody th {
+	font-weight: 700;
+}
+
+/* SPEC: a column of figures: right-aligned in the mono face, its digits one width. The hook is
+   core's column alignment, which an editor already sets for figures; the rows setting has no
+   alignment yet (docs/todo.md). */
+.ucf-c-table .has-text-align-right {
+	font-family: var(--ucf-font-family-mono);
+	font-variant-numeric: tabular-nums;
+	font-weight: 500;
+	text-align: right;
+}
+
 /*
  * SPEC: core's Stripes: alternate rows banded, no rules between them.
  * WHY `raised`: core bands in a fixed light gray, the same on every section, so on a dark one
