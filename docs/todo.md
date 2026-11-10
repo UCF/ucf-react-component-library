@@ -128,10 +128,12 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
     - A Buttons group, the trailing-arrow variant from the hero designs, and `RichText` for the
       label if editors need bold or italics.
-    - Its measurements are shared tokens (`tokens.json` `custom` `button-*`), but its rules are
-      written both here and in the theme. Generate the theme's button CSS from ours, with a
-      screenshot test comparing a core Button and ours. Show Jim first: it moves the core
-      Button's look from the theme to the library.
+    - The theme to use its generated CSS (`dist/theme/_core-blocks.scss`, from this
+      primitive's `style.css`) in place of its own `src/scss/_buttons.scss`: `tools/sync-tokens.js`
+      copies the file, `main.scss` loads it. Show Jim first: it moves the core Button's look from
+      the theme to the library. On the theme's pages it matches every core Button at rest and on
+      hover but one way: Outline buttons get the Fill's padding, as the theme intends; core's own
+      Outline style shrinks it today.
     - PERF: its CSS ships with each block that uses it. Once several blocks use primitives, put
       every primitive's `style.css` in the plugins' shared `base.css`, which loads once.
     - Behavior for interactive pieces: pick an unstyled library (React Aria first, Base UI as

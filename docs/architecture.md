@@ -434,8 +434,12 @@ content, so in WordPress it holds core blocks (see "Frames").
   version uses core's tools (`PlainText` or `RichText`, `LinkControl`, `MediaUpload`). An editor
   who knows core's Button knows ours, and content can move between them.
 - **Its markup and styles are ours,** from our tokens, the same in every host. Core blocks an
-  editor places are styled by the theme; keep the two looking alike through the tokens both
-  read.
+  editor places are styled by the theme. Where a primitive stands in for a core block, its CSS
+  is also the theme's for that block: `scripts/core-css.mjs` rewrites it for core's markup
+  (`.ucf-c-button[data-variant="outline"]` as `.wp-block-button.is-style-outline >
+.wp-block-button__link`, our roles as the theme's) into the theme's kit,
+  `dist/theme/_core-blocks.scss`. A selector or token it can't map fails the build. So far: the
+  Button.
 - **The dependency goes one way:** components import primitives; primitives never import
   components. Both import `integrations/`'s schema and Puck helpers, which import no component,
   so nothing loops back.

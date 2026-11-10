@@ -94,7 +94,7 @@ function resolve( tokens, value, where, host ) {
  * @param {string} role   A role's name.
  * @param {string} where  Where it was named, for the error.
  */
-function roleFallback( tokens, role, where ) {
+export function roleFallback( tokens, role, where ) {
 	const light = compositions( tokens ).find( ( c ) => c.name === 'light' );
 	const treatment = treatments( tokens ).find(
 		( t ) => t.name === light.treatment
