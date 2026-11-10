@@ -19,7 +19,8 @@
 
 		// `@/` is the repo root: an import that leaves its component's folder names it from there
 		// (docs/architecture.md, "A component's folder").
-		// SYNC: the same alias in webpack.config.js, vitest.config.mts and .storybook/main.ts.
+		// SYNC: the same alias in webpack.config.js, vitest.config.mts, .storybook/main.ts and
+		// scripts/alias.mjs.
 		// UPSTREAM: @wordpress/block-editor ships its type files but does not list them in its
 		// package.json, so TypeScript has to be pointed at them.
 		"paths": {

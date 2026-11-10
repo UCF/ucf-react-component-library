@@ -1,6 +1,7 @@
 /**
  * scripts/sync-blocks.mjs: block.json's attributes come from each component's props.
  */
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, test } from 'vitest';
@@ -51,3 +52,18 @@ describe( 'syncAttributes', () => {
 test( 'every block.json in the repo matches its props', async () => {
 	expect( await syncBlocks( root, { check: true } ) ).toEqual( [] );
 } );
+
+// FIX: `npm run sync:blocks` runs in plain Node, not through Vite as this file does, so an `@/`
+// import in a props file passed here and failed there. This runs the command as npm does.
+test( 'runs as `npm run sync:blocks` does, in plain Node', () => {
+	const output = execFileSync(
+		process.execPath,
+		[
+			'--no-warnings',
+			path.join( root, 'scripts/sync-blocks.mjs' ),
+			'--check',
+		],
+		{ cwd: root, encoding: 'utf8' }
+	);
+	expect( output ).toContain( 'Every block.json matches its props.' );
+}, 60_000 );

@@ -225,14 +225,16 @@ one of the two `integrations/wp/` folders: `components/content/card/integrations
 anywhere, and a primitive is `'@/components/primitives/heading/Heading'`. Imports inside a
 component stay relative (`'../../EventList.tsx'`), as do imports between `integrations/` folders
 (`'../schema/props.ts'`) and of `.storybook/` and `tokens/tokens.json`, which are setup and data,
-not library code. An `@/` import of a module has no ending, as Next writes them; a stylesheet or
+not library code. So do `import.meta.glob()` patterns in tests (`'../../components/*/*/index.ts'`):
+the tests read component names from the paths they return. An `@/` import of a module has no ending, as Next writes them; a stylesheet or
 JSON file keeps its `.css` or `.json`; a relative import ends in `.ts` or `.tsx` (see "Gotchas").
 No two modules may share a name in a folder (`props.ts` beside `props.tsx`), or an `@/` import
 would match both. `npm run new:component` writes them.
 
 The alias is defined for each tool that reads the code, kept the same by hand: `tsconfig.json`
 `paths` (TypeScript and the editor), `webpack.config.js` (the WordPress plugins),
-`vitest.config.mts` (the tests) and `.storybook/main.ts` (Storybook). The published package has
+`vitest.config.mts` (the tests), `.storybook/main.ts` (Storybook) and `scripts/alias.mjs` (scripts
+that load the TypeScript source in plain Node, as `npm run sync:blocks` does). The published package has
 no alias: `scripts/build-package.mjs` runs tsc-alias after `tsc`, which rewrites every `@/` import
 in `dist/` to a relative path and adds the `.js` plain Node needs (`resolveFullPaths` in
 `tsconfig.build.json`). WHY an alias rather than package.json `imports` (`#` names): the
