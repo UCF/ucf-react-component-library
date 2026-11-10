@@ -4,7 +4,7 @@
  */
 import type { Part } from './Hero.parts.ts';
 import type { HeroEditableProps } from './Hero.props.ts';
-import type { Preset as PresetOf } from '../../../integrations/schema/presets.ts';
+import type { Preset as PresetOf } from '@/integrations/schema/presets';
 
 export type Preset = PresetOf< HeroEditableProps, Part >;
 

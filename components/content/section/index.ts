@@ -10,4 +10,4 @@ export { PRESETS as SECTION_PRESETS } from './Section.presets.ts';
 export {
 	COMPOSITIONS,
 	type Composition,
-} from '../../../integrations/schema/compositions.ts';
+} from '@/integrations/schema/compositions';

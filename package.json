@@ -155,6 +155,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^10.6.5",
+		"tsc-alias": "1.9.9",
 		"typescript": "^5.9.3",
 		"vite": "^8.3.5",
 		"vitest": "^5.0.5"

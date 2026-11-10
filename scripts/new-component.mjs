@@ -242,9 +242,7 @@ function addToList( source, file, anchor, name ) {
 // The three places puck.test.tsx names each config: its import, CONFIGS and the type check.
 function addPuckConfig( source, file, n ) {
 	const imports = [
-		...source.matchAll(
-			/^import \w+ from '\.\.\/[^']+\/puck\/config\.tsx';\n/gm
-		),
+		...source.matchAll( /^import \w+ from '@\/[^']+\/puck\/config';\n/gm ),
 	];
 	const configs = source.indexOf( 'const CONFIGS = {' );
 	const configsEnd = configs < 0 ? -1 : source.indexOf( '\n};', configs );
@@ -260,7 +258,8 @@ function addPuckConfig( source, file, n ) {
 	// FIX: insert the one new line in its sorted place. Rewriting the block from the lines the
 	// pattern matched dropped any import between them that it didn't match (one split over
 	// several lines, as `import card, { withTemplate }` is).
-	const configPath = `${ `../../${ n.tier }` }/${ n.name }/integrations/puck/config.tsx`;
+	// SYNC: the `@/` alias (tsconfig.json `paths`): every component by its path from the root.
+	const configPath = `@/${ n.tier }/${ n.name }/integrations/puck/config`;
 	const before = imports.find(
 		( match ) =>
 			match[ 0 ].split( "'" )[ 1 ].localeCompare( configPath ) > 0
@@ -339,7 +338,6 @@ const blockJson = ( n, attributes, extra ) =>
 function contentFiles( n ) {
 	// `pull-quote` → `PULL_QUOTE`, for the package entry's PARTS and PRESETS names.
 	const NAME = n.name.toUpperCase().replace( /-/g, '_' );
-	const root = '../../../../..';
 	return {
 		[ `${ n.Name }.tsx` ]: `/**
  * The ${ n.title }. Why it's built this way: docs/architecture.md, "Built with frame()".
@@ -350,7 +348,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '../../../integrations/react/frame.tsx';
+} from '@/integrations/react/frame';
 import { PARTS } from './${ n.Name }.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './${ n.Name }.presets.ts';
 import { PROPS } from './${ n.Name }.props.ts';
@@ -416,7 +414,7 @@ export default ${ n.Name };
 import type {
 	PropDefinitions,
 	PropsOf,
-} from '../../../integrations/schema/props.ts';
+} from '@/integrations/schema/props';
 
 export const PROPS = {
 	/** The content's alignment, across. */
@@ -443,7 +441,7 @@ export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 import type {
 	PartDefinitions,
 	PartOf,
-} from '../../../integrations/schema/parts.ts';
+} from '@/integrations/schema/parts';
 
 export const PARTS = {
 	/** The title. */
@@ -464,7 +462,7 @@ import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
 import {
 	findPreset,
 	type Preset as PresetOf,
-} from '../../../integrations/schema/presets.ts';
+} from '@/integrations/schema/presets';
 
 export type Preset = PresetOf< ${ n.Name }EditableProps, Part >;
 
@@ -529,14 +527,14 @@ export { PRESETS as ${ NAME }_PRESETS } from './${ n.Name }.presets.ts';
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { defaultsIn } from '${ root }/integrations/schema/props.ts';
-import { argTypesOf } from '${ root }/integrations/storybook/arg-types.ts';
+import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
 // WHY every primitive's styles: each part kind renders as one (integrations/storybook/parts.tsx),
 // and an unstyled button fails the contrast check on dark sections.
-import '${ root }/components/primitives/button/style.css';
-import '${ root }/components/primitives/heading/style.css';
-import '${ root }/components/primitives/image/style.css';
-import '${ root }/components/primitives/paragraph/style.css';
+import '@/components/primitives/button/style.css';
+import '@/components/primitives/heading/style.css';
+import '@/components/primitives/image/style.css';
+import '@/components/primitives/paragraph/style.css';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS } from '../../${ n.Name }.props.ts';
 import '../../style.css';
@@ -627,7 +625,7 @@ it( 'styles every part class', () => {
 } );
 `,
 		'integrations/puck/config.tsx': `/** The ${ n.title } in Puck, from its port (integrations/puck/config.tsx). */
-import { puckConfig } from '${ root }/integrations/puck/config.tsx';
+import { puckConfig } from '@/integrations/puck/config';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( ${ n.Name } );
@@ -644,7 +642,7 @@ export { TEMPLATE, withTemplate, withPreset };
 import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
-import { blockSettings } from '${ root }/integrations/wp/block.tsx';
+import { blockSettings } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import metadata from './block.json';
 import edit from './edit.tsx';
@@ -658,7 +656,7 @@ registerBlockType( metadata as unknown as BlockConfiguration, {
 } );
 `,
 		'integrations/wp/edit.tsx': `/** The ${ n.title }'s editor view: its sidebar and its content, from its port. */
-import { blockEdit } from '${ root }/integrations/wp/block.tsx';
+import { blockEdit } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 export default blockEdit( ${ n.Name } );
@@ -667,7 +665,7 @@ export default blockEdit( ${ n.Name } );
  * What the ${ n.title }'s block stores in a post.
  * SYNC: stored in every post with the block; changing it needs a deprecation in index.tsx.
  */
-import { blockSave } from '${ root }/integrations/wp/block.tsx';
+import { blockSave } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 export default blockSave( ${ n.Name } );
@@ -791,7 +789,7 @@ export const Default: Story = {};
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { DEFAULTS } from '../../defaults.ts';
-import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
 
 type Props = {
 	/** The label, or '' for the default. */
@@ -970,7 +968,6 @@ function liveFiles( n ) {
 	// PHP names: `ucf-content` + `pull-quote` → `ucf_content_pull_quote_*`, prefixed by plugin.
 	const fn = `${ n.plugin.replace( /-/g, '_' ) }_${ n.name.replace( /-/g, '_' ) }`;
 	const NAME = n.name.toUpperCase().replace( /-/g, '_' );
-	const root = '../../../../..';
 	return {
 		[ `${ n.Name }.tsx` ]: `/**
  * CONTEXT: the ${ n.title }, a live component: a list fetched from a feed, written into the page
@@ -1031,7 +1028,7 @@ export default function ${ n.Name }( {
 import type {
 	PropDefinitions,
 	PropsOf,
-} from '../../../integrations/schema/props.ts';
+} from '@/integrations/schema/props';
 
 export const PROPS = {
 	/** Where the items come from: a JSON list of { id, title, url }. '' shows none. */
@@ -1231,9 +1228,9 @@ export const Default: Story = {};
  * WHY fetched in the browser here: Puck's editor renders on the client, and \`render\` can't
  * wait for data (components/live/event-list/integrations/puck/config.tsx).
  */
-import { defaultsIn } from '${ root }/integrations/schema/props.ts';
-import { puckFields } from '${ root }/integrations/puck/config.tsx';
-import type { PuckComponentConfig } from '${ root }/integrations/puck/types.ts';
+import { defaultsIn } from '@/integrations/schema/props';
+import { puckFields } from '@/integrations/puck/config';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
 import { useItems } from '../../utils/useItems.ts';
@@ -1287,8 +1284,8 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { Disabled, Notice, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import { panelsOf } from '${ root }/integrations/schema/props.ts';
-import { FieldControl } from '${ root }/integrations/wp/inspector.tsx';
+import { panelsOf } from '@/integrations/schema/props';
+import { FieldControl } from '@/integrations/wp/inspector';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
 import { useItems } from '../../utils/useItems.ts';
@@ -1483,7 +1480,7 @@ import {
 	phpString,
 	sameHtml,
 	tempFile,
-} from '../../../../integrations/tests/live.ts';
+} from '@/integrations/tests/live';
 import ${ n.Name } from '../${ n.Name }.tsx';
 import { normalizeItems } from '../client.ts';
 import { SAMPLE_ITEMS } from '../sample-data.ts';
@@ -1668,7 +1665,7 @@ describe( '${ n.Name }', () => {
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
 
 type Props = {
 	text: string;

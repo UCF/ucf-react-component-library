@@ -27,8 +27,7 @@ vi.mock( '../integrations/wp/settings.ts', () => ( {
 
 const { default: Edit } = await import( '../integrations/wp/edit.tsx' );
 const { PROPS } = await import( '../EventList.props.ts' );
-const { defaultsIn } =
-	await import( '../../../../integrations/schema/props.ts' );
+const { defaultsIn } = await import( '@/integrations/schema/props' );
 
 describe( 'the Event List in the editor', () => {
 	test( 'shows its preview inside an inert wrapper, links and all', () => {

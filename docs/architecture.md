@@ -220,6 +220,27 @@ same name at the top holds the half every component shares. Something about Word
 one of the two `integrations/wp/` folders: `components/content/card/integrations/wp/` for the Card,
 `integrations/wp/` for every component.
 
+**Imports that leave a component's folder start from the repo root, `@/`.** So
+`'../../../../../integrations/schema/props.ts'` is `'@/integrations/schema/props'` from
+anywhere, and a primitive is `'@/components/primitives/heading/Heading'`. Imports inside a
+component stay relative (`'../../EventList.tsx'`), as do imports between `integrations/` folders
+(`'../schema/props.ts'`) and of `.storybook/` and `tokens/tokens.json`, which are setup and data,
+not library code. So do `import.meta.glob()` patterns in tests (`'../../components/*/*/index.ts'`):
+the tests read component names from the paths they return. An `@/` import of a module has no ending, as Next writes them; a stylesheet or
+JSON file keeps its `.css` or `.json`; a relative import ends in `.ts` or `.tsx` (see "Gotchas").
+No two modules may share a name in a folder (`props.ts` beside `props.tsx`), or an `@/` import
+would match both. `npm run new:component` writes them.
+
+The alias is defined for each tool that reads the code, kept the same by hand: `tsconfig.json`
+`paths` (TypeScript and the editor), `webpack.config.js` (the WordPress plugins),
+`vitest.config.mts` (the tests), `.storybook/main.ts` (Storybook) and `scripts/alias.mjs` (scripts
+that load the TypeScript source in plain Node, as `npm run sync:blocks` does). The published package has
+no alias: `scripts/build-package.mjs` runs tsc-alias after `tsc`, which rewrites every `@/` import
+in `dist/` to a relative path and adds the `.js` plain Node needs (`resolveFullPaths` in
+`tsconfig.build.json`). WHY an alias rather than package.json `imports` (`#` names): the
+editor's TypeScript reliably picks up a change to `tsconfig.json`, and kept a stale answer after a
+change to `package.json`'s `imports`.
+
 Every content component follows this layout: the Card, the Highlight, the Hero and the Section.
 
 **What every component shares is in `integrations/`,** laid out in the same layers
@@ -805,6 +826,10 @@ Things in the tools that look wrong and aren't. Don't "clean them up".
   requires its own copy of those classes, so `instanceof` against ours doesn't match.
 - **JSON imported by a published module needs `with { type: 'json' }`.** Bundlers don't
   care; plain Node refuses without it.
+- **An `@/` import has no ending; a relative one ends in `.ts` or `.tsx`.** The package build
+  (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports, and refuses a `.ts` or
+  `.tsx` ending on any other (TS2877). So an `@/` import names no ending: TypeScript, Vite and
+  webpack find the file, and tsc-alias adds `.js` when it rewrites `dist/`.
 - **The root `package.json` is not `"type": "module"`.** wp-scripts loads the webpack and
   ESLint configs as CommonJS. `dist/package.json` sets it for the package instead.
 

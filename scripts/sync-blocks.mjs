@@ -13,6 +13,9 @@ import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+// WHY: the props files import with `@/`, which plain Node doesn't know (scripts/alias.mjs).
+import './alias.mjs';
+
 // Attributes WordPress adds for a block's `supports`, kept as they are: not props.
 // SYNC: WORDPRESS_ONLY in integrations/tests/parity.test.tsx.
 const WORDPRESS_OWN = new Set( [ 'align' ] );

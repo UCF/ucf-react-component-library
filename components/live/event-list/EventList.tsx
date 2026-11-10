@@ -12,7 +12,7 @@
  * SPEC: the UCF Brand Block Theme's Events block (`ucf/events`, includes/events.php there): a
  * date block, the title, then when and where.
  */
-import Heading from '../../primitives/heading/Heading.tsx';
+import Heading from '@/components/primitives/heading/Heading';
 import { PROPS, type EventListEditableProps } from './EventList.props.ts';
 import type { EventItem } from './types.ts';
 import { dateBlock, whenText } from './utils/dates.ts';

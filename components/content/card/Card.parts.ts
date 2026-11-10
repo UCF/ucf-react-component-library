@@ -2,10 +2,7 @@
  * The Card's parts: what goes inside it, each with its kind and the class that styles it.
  * SYNC: style.css styles every class here; tests/Card.test.tsx checks.
  */
-import type {
-	PartDefinitions,
-	PartOf,
-} from '../../../integrations/schema/parts.ts';
+import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
 
 export const PARTS = {
 	/** A photo or illustration across the card. */

@@ -82,6 +82,12 @@ module.exports = plugins.map( ( plugin ) => ( {
 		...defaultConfig.output,
 		path: path.join( plugin.dir, 'build' ),
 	},
+	resolve: {
+		...defaultConfig.resolve,
+		// SYNC: `@/`, the repo root, as tsconfig.json `paths` defines it. WHY the key `@`:
+		// webpack matches it only as `@` or `@/…`, never `@wordpress/…`.
+		alias: { ...defaultConfig.resolve.alias, '@': root },
+	},
 	plugins: [
 		...defaultConfig.plugins.filter(
 			( p ) => p && ! REPLACED.includes( p.constructor.name )
