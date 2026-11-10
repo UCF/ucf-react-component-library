@@ -16,6 +16,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import button from '@/components/primitives/button/integrations/puck/config';
+import column from '@/components/primitives/column/integrations/puck/config';
+import columns from '@/components/primitives/columns/integrations/puck/config';
 import heading from '@/components/primitives/heading/integrations/puck/config';
 import image from '@/components/primitives/image/integrations/puck/config';
 import paragraph from '@/components/primitives/paragraph/integrations/puck/config';
@@ -57,6 +59,8 @@ const CONFIGS = {
 	Card: card,
 	Heading: heading,
 	Paragraph: paragraph,
+	Columns: columns,
+	Column: column,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -71,6 +75,8 @@ image satisfies ComponentConfig< PropsOf< typeof image > >;
 card satisfies ComponentConfig< PropsOf< typeof card > >;
 heading satisfies ComponentConfig< PropsOf< typeof heading > >;
 paragraph satisfies ComponentConfig< PropsOf< typeof paragraph > >;
+columns satisfies ComponentConfig< PropsOf< typeof columns > >;
+column satisfies ComponentConfig< PropsOf< typeof column > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

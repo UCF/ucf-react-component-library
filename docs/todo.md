@@ -140,8 +140,15 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
 1. **Image** (built, used by the Card). Still to do: a Figure with a caption; the host's image
    component (`next/image`) through a slot; and moving the Hero onto it.
-1. **Columns and Column:** a column count, ratio, gap and stacking width, with a Puck slot per
-   column. Match P1's Columns setting names.
+1. **Columns in WordPress** (the primitive is built, for Puck and React sites). WordPress
+   editors place core Columns in a Section. Still to do:
+
+    - The theme's core Columns styles to match the primitive's: its gaps (spacing 40, 60, 80)
+      and its stacking (one column below 36rem of Columns), so a layout looks the same in both.
+    - A `columns` part kind for frames' templates, written to core Columns in WordPress:
+      `distribution` as each Column's width (`2:1` is 66.66% and 33.33%), `gap` as
+      `style.spacing.blockGap`, `valign` as `verticalAlignment`.
+
 1. **Cover / Hero frame:** media, scrim, height, split, patterns inside.
 1. **Lock core down** in the plugin: the allowed block list, and core's design controls off.
    Do it alongside the next primitive.

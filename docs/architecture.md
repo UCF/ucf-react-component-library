@@ -374,8 +374,9 @@ change its markup), we own it**, as a component here with the same markup in eve
 
 | Use core: it is just the element                 | Own it: structure we must control                  |
 | ------------------------------------------------ | -------------------------------------------------- |
-| Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group), Columns and Column    |
+| Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group)                        |
 | Table (styled by `elements.css`; see below)      | Cover / Hero, Buttons and Button, Image and Figure |
+| Columns and Column (a primitive in Puck)         |                                                    |
 |                                                  | Media and text, Gallery, Details / Accordion, Tabs |
 
 - **WHY core for plain text:** Paragraph, Heading and List save bare `<p>`, `<h2>`, `<ul>`, the
@@ -443,6 +444,17 @@ content, so in WordPress it holds core blocks (see "Frames").
   fail for each one, so none is missed.
 - **Not for behavior.** Interactive pieces (a combobox, a dialog) take their behavior from an
   unstyled library in interactive components only; not chosen yet (docs/todo.md).
+- **A primitive that holds content is built with `frame()`,** with `kind: 'primitive'` and no
+  block (the Columns and the Column). Its content area is where a host puts content, so in Puck
+  the slot renders as that element: the Columns's slot is its grid, and each Column dropped in
+  is a grid item. Its settings are a `{Name}.props.ts`, as a content component's are.
+  In Puck a host uses the Columns through `withColumns( 'Column' )` and the Column through
+  `inColumns( 'Column' )`, naming the key it registered the Column under: only Columns go in a
+  Columns, picking a distribution adds the empty Columns it names (never removing one), and a
+  Column can't hold a Column.
+  WHY not core's names for the Columns: it lays out on a 12-column grid with five named
+  distributions (P1's names), not free widths, so every page lines up. WordPress editors place
+  core Columns instead, which the theme styles (docs/todo.md).
 
 ## Frames
 
@@ -839,6 +851,10 @@ Things in the tools that look wrong and aren't. Don't "clean them up".
   (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports, and refuses a `.ts` or
   `.tsx` ending on any other (TS2877). So an `@/` import names no ending: TypeScript, Vite and
   webpack find the file, and tsc-alias adds `.js` when it rewrites `dist/`.
+- **Storybook's test plugin sizes the page itself.** Before each story it sets 1200 × 900 unless
+  the story's `viewport` global names one of its viewports, so Vitest's `browser.viewport` alone
+  does nothing. `.storybook/viewports.mts` names the three test widths, `preview.ts` selects the
+  project's, and `vitest.setup.ts` fails a story that didn't render at it.
 - **The root `package.json` is not `"type": "module"`.** wp-scripts loads the webpack and
   ESLint configs as CommonJS. `dist/package.json` sets it for the package instead.
 

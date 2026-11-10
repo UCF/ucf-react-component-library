@@ -19,7 +19,12 @@ export type PuckScalarField =
 // ── Slots and render ───────────────────────────────────────────────────────────────────────────
 
 /** A slot: the components placed inside. */
-export type PuckSlotField = { type: 'slot'; label?: string; allow?: string[] };
+export type PuckSlotField = {
+	type: 'slot';
+	label?: string;
+	allow?: string[];
+	disallow?: string[];
+};
 
 /**
  * A group of fields stored as one object: a card's content, a link's text and address.

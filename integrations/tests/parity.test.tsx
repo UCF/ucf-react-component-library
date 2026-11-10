@@ -190,6 +190,8 @@ const primitives = Object.keys(
 test( 'finds every primitive', () => {
 	expect( primitives ).toEqual( [
 		'button',
+		'column',
+		'columns',
 		'heading',
 		'image',
 		'paragraph',
