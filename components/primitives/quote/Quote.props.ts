@@ -17,7 +17,7 @@ export const PROPS = {
 		label: 'Quote',
 		panel: 'Quote',
 		control: 'multiline',
-		default: 'Jim says everyone gets one. I’m on my fourth.',
+		default: "Jim says everyone gets one. I'm on my fourth.",
 	},
 	/** Who said it, or '' for none. */
 	citation: {

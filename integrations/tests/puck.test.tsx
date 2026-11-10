@@ -35,6 +35,8 @@ import eventList from '@/components/live/event-list/integrations/puck/config';
 import pullquote from '@/components/primitives/pullquote/integrations/puck/config';
 import quote from '@/components/primitives/quote/integrations/puck/config';
 import separator from '@/components/primitives/separator/integrations/puck/config';
+import list from '@/components/primitives/list/integrations/puck/config';
+import table from '@/components/primitives/table/integrations/puck/config';
 import hero, {
 	withTemplate as heroWithTemplate,
 } from '@/components/content/hero/integrations/puck/config';
@@ -69,6 +71,8 @@ const CONFIGS = {
 	Code: code,
 	Quote: quote,
 	Pullquote: pullquote,
+	List: list,
+	Table: table,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -89,6 +93,8 @@ separator satisfies ComponentConfig< PropsOf< typeof separator > >;
 code satisfies ComponentConfig< PropsOf< typeof code > >;
 quote satisfies ComponentConfig< PropsOf< typeof quote > >;
 pullquote satisfies ComponentConfig< PropsOf< typeof pullquote > >;
+list satisfies ComponentConfig< PropsOf< typeof list > >;
+table satisfies ComponentConfig< PropsOf< typeof table > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

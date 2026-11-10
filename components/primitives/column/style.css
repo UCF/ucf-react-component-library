@@ -13,3 +13,10 @@
 	display: grid;
 	gap: var(--ucf-spacing-40);
 }
+
+/* FIX: wide content (a Compare table, a long code line) scrolls inside its column rather than
+   widening it. In Puck's editor each block sits in a wrapper of Puck's, which is the grid item
+   here; without this it grew to the table's width and ran into the next column. */
+.ucf-c-column__content > * {
+	min-width: 0;
+}

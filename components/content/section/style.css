@@ -33,6 +33,12 @@
 	margin-inline: auto;
 }
 
+/* FIX: wide content scrolls inside the band rather than widening it, as in a Column
+   (components/primitives/column/style.css says why). */
+.ucf-section__inner > * {
+	min-width: 0;
+}
+
 /*
  * The block theme's two layout widths (tokens.json `layout`). In WordPress they are the active
  * theme's own contentSize and wideSize; the theme's bands use exactly these two.

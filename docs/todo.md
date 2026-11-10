@@ -123,10 +123,34 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 
 **Core's text blocks as primitives, for Puck** (WordPress keeps the core blocks). Each one's CSS
 reproduces what the theme renders for the core block, measured on a page of every style, then
-becomes the theme's through `scripts/core-css.mjs`. Built: Separator and Code (their fixed core
-grays are roles here), Quote and Pullquote. Next: List (Check, Divided, Tags, Definitions), Table
-(Stripes, the Compare style), with an items setting for list items and table rows. Then extend
-`core-css.mjs` to inner elements and pseudo-elements (`> li::before`, `> code`) and sync them.
+becomes the theme's through `scripts/core-css.mjs`. Built: Separator, Code, Quote, Pullquote, List
+and Table. Next: extend `core-css.mjs` to inner elements and pseudo-elements (`> li::before`,
+`> code`, `thead th`) and sync them. Where ours differs from the theme, syncing changes the theme:
+
+- **Stripes on a dark section:** core bands rows in a fixed light gray, so white text on them
+  can't be read. Ours bands in the `raised` role.
+- **Compare on a phone:** the theme holds the first column but not its header cell, which scrolls
+  away. Ours holds both.
+- **A captioned table's role (the theme's `includes/tables.php`, not synced):** it gives every
+  table's figure `role="region"`, which axe rejects on a figure with a caption
+  (`aria-allowed-role`). Ours adds the role only when there is no caption.
+
+Still to do for the Table. Its job for now is to carry the theme's table styles to both hosts;
+WordPress editors use core Table, whose editing already covers these. Puck's table editing waits
+until it is needed:
+
+- **Compare reads as a restyle:** it is the theme's comparison table (two to four options side by
+  side, the questions in the first column, at full width; the theme's `patterns/comparison.php`),
+  but its story and Puck show the deadlines sample, which isn't a comparison. Give it the
+  pattern's content, and say what each style is for in the Style field's help.
+- **Fixed-width columns:** core's default (`hasFixedLayout`) gives equal columns that wrap long
+  words; ours sizes columns to their content, as core does with the setting off.
+- **Header cells in the body and a footer row:** the theme styles both; the rows format can't
+  write them.
+- **Numbers in a column:** the theme sets a right-aligned column (core's column alignment) in the
+  mono face. Ours has no alignment setting yet.
+- **The Compare caption** scrolls sideways with the table on a phone, in the theme and ours. It
+  could sit outside the scrolling area, which needs a wrapper core doesn't write.
 
 Components are built from primitives in `components/primitives/` (architecture.md,
 "Primitives"). Roughly in order of need:

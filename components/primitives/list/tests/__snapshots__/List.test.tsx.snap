@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`List > renders the same in WordPress and React: blank lines skipped 1`] = `"<ul class="ucf-c ucf-c-list"><li>First item</li><li>Second item</li></ul>"`;
+
+exports[`List > renders the same in WordPress and React: check 1`] = `"<ul class="ucf-c ucf-c-list" data-variant="check"><li>First item</li><li>Second item</li></ul>"`;
+
+exports[`List > renders the same in WordPress and React: default 1`] = `"<ul class="ucf-c ucf-c-list"><li>First item</li><li>Second item</li></ul>"`;
+
+exports[`List > renders the same in WordPress and React: definitions 1`] = `"<ul class="ucf-c ucf-c-list" data-variant="definitions"><li><strong>Phone</strong> 407-823-3000</li><li><strong>Hours</strong> 8 a.m. to 5 p.m.</li></ul>"`;
+
+exports[`List > renders the same in WordPress and React: divided 1`] = `"<ul class="ucf-c ucf-c-list" data-variant="divided"><li>First item</li><li>Second item</li></ul>"`;
+
+exports[`List > renders the same in WordPress and React: numbered 1`] = `"<ol class="ucf-c ucf-c-list"><li>First item</li><li>Second item</li></ol>"`;
+
+exports[`List > renders the same in WordPress and React: tags 1`] = `"<ul class="ucf-c ucf-c-list" data-variant="tags"><li>First item</li><li>Second item</li></ul>"`;

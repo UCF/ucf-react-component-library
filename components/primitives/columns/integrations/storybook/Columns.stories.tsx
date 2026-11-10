@@ -6,6 +6,8 @@ import { expect } from 'storybook/test';
 
 import Column from '@/components/primitives/column/Column';
 import '@/components/primitives/column/style.css';
+import Table from '@/components/primitives/table/Table';
+import '@/components/primitives/table/style.css';
 import { defaultsIn } from '@/integrations/schema/props';
 import { argTypesOf } from '@/integrations/storybook/arg-types';
 import Columns, { type ColumnsProps } from '../../Columns.tsx';
@@ -133,5 +135,41 @@ export const Layout: Story = {
 			} );
 		}
 		await expect( failures ).toEqual( [] );
+	},
+};
+
+/**
+ * Content wider than its column, a Compare table, in a plain wrapper as Puck's editor puts each
+ * block in: it scrolls inside its column, and no column grows (column/style.css says why).
+ */
+export const WideContent: Story = {
+	args: { distribution: '1:1:1' },
+	render: ( args ) => (
+		<Columns { ...args }>
+			<Column>
+				<div data-check="wrapper">
+					<Table variant="compare" caption="Compare" />
+				</div>
+			</Column>
+			<Column>
+				<p>Second column.</p>
+			</Column>
+			<Column>
+				<p>Third column.</p>
+			</Column>
+		</Columns>
+	),
+	play: async ( { canvasElement } ) => {
+		const column = canvasElement.querySelector( '.ucf-c-column' )!;
+		const wrapper = canvasElement.querySelector(
+			'[data-check="wrapper"]'
+		)!;
+		const table =
+			canvasElement.querySelector< HTMLElement >( '.ucf-c-table' )!;
+
+		await expect(
+			wrapper.getBoundingClientRect().width
+		).toBeLessThanOrEqual( column.getBoundingClientRect().width + 1 );
+		await expect( table.scrollWidth ).toBeGreaterThan( table.clientWidth );
 	},
 };

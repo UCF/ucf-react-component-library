@@ -195,10 +195,12 @@ test( 'finds every primitive', () => {
 		'columns',
 		'heading',
 		'image',
+		'list',
 		'paragraph',
 		'pullquote',
 		'quote',
 		'separator',
+		'table',
 	] );
 } );
 

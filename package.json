@@ -142,6 +142,22 @@
 		"./primitives/pullquote/puck": {
 			"types": "./dist/components/primitives/pullquote/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/pullquote/integrations/puck/config.js"
+		},
+		"./primitives/list": {
+			"types": "./dist/components/primitives/list/index.d.ts",
+			"default": "./dist/components/primitives/list/index.js"
+		},
+		"./primitives/list/puck": {
+			"types": "./dist/components/primitives/list/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/list/integrations/puck/config.js"
+		},
+		"./primitives/table": {
+			"types": "./dist/components/primitives/table/index.d.ts",
+			"default": "./dist/components/primitives/table/index.js"
+		},
+		"./primitives/table/puck": {
+			"types": "./dist/components/primitives/table/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/table/integrations/puck/config.js"
 		}
 	},
 	"files": [

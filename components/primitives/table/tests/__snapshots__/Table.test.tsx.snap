@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Table > renders the same in WordPress and React: compare 1`] = `"<figure tabindex="0" class="ucf-c ucf-c-table" data-variant="compare"><table><thead><tr><th>Term</th><th>Starts</th></tr></thead><tbody><tr><td>Fall</td><td>August 24</td></tr><tr><td>Spring</td><td>January 6</td></tr></tbody></table><figcaption>Deadlines</figcaption></figure>"`;
+
+exports[`Table > renders the same in WordPress and React: default 1`] = `"<figure tabindex="0" class="ucf-c ucf-c-table"><table><thead><tr><th>Term</th><th>Starts</th></tr></thead><tbody><tr><td>Fall</td><td>August 24</td></tr><tr><td>Spring</td><td>January 6</td></tr></tbody></table><figcaption>Deadlines</figcaption></figure>"`;
+
+exports[`Table > renders the same in WordPress and React: header only 1`] = `"<figure tabindex="0" class="ucf-c ucf-c-table"><table><thead><tr><th>Term</th><th>Starts</th></tr></thead></table><figcaption>Deadlines</figcaption></figure>"`;
+
+exports[`Table > renders the same in WordPress and React: no caption 1`] = `"<figure tabindex="0" role="region" aria-label="Table" class="ucf-c ucf-c-table"><table><thead><tr><th>Term</th><th>Starts</th></tr></thead><tbody><tr><td>Fall</td><td>August 24</td></tr><tr><td>Spring</td><td>January 6</td></tr></tbody></table></figure>"`;
+
+exports[`Table > renders the same in WordPress and React: stripes 1`] = `"<figure tabindex="0" class="ucf-c ucf-c-table" data-variant="stripes"><table><thead><tr><th>Term</th><th>Starts</th></tr></thead><tbody><tr><td>Fall</td><td>August 24</td></tr><tr><td>Spring</td><td>January 6</td></tr></tbody></table><figcaption>Deadlines</figcaption></figure>"`;
