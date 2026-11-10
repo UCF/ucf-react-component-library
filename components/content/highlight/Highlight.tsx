@@ -16,7 +16,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '@/integrations/react/frame.js';
+} from '@/integrations/react/frame';
 import { PARTS } from './Highlight.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Highlight.presets.ts';
 import { PROPS } from './Highlight.props.ts';

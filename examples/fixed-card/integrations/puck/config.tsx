@@ -12,7 +12,7 @@ import { CHOICES, type ChoiceKey } from '../../options.ts';
 import type {
 	PuckComponentConfig,
 	PuckScalarField,
-} from '@/integrations/puck/types.js';
+} from '@/integrations/puck/types';
 
 type Props = {
 	title: string;

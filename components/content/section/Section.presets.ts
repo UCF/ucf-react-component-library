@@ -4,7 +4,7 @@
  */
 import type { Part } from './Section.parts.ts';
 import type { SectionEditableProps } from './Section.props.ts';
-import type { Preset as PresetOf } from '@/integrations/schema/presets.js';
+import type { Preset as PresetOf } from '@/integrations/schema/presets';
 
 export type Preset = PresetOf< SectionEditableProps, Part >;
 

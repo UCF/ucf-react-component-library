@@ -30,7 +30,7 @@
  */
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
-import Image from '@/components/primitives/image/Image.js';
+import Image from '@/components/primitives/image/Image';
 
 export type FixedCardProps = {
 	/** The title, under about eight words. */

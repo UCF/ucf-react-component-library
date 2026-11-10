@@ -3,7 +3,7 @@
 import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
-import { blockSettings } from '@/integrations/wp/block.js';
+import { blockSettings } from '@/integrations/wp/block';
 import Section from '../../Section.tsx';
 import metadata from './block.json';
 import edit from './edit.tsx';

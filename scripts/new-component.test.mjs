@@ -207,7 +207,7 @@ describe( 'planComponent', () => {
 			/expect\( primitives \)\.toEqual\(\s*\[[^\]]*'badge'/
 		);
 		expect( read( 'integrations/tests/puck.test.tsx' ) ).toContain(
-			"import badge from '@/components/primitives/badge/integrations/puck/config.js';"
+			"import badge from '@/components/primitives/badge/integrations/puck/config';"
 		);
 	} );
 
@@ -300,7 +300,7 @@ describe( 'planComponent', () => {
 
 		const puck = read( 'integrations/tests/puck.test.tsx' );
 		expect( puck ).toContain(
-			"import pullQuote from '@/components/content/pull-quote/integrations/puck/config.js';"
+			"import pullQuote from '@/components/content/pull-quote/integrations/puck/config';"
 		);
 		expect( puck ).toContain( "'Pull Quote': pullQuote," );
 		expect( puck ).toContain(

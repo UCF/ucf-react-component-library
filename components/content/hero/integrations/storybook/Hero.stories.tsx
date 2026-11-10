@@ -7,18 +7,18 @@
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Button from '@/components/primitives/button/Button.js';
+import Button from '@/components/primitives/button/Button';
 import '@/components/primitives/button/style.css';
-import Heading from '@/components/primitives/heading/Heading.js';
+import Heading from '@/components/primitives/heading/Heading';
 import '@/components/primitives/heading/style.css';
-import Paragraph from '@/components/primitives/paragraph/Paragraph.js';
+import Paragraph from '@/components/primitives/paragraph/Paragraph';
 import '@/components/primitives/paragraph/style.css';
 import {
 	PLACEHOLDER_ALT,
 	PLACEHOLDER_IMAGE,
 } from '../../../../../.storybook/placeholder.ts';
-import { defaultsIn } from '@/integrations/schema/props.js';
-import { argTypesOf } from '@/integrations/storybook/arg-types.js';
+import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
 import Hero from '../../Hero.tsx';
 import { PARTS } from '../../Hero.parts.ts';
 import { PROPS } from '../../Hero.props.ts';

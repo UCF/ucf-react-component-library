@@ -87,9 +87,6 @@ module.exports = plugins.map( ( plugin ) => ( {
 		// SYNC: `@/`, the repo root, as tsconfig.json `paths` defines it. WHY the key `@`:
 		// webpack matches it only as `@` or `@/…`, never `@wordpress/…`.
 		alias: { ...defaultConfig.resolve.alias, '@': root },
-		// UPSTREAM: an `@/` import names the compiled file (`@/integrations/schema/props.js`), as
-		// TypeScript expects; webpack only finds the `.ts` source behind it when told to look.
-		extensionAlias: { '.js': [ '.ts', '.tsx', '.js' ] },
 	},
 	plugins: [
 		...defaultConfig.plugins.filter(

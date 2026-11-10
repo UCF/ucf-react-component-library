@@ -3,8 +3,8 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { Disabled, Notice, PanelBody, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import { panelsOf } from '@/integrations/schema/props.js';
-import { FieldControl } from '@/integrations/wp/inspector.js';
+import { panelsOf } from '@/integrations/schema/props';
+import { FieldControl } from '@/integrations/wp/inspector';
 import EventList from '../../EventList.tsx';
 import { PROPS, type EventListEditableProps } from '../../EventList.props.ts';
 import { useEvents } from '../../utils/useEvents.ts';

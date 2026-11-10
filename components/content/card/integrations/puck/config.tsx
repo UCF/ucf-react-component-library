@@ -1,5 +1,5 @@
 /** The Card in Puck, from its port (integrations/puck/config.tsx). */
-import { puckConfig } from '@/integrations/puck/config.js';
+import { puckConfig } from '@/integrations/puck/config';
 import Card from '../../Card.tsx';
 
 const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( Card );

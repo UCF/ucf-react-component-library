@@ -7,7 +7,7 @@ import type { CardEditableProps } from './Card.props.ts';
 import {
 	findPreset,
 	type Preset as PresetOf,
-} from '@/integrations/schema/presets.js';
+} from '@/integrations/schema/presets';
 
 export type Preset = PresetOf< CardEditableProps, Part >;
 

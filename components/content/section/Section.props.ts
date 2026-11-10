@@ -3,8 +3,8 @@
  * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props.js';
-import { COMPOSITIONS } from '@/integrations/schema/compositions.js';
+import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import { COMPOSITIONS } from '@/integrations/schema/compositions';
 
 export const PROPS = {
 	/** The band's background, and so the colors of everything inside it. */

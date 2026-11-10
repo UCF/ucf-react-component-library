@@ -10,6 +10,11 @@
 	// WordPress, and wp-scripts builds it into the plugins), as wp is, left out below.
 	// integrations/storybook and integrations/tests are never shipped.
 	"extends": "./tsconfig.json",
+	// WHY resolveFullPaths: an `@/` import has no ending in the source. tsc-alias turns it into a
+	// relative path in dist/ and adds the `.js` plain Node needs (scripts/build-package.mjs).
+	"tsc-alias": {
+		"resolveFullPaths": true
+	},
 	"compilerOptions": {
 		"noEmit": false,
 		"allowImportingTsExtensions": false,

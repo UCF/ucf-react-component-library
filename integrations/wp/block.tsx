@@ -28,7 +28,7 @@ import { createContext, useContext, type ComponentType } from 'react';
 import imageExample from '@/components/primitives/image/example.json';
 import ImageEdit, {
 	type ImageValue,
-} from '@/components/primitives/image/integrations/wp/edit.js';
+} from '@/components/primitives/image/integrations/wp/edit';
 import type { Areas, Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import {

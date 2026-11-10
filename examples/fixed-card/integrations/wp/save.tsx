@@ -2,7 +2,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import type { BlockSaveProps } from '@wordpress/blocks';
 
 import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
-import { ownAttributes } from '@/integrations/wp/attributes.js';
+import { ownAttributes } from '@/integrations/wp/attributes';
 import metadata from './block.json';
 import type { Attributes } from './edit.tsx';
 

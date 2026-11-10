@@ -12,7 +12,7 @@
  * Renaming one needs a block deprecation (docs/architecture.md, "Naming"). block.json lists
  * them too; integrations/tests/parity.test.tsx fails while the two differ.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props.js';
+import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
 
 export const PROPS = {
 	/**

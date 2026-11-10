@@ -4,9 +4,9 @@
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import Button from '@/components/primitives/button/Button.js';
-import Heading from '@/components/primitives/heading/Heading.js';
-import Paragraph from '@/components/primitives/paragraph/Paragraph.js';
+import Button from '@/components/primitives/button/Button';
+import Heading from '@/components/primitives/heading/Heading';
+import Paragraph from '@/components/primitives/paragraph/Paragraph';
 import Card from '../../Card.tsx';
 import { PARTS } from '../../Card.parts.ts';
 import { base } from './shared.tsx';
