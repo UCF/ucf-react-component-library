@@ -13,6 +13,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 
+import { elementsCss } from './elements.mjs';
 import plugins from './plugins.cjs';
 
 import {
@@ -180,21 +181,24 @@ describe( 'roles contract', () => {
 		...roles.map( ( role ) => `c-bar-${ role }` ),
 	] );
 
-	// The components' (primitives included) and examples' CSS and the opt-in element styles
-	// (styles/elements.css). WHY examples: they are written to be copied, so they follow the
-	// same rules.
-	const cssFiles = [ 'components', 'examples', 'styles' ].flatMap( ( dir ) =>
+	// The components' (primitives included) and examples' CSS, and the opt-in element styles
+	// as scripts/elements.mjs writes them. WHY examples: they are written to be copied, so they
+	// follow the same rules.
+	const cssFiles = [ 'components', 'examples' ].flatMap( ( dir ) =>
 		readdirSync( path.join( root, dir ), { recursive: true } )
 			.filter( ( file ) => file.endsWith( '.css' ) )
 			.map( ( file ) => path.join( dir, file ) )
 	);
 
-	const read = cssFiles.flatMap( ( file ) =>
-		[
-			...readFileSync( path.join( root, file ), 'utf8' ).matchAll(
-				/var\(\s*--ucf-([a-z0-9-]+)/g
-			),
-		]
+	const sources = [
+		...cssFiles.map( ( file ) => [
+			file,
+			readFileSync( path.join( root, file ), 'utf8' ),
+		] ),
+		[ 'tokens/elements.json', elementsCss( tokens ) ],
+	];
+	const read = sources.flatMap( ( [ file, css ] ) =>
+		[ ...css.matchAll( /var\(\s*--ucf-([a-z0-9-]+)/g ) ]
 			.map( ( m ) => m[ 1 ] )
 			.filter( ( name ) => ! primitiveNames.has( name ) )
 			.map( ( name ) => ( { file, name } ) )

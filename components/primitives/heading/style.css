@@ -1,9 +1,9 @@
 /*
  * CONTEXT: the Heading's styles, for every host and every component that uses it.
  *
- * SYNC: the theme's heading element styles (theme.json `styles.elements` h1 to h6), as
- * styles/elements.css copies them for plain headings. The values come from the same tokens;
- * these rules are copied, so change all three together.
+ * SYNC: the heading styles in tokens/elements.json (`heading`, `h1` to `h6`), which the theme
+ * and elements.css are built from. The values come from the same tokens; these rules are copied,
+ * so change both together.
  *
  * WHY no margin: space between pieces is the container's (a Section's flow, a Card's
  * gap), as core's block gap is in WordPress.

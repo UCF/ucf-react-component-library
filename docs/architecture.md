@@ -633,9 +633,18 @@ stylesheet work in every host.
 
 **Plain elements are the host's, with one opt-in.** Components style only their own classes;
 headings, body copy and links are styled by the host (the block theme in WordPress). For React
-hosts, `@ucf/components/elements.css` (`styles/elements.css`) copies the theme's element styles,
-scoped to a Section or `.ucf-elements` and at zero specificity, so it never restyles a site's own
-chrome or beats a component. Storybook and the Puck demo load it.
+hosts, `@ucf/components/elements.css` gives them the theme's element styles, scoped to a Section
+or `.ucf-elements` and at zero specificity, so it never restyles a site's own chrome or beats a
+component. Storybook and the Puck demo load it.
+
+**Element styles are data, like the roles.** `tokens/elements.json` holds them in theme.json's
+own shape (`elements.h2.typography.fontSize`), naming tokens (`{font-size.heading-2}`) and roles
+(`{role.link}`). `npm run build:tokens` (scripts/elements.mjs) writes them twice: as
+`dist/tokens/elements.css` for React hosts, and as `styles` in the theme's kit
+(`dist/theme/theme-json.json`), which the theme's `check:tokens` compares with its theme.json.
+What theme.json can't express (underline thickness, `text-wrap`, colors on `p` and `li`) sits in
+each element's `css` entry: React hosts get it, and the theme writes its own in SCSS, reading the
+same tokens (`custom.link-underline` and the rest).
 
 **Layout widths are tokens too** (`tokens.json` `layout`: `content` 720px, `wide` 1240px, read as
 `--ucf-layout-content` and `--ucf-layout-wide`). In WordPress they point at the active theme's

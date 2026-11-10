@@ -6,7 +6,8 @@
  * ones. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
- *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
+ *   3. dist/elements.css: the opt-in element styles (dist/tokens/elements.css, from
+ *      tokens/elements.json).
  *   4. dist/package.json marks the output as ES modules.
  *   5. Every file package.json exports must exist, or the build fails.
  *
@@ -95,9 +96,9 @@ for ( const { dir } of componentDirs().values() ) {
 }
 
 // WHY separate from ucf.css: opt-in. It styles plain elements, which a site with its own
-// typography must be able to leave out (styles/elements.css).
+// typography must be able to leave out. build:tokens writes it from tokens/elements.json.
 copyFileSync(
-	path.join( root, 'styles/elements.css' ),
+	path.join( dist, 'tokens/elements.css' ),
 	path.join( dist, 'elements.css' )
 );
 

@@ -127,7 +127,7 @@
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
 		"lint:js": "wp-scripts lint-js integrations components examples scripts .storybook webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\" \"styles/**/*.css\"",
+		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

@@ -15,7 +15,7 @@ import tokens from '../tokens/tokens.json';
 // so a CSS edit shows without rebuilding the package.
 import '../dist/tokens/base.css';
 // WHY: headings and copy in a story look as they do on a UCF page, as in the block theme.
-import '../styles/elements.css';
+import '../dist/tokens/elements.css';
 
 // WHY read from tokens.json: a composition added there shows up in the toolbar with no
 // second edit.

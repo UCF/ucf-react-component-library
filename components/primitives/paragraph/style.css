@@ -1,8 +1,8 @@
 /*
  * CONTEXT: the Paragraph's styles, for every host and every component that uses it.
  *
- * SYNC: the theme's body copy (theme.json `styles.typography`), as styles/elements.css copies
- * it for plain paragraphs. The values come from the same tokens; these rules are copied.
+ * SYNC: the body copy in tokens/elements.json (`root`), which the theme and elements.css are
+ * built from. The values come from the same tokens; these rules are copied.
  *
  * WHY no margin: space between pieces is the container's (a Section's flow, a Card's
  * gap), as core's block gap is in WordPress.

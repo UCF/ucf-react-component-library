@@ -146,8 +146,8 @@ Components are built from primitives in `components/primitives/` (architecture.m
 1. **Lock core down** in the plugin: the allowed block list, and core's design controls off.
    Do it alongside the next primitive.
 1. **Heading and Paragraph** (built, for the frames' Puck templates). Their rules copy
-   `styles/elements.css` (`SYNC:`); generate one from the other, or have elements.css style
-   these classes too. Decide whether Paragraph needs a Lead size.
+   the values in `tokens/elements.json` (`SYNC:`); generate their CSS from it, as elements.css
+   is. Decide whether Paragraph needs a Lead size.
 
 ## Section
 
@@ -166,12 +166,18 @@ blocks. Compare the two first. Also check our configs against Puck 0.21 (the typ
 
 ## Element styles
 
-`styles/elements.css` gives React hosts the block theme's headings, body copy, links and
-captions. Its rules are copied by hand from the theme's `theme.json` and `_typography.scss`, so
-they can drift. Two ways to fix that:
+`tokens/elements.json` is the one source for the element styles (architecture.md, "Tokens,
+roles and fonts"). The theme's side is still to do, on its `tokens-from-ucf-components` branch,
+with Jim's agreement:
 
-- **One source for both:** element styles in `tokens.json`, generating this stylesheet and the
-  theme's `styles.elements`, as the compositions already are. Needs Jim's agreement.
+- **Check `styles` in `tools/sync-tokens.js`:** compare theme.json `styles.typography` and
+  `styles.elements` with the kit's `styles`, as it compares presets, so the theme fails while
+  they differ.
+- **Read the link tokens in `src/scss/_typography.scss`:** `var(--wp--custom--link-underline)`,
+  `link-underline-hover` and `link-underline-offset` in place of `1px`, `2px` and `0.2em`, after
+  `sync:tokens` adds them to theme.json `settings.custom`.
+- **The button element** (theme.json `styles.elements.button`) joins elements.json with the
+  Button primitive's move to the library.
 - **A Tailwind preset** from `tokens.json`, so React sites style pages with the same values.
   WordPress doesn't use Tailwind, so the theme and plugins would still need the plain CSS. A
   middle way: keep components on plain CSS, and ship a preset only as a convenience for sites,
