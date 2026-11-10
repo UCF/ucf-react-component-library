@@ -383,7 +383,7 @@ change its markup), we own it**, as a component here with the same markup in eve
   same elements Puck and Next render, so they are already at parity, and rebuilding their
   editing (levels, anchors, splitting, pasting) would gain nothing. In WordPress they stay core
   blocks, which the theme styles. Puck has no core blocks, so each is also a primitive Puck
-  editors place (the Separator, the Code; Quote, List and Table to come), whose CSS reproduces
+  editors place (the Separator, the Code, the Quote and Pullquote; List and Table to come), whose CSS reproduces
   the theme's and, through `scripts/core-css.mjs`, becomes it (see "Primitives").
 - **WHY our own for the rest:** core's markup carries wrappers and classes we don't choose,
   global styles inject inline CSS, its design controls let editors break the system, and

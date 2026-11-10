@@ -1,0 +1,65 @@
+/*
+ * CONTEXT: the Pullquote's styles, for every host and every component that uses it.
+ *
+ * SPEC: core Pullquote as the UCF theme renders it (src/scss/_quote.scss there): the line in the
+ * display face, uppercase and large, with accent marks the theme adds, not typed; then the
+ * citation, small and muted after a 48px accent rule, as on the Quote.
+ * WHY left-aligned with no borders: core's Pullquote centers its text between two rules; the theme
+ * resets both, and the marks are the device.
+ */
+.ucf-c-pullquote {
+	border: 0;
+	color: var(--ucf-c-body);
+	margin: 0;
+	padding: 0;
+	text-align: left;
+}
+
+.ucf-c-pullquote > blockquote {
+	margin: 0;
+}
+
+/* SPEC: the theme's size, between heading 3 and heading 2: 28px to 42px. */
+.ucf-c-pullquote > blockquote > p {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-display);
+	font-size: clamp(1.75rem, 1.45rem + 1.3vw, 2.625rem);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.08;
+	margin: 0 0 var(--ucf-spacing-50);
+	text-transform: uppercase;
+	text-wrap: balance;
+}
+
+.ucf-c-pullquote > blockquote > p:first-of-type::before {
+	color: var(--ucf-c-accent);
+	content: "\201C";
+	margin-right: 0.04em;
+}
+
+.ucf-c-pullquote > blockquote > p:last-of-type::after {
+	color: var(--ucf-c-accent);
+	content: "\201D";
+	margin-left: 0.04em;
+}
+
+/* SPEC: line height 1.6, core Pullquote's own, a little tighter than the Quote's citation. */
+.ucf-c-pullquote > blockquote > cite {
+	align-items: center;
+	color: var(--ucf-c-muted);
+	display: flex;
+	font-size: var(--ucf-font-size-small);
+	font-style: normal;
+	gap: var(--ucf-spacing-40);
+	line-height: 1.6;
+	text-transform: none;
+}
+
+.ucf-c-pullquote > blockquote > cite::before {
+	background-color: var(--ucf-c-accent);
+	content: "";
+	flex: none;
+	height: var(--ucf-custom-rule-accent);
+	width: 48px;
+}

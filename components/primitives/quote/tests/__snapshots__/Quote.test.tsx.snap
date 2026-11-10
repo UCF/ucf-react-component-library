@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Quote > renders the same in WordPress and React: no citation 1`] = `"<blockquote class="ucf-c ucf-c-quote"><p>The best part of UCF was the people who pushed me.</p></blockquote>"`;
+
+exports[`Quote > renders the same in WordPress and React: sample 1`] = `"<blockquote class="ucf-c ucf-c-quote"><p>The best part of UCF was the people who pushed me.</p><cite>Darren Johnson</cite></blockquote>"`;
+
+exports[`Quote > renders the same in WordPress and React: two paragraphs 1`] = `"<blockquote class="ucf-c ucf-c-quote"><p>The first paragraph.</p><p>The second, after a blank line.</p><cite>Darren Johnson</cite></blockquote>"`;

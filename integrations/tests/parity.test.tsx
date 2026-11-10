@@ -196,6 +196,8 @@ test( 'finds every primitive', () => {
 		'heading',
 		'image',
 		'paragraph',
+		'pullquote',
+		'quote',
 		'separator',
 	] );
 } );

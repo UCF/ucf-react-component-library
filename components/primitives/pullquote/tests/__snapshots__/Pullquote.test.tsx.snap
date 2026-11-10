@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Pullquote > renders the same in WordPress and React: no citation 1`] = `"<figure class="ucf-c ucf-c-pullquote"><blockquote><p>Florida’s largest university, by design.</p></blockquote></figure>"`;
+
+exports[`Pullquote > renders the same in WordPress and React: sample 1`] = `"<figure class="ucf-c ucf-c-pullquote"><blockquote><p>Florida’s largest university, by design.</p><cite>UCF Admissions</cite></blockquote></figure>"`;
+
+exports[`Pullquote > renders the same in WordPress and React: two paragraphs 1`] = `"<figure class="ucf-c ucf-c-pullquote"><blockquote><p>The first paragraph.</p><p>The second, after a blank line.</p><cite>UCF Admissions</cite></blockquote></figure>"`;

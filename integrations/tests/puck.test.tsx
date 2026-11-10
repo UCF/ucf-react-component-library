@@ -32,6 +32,8 @@ import {
 } from '@/components/content/card/Card.presets';
 import degreeFinder from '@/components/interactive/degree-finder/integrations/puck/config';
 import eventList from '@/components/live/event-list/integrations/puck/config';
+import pullquote from '@/components/primitives/pullquote/integrations/puck/config';
+import quote from '@/components/primitives/quote/integrations/puck/config';
 import separator from '@/components/primitives/separator/integrations/puck/config';
 import hero, {
 	withTemplate as heroWithTemplate,
@@ -65,6 +67,8 @@ const CONFIGS = {
 	Column: column,
 	Separator: separator,
 	Code: code,
+	Quote: quote,
+	Pullquote: pullquote,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -83,6 +87,8 @@ columns satisfies ComponentConfig< PropsOf< typeof columns > >;
 column satisfies ComponentConfig< PropsOf< typeof column > >;
 separator satisfies ComponentConfig< PropsOf< typeof separator > >;
 code satisfies ComponentConfig< PropsOf< typeof code > >;
+quote satisfies ComponentConfig< PropsOf< typeof quote > >;
+pullquote satisfies ComponentConfig< PropsOf< typeof pullquote > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

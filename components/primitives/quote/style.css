@@ -1,0 +1,77 @@
+/*
+ * CONTEXT: the Quote's styles, for every host and every component that uses it.
+ *
+ * SPEC: core Quote as the UCF theme renders it (src/scss/_quote.scss there): the quotation in the
+ * lead size, with accent marks the theme adds, not typed; the citation small and muted after a
+ * 48px accent rule; a block gap between them (spacing-40).
+ * WHY a margin, not a grid gap: WordPress's flow layout spaces core Quote's blocks with the same
+ * margin. A gap here would add to it once this CSS styles core Quote.
+ * WHY no border or indent: the marks are the device; core's left border and indent are reset.
+ */
+.ucf-c-quote {
+	border: 0;
+	color: var(--ucf-c-body);
+	margin: 0;
+	padding: 0;
+}
+
+.ucf-c-quote > * + * {
+	margin-block-start: var(--ucf-spacing-40);
+}
+
+.ucf-c-quote > p {
+	color: var(--ucf-c-body);
+	font-size: var(--ucf-font-size-lead);
+	font-weight: 500;
+	line-height: 1.5;
+	margin-block-end: 0;
+}
+
+.ucf-c-quote > p:first-child {
+	margin-block-start: 0;
+}
+
+/*
+ * SPEC: the marks larger than the text, so they read as the device at the lead size; at the
+ * text's own size they were small specks. WHY line-height 0: the marks grow without pushing the
+ * lines apart. SPEC: the baseline lowered just enough that the marks' tops rise a little above
+ * the capitals, where a typesetter hangs them.
+ */
+.ucf-c-quote > p:first-of-type::before,
+.ucf-c-quote > p:last-of-type::after {
+	color: var(--ucf-c-accent);
+	font-size: 2.1em;
+	line-height: 0;
+	vertical-align: -0.24em;
+}
+
+/* SPEC: a small gap between each mark and the words: close enough to belong to them, short of
+   a word space, which would read as detached. */
+.ucf-c-quote > p:first-of-type::before {
+	content: "\201C";
+	margin-right: 0.06em;
+}
+
+.ucf-c-quote > p:last-of-type::after {
+	content: "\201D";
+	margin-left: 0.04em;
+}
+
+.ucf-c-quote > cite {
+	align-items: center;
+	color: var(--ucf-c-muted);
+	display: flex;
+	font-size: var(--ucf-font-size-small);
+	font-style: normal;
+	gap: var(--ucf-spacing-40);
+	line-height: 1.65;
+	text-transform: none;
+}
+
+.ucf-c-quote > cite::before {
+	background-color: var(--ucf-c-accent);
+	content: "";
+	flex: none;
+	height: var(--ucf-custom-rule-accent);
+	width: 48px;
+}
