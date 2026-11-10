@@ -43,6 +43,10 @@ const VIEWPORTS = {
 };
 
 export default defineConfig( {
+	// SYNC: `@/`, the repo root, as tsconfig.json `paths` defines it. Every project extends this.
+	resolve: {
+		alias: [ { find: /^@\//, replacement: `${ dirname }/` } ],
+	},
 	test: {
 		projects: [
 			{

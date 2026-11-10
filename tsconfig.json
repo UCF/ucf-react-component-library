@@ -17,9 +17,13 @@
 		"noEmit": true,
 		"types": [],
 
+		// `@/` is the repo root: an import that leaves its component's folder names it from there
+		// (docs/architecture.md, "A component's folder").
+		// SYNC: the same alias in webpack.config.js, vitest.config.mts and .storybook/main.ts.
 		// UPSTREAM: @wordpress/block-editor ships its type files but does not list them in its
 		// package.json, so TypeScript has to be pointed at them.
 		"paths": {
+			"@/*": [ "./*" ],
 			"@wordpress/block-editor": [
 				"./node_modules/@wordpress/block-editor/build-types/index.d.ts"
 			]

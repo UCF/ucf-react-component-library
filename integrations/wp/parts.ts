@@ -9,7 +9,7 @@
  * text.
  */
 
-import imageExample from '#primitives/image/example.json';
+import imageExample from '@/components/primitives/image/example.json';
 import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
 
 // ── Parts → blocks ─────────────────────────────────────────────────────────────────────────────

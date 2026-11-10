@@ -9,8 +9,8 @@ import { __ } from '@wordpress/i18n';
 
 import ImageEdit, {
 	type ImageValue,
-} from '#primitives/image/integrations/wp/edit.js';
-import { blockEdit, useBlock } from '#integrations/wp/block.js';
+} from '@/components/primitives/image/integrations/wp/edit.js';
+import { blockEdit, useBlock } from '@/integrations/wp/block.js';
 import Hero from '../../Hero.tsx';
 
 /**

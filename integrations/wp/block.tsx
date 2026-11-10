@@ -25,10 +25,10 @@ import { Button, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, type ComponentType } from 'react';
 
-import imageExample from '#primitives/image/example.json';
+import imageExample from '@/components/primitives/image/example.json';
 import ImageEdit, {
 	type ImageValue,
-} from '#primitives/image/integrations/wp/edit.js';
+} from '@/components/primitives/image/integrations/wp/edit.js';
 import type { Areas, Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import {

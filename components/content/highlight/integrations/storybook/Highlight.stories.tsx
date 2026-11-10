@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { PLACEHOLDER_ALT } from '../../../../../.storybook/placeholder.ts';
-import { resolveParts } from '#integrations/schema/parts.js';
-import { defaultsIn } from '#integrations/schema/props.js';
-import { argTypesOf } from '#integrations/storybook/arg-types.js';
-import { renderParts } from '#integrations/storybook/parts.js';
+import { resolveParts } from '@/integrations/schema/parts.js';
+import { defaultsIn } from '@/integrations/schema/props.js';
+import { argTypesOf } from '@/integrations/storybook/arg-types.js';
+import { renderParts } from '@/integrations/storybook/parts.js';
 import Highlight from '../../Highlight.tsx';
 import { PARTS, type Part } from '../../Highlight.parts.ts';
 import { presetNamed } from '../../Highlight.presets.ts';

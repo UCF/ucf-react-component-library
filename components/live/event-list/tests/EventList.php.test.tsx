@@ -24,7 +24,7 @@ import {
 	phpString,
 	sameHtml,
 	tempFile,
-} from '#integrations/tests/live.js';
+} from '@/integrations/tests/live.js';
 import EventList from '../EventList.tsx';
 import type { EventListEditableProps } from '../EventList.props.ts';
 import { normalizeEvents } from '../client.ts';

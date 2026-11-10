@@ -26,7 +26,7 @@ import type {
 	ReactNode,
 } from 'react';
 
-import imageExample from '#primitives/image/example.json' with { type: 'json' };
+import imageExample from '@/components/primitives/image/example.json' with { type: 'json' };
 import type { ComponentDefinition } from '../schema/definition.ts';
 import {
 	resolveParts,

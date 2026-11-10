@@ -4,7 +4,7 @@
 import Paragraph from '../../Paragraph.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '#integrations/puck/types.js';
+import type { PuckComponentConfig } from '@/integrations/puck/types.js';
 
 type Props = {
 	content: string;

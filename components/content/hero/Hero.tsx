@@ -42,8 +42,8 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '#integrations/react/frame.js';
-import Image from '#primitives/image/Image.js';
+} from '@/integrations/react/frame.js';
+import Image from '@/components/primitives/image/Image.js';
 import { PARTS } from './Hero.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Hero.presets.ts';
 import { PROPS, type HeroEditableProps } from './Hero.props.ts';

@@ -220,15 +220,21 @@ same name at the top holds the half every component shares. Something about Word
 one of the two `integrations/wp/` folders: `components/content/card/integrations/wp/` for the Card,
 `integrations/wp/` for every component.
 
-**Imports that leave a component's folder use a name, not a path.** `package.json` `imports`
-maps `#integrations/*` to `integrations/`, `#primitives/*` to `components/primitives/` and
-`#components/*` to `components/`, so `'../../../../../integrations/schema/props.ts'` is
-`'#integrations/schema/props.js'` from anywhere. Imports inside a component stay relative
-(`'../../EventList.tsx'`), as do imports between `integrations/` folders (`'../schema/props.ts'`)
-and of `.storybook/` and `tokens/tokens.json`, which are setup and data, not library code. A
-`#` name ends in `.js`, never `.ts` or `.tsx`, and a relative import ends in `.ts` or `.tsx`
-(see "Gotchas"). `scripts/build-package.mjs` writes the same map into `dist/package.json`, so
-the published package resolves the names too, and `npm run new:component` writes them.
+**Imports that leave a component's folder start from the repo root, `@/`.** So
+`'../../../../../integrations/schema/props.ts'` is `'@/integrations/schema/props.js'` from
+anywhere, and a primitive is `'@/components/primitives/heading/Heading.js'`. Imports inside a
+component stay relative (`'../../EventList.tsx'`), as do imports between `integrations/` folders
+(`'../schema/props.ts'`) and of `.storybook/` and `tokens/tokens.json`, which are setup and data,
+not library code. An `@/` import ends in `.js`, never `.ts` or `.tsx`, and a relative import ends
+in `.ts` or `.tsx` (see "Gotchas"). `npm run new:component` writes them.
+
+The alias is defined for each tool that reads the code, kept the same by hand: `tsconfig.json`
+`paths` (TypeScript and the editor), `webpack.config.js` (the WordPress plugins),
+`vitest.config.mts` (the tests) and `.storybook/main.ts` (Storybook). The published package has
+no alias: `scripts/build-package.mjs` runs tsc-alias after `tsc`, which rewrites every `@/` import
+in `dist/` to a relative path. WHY an alias rather than package.json `imports` (`#` names): the
+editor's TypeScript reliably picks up a change to `tsconfig.json`, and kept a stale answer after a
+change to `package.json`'s `imports`.
 
 Every content component follows this layout: the Card, the Highlight, the Hero and the Section.
 
@@ -815,12 +821,12 @@ Things in the tools that look wrong and aren't. Don't "clean them up".
   requires its own copy of those classes, so `instanceof` against ours doesn't match.
 - **JSON imported by a published module needs `with { type: 'json' }`.** Bundlers don't
   care; plain Node refuses without it.
-- **A `#` import ends in `.js`; a relative one ends in `.ts` or `.tsx`.** The package build
-  (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports and copies a `#` import
-  as written, so a `#` import names the file that exists in `dist/`. Written `.ts`, `tsc`
-  refuses it (TS2877); written without an extension, TypeScript can't find it. TypeScript and
-  Vite find the `.ts` source behind a `.js` name on their own; webpack needs `extensionAlias`
-  in `webpack.config.js`.
+- **An `@/` import ends in `.js`; a relative one ends in `.ts` or `.tsx`.** The package build
+  (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports, and refuses a `.ts` or
+  `.tsx` ending on any other (TS2877). tsc-alias then turns `@/` into a relative path but keeps
+  the ending, so an `@/` import names the file that exists in `dist/`. TypeScript and Vite find
+  the `.ts` source behind a `.js` name on their own; webpack needs `extensionAlias` in
+  `webpack.config.js`.
 - **The root `package.json` is not `"type": "module"`.** wp-scripts loads the webpack and
   ESLint configs as CommonJS. `dist/package.json` sets it for the package instead.
 

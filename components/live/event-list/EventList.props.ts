@@ -10,7 +10,7 @@
  * permanent (docs/architecture.md, "Naming"). block.json lists them too, written by
  * `npm run sync:blocks`; integrations/tests/parity.test.tsx fails while the two differ.
  */
-import type { PropDefinitions, PropsOf } from '#integrations/schema/props.js';
+import type { PropDefinitions, PropsOf } from '@/integrations/schema/props.js';
 
 // WHY choices, not free numbers: the schema's fields are text or a choice, and a list of a few
 // events is what this is for. The old plugin's default was 3.

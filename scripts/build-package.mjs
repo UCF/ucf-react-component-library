@@ -2,11 +2,12 @@
  * CONTEXT: builds the npm package, `@ucf/components`, into dist/.
  *
  *   1. `tsc -p tsconfig.build.json` writes the JavaScript and the `.d.ts` type files, rewriting
- * `./Highlight.tsx` imports to `./Highlight.js`. Then every example.json is copied beside them.
+ * `./Highlight.tsx` imports to `./Highlight.js`, and tsc-alias turns `@/` imports into relative
+ * ones. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
- *   4. dist/package.json marks the output as ES modules, and maps the `#` import names to it.
+ *   4. dist/package.json marks the output as ES modules.
  *   5. Every file package.json exports must exist, or the build fails.
  *
  * WHY step 3 rather than `"type": "module"` in the root package.json: the root holds the
@@ -44,6 +45,13 @@ for ( const entry of existsSync( dist )
 
 execFileSync(
 	path.join( root, 'node_modules/.bin/tsc' ),
+	[ '-p', 'tsconfig.build.json' ],
+	{ cwd: root, stdio: 'inherit' }
+);
+// WHY: tsc writes an `@/` import as it is, and nothing outside this repo knows the alias.
+// tsc-alias rewrites each one, in the JavaScript and the type files, to a relative path.
+execFileSync(
+	path.join( root, 'node_modules/.bin/tsc-alias' ),
 	[ '-p', 'tsconfig.build.json' ],
 	{ cwd: root, stdio: 'inherit' }
 );
@@ -93,16 +101,9 @@ copyFileSync(
 	path.join( dist, 'elements.css' )
 );
 
-// WHY the package's `#` import names (package.json `imports`) again: Node and bundlers resolve
-// them from the nearest package.json, which for a built file is this one. dist/ mirrors the
-// repo's folders, and the names already end in `.js`, so the map is the same.
-const { imports } = JSON.parse(
-	readFileSync( path.join( root, 'package.json' ), 'utf8' )
-);
-
 writeFileSync(
 	path.join( dist, 'package.json' ),
-	JSON.stringify( { type: 'module', imports }, null, '\t' ) + '\n'
+	JSON.stringify( { type: 'module' }, null, '\t' ) + '\n'
 );
 
 // FIX: an export whose file the build never wrote. tsc copies a JSON file only when code

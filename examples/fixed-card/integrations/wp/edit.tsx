@@ -14,10 +14,10 @@ import {
 import { __ } from '@wordpress/i18n';
 import type { ComponentType } from 'react';
 
-import ImageEdit from '#primitives/image/integrations/wp/edit.js';
+import ImageEdit from '@/components/primitives/image/integrations/wp/edit.js';
 import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
 import { CHOICES, type ChoiceKey } from '../../options.ts';
-import { ownAttributes } from '#integrations/wp/attributes.js';
+import { ownAttributes } from '@/integrations/wp/attributes.js';
 import metadata from './block.json';
 
 // UPSTREAM: block-editor's type files are generated from JSDoc, and PlainText's has no props.

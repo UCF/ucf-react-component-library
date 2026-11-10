@@ -10,8 +10,8 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '#integrations/react/frame.js';
-import Image from '#primitives/image/Image.js';
+} from '@/integrations/react/frame.js';
+import Image from '@/components/primitives/image/Image.js';
 import { PARTS } from './Card.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Card.presets.ts';
 import { PROPS } from './Card.props.ts';
