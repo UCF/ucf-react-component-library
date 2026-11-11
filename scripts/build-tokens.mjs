@@ -16,11 +16,12 @@
  *   dist/tokens/elements.css    The opt-in element styles for React hosts (headings, body copy,
  *                               links, captions), from tokens/elements.json (scripts/elements.mjs).
  *   dist/theme/                 The block theme's kit, copied there by its `npm run sync:tokens`:
- *                               _tokens.scss (,  as slugs), compositions.json
- *                               (names and labels for its block-style registration) and
- *                               theme-json.json (the presets and element styles its theme.json
- *                               must hold) and _core-blocks.scss (the primitives' CSS for core's
- *                               blocks: the Button's for core Button).
+ *                               _tokens.scss ($treatments and $compositions, as slugs),
+ *                               compositions.json (names and labels for its block-style
+ *                               registration), theme-json.json (the presets and element styles
+ *                               its theme.json must hold) and _core-blocks.scss (the primitives'
+ *                               CSS for core's Button, List, Table, Quote, Pullquote, Separator
+ *                               and Code; scripts/core-css.mjs).
  *
  * The component layer is `.ucf-c` and `.ucf-c-panel`: each sets `--ucf-c-{role}` and
  * `--ucf-c-bar-{role}` for every role, already resolved with its fallback, so a component reads
