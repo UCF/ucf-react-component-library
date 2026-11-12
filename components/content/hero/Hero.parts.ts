@@ -2,10 +2,7 @@
  * The Hero's parts: its copy, each with the class that styles it.
  * SYNC: style.css styles every class here.
  */
-import type {
-	PartDefinitions,
-	PartOf,
-} from '../../../integrations/schema/parts.ts';
+import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
 
 export const PARTS = {
 	/** A short line above the title: "Undergraduate admissions". */

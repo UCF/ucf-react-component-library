@@ -22,7 +22,7 @@ const root = path.dirname( __dirname );
  * SYNC: docs/architecture.md, "A component's folder". integrations/tests/parity.test.tsx checks
  * each bucket holds only its kind.
  */
-const BUCKETS = [ 'primitives', 'content', 'interactive' ];
+const BUCKETS = [ 'primitives', 'content', 'live', 'interactive' ];
 
 /**
  * Every component and primitive, by name: its bucket and its folder.

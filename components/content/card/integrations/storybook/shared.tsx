@@ -9,12 +9,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 
 import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
-import { argTypesOf } from '../../../../../integrations/storybook/arg-types.ts';
-import { defaultsIn } from '../../../../../integrations/schema/props.ts';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
+import { defaultsIn } from '@/integrations/schema/props';
 import Card from '../../Card.tsx';
 import { presetNamed } from '../../Card.presets.ts';
-import { resolveParts } from '../../../../../integrations/schema/parts.ts';
-import { renderParts } from '../../../../../integrations/storybook/parts.tsx';
+import { resolveParts } from '@/integrations/schema/parts';
+import { renderParts } from '@/integrations/storybook/parts';
 import { PARTS } from '../../Card.parts.ts';
 import { PROPS } from '../../Card.props.ts';
 import '../../style.css';

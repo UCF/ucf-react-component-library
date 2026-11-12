@@ -1,0 +1,54 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-events/event-list",
+	"title": "Event List",
+	"category": "ucf-live",
+	"description": "Upcoming events from an events.ucf.edu calendar. The list stays current on its own: past events drop off.",
+	"keywords": [ "events", "calendar", "upcoming" ],
+	"textdomain": "ucf-events",
+	"attributes": {
+		"feedUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"limit": {
+			"type": "string",
+			"default": "3"
+		},
+		"offset": {
+			"type": "string",
+			"default": "0"
+		},
+		"descriptions": {
+			"type": "string",
+			"default": "hide"
+		},
+		"emptyMessage": {
+			"type": "string",
+			"default": "There are no upcoming events."
+		},
+		"columns": {
+			"type": "string",
+			"default": "1"
+		},
+		"dates": {
+			"type": "string",
+			"default": "show"
+		},
+		"title": {
+			"type": "string",
+			"default": "Upcoming events"
+		}
+	},
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"spacing": {
+			"margin": true
+		}
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}

@@ -1,0 +1,155 @@
+/*
+ * CONTEXT: the Event List's styles, for every host.
+ *
+ * SPEC: the UCF Brand Block Theme's Events block (`.ucf-events` in src/scss/_data.scss there):
+ * hairline rules between events, a square date block in the inverse of the section, the title,
+ * then when and where in the muted voice.
+ * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles.
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ */
+/* WHY a container: two columns follow the list's own width, so a list in a narrow column of a
+   page stays one column even on a wide screen. */
+.ucf-c-event-list {
+	color: var(--ucf-c-body);
+	container: ucf-c-event-list / inline-size;
+}
+
+/* SPEC: two columns from 40rem of list, each wide enough for a date block and a title. */
+@container ucf-c-event-list (min-width: 40rem) {
+	.ucf-c-event-list[data-columns="2"] .ucf-c-event-list__items {
+		border-top: 0;
+		column-gap: var(--ucf-spacing-70);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	/* WHY on the first row, not the list: the list's rule would run across the gap, unlike the
+	   rules under each event. */
+	.ucf-c-event-list[data-columns="2"]
+		.ucf-c-event-list__item:nth-child(-n + 2) {
+		border-top: 1px solid var(--ucf-c-line);
+	}
+}
+
+/* FIX: two classes. The Heading primitive's `.ucf-c-heading { margin: 0 }` ties with one, so
+   the space under the heading came and went with stylesheet order (switching Storybook stories). */
+.ucf-c-event-list .ucf-c-event-list__heading {
+	margin: 0 0 var(--ucf-spacing-50);
+}
+
+.ucf-c-event-list__items {
+	border-top: 1px solid var(--ucf-c-line);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ucf-c-event-list__item {
+	border-bottom: 1px solid var(--ucf-c-line);
+	display: grid;
+	gap: var(--ucf-spacing-50);
+	grid-template-columns: 4.5rem minmax(0, 1fr);
+	padding-block: var(--ucf-spacing-50);
+}
+
+/* SPEC: without descriptions, the title and its line sit centered beside the date block. WHY
+   for the whole list, not per event: a list mixing centered and top-aligned events looks
+   uneven, and with descriptions shown some events have none. */
+.ucf-c-event-list:not(:has(.ucf-c-event-list__description))
+	.ucf-c-event-list__item {
+	align-items: center;
+}
+
+/* SPEC: the date block, a box in the section's text color, its text `on-body` (gold on black on
+   light sections, white on black on gold, black on white on dark), the day in the display face. */
+.ucf-c-event-list__date {
+	align-items: center;
+	aspect-ratio: 1;
+	background-color: var(--ucf-c-body);
+	color: var(--ucf-c-on-body);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.ucf-c-event-list__month {
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.ucf-c-event-list__day {
+	font-family: var(--ucf-font-family-display);
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	margin-top: 2px;
+}
+
+/* An event's title, a step below the Heading primitive's h3 size, so the list's h2 heading
+   stays clearly above it. WHY two classes: to outrank `h3.ucf-c-heading`. */
+.ucf-c-event-list .ucf-c-event-list__title {
+	font-size: var(--ucf-font-size-heading-4);
+	margin: 0 0 var(--ucf-spacing-20);
+}
+
+.ucf-c-event-list__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ucf-c-event-list__title a:hover {
+	text-decoration: underline;
+}
+
+.ucf-c-event-list__title a:focus-visible {
+	outline: 2px solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+/* SPEC: the data voice (the theme's `.is-style-data`, the Card's meta), at its large size. */
+.ucf-c-event-list__meta {
+	/* WHY baseline: the date and the place are different faces and sizes. */
+	align-items: baseline;
+	color: var(--ucf-c-muted);
+	display: flex;
+	flex-wrap: wrap;
+	font-family: var(--ucf-font-family-mono);
+	/* WHY the large data size: at the data size, a venue under a body-size date read too small. */
+	font-size: var(--ucf-font-size-data-lg);
+	gap: var(--ucf-spacing-10) var(--ucf-spacing-50);
+	line-height: 1.55;
+	margin: 0;
+}
+
+/* SPEC: three levels in each event: the title, then when (the body face, bold, in the body
+   color), then where (the data voice above). */
+.ucf-c-event-list__meta time {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-body);
+	font-weight: 700;
+}
+
+.ucf-c-event-list__description {
+	margin: var(--ucf-spacing-30) 0 0;
+}
+
+.ucf-c-event-list__empty {
+	margin: 0;
+}
+
+/* With the date blocks hidden, the title takes the whole row. */
+.ucf-c-event-list[data-dates="hide"] .ucf-c-event-list__item {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+/* SPEC: in a narrow list, such as on a phone, an h4-size title wraps too often. */
+@container ucf-c-event-list (max-width: 30rem) {
+	.ucf-c-event-list .ucf-c-event-list__title {
+		font-size: var(--ucf-font-size-heading-5);
+	}
+}

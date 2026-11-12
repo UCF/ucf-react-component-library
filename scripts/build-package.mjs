@@ -2,7 +2,8 @@
  * CONTEXT: builds the npm package, `@ucf/components`, into dist/.
  *
  *   1. `tsc -p tsconfig.build.json` writes the JavaScript and the `.d.ts` type files, rewriting
- * `./Highlight.tsx` imports to `./Highlight.js`. Then every example.json is copied beside them.
+ * `./Highlight.tsx` imports to `./Highlight.js`, and tsc-alias turns `@/` imports into relative
+ * ones. Then every example.json is copied beside them.
  *   2. dist/ucf.css: the package's one stylesheet. dist/tokens/base.css (tokens, compositions,
  *      the component layer), then every primitive's and component's style.css; tsc ignores CSS.
  *   3. dist/elements.css: the opt-in element styles (styles/elements.css), as they are.
@@ -44,6 +45,13 @@ for ( const entry of existsSync( dist )
 
 execFileSync(
 	path.join( root, 'node_modules/.bin/tsc' ),
+	[ '-p', 'tsconfig.build.json' ],
+	{ cwd: root, stdio: 'inherit' }
+);
+// WHY: tsc writes an `@/` import as it is, and nothing outside this repo knows the alias.
+// tsc-alias rewrites each one, in the JavaScript and the type files, to a relative path.
+execFileSync(
+	path.join( root, 'node_modules/.bin/tsc-alias' ),
 	[ '-p', 'tsconfig.build.json' ],
 	{ cwd: root, stdio: 'inherit' }
 );

@@ -87,9 +87,9 @@ Other useful scripts:
 
 New to the library? Build one with [`docs/first-component.md`](docs/first-component.md) first.
 
-Decide its **kind** and its **name** first ([`docs/architecture.md`](docs/architecture.md), "Two kinds of component" and "Naming"):
+Decide its **kind** and its **name** first ([`docs/architecture.md`](docs/architecture.md), "Three kinds of component" and "Naming"):
 
-- **Content or interactive** changes what the core may import, how its block is built and whether its markup is frozen.
+- **Content, live or interactive** changes what the core may import, how its block is built and whether its markup is frozen. A live component's markup is written twice, in React and PHP, and a test keeps them the same.
 - **A block's name, and a content block's attribute names, are stored in posts.** They are permanent once a site uses them.
 - **A content component's markup is frozen.** Changing it means a major version and a block deprecation ("Changing a content component's markup"). Never update a markup snapshot casually: it means every saved post with that block changes.
 

@@ -28,24 +28,24 @@ const byComponent = < T, >( modules: Record< string, T > ) =>
 
 const presetFiles = byComponent(
 	import.meta.glob< { PRESETS: Preset[]; DEFAULT_PRESET: Preset } >(
-		'../../components/{content,interactive}/*/*.presets.ts',
+		'../../components/{content,live,interactive}/*/*.presets.ts',
 		{ eager: true }
 	)
 );
 // WHY eager: importing each block's index.tsx registers it, with its presets as variations.
 import.meta.glob(
-	'../../components/{content,interactive}/*/integrations/wp/index.tsx',
+	'../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
 	{ eager: true }
 );
 const blockJsons = byComponent(
 	import.meta.glob< { name: string; title: string } >(
-		'../../components/{content,interactive}/*/integrations/wp/block.json',
+		'../../components/{content,live,interactive}/*/integrations/wp/block.json',
 		{ eager: true, import: 'default' }
 	)
 );
 const partFiles = byComponent(
 	import.meta.glob< PartDefinitions >(
-		'../../components/{content,interactive}/*/*.parts.ts',
+		'../../components/{content,live,interactive}/*/*.parts.ts',
 		{ eager: true, import: 'PARTS' }
 	)
 );
@@ -79,7 +79,7 @@ const asBlocks = ( template: BlockTemplate ): Block[] =>
 
 const definitions = byComponent(
 	import.meta.glob< PropDefinitions >(
-		'../../components/{content,interactive}/*/*.props.ts',
+		'../../components/{content,live,interactive}/*/*.props.ts',
 		{
 			eager: true,
 			import: 'PROPS',

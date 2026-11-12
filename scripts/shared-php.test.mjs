@@ -110,6 +110,6 @@ echo json_encode( array_column( $twice, 'slug' ) );
 			JSON.parse(
 				execFileSync( 'php', [ script ], { encoding: 'utf8' } )
 			)
-		).toEqual( [ 'ucf-content', 'ucf-interactive', 'text' ] );
+		).toEqual( [ 'ucf-content', 'ucf-live', 'ucf-interactive', 'text' ] );
 	}
 );

@@ -3,17 +3,18 @@
  * <plugin>`
  *
  *   name     kebab-case, the one name in every layer (docs/architecture.md, "Naming").
- *   --kind   `content` (works without JavaScript; saved as HTML), `interactive` (built in the
- *            browser), or `primitive` (a piece components are built from: a button, an image).
- *            See "Two kinds of component" and "Primitives".
+ *   --kind   `content` (works without JavaScript; saved as HTML), `live` (fetched, and written
+ *            by the server on each request), `interactive` (built in the browser), or
+ *            `primitive` (a piece components are built from: a button, an image). See "Three
+ *            kinds of component" and "Primitives".
  *   --plugin the WordPress plugin whose plugin.json will list the block, e.g. `ucf-content`.
  *            Not for a primitive, which has no block of its own.
  *   --title  optional display name; defaults to the name in title case.
  *
  * Asks for whichever of kind and plugin is missing when run in a terminal.
  *
- * It writes components/{bucket}/{name}/ (content, interactive or primitives, by kind), a working
- * copy of the closest of `card`, `degree-finder` and `button` reduced to one prop (a content
+ * It writes components/{bucket}/{name}/ (content, live, interactive or primitives, by kind), a
+ * working copy of the closest of `card`, `event-list`, `degree-finder` and `button` reduced to one prop (a content
  * component: one prop, two parts, one preset, built with frame()), and adds it to every list that names
  * components by hand: package.json `exports`, the plugin's plugin.json, and the lists in
  * integrations/tests/{parity,blocks,puck}.test.tsx. The result passes `npm run check` and
@@ -34,11 +35,12 @@ import path from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const KINDS = [ 'content', 'interactive', 'primitive' ];
+export const KINDS = [ 'content', 'live', 'interactive', 'primitive' ];
 
 // Each kind's bucket under components/. SYNC: BUCKETS in scripts/plugins.cjs.
 const BUCKET_OF = {
 	content: 'content',
+	live: 'live',
 	interactive: 'interactive',
 	primitive: 'primitives',
 };
@@ -94,7 +96,7 @@ export function pluginNames( root ) {
  * @param {Object}  options
  * @param {string}  options.root   The repo.
  * @param {string}  options.name   kebab-case.
- * @param {string}  options.kind   `content`, `interactive` or `primitive`.
+ * @param {string}  options.kind   `content`, `live`, `interactive` or `primitive`.
  * @param {string=} options.plugin A plugin under plugins/. Not for a primitive.
  * @param {string=} options.title  The display name.
  * @return {Map<string, string>} Repo-relative path → contents, new files and edited ones.
@@ -129,6 +131,7 @@ export function planComponent( { root, name, kind, plugin, title } ) {
 	const files = new Map();
 	const templates = {
 		content: contentFiles,
+		live: liveFiles,
 		interactive: interactiveFiles,
 		primitive: primitiveFiles,
 	}[ kind ]( n );
@@ -239,9 +242,7 @@ function addToList( source, file, anchor, name ) {
 // The three places puck.test.tsx names each config: its import, CONFIGS and the type check.
 function addPuckConfig( source, file, n ) {
 	const imports = [
-		...source.matchAll(
-			/^import \w+ from '\.\.\/[^']+\/puck\/config\.tsx';\n/gm
-		),
+		...source.matchAll( /^import \w+ from '@\/[^']+\/puck\/config';\n/gm ),
 	];
 	const configs = source.indexOf( 'const CONFIGS = {' );
 	const configsEnd = configs < 0 ? -1 : source.indexOf( '\n};', configs );
@@ -257,7 +258,8 @@ function addPuckConfig( source, file, n ) {
 	// FIX: insert the one new line in its sorted place. Rewriting the block from the lines the
 	// pattern matched dropped any import between them that it didn't match (one split over
 	// several lines, as `import card, { withTemplate }` is).
-	const configPath = `${ `../../${ n.tier }` }/${ n.name }/integrations/puck/config.tsx`;
+	// SYNC: the `@/` alias (tsconfig.json `paths`): every component by its path from the root.
+	const configPath = `@/${ n.tier }/${ n.name }/integrations/puck/config`;
 	const before = imports.find(
 		( match ) =>
 			match[ 0 ].split( "'" )[ 1 ].localeCompare( configPath ) > 0
@@ -288,9 +290,25 @@ function addPuckConfig( source, file, n ) {
 }
 
 // ── Templates ────────────────────────────────────────────────────────────────────────────
-// SYNC: modeled on components/content/card (content), components/interactive/degree-finder
-// (interactive) and components/primitives/button (primitive). When a convention changes there,
+// SYNC: modeled on components/content/card (content), components/live/event-list (live),
+// components/interactive/degree-finder (interactive) and components/primitives/button
+// (primitive). When a convention changes there,
 // change it here too.
+
+/**
+ * A block's inserter category, from how it is built: its kind's.
+ * SYNC: kindOf() and CATEGORY_OF in integrations/wp/kind.ts, and ucf_components_block_category()
+ * in plugins/shared/shared.php.
+ *
+ * @param {Object} extra The block.json fields that set its kind: `render`, `viewScript`.
+ * @return {string} The category.
+ */
+function categoryOf( extra ) {
+	if ( ! extra.render ) {
+		return 'ucf-content';
+	}
+	return extra.viewScript ? 'ucf-interactive' : 'ucf-live';
+}
 
 const blockJson = ( n, attributes, extra ) =>
 	JSON.stringify(
@@ -299,9 +317,7 @@ const blockJson = ( n, attributes, extra ) =>
 			apiVersion: 3,
 			name: n.block,
 			title: n.title,
-			// SYNC: a block's category is its kind's (ucf_components_block_category() in
-			// plugins/shared/shared.php). An interactive block is the one rendered by render.php.
-			category: extra.render ? 'ucf-interactive' : 'ucf-content',
+			category: categoryOf( extra ),
 			description: `The ${ n.title }.`,
 			keywords: [ n.title.toLowerCase() ],
 			textdomain: n.plugin,
@@ -322,7 +338,6 @@ const blockJson = ( n, attributes, extra ) =>
 function contentFiles( n ) {
 	// `pull-quote` → `PULL_QUOTE`, for the package entry's PARTS and PRESETS names.
 	const NAME = n.name.toUpperCase().replace( /-/g, '_' );
-	const root = '../../../../..';
 	return {
 		[ `${ n.Name }.tsx` ]: `/**
  * The ${ n.title }. Why it's built this way: docs/architecture.md, "Built with frame()".
@@ -333,7 +348,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '../../../integrations/react/frame.tsx';
+} from '@/integrations/react/frame';
 import { PARTS } from './${ n.Name }.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './${ n.Name }.presets.ts';
 import { PROPS } from './${ n.Name }.props.ts';
@@ -399,7 +414,7 @@ export default ${ n.Name };
 import type {
 	PropDefinitions,
 	PropsOf,
-} from '../../../integrations/schema/props.ts';
+} from '@/integrations/schema/props';
 
 export const PROPS = {
 	/** The content's alignment, across. */
@@ -426,7 +441,7 @@ export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 import type {
 	PartDefinitions,
 	PartOf,
-} from '../../../integrations/schema/parts.ts';
+} from '@/integrations/schema/parts';
 
 export const PARTS = {
 	/** The title. */
@@ -447,7 +462,7 @@ import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
 import {
 	findPreset,
 	type Preset as PresetOf,
-} from '../../../integrations/schema/presets.ts';
+} from '@/integrations/schema/presets';
 
 export type Preset = PresetOf< ${ n.Name }EditableProps, Part >;
 
@@ -512,14 +527,14 @@ export { PRESETS as ${ NAME }_PRESETS } from './${ n.Name }.presets.ts';
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { defaultsIn } from '${ root }/integrations/schema/props.ts';
-import { argTypesOf } from '${ root }/integrations/storybook/arg-types.ts';
+import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/integrations/storybook/arg-types';
 // WHY every primitive's styles: each part kind renders as one (integrations/storybook/parts.tsx),
 // and an unstyled button fails the contrast check on dark sections.
-import '${ root }/components/primitives/button/style.css';
-import '${ root }/components/primitives/heading/style.css';
-import '${ root }/components/primitives/image/style.css';
-import '${ root }/components/primitives/paragraph/style.css';
+import '@/components/primitives/button/style.css';
+import '@/components/primitives/heading/style.css';
+import '@/components/primitives/image/style.css';
+import '@/components/primitives/paragraph/style.css';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS } from '../../${ n.Name }.props.ts';
 import '../../style.css';
@@ -610,7 +625,7 @@ it( 'styles every part class', () => {
 } );
 `,
 		'integrations/puck/config.tsx': `/** The ${ n.title } in Puck, from its port (integrations/puck/config.tsx). */
-import { puckConfig } from '${ root }/integrations/puck/config.tsx';
+import { puckConfig } from '@/integrations/puck/config';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 const { config, TEMPLATE, withTemplate, withPreset } = puckConfig( ${ n.Name } );
@@ -627,7 +642,7 @@ export { TEMPLATE, withTemplate, withPreset };
 import '../../style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
-import { blockSettings } from '${ root }/integrations/wp/block.tsx';
+import { blockSettings } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import metadata from './block.json';
 import edit from './edit.tsx';
@@ -641,7 +656,7 @@ registerBlockType( metadata as unknown as BlockConfiguration, {
 } );
 `,
 		'integrations/wp/edit.tsx': `/** The ${ n.title }'s editor view: its sidebar and its content, from its port. */
-import { blockEdit } from '${ root }/integrations/wp/block.tsx';
+import { blockEdit } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 export default blockEdit( ${ n.Name } );
@@ -650,7 +665,7 @@ export default blockEdit( ${ n.Name } );
  * What the ${ n.title }'s block stores in a post.
  * SYNC: stored in every post with the block; changing it needs a deprecation in index.tsx.
  */
-import { blockSave } from '${ root }/integrations/wp/block.tsx';
+import { blockSave } from '@/integrations/wp/block';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 
 export default blockSave( ${ n.Name } );
@@ -774,7 +789,7 @@ export const Default: Story = {};
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { DEFAULTS } from '../../defaults.ts';
-import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
 
 type Props = {
 	/** The label, or '' for the default. */
@@ -949,6 +964,599 @@ $${ prefix }_${ n.name.replace( /-/g, '_' ) }_wrapper = get_block_wrapper_attrib
 	};
 }
 
+function liveFiles( n ) {
+	// PHP names: `ucf-content` + `pull-quote` → `ucf_content_pull_quote_*`, prefixed by plugin.
+	const fn = `${ n.plugin.replace( /-/g, '_' ) }_${ n.name.replace( /-/g, '_' ) }`;
+	const NAME = n.name.toUpperCase().replace( /-/g, '_' );
+	return {
+		[ `${ n.Name }.tsx` ]: `/**
+ * CONTEXT: the ${ n.title }, a live component: a list fetched from a feed, written into the page
+ * on the server (docs/architecture.md, "Three kinds of component").
+ *
+ * Content rules apply to this core: props in, markup out, no state, no effects, no fetching.
+ * Whoever renders it fetches first (client.ts, or client.php in WordPress) and passes \`items\`.
+ *
+ * SYNC: integrations/wp/render.php writes this same markup in PHP. tests/${ n.Name }.php.test.tsx
+ * fails when the two differ; change both together. Nothing stores it, so a change needs no
+ * block deprecation.
+ *
+ * The linked list is a placeholder that shows data reaching every host. Replace it.
+ */
+import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
+import type { ${ n.Name }Item } from './types.ts';
+
+export type ${ n.Name }Props = Partial< Pick< ${ n.Name }EditableProps, 'title' > > & {
+	/** The items to show, already fetched (client.ts). */
+	items?: readonly ${ n.Name }Item[];
+	/** Extra classes for the root, as a host adds its own. */
+	className?: string;
+};
+
+export default function ${ n.Name }( {
+	items = [],
+	title = '',
+	className,
+}: ${ n.Name }Props ) {
+	return (
+		<div
+			className={ [ className, 'ucf-c', 'ucf-c-${ n.name }' ]
+				.filter( Boolean )
+				.join( ' ' ) }
+		>
+			{ title ? (
+				<p className="ucf-c-${ n.name }__title">{ title }</p>
+			) : null }
+			<ul className="ucf-c-${ n.name }__items">
+				{ items.map( ( item ) => (
+					<li className="ucf-c-${ n.name }__item" key={ item.id }>
+						<a href={ item.url }>{ item.title }</a>
+					</li>
+				) ) }
+			</ul>
+		</div>
+	);
+}
+`,
+		[ `${ n.Name }.props.ts` ]: `/**
+ * The ${ n.title }'s props: every prop an editor sets. WordPress's sidebar and block.json
+ * attributes, Puck's fields and the stories' controls are built from it
+ * (integrations/schema/props.ts).
+ *
+ * SYNC: each prop's key is a block attribute, saved in every post that uses the block, so it is
+ * permanent (docs/architecture.md, "Naming"). \`npm run sync:blocks\` writes them into block.json.
+ */
+import type {
+	PropDefinitions,
+	PropsOf,
+} from '@/integrations/schema/props';
+
+export const PROPS = {
+	/** Where the items come from: a JSON list of { id, title, url }. '' shows none. */
+	feedUrl: {
+		type: 'text',
+		label: 'Feed URL',
+		panel: 'Settings',
+		default: '',
+	},
+	/** A line above the list, or '' for none. */
+	title: {
+		type: 'text',
+		label: 'Title',
+		panel: 'Settings',
+		default: '',
+	},
+} as const satisfies PropDefinitions;
+
+export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
+`,
+		'types.ts': `/** One item as the ${ n.title } shows it, from client.ts (or client.php). */
+export interface ${ n.Name }Item {
+	id: string;
+	title: string;
+	url: string;
+}
+`,
+		'client.ts': `/**
+ * CONTEXT: the only code that knows the feed's response shape. Everything it returns is a
+ * ${ n.Name }Item (types.ts).
+ *
+ * SYNC: integrations/wp/client.php does the same in PHP, step for step.
+ * tests/${ n.Name }.php.test.tsx runs both on the same feed and fails when their markup differs.
+ */
+import type { ${ n.Name }Item } from './types.ts';
+
+/**
+ * The feed's items as ${ n.Name }Items: those without a title or URL dropped.
+ *
+ * @param feed The feed's JSON, parsed.
+ * @return The items to show.
+ */
+export function normalizeItems( feed: unknown ): ${ n.Name }Item[] {
+	if ( ! Array.isArray( feed ) ) {
+		return [];
+	}
+	return ( feed as Record< string, unknown >[] ).flatMap( ( item ) => {
+		const title = String( item?.title ?? '' ).trim();
+		const url = String( item?.url ?? '' );
+		return title && url ? [ { id: String( item.id ?? url ), title, url } ] : [];
+	} );
+}
+
+export interface ${ n.Name }Client {
+	getItems: ( options?: { signal?: AbortSignal } ) => Promise< ${ n.Name }Item[] >;
+}
+
+/**
+ * A client for one feed.
+ *
+ * @param options         Which feed, and how to fetch it.
+ * @param options.feedUrl The feed; with none, there are no items.
+ * @param options.fetch   Replaces the global fetch, for tests.
+ * @return A ${ n.Name }Client.
+ */
+export function createClient( {
+	feedUrl = '',
+	fetch: fetchFn = globalThis.fetch,
+}: { feedUrl?: string; fetch?: typeof globalThis.fetch } = {} ): ${ n.Name }Client {
+	return {
+		async getItems( { signal } = {} ) {
+			if ( ! feedUrl ) {
+				return [];
+			}
+			const response = await fetchFn( feedUrl, {
+				signal,
+				headers: { Accept: 'application/json' },
+			} );
+			if ( ! response.ok ) {
+				throw new Error(
+					\`Request failed with status \${ response.status }: \${ feedUrl }\`
+				);
+			}
+			return normalizeItems( await response.json() );
+		},
+	};
+}
+`,
+		'sample-data.ts': `/** Sample items for the stories and tests. */
+import type { ${ n.Name }Item } from './types.ts';
+
+export const SAMPLE_ITEMS: readonly ${ n.Name }Item[] = [
+	{ id: '1', title: 'First item', url: 'https://www.ucf.edu/' },
+	{ id: '2', title: 'Second & “quoted” item', url: 'https://www.ucf.edu/about-ucf/' },
+];
+`,
+		'utils/useItems.ts': `/**
+ * The items for an editor's preview, fetched in the browser. WHY only for editors: a page a
+ * visitor sees gets its items on the server, and the component itself never fetches.
+ */
+import { useEffect, useState } from 'react';
+
+import { createClient } from '../client.ts';
+import type { ${ n.Name }Item } from '../types.ts';
+
+/**
+ * Fetch a feed's items, again whenever the feed changes.
+ *
+ * @param feedUrl The feed.
+ * @return The items, and whether the last request failed.
+ */
+export function useItems( feedUrl: string ) {
+	const [ state, setState ] = useState< {
+		items: readonly ${ n.Name }Item[];
+		failed: boolean;
+	} >( { items: [], failed: false } );
+
+	useEffect( () => {
+		const controller = new AbortController();
+		createClient( { feedUrl } )
+			.getItems( { signal: controller.signal } )
+			.then(
+				( items ) =>
+					! controller.signal.aborted &&
+					setState( { items, failed: false } ),
+				() =>
+					! controller.signal.aborted &&
+					setState( { items: [], failed: true } )
+			);
+		return () => controller.abort();
+	}, [ feedUrl ] );
+
+	return state;
+}
+`,
+		'index.ts': `/**
+ * \`@ucf/components/${ n.name }\`. SYNC: docs/architecture.md, "What a component exports".
+ */
+export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
+export { PROPS as ${ NAME }_PROPS } from './${ n.Name }.props.ts';
+export { createClient, normalizeItems } from './client.ts';
+export type { ${ n.Name }Item } from './types.ts';
+`,
+		'style.css': `/*
+ * CONTEXT: the ${ n.title }'s styles, for every host.
+ *
+ * Reads only \`--ucf-*\` names, and colors only as component-layer roles. The root carries
+ * \`ucf-c\`, so its colors are the section's roles.
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named \`style.css\`.
+ */
+.ucf-c-${ n.name } {
+	color: var(--ucf-c-body);
+}
+
+.ucf-c-${ n.name }__title {
+	font-weight: 700;
+	margin: 0 0 var(--ucf-spacing-30);
+}
+
+.ucf-c-${ n.name }__items {
+	margin: 0;
+}
+
+.ucf-c-${ n.name }__item a {
+	color: var(--ucf-c-body);
+}
+
+.ucf-c-${ n.name }__item a:focus-visible {
+	outline: 2px solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+`,
+		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
+
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import { SAMPLE_ITEMS } from '../../sample-data.ts';
+import '../../style.css';
+
+// WHY sample items, not the feed: a story must look the same on every run.
+const meta = {
+	// SYNC: the group names and tags are explained in .storybook/preview.ts.
+	title: 'Live (Server)/${ n.title }',
+	tags: [ 'server' ],
+	component: ${ n.Name },
+	args: { items: SAMPLE_ITEMS, title: '${ n.title }' },
+} satisfies Meta< typeof ${ n.Name } >;
+
+export default meta;
+
+type Story = StoryObj< typeof meta >;
+
+export const Default: Story = {};
+`,
+		'integrations/puck/config.tsx': `/**
+ * The ${ n.title } for Puck: a plain config object, so this library needs no Puck dependency.
+ * WHY fetched in the browser here: Puck's editor renders on the client, and \`render\` can't
+ * wait for data (components/live/event-list/integrations/puck/config.tsx).
+ */
+import { defaultsIn } from '@/integrations/schema/props';
+import { puckFields } from '@/integrations/puck/config';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
+import { useItems } from '../../utils/useItems.ts';
+
+/**
+ * The list, fetched for the preview.
+ *
+ * @param props The stored props.
+ */
+function Preview( props: ${ n.Name }EditableProps ) {
+	const { items } = useItems( props.feedUrl );
+	return <${ n.Name } items={ items } title={ props.title } />;
+}
+
+const config: PuckComponentConfig< ${ n.Name }EditableProps > = {
+	label: '${ n.title }',
+	fields: puckFields( PROPS ),
+	defaultProps: defaultsIn( PROPS, 'puck' ),
+	render: ( { feedUrl, title } ) => (
+		<Preview feedUrl={ feedUrl } title={ title } />
+	),
+};
+
+export default config;
+`,
+		'integrations/wp/block.json': blockJson( n, [ 'feedUrl', 'title' ], {
+			style: 'file:./style-index.css',
+			render: 'file:./render.php',
+		} ),
+		'integrations/wp/index.tsx': `/** Registers the ${ n.title }'s block. */
+// WHY imported here: webpack builds the block's stylesheet from what its script imports.
+import '../../style.css';
+import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
+
+import metadata from './block.json';
+import Edit, { type Attributes } from './edit.tsx';
+
+// UPSTREAM: TypeScript reads block.json's values as plain strings, not WordPress's types.
+registerBlockType< Attributes >(
+	metadata as unknown as BlockConfiguration< Attributes >,
+	{
+		edit: Edit,
+		// WHY null: a live block. render.php writes it on every request, so the post stores
+		// only the attributes.
+		save: () => null,
+	}
+);
+`,
+		'integrations/wp/edit.tsx': `import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
+import type { BlockEditProps } from '@wordpress/blocks';
+import { Disabled, Notice, PanelBody } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+
+import { panelsOf } from '@/integrations/schema/props';
+import { FieldControl } from '@/integrations/wp/inspector';
+import ${ n.Name } from '../../${ n.Name }.tsx';
+import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
+import { useItems } from '../../utils/useItems.ts';
+
+export type Attributes = ${ n.Name }EditableProps;
+
+/**
+ * The editor shows the list from the feed, fetched in the browser. render.php writes the same
+ * markup on the page.
+ *
+ * @param props               The block's edit props.
+ * @param props.attributes    Its attributes.
+ * @param props.setAttributes Updates them.
+ */
+export default function Edit( {
+	attributes,
+	setAttributes,
+}: BlockEditProps< Attributes > ) {
+	const { items, failed } = useItems( attributes.feedUrl );
+	return (
+		<>
+			<InspectorControls>
+				{ panelsOf( PROPS ).map( ( panel ) => (
+					<PanelBody key={ panel.title } title={ panel.title }>
+						{ panel.keys.map( ( key ) => (
+							<FieldControl
+								key={ key }
+								definition={ PROPS[ key ] }
+								value={ attributes[ key ] }
+								onChange={ ( value ) =>
+									setAttributes( { [ key ]: value } )
+								}
+							/>
+						) ) }
+					</PanelBody>
+				) ) }
+			</InspectorControls>
+			<div { ...useBlockProps() }>
+				{ failed ? (
+					<Notice status="warning" isDismissible={ false }>
+						{ __( 'The feed could not be loaded.', '${ n.plugin }' ) }
+					</Notice>
+				) : null }
+				{ /* WHY Disabled: WordPress's way to show a preview that can't be used. A link in it
+				     can't navigate away from the editor or take focus, and a click selects the
+				     block. The notice above stays outside: it's for the editor. */ }
+				<Disabled>
+					<${ n.Name } items={ items } title={ attributes.title } />
+				</Disabled>
+			</div>
+		</>
+	);
+}
+`,
+		'integrations/wp/client.php': `<?php
+/**
+ * The ${ n.title }'s items, fetched and cached in WordPress.
+ *
+ * SYNC: normalizeItems() in client.ts, step for step. tests/${ n.Name }.php.test.tsx runs both on
+ * the same feed and fails when their markup differs.
+ *
+ * @package ${ n.plugin }
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( ! function_exists( '${ fn }_feed' ) ) {
+	/**
+	 * A feed's JSON, parsed: from the cache, or fetched and cached for an hour.
+	 * WHY wp_safe_remote_get(): the feed URL is an editor's setting, so the request refuses
+	 * private addresses.
+	 *
+	 * @param string $feed_url The feed.
+	 * @return array<int, mixed> The feed's items, or an empty array.
+	 */
+	function ${ fn }_feed( $feed_url ) {
+		if ( '' === $feed_url ) {
+			return array();
+		}
+		$key    = '${ fn }_' . md5( $feed_url );
+		$cached = get_transient( $key );
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$response = wp_safe_remote_get( $feed_url, array( 'timeout' => 5 ) );
+		$feed     = is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response )
+			? null
+			: json_decode( wp_remote_retrieve_body( $response ), true );
+		$feed     = is_array( $feed ) ? $feed : array();
+
+		set_transient( $key, $feed, $feed ? HOUR_IN_SECONDS : 5 * MINUTE_IN_SECONDS );
+		return $feed;
+	}
+}
+
+if ( ! function_exists( '${ fn }_items' ) ) {
+	/**
+	 * The feed's items as the list shows them. SYNC: normalizeItems() in client.ts.
+	 *
+	 * @param mixed $feed The feed's JSON, parsed to arrays.
+	 * @return array<int, array<string, string>> Items: id, title, url.
+	 */
+	function ${ fn }_items( $feed ) {
+		if ( ! is_array( $feed ) || ! array_is_list( $feed ) ) {
+			return array();
+		}
+		$items = array();
+		foreach ( $feed as $item ) {
+			$title = is_array( $item ) ? trim( (string) ( $item['title'] ?? '' ) ) : '';
+			$url   = is_array( $item ) ? (string) ( $item['url'] ?? '' ) : '';
+			if ( '' !== $title && '' !== $url ) {
+				$items[] = array(
+					'id'    => (string) ( $item['id'] ?? $url ),
+					'title' => $title,
+					'url'   => $url,
+				);
+			}
+		}
+		return $items;
+	}
+}
+`,
+		'integrations/wp/render.php': `<?php
+/**
+ * The ${ n.title } on the page.
+ *
+ * CONTEXT: a live block. On each request this fetches the feed (cached; client.php) and writes
+ * the whole list, so it is in the page with no JavaScript.
+ *
+ * SYNC: ${ n.Name }.tsx, element for element. tests/${ n.Name }.php.test.tsx runs this file and
+ * fails when its HTML differs from React's. Whitespace between tags doesn't count: each sits
+ * between block items, where browsers don't show it. Functions the markup needs go in
+ * helpers.php (docs/architecture.md, "Three kinds of component").
+ *
+ * @package ${ n.plugin }
+ *
+ * @var array $attributes Block attributes.
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+require_once __DIR__ . '/client.php';
+
+$${ fn }_items = ${ fn }_items( ${ fn }_feed( (string) ( $attributes['feedUrl'] ?? '' ) ) );
+$${ fn }_title = (string) ( $attributes['title'] ?? '' );
+?>
+<div <?php echo get_block_wrapper_attributes( array( 'class' => 'ucf-c ucf-c-${ n.name }' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress escapes each attribute. ?>>
+	<?php if ( '' !== $${ fn }_title ) : ?>
+		<p class="ucf-c-${ n.name }__title"><?php echo esc_html( $${ fn }_title ); ?></p>
+	<?php endif; ?>
+	<ul class="ucf-c-${ n.name }__items">
+		<?php foreach ( $${ fn }_items as $${ fn }_item ) : ?>
+			<li class="ucf-c-${ n.name }__item"><a href="<?php echo esc_url( $${ fn }_item['url'] ); ?>"><?php echo esc_html( $${ fn }_item['title'] ); ?></a></li>
+		<?php endforeach; ?>
+	</ul>
+</div>
+`,
+		[ `tests/${ n.Name }.test.tsx` ]: `/**
+ * The ${ n.title }'s markup, the record of it. A change here changes what every site shows, and
+ * integrations/wp/render.php must change with it (tests/${ n.Name }.php.test.tsx).
+ */
+import { renderToStaticMarkup } from 'react-dom/server';
+import { expect, it } from 'vitest';
+
+import ${ n.Name } from '../${ n.Name }.tsx';
+import { SAMPLE_ITEMS } from '../sample-data.ts';
+
+it( 'renders its items', () => {
+	expect(
+		renderToStaticMarkup( <${ n.Name } items={ SAMPLE_ITEMS } title="Title" /> )
+	).toMatchSnapshot();
+} );
+`,
+		[ `tests/${ n.Name }.php.test.tsx` ]: `// @vitest-environment happy-dom
+/**
+ * The live markup contract: WordPress's PHP and React write the same markup from the same feed
+ * (integrations/tests/live.ts says how).
+ */
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, test } from 'vitest';
+
+import {
+	hasPhp,
+	php,
+	phpString,
+	sameHtml,
+	tempFile,
+} from '@/integrations/tests/live';
+import ${ n.Name } from '../${ n.Name }.tsx';
+import { normalizeItems } from '../client.ts';
+import { SAMPLE_ITEMS } from '../sample-data.ts';
+
+const wp = path.join(
+	path.dirname( fileURLToPath( import.meta.url ) ),
+	'../integrations/wp'
+);
+
+const cases: Record< string, { feed: unknown; title: string } > = {
+	'sample items, with a title': {
+		feed: [ ...SAMPLE_ITEMS, { title: 'No URL' }, 'not an item' ],
+		title: 'A “title” & more',
+	},
+	'no items': { feed: [], title: '' },
+	'a feed that is not a list': { feed: { error: 'Not found' }, title: '' },
+};
+
+describe.runIf( hasPhp )( 'the ${ n.title } in PHP', () => {
+	test.each( Object.entries( cases ) )(
+		'writes the markup React does: %s',
+		( _, { feed, title } ) => {
+			// render.php as WordPress runs it, with the fetch stubbed.
+			const html = php( \`
+function wp_safe_remote_get( $url, $args ) {
+	return array( 'body' => file_get_contents( \${ phpString( tempFile( JSON.stringify( feed ) ) ) } ), 'response' => array( 'code' => 200 ) );
+}
+$attributes = array( 'feedUrl' => 'https://example.test/feed.json', 'title' => \${ phpString( title ) } );
+require \${ phpString( path.join( wp, 'render.php' ) ) };
+\` );
+			const expected = renderToStaticMarkup(
+				<${ n.Name } items={ normalizeItems( feed ) } title={ title } />
+			);
+
+			// FIX: guards against two empty outputs matching.
+			expect( expected ).toContain( 'ucf-c-${ n.name }' );
+			expect( sameHtml( html ) ).toBe( sameHtml( expected ) );
+		}
+	);
+} );
+`,
+		'tests/client.test.ts': `import { describe, expect, it, vi } from 'vitest';
+
+import { createClient, normalizeItems } from '../client.ts';
+
+describe( 'normalizeItems', () => {
+	it( 'keeps items with a title and a URL', () => {
+		expect(
+			normalizeItems( [
+				{ id: 1, title: ' One ', url: '/one' },
+				{ title: 'No URL' },
+				null,
+			] )
+		).toEqual( [ { id: '1', title: 'One', url: '/one' } ] );
+		expect( normalizeItems( { error: 'nope' } ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'createClient', () => {
+	it( 'fetches nothing without a feed', async () => {
+		const fetch = vi.fn();
+		await expect( createClient( { fetch } ).getItems() ).resolves.toEqual( [] );
+		expect( fetch ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fails loudly on an error response', async () => {
+		const fetch = vi.fn( async () => new Response( '', { status: 500 } ) );
+		await expect(
+			createClient( { feedUrl: '/feed.json', fetch } ).getItems()
+		).rejects.toThrow( /500/ );
+	} );
+} );
+`,
+	};
+}
+
 function primitiveFiles( n ) {
 	return {
 		[ `${ n.Name }.tsx` ]: `/**
@@ -1057,7 +1665,7 @@ describe( '${ n.Name }', () => {
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import example from '../../example.json' with { type: 'json' };
 // WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '../../../../../integrations/puck/types.ts';
+import type { PuckComponentConfig } from '@/integrations/puck/types';
 
 type Props = {
 	text: string;
@@ -1175,7 +1783,7 @@ async function main() {
 	);
 	const options = parseArgs( process.argv.slice( 2 ) );
 	const usage =
-		'Usage: npm run new:component -- <name> --kind content|interactive|primitive [--plugin <plugin>] [--title "Display Name"]';
+		'Usage: npm run new:component -- <name> --kind content|live|interactive|primitive [--plugin <plugin>] [--title "Display Name"]';
 
 	if ( ! options.name ) {
 		throw new Error( usage );
@@ -1240,6 +1848,18 @@ Next (docs/architecture.md, "Built with frame()"):
   4. Write the block's description in wp/block.json.
   5. Run \`npm test\` to write the new markup snapshots, then review them: they are what every
      saved post will store.
+  Then: npm run check && npm run test:stories` );
+		return;
+	}
+	if ( options.kind === 'live' ) {
+		console.log( `
+Next (docs/architecture.md, "Three kinds of component"; components/live/event-list is the model):
+  1. Replace the placeholder feed in client.ts and types.ts, and the same steps in
+     wp/client.php. Write tests/fixtures/ from the real feed.
+  2. Replace the markup in ${ Name }.tsx, and the same markup in wp/render.php.
+  3. Add props to ${ Name }.props.ts, then run \`npm run sync:blocks\`.
+  4. Add the plugin's PHP prefix and text domain to phpcs.xml.dist if they're new.
+  5. Run \`npm test\`: tests/${ Name }.php.test.tsx fails while the PHP and React markup differ.
   Then: npm run check && npm run test:stories` );
 		return;
 	}
