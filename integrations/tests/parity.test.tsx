@@ -169,6 +169,7 @@ test( 'finds every component', () => {
 	expect( components ).toEqual( [
 		'card',
 		'degree-finder',
+		'degree-list',
 		'event-list',
 		'hero',
 		'highlight',

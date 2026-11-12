@@ -217,10 +217,11 @@ Each of these lives in this library under `components/interactive/`.
 
 ## What follows
 
-If these buckets hold, three things change. [architecture.md](architecture.md)'s "Two kinds of
-component" becomes three, with live content defined as above and the single-site rule stated
-there. [degree-profile-plan.md](degree-profile-plan.md) changes from React components in this
-library to PHP dynamic blocks in the degree plugin, with the same single loader. And we need to
-answer two questions before building the tuition block: whether ucf.edu stays on WordPress for
-the foreseeable future, since PHP blocks would be rewritten at a move to the P1 starter, and which
-plugin or theme owns the degree post type today, which is where the degree blocks will live.
+[architecture.md](architecture.md) describes the three kinds as built ("Three kinds of
+component"), with the Event List and the Degree List as the live examples. The single-site rule
+is not there yet: every live component so far is used on many sites, so each lives in this
+library. Before the first degree profile block (the tuition block), we need two answers: whether
+ucf.edu stays on WordPress for the foreseeable future, since PHP-only blocks would be rewritten at
+a move to the P1 starter, and which plugin or theme owns the degree post type, where those blocks
+would live. What the Search Service gives them is in [todo.md](todo.md), "The degree profile
+blocks".

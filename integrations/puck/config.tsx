@@ -15,10 +15,14 @@ import {
 	defaultsIn,
 	inHost,
 	mediaProps,
+	type PropDefinition,
 	type PropDefinitions,
 	type PropsIn,
 } from '../schema/props.ts';
+import { listField } from './list-field.tsx';
 import {
+	type PuckCustomField,
+	type PuckFieldFor,
 	type PuckScalarField,
 	type PuckComponentConfig,
 	type PuckSlot,
@@ -41,23 +45,43 @@ import { toPrimitives } from './parts.ts';
  */
 export function puckFields< Props extends PropDefinitions >(
 	definitions: Props
-): Record< keyof PropsIn< Props, 'puck' >, PuckScalarField > {
+): {
+	[ Key in keyof PropsIn< Props, 'puck' > ]: PuckFieldFor<
+		PropsIn< Props, 'puck' >[ Key ]
+	>;
+} {
 	return Object.fromEntries(
 		Object.entries( definitions )
 			.filter( ( [ , definition ] ) => inHost( definition, 'puck' ) )
-			.map( ( [ key, definition ] ): [ string, PuckScalarField ] => [
-				key,
-				definition.type === 'choice'
-					? {
-							type: definition.control,
-							label: definition.label,
-							options: definition.options.map( ( option ) => ( {
-								...option,
-							} ) ),
-						}
-					: { type: 'text', label: definition.label },
-			] )
-	) as Record< keyof PropsIn< Props, 'puck' >, PuckScalarField >;
+			.map(
+				( [ key, definition ] ): [
+					string,
+					PuckScalarField | PuckCustomField< readonly string[] >,
+				] => [ key, fieldOf( definition ) ]
+			)
+	) as never;
+}
+
+/**
+ * One prop as a Puck field.
+ *
+ * @param definition A prop.
+ */
+function fieldOf(
+	definition: PropDefinition
+): PuckScalarField | PuckCustomField< readonly string[] > {
+	if ( definition.type === 'list' ) {
+		return listField( definition );
+	}
+	return definition.type === 'choice'
+		? {
+				type: definition.control,
+				label: definition.label,
+				options: definition.options.map( ( option ) => ( {
+					...option,
+				} ) ),
+			}
+		: { type: 'text', label: definition.label };
 }
 
 // ── The config ─────────────────────────────────────────────────────────────────────────────────

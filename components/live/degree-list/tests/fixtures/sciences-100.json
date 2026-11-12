@@ -1,0 +1,122 @@
+{
+	"count": 123,
+	"next": null,
+	"previous": "https://search.cm.ucf.edu/api/v1/programs/search/?active=True&college_slug=sciences&fields=id%2Cname%2Cprimary_profile_url&limit=50&offset=50&subplan_code__isnull=True",
+	"results": [
+		{
+			"id": 1864,
+			"name": "Research Smarts Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/research-smarts-certificate/"
+		},
+		{
+			"id": 1875,
+			"name": "Data Science (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/data-science-bs/"
+		},
+		{
+			"id": 1901,
+			"name": "Kurdish Studies Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/kurdish-studies-certificate/"
+		},
+		{
+			"id": 1902,
+			"name": "Politics of Race, Ethnicity, Gender and Identity Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/politics-of-race-ethnicity-gender-and-identity-undergraduate-certificate/"
+		},
+		{
+			"id": 1910,
+			"name": "Network Analysis and Applications Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/network-analysis-and-applications-certificate/"
+		},
+		{
+			"id": 1912,
+			"name": "Survey Research Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/survey-research-certificate/"
+		},
+		{
+			"id": 1914,
+			"name": "Feature Film Production (MFA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/feature-film-production-mfa/"
+		},
+		{
+			"id": 1917,
+			"name": "Media Production and Management (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/media-production-and-management-ba/"
+		},
+		{
+			"id": 1947,
+			"name": "Chemistry (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/chemistry-ba/"
+		},
+		{
+			"id": 1963,
+			"name": "Digital Media (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/digital-media-ba/"
+		},
+		{
+			"id": 1970,
+			"name": "Public Relations in Sport Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/public-relations-in-sport-certificate/"
+		},
+		{
+			"id": 1992,
+			"name": "Anthropology of Pop Culture Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropology-of-pop-culture-minor-minor/"
+		},
+		{
+			"id": 1997,
+			"name": "Spatial Sociology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/spatial-sociology-minor-minor/"
+		},
+		{
+			"id": 1998,
+			"name": "Communication (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/communication-ba/"
+		},
+		{
+			"id": 2007,
+			"name": "Communication Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/communication-minor-minor/"
+		},
+		{
+			"id": 2011,
+			"name": "Film (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/film-ba/"
+		},
+		{
+			"id": 2056,
+			"name": "Data Science Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/data-science-minor-minor/"
+		},
+		{
+			"id": 2065,
+			"name": "Integrated Sciences and Technology (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/integrated-sciences-and-technology-bs/"
+		},
+		{
+			"id": 2106,
+			"name": "Planetary and Space Sciences (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/planetary-and-space-sciences-phd/"
+		},
+		{
+			"id": 2131,
+			"name": "India Studies Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/india-studies-undergraduate-certificate/"
+		},
+		{
+			"id": 2160,
+			"name": "Disability in Culture Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/disability-in-culture-undergraduate-certificate/"
+		},
+		{
+			"id": 2170,
+			"name": "Science, Technology, and Society (STS) Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/science-technology-and-society-sts-undergraduate-certificate/"
+		},
+		{
+			"id": 2212,
+			"name": "Planetary and Space Sciences (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/planetary-and-space-sciences-ms/"
+		}
+	]
+}

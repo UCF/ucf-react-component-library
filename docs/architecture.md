@@ -267,6 +267,7 @@ A frame (see "Frames") is its props, its parts, and presets built from both:
 ```
 Component
 ├─ {Name}.props.ts      PROPS: each prop's key · type · options · default · field
+│                       types: text, choice, number, list
 │                       field: label · help · control · panel · hosts
 ├─ {Name}.parts.ts      PARTS: each part (title, eyebrow, image…): its kind and its class
 │                       kinds (image, heading, text, link, button): integrations/schema/parts.ts
@@ -289,6 +290,16 @@ Each host reads the same objects:
 and the functions above; `parts.ts` the part kinds, and `resolveParts()`, which gives the
 mappers each part's kind and class from the component's PARTS; `presets.ts` the `Preset` type
 and `findPreset()`. A component's three files hold only its own data.
+
+**A list prop holds any number of values from a list** (the Degree List's colleges). Its
+options are fixed, or a function that loads them, for options an API owns and that change
+without a release; each editor loads them once a page (`integrations/react/options.ts`). It
+saves values, not labels, since a value is what an API filters by. WordPress stores it as an
+`array` attribute and shows core's `FormTokenField`; Puck shows a custom field of checkboxes
+(`integrations/puck/list-field.tsx`), since Puck has no multi-select and its configs can't use
+WordPress's components; Storybook shows checkboxes, or JSON when the options load. A saved value
+the options no longer include is shown as a problem in both editors, not dropped
+(`integrations/schema/options.ts`).
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by
@@ -603,11 +614,11 @@ per-component packages later is a move, not a rewrite.
 `plugins/{plugin}/` is a plugin: its main PHP file, and `plugin.json` listing the components
 whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/`.
 
-| Plugin        | Blocks                                         |
-| ------------- | ---------------------------------------------- |
-| `ucf-content` | `ucf-content/section`, `ucf-content/highlight` |
-| `ucf-degrees` | `ucf-degrees/degree-finder`                    |
-| `ucf-events`  | `ucf-events/event-list`                        |
+| Plugin        | Blocks                                                 |
+| ------------- | ------------------------------------------------------ |
+| `ucf-content` | `ucf-content/section`, `ucf-content/highlight`         |
+| `ucf-degrees` | `ucf-degrees/degree-finder`, `ucf-degrees/degree-list` |
+| `ucf-events`  | `ucf-events/event-list`                                |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
   fails if a component with an `integrations/wp/` is in no plugin or in two.
