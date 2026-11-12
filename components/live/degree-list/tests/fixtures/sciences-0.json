@@ -1,0 +1,257 @@
+{
+	"count": 123,
+	"next": "https://search.cm.ucf.edu/api/v1/programs/search/?active=True&college_slug=sciences&fields=id%2Cname%2Cprimary_profile_url&limit=50&offset=50&subplan_code__isnull=True",
+	"previous": null,
+	"results": [
+		{
+			"id": 871,
+			"name": "Actuarial Science (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/actuarial-science-bs/"
+		},
+		{
+			"id": 879,
+			"name": "Anthropology of Global Health Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropology-of-global-health-certificate/"
+		},
+		{
+			"id": 880,
+			"name": "Anthropology (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropology-ba/"
+		},
+		{
+			"id": 884,
+			"name": "Anthropology (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropology-ma/"
+		},
+		{
+			"id": 890,
+			"name": "Applied Sociology (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/applied-sociology-ma/"
+		},
+		{
+			"id": 904,
+			"name": "Behavioral Forensics Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/behavioral-forensics-certificate/"
+		},
+		{
+			"id": 905,
+			"name": "Big Data Analytics (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/big-data-analytics-phd/"
+		},
+		{
+			"id": 906,
+			"name": "Biology (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/biology-bs/"
+		},
+		{
+			"id": 913,
+			"name": "Biology (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/biology-ms/"
+		},
+		{
+			"id": 955,
+			"name": "Chemistry (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/chemistry-bs/"
+		},
+		{
+			"id": 957,
+			"name": "Chemistry (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/chemistry-ms/"
+		},
+		{
+			"id": 958,
+			"name": "Chemistry (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/chemistry-phd/"
+		},
+		{
+			"id": 976,
+			"name": "Civics Teaching Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/civics-teaching-certificate/"
+		},
+		{
+			"id": 983,
+			"name": "Clinical Psychology (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/clinical-psychology-ma/"
+		},
+		{
+			"id": 984,
+			"name": "Clinical Psychology (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/clinical-psychology-ms/"
+		},
+		{
+			"id": 1012,
+			"name": "Conservation Biology Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/conservation-biology-certificate/"
+		},
+		{
+			"id": 1059,
+			"name": "Diplomacy Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/diplomacy-certificate/"
+		},
+		{
+			"id": 1168,
+			"name": "Forensic Science (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/forensic-science-bs/"
+		},
+		{
+			"id": 1226,
+			"name": "Human Biology Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/human-biology-certificate/"
+		},
+		{
+			"id": 1233,
+			"name": "Human Factors and Cognitive Psychology (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/psychology-phd/human-factors-cognitive-psychology/"
+		},
+		{
+			"id": 1243,
+			"name": "Integrative Anthropological Sciences (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/integrative-anthropological-sciences-phd/"
+		},
+		{
+			"id": 1257,
+			"name": "International and Global Studies (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/international-and-global-studies-ba/"
+		},
+		{
+			"id": 1259,
+			"name": "Intelligence and National Security Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/intelligence-and-national-security-certificate-2/"
+		},
+		{
+			"id": 1262,
+			"name": "Industrial and Organizational Psychology (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/industrial-and-organizational-psychology-ms/"
+		},
+		{
+			"id": 1302,
+			"name": "Mathematics (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematics-bs/"
+		},
+		{
+			"id": 1308,
+			"name": "Mathematical Science (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematical-science-ms/"
+		},
+		{
+			"id": 1311,
+			"name": "Mathematics (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematics-phd/"
+		},
+		{
+			"id": 1313,
+			"name": "Mathematical Science Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematical-science-certificate/"
+		},
+		{
+			"id": 1367,
+			"name": "Native American Studies Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/native-american-studies-certificate/"
+		},
+		{
+			"id": 1411,
+			"name": "Physics (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/physics-ba/"
+		},
+		{
+			"id": 1417,
+			"name": "Physics (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/physics-bs/"
+		},
+		{
+			"id": 1422,
+			"name": "Physics (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/physics-ms/"
+		},
+		{
+			"id": 1424,
+			"name": "Physics (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/physics-phd/"
+		},
+		{
+			"id": 1431,
+			"name": "Political Science (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/political-science-ba/"
+		},
+		{
+			"id": 1438,
+			"name": "Political Science (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/political-science-ma/"
+		},
+		{
+			"id": 1446,
+			"name": "Intelligence and National Security Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/intelligence-and-national-security-certificate/"
+		},
+		{
+			"id": 1447,
+			"name": "Psychology (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/psychology-bs/"
+		},
+		{
+			"id": 1461,
+			"name": "Psychology (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/psychology-phd/"
+		},
+		{
+			"id": 1501,
+			"name": "SAS Data Mining Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/sas-data-mining-certificate/"
+		},
+		{
+			"id": 1503,
+			"name": "Security Studies (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/security-studies-phd/"
+		},
+		{
+			"id": 1517,
+			"name": "Sociology (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/sociology-ba/"
+		},
+		{
+			"id": 1519,
+			"name": "Sociology (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/sociology-bs/"
+		},
+		{
+			"id": 1521,
+			"name": "Sociology (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/sociology-phd/"
+		},
+		{
+			"id": 1522,
+			"name": "Social Sciences (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/social-sciences-bs/"
+		},
+		{
+			"id": 1549,
+			"name": "Statistics (BS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/statistics-bs/"
+		},
+		{
+			"id": 1604,
+			"name": "Actuarial Science Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/actuarial-science-minor/"
+		},
+		{
+			"id": 1610,
+			"name": "Anthropological Archaeology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropological-archaeology-minor/"
+		},
+		{
+			"id": 1611,
+			"name": "Anthropology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/anthropology-minor/"
+		},
+		{
+			"id": 1617,
+			"name": "Astronomy Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/astronomy-minor/"
+		},
+		{
+			"id": 1618,
+			"name": "Biological Anthropology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/biological-anthropology-minor/"
+		}
+	]
+}

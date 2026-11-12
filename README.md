@@ -74,7 +74,7 @@ components/        one self-contained folder per component, in a bucket by role:
   content/         what editors place, saved as HTML, works without JavaScript: Section,
                    Highlight, Hero, Card
   live/            what editors place, fetched and written by the server, works without
-                   JavaScript: Event List
+                   JavaScript: Event List, Degree List
   interactive/     what editors place, built in the browser: Degree Finder
 examples/          reference code, not shipped: typechecked, linted and tested, but in no
                    Storybook, package or plugin
@@ -83,7 +83,7 @@ examples/          reference code, not shipped: typechecked, linted and tested, 
 plugins/           one WordPress plugin per content type
   shared/          PHP every plugin carries, copied into each at build time
   ucf-content/     plugin.json lists its blocks: section, highlight, hero, card
-  ucf-degrees/     degree-finder
+  ucf-degrees/     degree-finder, degree-list
   ucf-events/      event-list
 tokens/tokens.json every value, role and composition (W3C Design Tokens format)
 scripts/           the token, package, release and deploy scripts, and their tests

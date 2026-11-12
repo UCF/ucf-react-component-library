@@ -64,7 +64,49 @@ UCF Events Plugin's `[ucf-events]` shortcode. To finish:
   the site's Server Component). Work it out in the playground.
 - **Migrating shortcodes.** Pages that use `[ucf-events]` keep working while both plugins are
   active. A transform from the shortcode block to this one would move them over.
-- **The degree facts** are the next live component, in `ucf-degrees`.
+
+## The Degree List
+
+`components/live/degree-list` (block `ucf-degrees/degree-list`, plugin `ucf-degrees`) replaces
+the `[degree-list]` and `[ucf-external-degree-list]` shortcodes, reading the UCF Search Service.
+To finish:
+
+- **Check it in a real WordPress.** Add the block, pick colleges and departments in the token
+  fields, and check `getBlocks()` in the editor and the page's HTML. Its PHP test runs against
+  stubs.
+- **Check the Puck field in a real Puck editor.** The custom checkbox field fits Puck's types
+  (`integrations/tests/puck.test.tsx`), but nothing has rendered it inside Puck. Needs the
+  playground.
+- **Settle its names before any site uses it:** the block and its attributes (`colleges`,
+  `departments`, `programTypes`, `title`, `columns`, `emptyMessage`) are permanent once saved.
+- **Two programs, one name.** The service lists on-campus and online records of some programs
+  with the same name and different profile pages ("Criminal Justice (BA)", "Doctor of Nursing
+  Practice (DNP)"), so the list shows the name twice. Decide how to tell them apart.
+- **Grouping, tracks, a limit, online only:** each is a prop on this component (both shortcodes
+  group by program type).
+- **Migrating shortcodes.** A transform from each shortcode to this block would move existing
+  pages over.
+
+## The degree profile blocks
+
+The facts on a degree's profile page (tuition, deadlines, outcomes) are the next live
+components, in `ucf-degrees`. Each page shows one program, so its blocks share one cached read
+of that program per request (component-buckets.md, "Live content"). What the Search Service
+gives them:
+
+- **One program is `/api/v1/programs/{id}/`,** about 38 KB, most of it five descriptions. It
+  links to four more endpoints for the same program: `outcomes/`, `projections/`, `careers/` and
+  `deadlines/`. Read each only when a block on the page shows it.
+- **Numbers come as strings** (tuition `"212.28"`, employment `"79.00000000"`), and empty comes
+  in several forms (`careers/` can be `[""]`). The client turns each into one shape, once.
+- **Rates:** most programs have in-state and out-of-state rates; some have one rate for both and
+  some have none. `tuition_type` gives the unit: `SCH` per credit hour, `ANN` per year.
+- **The page's program ID** is on every ucf.edu degree post, in `degree_meta.degree_api_id`, so a
+  block can default to the current post's program.
+- **Which description a page shows** is a decision: the five types (Custom, Catalog, Full
+  Catalog, Source Catalog, Source Catalog Curriculum) have none marked primary.
+- **Authored parts.** ucf.edu's degree posts also hold content editors write and the service
+  doesn't have (the skills and career lists). Decide per block whether that becomes a prop.
 
 ## Release
 

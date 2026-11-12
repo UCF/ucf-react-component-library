@@ -46,6 +46,43 @@ function ucf_degrees_degree_finder_settings() {
 }
 
 /**
+ * Site-wide settings for the Degree List.
+ *
+ * @return array{apiRoot: string, cacheHours: float, timeout: int}
+ */
+function ucf_degrees_degree_list_settings() {
+	$defaults = array(
+		// SYNC: DEFAULT_API_ROOT in components/live/degree-list/client.ts.
+		'apiRoot'    => 'https://search.cm.ucf.edu/api/v1/',
+		'cacheHours' => 1,
+		'timeout'    => 5,
+	);
+
+	/**
+	 * Filters the Degree List's settings.
+	 *
+	 * @param array $settings `apiRoot` (the UCF Search Service's API), `cacheHours` (how long a
+	 *                        list's programs are kept before they are fetched again) and
+	 *                        `timeout` (seconds to wait for each page).
+	 */
+	$settings = apply_filters( 'ucf_degrees_degree_list_settings', $defaults );
+
+	// WHY over the defaults: render.php, client.php and the editor read every key directly, so
+	// a filter that leaves one out, or returns something other than an array, still gets the
+	// default for what it didn't set.
+	return array_merge( $defaults, is_array( $settings ) ? $settings : array() );
+}
+
+/**
+ * The Degree List's settings its editor preview needs: only where the service is.
+ *
+ * @return array{apiRoot: string}
+ */
+function ucf_degrees_degree_list_editor_settings() {
+	return array( 'apiRoot' => ucf_degrees_degree_list_settings()['apiRoot'] );
+}
+
+/**
  * Give each block's editor preview the same settings its front end gets.
  *
  * WHY: priority 20 runs after shared.php has registered the blocks on the default priority,
@@ -57,6 +94,7 @@ function ucf_degrees_degree_finder_settings() {
 function ucf_degrees_editor_settings() {
 	$blocks = array(
 		'ucf-degrees/degree-finder' => array( 'ucfDegreeFinderSettings', 'ucf_degrees_degree_finder_settings' ),
+		'ucf-degrees/degree-list'   => array( 'ucfDegreeListSettings', 'ucf_degrees_degree_list_editor_settings' ),
 	);
 
 	foreach ( $blocks as $name => list( $global, $settings ) ) {

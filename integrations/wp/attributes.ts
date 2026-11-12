@@ -41,10 +41,19 @@ export function blockAttributes( definitions: PropDefinitions ) {
 			.filter( ( [ , definition ] ) => inHost( definition, 'wp' ) )
 			.map( ( [ key, definition ] ) => [
 				key,
-				{
-					type: definition.type === 'number' ? 'number' : 'string',
-					default: definition.default,
-				},
+				definition.type === 'list'
+					? {
+							type: 'array',
+							items: { type: 'string' },
+							default: definition.default,
+						}
+					: {
+							type:
+								definition.type === 'number'
+									? 'number'
+									: 'string',
+							default: definition.default,
+						},
 			] )
 	);
 }
