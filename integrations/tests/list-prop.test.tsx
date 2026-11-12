@@ -121,3 +121,31 @@ describe( 'loading a list’s options', () => {
 		expect( loader ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
+
+describe( 'a list prop in WordPress', () => {
+	// FIX: core's FormTokenField shows "Separate with commas or the Enter key" when given no
+	// help, which is wrong for a field that keeps only what matches a suggestion.
+	it( 'shows the prop’s own help, not core’s typing hint', async () => {
+		const { ListControl } = await import( '../wp/list-control.tsx' );
+		const html = renderToStaticMarkup(
+			<ListControl
+				definition={ { ...PROPS.fixed, help: 'Pick any colleges.' } }
+				value={ [ 'nursing' ] }
+				onChange={ () => {} }
+			/>
+		);
+		expect( html ).toContain( 'Pick any colleges.' );
+		expect( html ).toContain( 'College of Nursing' );
+		expect( html ).not.toMatch( /Separate with commas/ );
+
+		const bare = renderToStaticMarkup(
+			<ListControl
+				definition={ PROPS.fixed }
+				value={ [] }
+				onChange={ () => {} }
+			/>
+		);
+		expect( bare ).not.toMatch( /Separate with commas/ );
+		// PERF: the first import of @wordpress/components took about 10 seconds in Node here.
+	}, 60_000 );
+} );

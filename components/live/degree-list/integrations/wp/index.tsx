@@ -2,6 +2,9 @@
 // WHY imported here: webpack builds the block's stylesheet from what its script imports.
 import '@/components/primitives/heading/style.css';
 import '../../style.css';
+// WHY a second style.css: wp-scripts sends only files named style.css to the front end, and
+// this one is WordPress's alone (wide and full alignment).
+import './style.css';
 import { registerBlockType, type BlockConfiguration } from '@wordpress/blocks';
 
 import metadata from './block.json';

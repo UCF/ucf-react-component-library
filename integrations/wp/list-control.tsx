@@ -34,7 +34,9 @@ export function ListControl( { definition, value, onChange }: Props ) {
 	const chosen = chosenOf( value, state.options );
 
 	return (
-		<>
+		// FIX: FormTokenField leaves no space under its help, so it ran into the next field's
+		// label. WHY 24px: the space under the sidebar's TextControl and RadioControl help.
+		<div style={ { marginBottom: '24px' } }>
 			<FormTokenField
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
@@ -44,6 +46,10 @@ export function ListControl( { definition, value, onChange }: Props ) {
 					options.some( ( option ) => option.label === label )
 				}
 				label={ definition.label ?? '' }
+				// FIX: with no `help`, core shows "Separate with commas or the Enter key", which
+				// is wrong here: typed text is only kept when it matches a suggestion. The prop's
+				// own help replaces it ('' shows none).
+				help={ definition.help ?? '' }
 				suggestions={ options.map( ( option ) => option.label ) }
 				value={ chosen.map( ( item ) =>
 					item.known
@@ -77,11 +83,6 @@ export function ListControl( { definition, value, onChange }: Props ) {
 					) }
 				</p>
 			) : null }
-			{ definition.help ? (
-				<p className="components-base-control__help">
-					{ definition.help }
-				</p>
-			) : null }
-		</>
+		</div>
 	);
 }
