@@ -12,11 +12,19 @@
  * WHY no snapshot here: tests/EventList.test.tsx keeps React's; this only says PHP matches it.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import {
+	copyFileSync,
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, test } from 'vitest';
+import { afterAll, describe, expect, test } from 'vitest';
 
 import {
 	hasPhp,
@@ -349,6 +357,134 @@ echo ucf_events_event_list_plain_text( ${ phpString( text ) } );
 			).toEqual( [ [ 0, 300 ] ] );
 			expect( result.html ).toContain( 'Nothing on the calendar.' );
 		} );
+	} );
+} );
+
+describe.runIf( hasPhp )( 'the Event List’s settings in PHP', () => {
+	// The plugin's main file, beside a stand-in for its build folder (generated, so absent in a
+	// fresh checkout).
+	const plugin = mkdtempSync( path.join( os.tmpdir(), 'ucf-events-' ) );
+	mkdirSync( path.join( plugin, 'build' ) );
+	writeFileSync(
+		path.join( plugin, 'build/shared.php' ),
+		'<?php function ucf_components_register_plugin( $dir, $url ) {}'
+	);
+	copyFileSync(
+		path.join( here, '../../../../plugins/ucf-events/ucf-events.php' ),
+		path.join( plugin, 'ucf-events.php' )
+	);
+	afterAll( () => rmSync( plugin, { recursive: true, force: true } ) );
+
+	/**
+	 * The settings, whether the feed's host is let through, and the editor's settings, with the
+	 * site's filter returning `filtered`.
+	 * WHY display_errors: a PHP warning then breaks the JSON, so the test fails on one.
+	 *
+	 * @param filtered What the `ucf_events_event_list_settings` filter returns.
+	 * @param oldFeed  The old plugin's `ucf_events_feed_url` option.
+	 */
+	const settingsWith = ( filtered: unknown, oldFeed: unknown = false ) =>
+		JSON.parse(
+			php( `
+error_reporting( E_ALL );
+ini_set( 'display_errors', '1' );
+function plugins_url( $path, $file ) { return ''; }
+function add_action( ...$args ) {}
+function add_filter( ...$args ) {}
+function get_option( $name ) { return json_decode( ${ phpString(
+				JSON.stringify( oldFeed )
+			) }, true ); }
+function apply_filters( $name, $value ) {
+	$filtered = json_decode( ${ phpString( JSON.stringify( filtered ) ) }, true );
+	return 'defaults' === $filtered ? $value : $filtered;
+}
+function wp_parse_url( $url, $component ) { return parse_url( $url, $component ); }
+function wp_json_encode( $value ) { return json_encode( $value ); }
+function wp_add_inline_script( $handle, $script, $position ) { $GLOBALS['inline'][] = $script; }
+class WP_Block_Type_Registry {
+	public static function get_instance() { return new self(); }
+	public function get_registered( $name ) { return (object) array( 'editor_script_handles' => array( 'editor' ) ); }
+}
+require ${ phpString( path.join( plugin, 'ucf-events.php' ) ) };
+$GLOBALS['inline'] = array();
+ucf_events_event_list_editor_settings();
+echo json_encode( array(
+	ucf_events_event_list_settings(),
+	ucf_events_event_list_allow_host( false, 'events.test' ),
+	$GLOBALS['inline'],
+) );
+` )
+		);
+
+	const DEFAULTS = {
+		feedUrl: 'https://events.ucf.edu/upcoming/feed.json',
+		cacheHours: 3,
+		timeout: 5,
+	};
+
+	/**
+	 * The editor's inline script for a feed. WHY the escaped slashes: json_encode writes them.
+	 *
+	 * @param feedUrl The feed the editor previews.
+	 */
+	const editor = ( feedUrl: string ) => [
+		`window.ucfEventListSettings = ${ JSON.stringify( { feedUrl } ).replaceAll( '/', '\\/' ) };`,
+	];
+
+	test( 'keeps what a filter sets', () => {
+		expect(
+			settingsWith( {
+				feedUrl: 'https://events.test/feed.json',
+				cacheHours: 1,
+				timeout: 10,
+			} )
+		).toEqual( [
+			{
+				feedUrl: 'https://events.test/feed.json',
+				cacheHours: 1,
+				timeout: 10,
+			},
+			true,
+			editor( 'https://events.test/feed.json' ),
+		] );
+	} );
+
+	test( 'fills in what a filter leaves out', () => {
+		expect( settingsWith( { timeout: 10 } ) ).toEqual( [
+			{ ...DEFAULTS, timeout: 10 },
+			false,
+			editor( DEFAULTS.feedUrl ),
+		] );
+	} );
+
+	test.each( [ 'not settings', null, 7 ] )(
+		'uses the defaults when a filter returns something other than an array: %s',
+		( filtered ) => {
+			expect( settingsWith( filtered ) ).toEqual( [
+				DEFAULTS,
+				false,
+				editor( DEFAULTS.feedUrl ),
+			] );
+		}
+	);
+
+	test( 'defaults to the old plugin’s feed, under what a filter sets', () => {
+		const old = 'https://events.test/old.json';
+		expect( settingsWith( 'defaults', old )[ 0 ] ).toEqual( {
+			...DEFAULTS,
+			feedUrl: old,
+		} );
+		expect( settingsWith( { timeout: 10 }, old ) ).toEqual( [
+			{ ...DEFAULTS, feedUrl: old, timeout: 10 },
+			true,
+			editor( old ),
+		] );
+		expect(
+			settingsWith(
+				{ feedUrl: 'https://other.test/feed.json' },
+				old
+			)[ 0 ].feedUrl
+		).toBe( 'https://other.test/feed.json' );
 	} );
 } );
 
