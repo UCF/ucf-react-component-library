@@ -110,7 +110,13 @@ const puckProps = {
 
 describe.each( Object.entries( CONFIGS ) )(
 	'the %s Puck config',
-	( _, config ) => {
+	( name, config ) => {
+		// WHY: the label is what Puck's sidebar lists it as. SYNC: the key here is the name the
+		// README tells hosts to register it under, its display name (docs/architecture.md, "Naming").
+		it( 'is labeled with its own name', () => {
+			expect( config.label ).toBe( name );
+		} );
+
 		it( 'renders the same markup with or without Puck’s own props', () => {
 			// UPSTREAM: Puck hands `render` a component for each slot prop, not the stored list.
 			const Slot = ( slotProps: object ) => <div { ...slotProps } />;

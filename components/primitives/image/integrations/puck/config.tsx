@@ -10,7 +10,7 @@ import { defaultsIn } from '@/integrations/schema/props';
 import { PROPS, type ImageEditableProps } from '../../Image.props.ts';
 
 const config: PuckComponentConfig< ImageEditableProps > = {
-	label: 'Original',
+	label: 'Image',
 	fields: puckFields( PROPS ),
 	defaultProps: defaultsIn( PROPS, 'puck' ),
 	// FIX: only the Image's own props; Puck's `id`, `puck` and `editMode` would reach the
