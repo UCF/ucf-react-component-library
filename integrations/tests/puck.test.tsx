@@ -15,6 +15,7 @@ import type { ComponentConfig } from '@puckeditor/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
+import degreeList from '@/components/live/degree-list/integrations/puck/config';
 import button from '@/components/primitives/button/integrations/puck/config';
 import code from '@/components/primitives/code/integrations/puck/config';
 import column from '@/components/primitives/column/integrations/puck/config';
@@ -73,6 +74,7 @@ const CONFIGS = {
 	Pullquote: pullquote,
 	List: list,
 	Table: table,
+	'Degree List': degreeList,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -95,6 +97,7 @@ quote satisfies ComponentConfig< PropsOf< typeof quote > >;
 pullquote satisfies ComponentConfig< PropsOf< typeof pullquote > >;
 list satisfies ComponentConfig< PropsOf< typeof list > >;
 table satisfies ComponentConfig< PropsOf< typeof table > >;
+degreeList satisfies ComponentConfig< PropsOf< typeof degreeList > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

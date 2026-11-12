@@ -1,0 +1,257 @@
+{
+	"count": 123,
+	"next": "https://search.cm.ucf.edu/api/v1/programs/search/?active=True&college_slug=sciences&fields=id%2Cname%2Cprimary_profile_url&limit=50&offset=100&subplan_code__isnull=True",
+	"previous": "https://search.cm.ucf.edu/api/v1/programs/search/?active=True&college_slug=sciences&fields=id%2Cname%2Cprimary_profile_url&limit=50&subplan_code__isnull=True",
+	"results": [
+		{
+			"id": 1621,
+			"name": "Biology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/biology-minor/"
+		},
+		{
+			"id": 1624,
+			"name": "Chemistry Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/chemistry-minor/"
+		},
+		{
+			"id": 1627,
+			"name": "Cultural Anthropology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/cultural-anthropology-minor/"
+		},
+		{
+			"id": 1633,
+			"name": "Crime, Law, and Deviance Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/crime-law-and-deviance-minor/"
+		},
+		{
+			"id": 1638,
+			"name": "Diplomacy Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/diplomacy-minor/"
+		},
+		{
+			"id": 1639,
+			"name": "Social Structures and Opportunity Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/social-structures-and-opportunity-minor-minor/"
+		},
+		{
+			"id": 1654,
+			"name": "European Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/european-studies-minor/"
+		},
+		{
+			"id": 1662,
+			"name": "Geosciences Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/geosciences-minor/"
+		},
+		{
+			"id": 1663,
+			"name": "Global Sociology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/global-sociology-minor/"
+		},
+		{
+			"id": 1664,
+			"name": "Global Peace and Security Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/global-peace-and-security-studies-minor/"
+		},
+		{
+			"id": 1675,
+			"name": "International and Global Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/international-and-global-studies-minor/"
+		},
+		{
+			"id": 1676,
+			"name": "Intelligence and National Security Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/intelligence-and-national-security-minor/"
+		},
+		{
+			"id": 1686,
+			"name": "Mass Culture and Collective Behavior Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/mass-culture-and-collective-behavior-minor/"
+		},
+		{
+			"id": 1688,
+			"name": "Mathematical Biology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematical-biology-minor/"
+		},
+		{
+			"id": 1690,
+			"name": "Mathematics Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/mathematics-minor/"
+		},
+		{
+			"id": 1692,
+			"name": "Medical Anthropology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/medical-anthropology-minor/"
+		},
+		{
+			"id": 1693,
+			"name": "Medical Sociology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/medical-sociology-minor/"
+		},
+		{
+			"id": 1698,
+			"name": "Multicultural Anthropology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/multicultural-anthropology-minor/"
+		},
+		{
+			"id": 1702,
+			"name": "Native American Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/native-american-studies-minor/"
+		},
+		{
+			"id": 1705,
+			"name": "Physics Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/physics-minor/"
+		},
+		{
+			"id": 1708,
+			"name": "Political Science Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/political-science-minor/"
+		},
+		{
+			"id": 1709,
+			"name": "Political Science / Prelaw Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/political-science-prelaw-minor/"
+		},
+		{
+			"id": 1710,
+			"name": "Psychology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/psychology-minor/"
+		},
+		{
+			"id": 1718,
+			"name": "Sociology Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/sociology-minor/"
+		},
+		{
+			"id": 1722,
+			"name": "Statistics Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/statistics-minor/"
+		},
+		{
+			"id": 1724,
+			"name": "Terrorism Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/terrorism-studies-minor/"
+		},
+		{
+			"id": 1813,
+			"name": "Integrative and Conservation Biology (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/integrative-and-conservation-biology-ph-d/"
+		},
+		{
+			"id": 872,
+			"name": "Advertising / Public Relations (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/advertising-public-relations-ba/"
+		},
+		{
+			"id": 993,
+			"name": "Communication and Conflict (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/communication-and-conflict-ba/"
+		},
+		{
+			"id": 995,
+			"name": "Communication (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/communication-ma/"
+		},
+		{
+			"id": 1013,
+			"name": "Corporate Communication Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/corporate-communication-certificate/"
+		},
+		{
+			"id": 1187,
+			"name": "Hispanic/Latino Media Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/hispanic-latino-media-certificate/"
+		},
+		{
+			"id": 1195,
+			"name": "Health Communication Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/health-communication-certificate/"
+		},
+		{
+			"id": 1265,
+			"name": "Journalism (BA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/journalism-ba/"
+		},
+		{
+			"id": 1794,
+			"name": "Strategic Communication Undergraduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/strategic-communication-certificate/"
+		},
+		{
+			"id": 1737,
+			"name": "Strategic Communication (PhD)",
+			"primary_profile_url": "https://www.ucf.edu/degree/strategic-communication-phd/"
+		},
+		{
+			"id": 1674,
+			"name": "Interpersonal/Organizational Communication Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/interpersonal-organizational-communication-minor/"
+		},
+		{
+			"id": 1795,
+			"name": "Intercultural Communication Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/intercultural-communication-minor/"
+		},
+		{
+			"id": 1679,
+			"name": "Journalism Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/journalism-studies-minor/"
+		},
+		{
+			"id": 1684,
+			"name": "Magazine Journalism Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/magazine-journalism-minor/"
+		},
+		{
+			"id": 1759,
+			"name": "Mass Media Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/mass-media-minor/"
+		},
+		{
+			"id": 1771,
+			"name": "Strategic Communication Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/strategic-communication-minor/"
+		},
+		{
+			"id": 1827,
+			"name": "Statistics and Data Science (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/statistics-and-data-science-ms/"
+		},
+		{
+			"id": 1056,
+			"name": "Digital Media (MA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/digital-media-ma/"
+		},
+		{
+			"id": 1058,
+			"name": "Interactive Entertainment (MS)",
+			"primary_profile_url": "https://www.ucf.edu/degree/interactive-entertainment-ms/"
+		},
+		{
+			"id": 1165,
+			"name": "Film (BFA)",
+			"primary_profile_url": "https://www.ucf.edu/degree/film-bfa/"
+		},
+		{
+			"id": 1625,
+			"name": "Film - Cinema Studies Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/film-cinema-studies-minor/"
+		},
+		{
+			"id": 1637,
+			"name": "Digital Media Minor",
+			"primary_profile_url": "https://www.ucf.edu/degree/digital-media-minor/"
+		},
+		{
+			"id": 1852,
+			"name": "Data Modeling Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/data-modeling-certificate/"
+		},
+		{
+			"id": 1854,
+			"name": "Financial Mathematics Graduate Certificate",
+			"primary_profile_url": "https://www.ucf.edu/degree/financial-mathematics-certificate/"
+		}
+	]
+}

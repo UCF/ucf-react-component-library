@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-degrees/degree-list",
+	"title": "Degree List",
+	"category": "ucf-live",
+	"description": "Programs from the UCF Search Service, filtered by college, department and program type, each linking to its profile page.",
+	"keywords": [ "degrees", "programs", "majors", "college", "department" ],
+	"textdomain": "ucf-degrees",
+	"attributes": {
+		"colleges": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"default": []
+		},
+		"departments": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"default": []
+		},
+		"programTypes": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"default": []
+		},
+		"title": {
+			"type": "string",
+			"default": ""
+		},
+		"columns": {
+			"type": "string",
+			"default": "1"
+		},
+		"emptyMessage": {
+			"type": "string",
+			"default": "No programs found."
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"anchor": true,
+		"spacing": {
+			"margin": true
+		}
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}

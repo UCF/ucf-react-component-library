@@ -16,6 +16,24 @@ export type PuckScalarField =
 	| { type: 'text' | 'textarea'; label?: string }
 	| { type: 'select' | 'radio'; label?: string; options: Option[] };
 
+/**
+ * A field that draws its own control: a list prop's checkboxes (integrations/puck/list-field.tsx).
+ * UPSTREAM: `CustomField` in `@puckeditor/core`. Puck draws no label around it, so the control
+ * labels itself.
+ */
+export type PuckCustomField< Value > = {
+	type: 'custom';
+	label?: string;
+	render: ( props: {
+		field: { label?: string };
+		name: string;
+		id: string;
+		value: Value;
+		onChange: ( value: Value ) => void;
+		readOnly?: boolean;
+	} ) => ReactElement;
+};
+
 // ── Slots and render ───────────────────────────────────────────────────────────────────────────
 
 /** A slot: the components placed inside. */
@@ -42,7 +60,9 @@ export type PuckObjectField< Value > = {
 export type PuckFieldFor< Value > = [ Value ] extends [ PuckSlot ]
 	? PuckSlotField
 	: Value extends readonly ( infer Item )[]
-		? PuckArrayField< Item >
+		? Item extends string
+			? PuckCustomField< Value >
+			: PuckArrayField< Item >
 		: Value extends object
 			? PuckObjectField< Value >
 			: PuckScalarField;
@@ -50,6 +70,7 @@ export type PuckFieldFor< Value > = [ Value ] extends [ PuckSlot ]
 /** Any field. */
 export type PuckField =
 	| PuckScalarField
+	| PuckCustomField< readonly string[] >
 	| PuckSlotField
 	| PuckObjectField< Record< string, unknown > >;
 

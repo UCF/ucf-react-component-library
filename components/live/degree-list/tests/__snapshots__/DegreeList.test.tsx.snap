@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DegreeList > renders: a heading 1`] = `"<div class="ucf-c ucf-c-degree-list"><h2 class="ucf-c-degree-list__heading ucf-c ucf-c-heading">Business programs</h2><ul class="ucf-c-degree-list__items"><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-bsba/">Accounting (BSBA)</a></li><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-msa/">Accounting (MSA)</a></li></ul></div>"`;
+
+exports[`DegreeList > renders: no programs, with a message 1`] = `"<div class="ucf-c ucf-c-degree-list"><p class="ucf-c-degree-list__empty">No programs found.</p></div>"`;
+
+exports[`DegreeList > renders: three columns 1`] = `"<div class="ucf-c ucf-c-degree-list" data-columns="3"><ul class="ucf-c-degree-list__items"><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-bsba/">Accounting (BSBA)</a></li><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-msa/">Accounting (MSA)</a></li></ul></div>"`;
+
+exports[`DegreeList > renders: three programs 1`] = `"<div class="ucf-c ucf-c-degree-list"><ul class="ucf-c-degree-list__items"><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-bsba/">Accounting (BSBA)</a></li><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-msa/">Accounting (MSA)</a></li><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/business-administration-mba/">Business Administration (MBA)</a></li></ul></div>"`;
+
+exports[`DegreeList > renders: two columns 1`] = `"<div class="ucf-c ucf-c-degree-list" data-columns="2"><ul class="ucf-c-degree-list__items"><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-bsba/">Accounting (BSBA)</a></li><li class="ucf-c-degree-list__item"><a href="https://www.ucf.edu/degree/accounting-msa/">Accounting (MSA)</a></li></ul></div>"`;

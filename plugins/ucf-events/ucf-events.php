@@ -34,6 +34,13 @@ ucf_components_register_plugin( __DIR__ . '/build', plugins_url( 'build', __FILE
  */
 function ucf_events_event_list_settings() {
 	$old_feed = get_option( 'ucf_events_feed_url' );
+	$defaults = array(
+		// SYNC: DEFAULT_FEED_URL in components/live/event-list/client.ts.
+		'feedUrl'    => is_string( $old_feed ) && '' !== $old_feed ? $old_feed : 'https://events.ucf.edu/upcoming/feed.json',
+		// SPEC: the UCF Events plugin's defaults.
+		'cacheHours' => 3,
+		'timeout'    => 5,
+	);
 
 	/**
 	 * Filters the Event List's settings.
@@ -42,16 +49,12 @@ function ucf_events_event_list_settings() {
 	 *                        (how long a feed is kept before it is fetched again) and
 	 *                        `timeout` (seconds to wait for the feed).
 	 */
-	return apply_filters(
-		'ucf_events_event_list_settings',
-		array(
-			// SYNC: DEFAULT_FEED_URL in components/live/event-list/client.ts.
-			'feedUrl'    => is_string( $old_feed ) && '' !== $old_feed ? $old_feed : 'https://events.ucf.edu/upcoming/feed.json',
-			// SPEC: the UCF Events plugin's defaults.
-			'cacheHours' => 3,
-			'timeout'    => 5,
-		)
-	);
+	$settings = apply_filters( 'ucf_events_event_list_settings', $defaults );
+
+	// WHY over the defaults: render.php, client.php, the host filter and the editor read every
+	// key directly, so a filter that leaves one out, or returns something other than an array,
+	// still gets the default for what it didn't set.
+	return array_merge( $defaults, is_array( $settings ) ? $settings : array() );
 }
 
 /**

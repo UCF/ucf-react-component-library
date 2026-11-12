@@ -1,0 +1,14 @@
+/*
+ * CONTEXT: WordPress only. A Degree List set to wide or full width (the block's Align setting)
+ * has room for three columns; at full width its names stay inside the theme's side padding
+ * rather than running to the edge of the screen.
+ *
+ * WHY not in the component's style.css: it reads WordPress's layout variables and the block's
+ * own wrapper class, neither of which exists in other hosts.
+ * UPSTREAM: named style.css because wp-scripts only sends files of that name to the front end.
+ * SYNC: the block name in block.json (`ucf-degrees/degree-list` gives this class).
+ */
+.wp-block-ucf-degrees-degree-list.alignfull {
+	padding-left: var(--wp--style--root--padding-left, var(--ucf-spacing-50));
+	padding-right: var(--wp--style--root--padding-right, var(--ucf-spacing-50));
+}

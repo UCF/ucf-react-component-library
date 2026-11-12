@@ -21,6 +21,7 @@ What is in each folder. Each environment has a main file named for what it makes
 ```
 schema/         what a component may declare
   props.ts        PropDefinitions: a prop's type, values, default, field; PropsOf, defaultsIn()
+  options.ts      a list prop's saved values as an editor sees them, and back
   parts.ts        PartDefinitions: each part's kind and class; resolveParts()
   presets.ts      Preset; findPreset()
   definition.ts   ComponentDefinition: what a component is, as data
@@ -31,11 +32,13 @@ wp/             WordPress                                   (the plugins only)
   parts.ts        parts → core blocks
   attributes.ts   blockAttributes(), ownAttributes()
   inspector.tsx   FieldControl: a prop as a sidebar control
+  list-control.tsx  a list prop as core's FormTokenField
   icons.ts        every icon a block or preset names
   kind.ts         kindOf(): content, live or interactive, from block.json; CATEGORY_OF
 
 puck/           Puck                                        (shipped with the Puck configs)
   config.tsx      puckConfig(): a framed component as a Puck config; puckFields()
+  list-field.tsx  a list prop as a custom field of checkboxes
   parts.ts        parts → primitives
   presets.ts      the Design picker and a field per part
   types.ts        Puck's config shape, without depending on Puck
@@ -43,6 +46,7 @@ puck/           Puck                                        (shipped with the Pu
 react/          a plain React site                          (shipped as @ucf/components/react)
   frame.tsx       frame(): a component from its definition and markup, with its port
   parts.tsx       parts → React; presetContent()
+  options.ts      a list prop's options, loaded once a page (both editors use it)
 
 storybook/      the stories                                 (never shipped)
   arg-types.ts    props → story controls

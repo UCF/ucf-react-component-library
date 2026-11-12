@@ -95,6 +95,14 @@
 			"types": "./dist/components/live/event-list/integrations/puck/config.d.ts",
 			"default": "./dist/components/live/event-list/integrations/puck/config.js"
 		},
+		"./degree-list": {
+			"types": "./dist/components/live/degree-list/index.d.ts",
+			"default": "./dist/components/live/degree-list/index.js"
+		},
+		"./degree-list/puck": {
+			"types": "./dist/components/live/degree-list/integrations/puck/config.d.ts",
+			"default": "./dist/components/live/degree-list/integrations/puck/config.js"
+		},
 		"./primitives/columns": {
 			"types": "./dist/components/primitives/columns/index.d.ts",
 			"default": "./dist/components/primitives/columns/index.js"

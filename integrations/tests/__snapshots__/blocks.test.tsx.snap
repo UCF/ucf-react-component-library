@@ -134,4 +134,6 @@ exports[`ucf-content/section holding other blocks > saves them inside its inner 
 
 exports[`ucf-degrees/degree-finder > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-finder /-->"`;
 
+exports[`ucf-degrees/degree-list > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-list /-->"`;
+
 exports[`ucf-events/event-list > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-events/event-list /-->"`;

@@ -115,6 +115,7 @@ test( 'finds every block', () => {
 	expect( blocks.map( ( block ) => block.component ).sort() ).toEqual( [
 		'card',
 		'degree-finder',
+		'degree-list',
 		'event-list',
 		'hero',
 		'highlight',

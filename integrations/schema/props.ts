@@ -47,7 +47,29 @@ export type TextProp = Field & {
 /** A number: a media library ID. */
 export type NumberProp = Field & { type: 'number'; default: number };
 
-export type PropDefinition = ChoiceProp | TextProp | NumberProp;
+/** One value a prop may take, and what an editor sees for it. */
+export type Option = { readonly value: string; readonly label: string };
+
+/**
+ * Loads a list's options when an editor opens its field: options that change without a release
+ * (the Search Service's colleges). integrations/react/options.ts runs each loader once a page.
+ */
+export type OptionsLoader = (
+	signal?: AbortSignal
+) => Promise< readonly Option[] >;
+
+/**
+ * Any number of values from a list, stored as their values in the order chosen: the colleges a
+ * Degree List shows. `options` are fixed, or loaded (OptionsLoader).
+ * WHY values, not labels: a value is what an API filters by, and a label can be reworded.
+ */
+export type ListProp = Field & {
+	type: 'list';
+	options: readonly Option[] | OptionsLoader;
+	default: readonly string[];
+};
+
+export type PropDefinition = ChoiceProp | TextProp | NumberProp | ListProp;
 
 export type PropDefinitions = Record< string, PropDefinition >;
 
@@ -57,14 +79,16 @@ export type PropDefinitions = Record< string, PropDefinition >;
 
 type ValueOf< Definition > = Definition extends {
 	type: 'choice';
-	options: readonly ( infer Option )[];
+	options: readonly ( infer Choice )[];
 }
-	? Option extends { value: infer Value }
+	? Choice extends { value: infer Value }
 		? Value
 		: never
 	: Definition extends { type: 'number' }
 		? number
-		: string;
+		: Definition extends { type: 'list' }
+			? readonly string[]
+			: string;
 
 /** The props, typed. WHY a mapped type: each prop keeps the doc comment on its definition. */
 export type PropsOf< Props extends PropDefinitions > = {

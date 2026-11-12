@@ -1,0 +1,68 @@
+/*
+ * CONTEXT: the Degree List's styles, for every host.
+ *
+ * SPEC: the `[degree-list]` shortcode's lists: one program name per line, each a link, in one
+ * column or two.
+ * The root carries `ucf-c`: it sits on the section, so its colors are the section's roles.
+ *
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ */
+/* WHY a container: columns follow the list's own width, so a list in a narrow column of a page
+   stays one column even on a wide screen. */
+.ucf-c-degree-list {
+	color: var(--ucf-c-body);
+	container: ucf-c-degree-list / inline-size;
+}
+
+/* FIX: two classes. The Heading primitive's `.ucf-c-heading { margin: 0 }` ties with one, so the
+   space under the heading would come and go with stylesheet order (as the Event List found). */
+.ucf-c-degree-list .ucf-c-degree-list__heading {
+	margin: 0 0 var(--ucf-spacing-50);
+}
+
+.ucf-c-degree-list__items {
+	margin: 0;
+	padding-inline-start: 1.25em;
+}
+
+/* WHY CSS columns, not a grid: names run down each column and on into the next, so the list
+   reads in order, as a printed index does. */
+@container ucf-c-degree-list (min-width: 36rem) {
+	.ucf-c-degree-list[data-columns] .ucf-c-degree-list__items {
+		column-count: 2;
+		column-gap: var(--ucf-spacing-70);
+	}
+}
+
+@container ucf-c-degree-list (min-width: 54rem) {
+	.ucf-c-degree-list[data-columns="3"] .ucf-c-degree-list__items {
+		column-count: 3;
+	}
+}
+
+/* WHY break-inside: a long name that wraps stays in one column. */
+.ucf-c-degree-list__item {
+	break-inside: avoid;
+	padding-block: var(--ucf-spacing-10);
+}
+
+.ucf-c-degree-list__item::marker {
+	color: var(--ucf-c-accent);
+}
+
+.ucf-c-degree-list__item a {
+	color: var(--ucf-c-link);
+}
+
+.ucf-c-degree-list__item a:hover {
+	color: var(--ucf-c-link-hover);
+}
+
+.ucf-c-degree-list__item a:focus-visible {
+	outline: 2px solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+.ucf-c-degree-list__empty {
+	margin: 0;
+}

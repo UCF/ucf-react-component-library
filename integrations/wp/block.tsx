@@ -201,7 +201,7 @@ export function blockEdit<
 									<FieldControl
 										key={ key }
 										definition={ prop }
-										value={ String( attributes[ key ] ) }
+										value={ attributes[ key ] }
 										onChange={ ( value ) =>
 											setAttributes( { [ key ]: value } )
 										}
