@@ -1,7 +1,7 @@
 # Component buckets
 
-Draft, 2026-11-09. The three kinds of component we build, what puts a component in each, how each
-is built, and where it lives.
+The three kinds of component we build, what puts a component in each, how each is built, and
+where it lives.
 
 ## The question that sorts them
 
@@ -218,10 +218,10 @@ Each of these lives in this library under `components/interactive/`.
 ## What follows
 
 [architecture.md](architecture.md) describes the three kinds as built ("Three kinds of
-component"), with the Event List and the Degree List as the live examples. The single-site rule
-is not there yet: every live component so far is used on many sites, so each lives in this
-library. Before the first degree profile block (the tuition block), we need two answers: whether
-ucf.edu stays on WordPress for the foreseeable future, since PHP-only blocks would be rewritten at
-a move to the P1 starter, and which plugin or theme owns the degree post type, where those blocks
-would live. What the Search Service gives them is in [todo.md](todo.md), "The degree profile
-blocks".
+component"), with the Event List and the Degree List as the live examples. It doesn't state the
+single-site rule above, since the Event List and the Degree List are both used on many sites and
+live in this library. Before the first degree profile block (the tuition block), we need two
+answers: whether ucf.edu stays on WordPress for the foreseeable future, since PHP-only blocks
+would be rewritten at a move to the P1 starter, and which plugin or theme owns the degree post
+type, where those blocks would live. What the Search Service gives them is in [todo.md](todo.md),
+"The degree profile blocks".

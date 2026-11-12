@@ -51,6 +51,13 @@ function ucf_degrees_degree_finder_settings() {
  * @return array{apiRoot: string, cacheHours: float, timeout: int}
  */
 function ucf_degrees_degree_list_settings() {
+	$defaults = array(
+		// SYNC: DEFAULT_API_ROOT in components/live/degree-list/client.ts.
+		'apiRoot'    => 'https://search.cm.ucf.edu/api/v1/',
+		'cacheHours' => 1,
+		'timeout'    => 5,
+	);
+
 	/**
 	 * Filters the Degree List's settings.
 	 *
@@ -58,15 +65,12 @@ function ucf_degrees_degree_list_settings() {
 	 *                        list's programs are kept before they are fetched again) and
 	 *                        `timeout` (seconds to wait for each page).
 	 */
-	return apply_filters(
-		'ucf_degrees_degree_list_settings',
-		array(
-			// SYNC: DEFAULT_API_ROOT in components/live/degree-list/client.ts.
-			'apiRoot'    => 'https://search.cm.ucf.edu/api/v1/',
-			'cacheHours' => 1,
-			'timeout'    => 5,
-		)
-	);
+	$settings = apply_filters( 'ucf_degrees_degree_list_settings', $defaults );
+
+	// WHY over the defaults: render.php, client.php and the editor read every key directly, so
+	// a filter that leaves one out, or returns something other than an array, still gets the
+	// default for what it didn't set.
+	return array_merge( $defaults, is_array( $settings ) ? $settings : array() );
 }
 
 /**

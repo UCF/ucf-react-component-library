@@ -12,11 +12,19 @@
  * WHY no snapshot here: tests/DegreeList.test.tsx keeps React's; this only says PHP matches it.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import {
+	copyFileSync,
+	rmSync,
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	writeFileSync,
+} from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, test } from 'vitest';
+import { afterAll, describe, expect, test } from 'vitest';
 
 import {
 	hasPhp,
@@ -342,6 +350,80 @@ $response = array( 'body' => file_get_contents( $files[ (int) $m[1] / 50 ] ), 'r
 			expect( result.html ).toContain( 'Nothing here.' );
 		} );
 	} );
+} );
+
+describe.runIf( hasPhp )( 'the Degree List’s settings in PHP', () => {
+	// The plugin's main file, beside a stand-in for its build folder (generated, so absent in a
+	// fresh checkout).
+	const plugin = mkdtempSync( path.join( os.tmpdir(), 'ucf-degrees-' ) );
+	mkdirSync( path.join( plugin, 'build' ) );
+	writeFileSync(
+		path.join( plugin, 'build/shared.php' ),
+		'<?php function ucf_components_register_plugin( $dir, $url ) {}'
+	);
+	copyFileSync(
+		path.join( here, '../../../../plugins/ucf-degrees/ucf-degrees.php' ),
+		path.join( plugin, 'ucf-degrees.php' )
+	);
+	afterAll( () => rmSync( plugin, { recursive: true, force: true } ) );
+
+	/**
+	 * The settings, and the editor's, with the site's filter returning `filtered`.
+	 * WHY display_errors: a PHP warning then breaks the JSON, so the test fails on one.
+	 *
+	 * @param filtered What the `ucf_degrees_degree_list_settings` filter returns.
+	 */
+	const settingsWith = ( filtered: unknown ) =>
+		JSON.parse(
+			php( `
+error_reporting( E_ALL );
+ini_set( 'display_errors', '1' );
+function plugins_url( $path, $file ) { return ''; }
+function add_action( ...$args ) {}
+function add_filter( ...$args ) {}
+function apply_filters( $name, $value ) { return json_decode( ${ phpString(
+				JSON.stringify( filtered )
+			) }, true ); }
+require ${ phpString( path.join( plugin, 'ucf-degrees.php' ) ) };
+echo json_encode( array( ucf_degrees_degree_list_settings(), ucf_degrees_degree_list_editor_settings() ) );
+` )
+		);
+
+	const DEFAULTS = {
+		apiRoot: 'https://search.cm.ucf.edu/api/v1/',
+		cacheHours: 1,
+		timeout: 5,
+	};
+
+	test( 'keeps what a filter sets', () => {
+		expect(
+			settingsWith( {
+				apiRoot: 'https://search.test/api/',
+				cacheHours: 3,
+				timeout: 10,
+			} )
+		).toEqual( [
+			{ apiRoot: 'https://search.test/api/', cacheHours: 3, timeout: 10 },
+			{ apiRoot: 'https://search.test/api/' },
+		] );
+	} );
+
+	test( 'fills in what a filter leaves out', () => {
+		expect( settingsWith( { timeout: 10 } ) ).toEqual( [
+			{ ...DEFAULTS, timeout: 10 },
+			{ apiRoot: DEFAULTS.apiRoot },
+		] );
+	} );
+
+	test.each( [ 'not settings', null, 7 ] )(
+		'uses the defaults when a filter returns something other than an array: %s',
+		( filtered ) => {
+			expect( settingsWith( filtered ) ).toEqual( [
+				DEFAULTS,
+				{ apiRoot: DEFAULTS.apiRoot },
+			] );
+		}
+	);
 } );
 
 /**
