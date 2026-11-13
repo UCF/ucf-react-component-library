@@ -1,0 +1,85 @@
+/*
+ * The Columns's styles, for every host.
+ *
+ * SPEC: a 12-column grid, so every distribution lands on the same tracks: halves 6 + 6,
+ * two-thirds 8 + 4, thirds 4 + 4 + 4, quarters 3 + 3 + 3 + 3. Gaps are spacing tokens: regular
+ * is core Columns' 2em (spacing-60), tight the theme's block gap (spacing-40), wide its sidebar
+ * gap (spacing-80).
+ * WHY `> *` for the columns: in Puck's editor each Column sits in an item wrapper of Puck's, and
+ * that wrapper is the grid item. Published, the Column is.
+ * WHY a container query: a Columns stacks when it is narrow, wherever it is, not only on a
+ * narrow screen. SPEC: below 36rem one column; from 36rem two (three and four columns wrap two to
+ * a row); from 48rem all of them, as core Columns are side by side from about 782px.
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ */
+.ucf-c-columns {
+	container: ucf-c-columns / inline-size;
+}
+
+/* FIX: one track while stacked. Twelve tracks need eleven gaps, and on a phone those alone are
+   wider than the Columns (11 × 2rem is 352px), so the columns overflowed it. */
+.ucf-c-columns__grid {
+	align-items: start;
+	display: grid;
+	gap: var(--ucf-spacing-60);
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.ucf-c-columns__grid > * {
+	min-width: 0;
+}
+
+.ucf-c-columns[data-gap="tight"] > .ucf-c-columns__grid {
+	gap: var(--ucf-spacing-40);
+}
+
+.ucf-c-columns[data-gap="wide"] > .ucf-c-columns__grid {
+	gap: var(--ucf-spacing-80);
+}
+
+.ucf-c-columns[data-valign="center"] > .ucf-c-columns__grid {
+	align-items: center;
+}
+
+.ucf-c-columns[data-valign="stretch"] > .ucf-c-columns__grid {
+	align-items: stretch;
+}
+
+@container ucf-c-columns (min-width: 36rem) {
+	.ucf-c-columns > .ucf-c-columns__grid {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+	}
+
+	/* 1:1, the default, and three and four columns two to a row until 48rem. */
+	.ucf-c-columns > .ucf-c-columns__grid > * {
+		grid-column: span 6;
+	}
+
+	.ucf-c-columns[data-distribution="2:1"]
+		> .ucf-c-columns__grid
+		> :nth-child(odd),
+	.ucf-c-columns[data-distribution="1:2"]
+		> .ucf-c-columns__grid
+		> :nth-child(even) {
+		grid-column: span 8;
+	}
+
+	.ucf-c-columns[data-distribution="2:1"]
+		> .ucf-c-columns__grid
+		> :nth-child(even),
+	.ucf-c-columns[data-distribution="1:2"]
+		> .ucf-c-columns__grid
+		> :nth-child(odd) {
+		grid-column: span 4;
+	}
+}
+
+@container ucf-c-columns (min-width: 48rem) {
+	.ucf-c-columns[data-distribution="1:1:1"] > .ucf-c-columns__grid > * {
+		grid-column: span 4;
+	}
+
+	.ucf-c-columns[data-distribution="1:1:1:1"] > .ucf-c-columns__grid > * {
+		grid-column: span 3;
+	}
+}

@@ -7,7 +7,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import imageExample from '@/components/primitives/image/example.json';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import { Card as CardWithPresets } from '@/components/content/card/index';
 import { presetContent } from '../react/index.ts';
 import type { PartDefinitions } from '../schema/parts.ts';
@@ -161,11 +161,11 @@ describe.each( wrapped )( '%s with a preset', ( _, Component ) => {
 					<Plain
 						{ ...preset.props }
 						{ ...( preset.background && {
-							imageSrc: imageExample.url,
+							imageSrc: IMAGE_SAMPLE.url,
 						} ) }
 					>
 						{ presetContent( partDefinitions, preset as never, {
-							imageUrl: imageExample.url,
+							imageUrl: IMAGE_SAMPLE.url,
 						} ) }
 					</Plain>
 				)

@@ -17,6 +17,9 @@ import { describe, expect, it } from 'vitest';
 
 import degreeList from '@/components/live/degree-list/integrations/puck/config';
 import button from '@/components/primitives/button/integrations/puck/config';
+import code from '@/components/primitives/code/integrations/puck/config';
+import column from '@/components/primitives/column/integrations/puck/config';
+import columns from '@/components/primitives/columns/integrations/puck/config';
 import heading from '@/components/primitives/heading/integrations/puck/config';
 import image from '@/components/primitives/image/integrations/puck/config';
 import paragraph from '@/components/primitives/paragraph/integrations/puck/config';
@@ -30,6 +33,11 @@ import {
 } from '@/components/content/card/Card.presets';
 import degreeFinder from '@/components/interactive/degree-finder/integrations/puck/config';
 import eventList from '@/components/live/event-list/integrations/puck/config';
+import pullquote from '@/components/primitives/pullquote/integrations/puck/config';
+import quote from '@/components/primitives/quote/integrations/puck/config';
+import separator from '@/components/primitives/separator/integrations/puck/config';
+import list from '@/components/primitives/list/integrations/puck/config';
+import table from '@/components/primitives/table/integrations/puck/config';
 import hero, {
 	withTemplate as heroWithTemplate,
 } from '@/components/content/hero/integrations/puck/config';
@@ -41,7 +49,7 @@ import highlight, {
 	withPreset as highlightWithPreset,
 } from '@/components/content/highlight/integrations/puck/config';
 import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/Highlight.presets';
-import imageExample from '@/components/primitives/image/example.json';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import type { PuckComponentConfig } from '../puck/types.ts';
 
 type PropsOf< Config > =
@@ -58,6 +66,14 @@ const CONFIGS = {
 	Card: card,
 	Heading: heading,
 	Paragraph: paragraph,
+	Columns: columns,
+	Column: column,
+	Separator: separator,
+	Code: code,
+	Quote: quote,
+	Pullquote: pullquote,
+	List: list,
+	Table: table,
 	'Degree List': degreeList,
 };
 
@@ -73,6 +89,14 @@ image satisfies ComponentConfig< PropsOf< typeof image > >;
 card satisfies ComponentConfig< PropsOf< typeof card > >;
 heading satisfies ComponentConfig< PropsOf< typeof heading > >;
 paragraph satisfies ComponentConfig< PropsOf< typeof paragraph > >;
+columns satisfies ComponentConfig< PropsOf< typeof columns > >;
+column satisfies ComponentConfig< PropsOf< typeof column > >;
+separator satisfies ComponentConfig< PropsOf< typeof separator > >;
+code satisfies ComponentConfig< PropsOf< typeof code > >;
+quote satisfies ComponentConfig< PropsOf< typeof quote > >;
+pullquote satisfies ComponentConfig< PropsOf< typeof pullquote > >;
+list satisfies ComponentConfig< PropsOf< typeof list > >;
+table satisfies ComponentConfig< PropsOf< typeof table > >;
 degreeList satisfies ComponentConfig< PropsOf< typeof degreeList > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
@@ -89,7 +113,13 @@ const puckProps = {
 
 describe.each( Object.entries( CONFIGS ) )(
 	'the %s Puck config',
-	( _, config ) => {
+	( name, config ) => {
+		// WHY: the label is what Puck's sidebar lists it as. SYNC: the key here is the name the
+		// README tells hosts to register it under, its display name (docs/architecture.md, "Naming").
+		it( 'is labeled with its own name', () => {
+			expect( config.label ).toBe( name );
+		} );
+
 		it( 'renders the same markup with or without Puck’s own props', () => {
 			// UPSTREAM: Puck hands `render` a component for each slot prop, not the stored list.
 			const Slot = ( slotProps: object ) => <div { ...slotProps } />;
@@ -355,7 +385,7 @@ describe( 'a preset with a background in Puck', () => {
 	} );
 
 	it( 'shows the sample in the editor only', () => {
-		expect( render( true ) ).toContain( imageExample.url );
-		expect( render( false ) ).not.toContain( imageExample.url );
+		expect( render( true ) ).toContain( IMAGE_SAMPLE.url );
+		expect( render( false ) ).not.toContain( IMAGE_SAMPLE.url );
 	} );
 } );

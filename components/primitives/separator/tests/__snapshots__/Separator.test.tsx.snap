@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Separator > renders the same in WordPress and React: default 1`] = `"<hr class="ucf-c ucf-c-separator"/>"`;
+
+exports[`Separator > renders the same in WordPress and React: dots 1`] = `"<hr class="ucf-c ucf-c-separator" data-variant="dots"/>"`;
+
+exports[`Separator > renders the same in WordPress and React: wide 1`] = `"<hr class="ucf-c ucf-c-separator" data-variant="wide"/>"`;

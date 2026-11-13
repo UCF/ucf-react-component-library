@@ -20,7 +20,7 @@ The current goal is a correct development process, not a pipeline.
 1. **Finish moving every component onto prop definitions and `frame()`.**
 
     - Remove the `example.json` handling for content components from `blocks.test.tsx`,
-      `parity.test.tsx` and `scripts/build-package.mjs` (only primitives have one), and
+      `parity.test.tsx` and `scripts/build-package.mjs` (no component has one now), and
       `imageId` from `WORDPRESS_ONLY` in `parity.test.tsx` (the Hero's and Card's are in their
       props).
     - A `README.md` for the Hero and the Section, as the Card has.
@@ -28,11 +28,10 @@ The current goal is a correct development process, not a pipeline.
       image, text only) may be worth naming.
     - The examples (`examples/fixed-card`, `examples/flexible-card`) use `innerAs`; move them to
       areas.
-    - The primitives: each one's props in `{Name}.props.ts` (they are written out in its
-      adapters today) and its `example.json` into its defaults.
-    - The primitives and the Degree Finder onto the translators (architecture.md, "One
-      definition, one translator per environment"). The Degree Finder is the WordPress
-      translator's interactive path (`render.php` and `view.tsx`).
+    - The Degree Finder onto the translators (architecture.md, "One definition, one
+      translator per environment"): the WordPress translator's interactive path (`render.php`
+      and `view.tsx`). Primitives with no content of their own stay plain components
+      (architecture.md, "Primitives").
     - Drop the deprecated `withVariation` from the Card's and Highlight's Puck configs once
       ucf-puck-demo uses `withPreset`.
 
@@ -164,6 +163,47 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 
 ## Primitives to build
 
+**Core's text blocks as primitives, for Puck** (WordPress keeps the core blocks). Each one's CSS
+reproduces what the theme renders for the core block, measured on a page of every style, then
+becomes the theme's through `scripts/core-css.mjs`. Built and mapped: Separator, Code, Quote,
+Pullquote, List and Table, in `dist/theme/_core-blocks.scss`.
+
+Next: the theme loads it (`tools/sync-tokens.js` copies it, `main.scss` uses it where it uses
+`lists`) in place of `src/scss/_lists.scss`, `_table.scss`, `_quote.scss` and the
+`.wp-block-separator` rule in `_base.scss`. Checked by compiling a copy of the theme's stylesheet
+that way and diffing every computed style of these blocks against the theme's own, on the style
+guide and the admissions pages at 1440px and 390px: Lists, plain Tables, the Pullquote and the
+default and Wide separators come out the same. Show Jim first, with the Button (below). What
+changes in the theme:
+
+- **The Quote's marks:** larger and fitted to the words.
+- **Separator dots and the Code border:** core's fixed grays become roles (`line-strong`, `line`).
+
+- **Stripes on a dark section:** core bands rows in a fixed light gray, so white text on them
+  can't be read. Ours bands in the `raised` role.
+- **Compare on a phone:** the theme holds the first column but not its header cell, which scrolls
+  away. Ours holds both.
+- **A captioned table's role (the theme's `includes/tables.php`, not synced):** it gives every
+  table's figure `role="region"`, which axe rejects on a figure with a caption
+  (`aria-allowed-role`). Ours adds the role only when there is no caption.
+
+Still to do for the Table. Its job for now is to carry the theme's table styles to both hosts;
+WordPress editors use core Table, whose editing already covers these. Puck's table editing waits
+until it is needed:
+
+- **Compare reads as a restyle:** it is the theme's comparison table (two to four options side by
+  side, the questions in the first column, at full width; the theme's `patterns/comparison.php`),
+  but its story and Puck show the deadlines sample, which isn't a comparison. Give it the
+  pattern's content, and say what each style is for in the Style field's help.
+- **Fixed-width columns:** core's default (`hasFixedLayout`) gives equal columns that wrap long
+  words; ours sizes columns to their content, as core does with the setting off.
+- **Header cells in the body and a footer row:** the theme styles both; the rows format can't
+  write them.
+- **Numbers in a column:** the theme sets a right-aligned column (core's column alignment) in the
+  mono face. Ours has no alignment setting yet.
+- **The Compare caption** scrolls sideways with the table on a phone, in the theme and ours. It
+  could sit outside the scrolling area, which needs a wrapper core doesn't write.
+
 Components are built from primitives in `components/primitives/` (architecture.md,
 "Primitives"). Roughly in order of need:
 
@@ -171,10 +211,12 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
     - A Buttons group, the trailing-arrow variant from the hero designs, and `RichText` for the
       label if editors need bold or italics.
-    - Its measurements are shared tokens (`tokens.json` `custom` `button-*`), but its rules are
-      written both here and in the theme. Generate the theme's button CSS from ours, with a
-      screenshot test comparing a core Button and ours. Show Jim first: it moves the core
-      Button's look from the theme to the library.
+    - The theme to use its generated CSS (`dist/theme/_core-blocks.scss`, from this
+      primitive's `style.css`) in place of its own `src/scss/_buttons.scss`: `tools/sync-tokens.js`
+      copies the file, `main.scss` loads it. Show Jim first: it moves the core Button's look from
+      the theme to the library. On the theme's pages it matches every core Button at rest and on
+      hover but one way: Outline buttons get the Fill's padding, as the theme intends; core's own
+      Outline style shrinks it today.
     - PERF: its CSS ships with each block that uses it. Once several blocks use primitives, put
       every primitive's `style.css` in the plugins' shared `base.css`, which loads once.
     - Behavior for interactive pieces: pick an unstyled library (React Aria first, Base UI as
@@ -182,14 +224,21 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
 1. **Image** (built, used by the Card). Still to do: a Figure with a caption; the host's image
    component (`next/image`) through a slot; and moving the Hero onto it.
-1. **Columns and Column:** a column count, ratio, gap and stacking width, with a Puck slot per
-   column. Match P1's Columns setting names.
+1. **Columns in WordPress** (the primitive is built, for Puck and React sites). WordPress
+   editors place core Columns in a Section. Still to do:
+
+    - The theme's core Columns styles to match the primitive's: its gaps (spacing 40, 60, 80)
+      and its stacking (one column below 36rem of Columns), so a layout looks the same in both.
+    - A `columns` part kind for frames' templates, written to core Columns in WordPress:
+      `distribution` as each Column's width (`2:1` is 66.66% and 33.33%), `gap` as
+      `style.spacing.blockGap`, `valign` as `verticalAlignment`.
+
 1. **Cover / Hero frame:** media, scrim, height, split, patterns inside.
 1. **Lock core down** in the plugin: the allowed block list, and core's design controls off.
    Do it alongside the next primitive.
 1. **Heading and Paragraph** (built, for the frames' Puck templates). Their rules copy
-   `styles/elements.css` (`SYNC:`); generate one from the other, or have elements.css style
-   these classes too. Decide whether Paragraph needs a Lead size.
+   the values in `tokens/elements.json` (`SYNC:`); generate their CSS from it, as elements.css
+   is. Decide whether Paragraph needs a Lead size.
 
 ## Section
 
@@ -208,12 +257,18 @@ blocks. Compare the two first. Also check our configs against Puck 0.21 (the typ
 
 ## Element styles
 
-`styles/elements.css` gives React hosts the block theme's headings, body copy, links and
-captions. Its rules are copied by hand from the theme's `theme.json` and `_typography.scss`, so
-they can drift. Two ways to fix that:
+`tokens/elements.json` is the one source for the element styles (architecture.md, "Tokens,
+roles and fonts"). The theme's side is still to do, on its `tokens-from-ucf-components` branch,
+with Jim's agreement:
 
-- **One source for both:** element styles in `tokens.json`, generating this stylesheet and the
-  theme's `styles.elements`, as the compositions already are. Needs Jim's agreement.
+- **Check `styles` in `tools/sync-tokens.js`:** compare theme.json `styles.typography` and
+  `styles.elements` with the kit's `styles`, as it compares presets, so the theme fails while
+  they differ.
+- **Read the link tokens in `src/scss/_typography.scss`:** `var(--wp--custom--link-underline)`,
+  `link-underline-hover` and `link-underline-offset` in place of `1px`, `2px` and `0.2em`, after
+  `sync:tokens` adds them to theme.json `settings.custom`.
+- **The button element** (theme.json `styles.elements.button`) joins elements.json with the
+  Button primitive's move to the library.
 - **A Tailwind preset** from `tokens.json`, so React sites style pages with the same values.
   WordPress doesn't use Tailwind, so the theme and plugins would still need the plain CSS. A
   middle way: keep components on plain CSS, and ship a preset only as a convenience for sites,

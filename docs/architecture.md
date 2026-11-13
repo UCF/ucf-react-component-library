@@ -385,14 +385,17 @@ change its markup), we own it**, as a component here with the same markup in eve
 
 | Use core: it is just the element                 | Own it: structure we must control                  |
 | ------------------------------------------------ | -------------------------------------------------- |
-| Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group), Columns and Column    |
+| Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group)                        |
 | Table (styled by `elements.css`; see below)      | Cover / Hero, Buttons and Button, Image and Figure |
+| Columns and Column (a primitive in Puck)         |                                                    |
 |                                                  | Media and text, Gallery, Details / Accordion, Tabs |
 
 - **WHY core for plain text:** Paragraph, Heading and List save bare `<p>`, `<h2>`, `<ul>`, the
   same elements Puck and Next render, so they are already at parity, and rebuilding their
-  editing (levels, anchors, splitting, pasting) would gain nothing. `elements.css` styles them in
-  React hosts; the theme does in WordPress.
+  editing (levels, anchors, splitting, pasting) would gain nothing. In WordPress they stay core
+  blocks, which the theme styles. Puck has no core blocks, so each is also a primitive Puck
+  editors place (the Separator, Code, Quote, Pullquote, List and Table), whose CSS reproduces
+  the theme's and, through `scripts/core-css.mjs`, becomes it (see "Primitives").
 - **WHY our own for the rest:** core's markup carries wrappers and classes we don't choose,
   global styles inject inline CSS, its design controls let editors break the system, and
   WordPress changes it between releases. A core block and a Puck component can never share a
@@ -429,8 +432,11 @@ content, so in WordPress it holds core blocks (see "Frames").
 | A content editor, or a frame's area | Core blocks (Button, Image…)    | Our primitives   |
 | A component's own markup (the Card) | Our primitives, in their markup | Our primitives   |
 
-- **A primitive is a component:** a core, `style.css`, stories, a markup test and a Puck config,
-  where Puck editors place it, since Puck has no core blocks. It has **no WordPress block**:
+- **A primitive is a component:** a core, a `{Name}.props.ts`, `style.css`, stories, a markup
+  test and a Puck config, where Puck editors place it, since Puck has no core blocks. Its Puck
+  fields, its story controls and their defaults are built from its props, as a content
+  component's are; its sample is its props' defaults. The Image's sample picture is also the
+  stand-in wherever a component needs one (`IMAGE_SAMPLE`). It has **no WordPress block**:
   WordPress editors use core's equivalent. Instead it has `integrations/wp/edit.tsx`, its editing
   version, which our blocks' `edit()` renders where their `save()` renders the plain primitive.
   With no block, its `style.css` reaches WordPress only through each block that uses it: that
@@ -441,10 +447,21 @@ content, so in WordPress it holds core blocks (see "Frames").
   version uses core's tools (`PlainText` or `RichText`, `LinkControl`, `MediaUpload`). An editor
   who knows core's Button knows ours, and content can move between them.
 - **Its markup and styles are ours,** from our tokens, the same in every host. Core blocks an
-  editor places are styled by the theme; keep the two looking alike through the tokens both
-  read.
+  editor places are styled by the theme. Where a primitive stands in for a core block, its CSS
+  is also the theme's for that block: `scripts/core-css.mjs` rewrites it for core's markup
+  (`.ucf-c-button[data-variant="outline"]` as `.wp-block-button.is-style-outline >
+.wp-block-button__link`, our roles as the theme's) into the theme's kit,
+  `dist/theme/_core-blocks.scss`. A selector or token it can't map fails the build. It maps the
+  Button, List, Table, Quote, Pullquote, Separator and Code. In WordPress the layout spaces
+  blocks, so a block's own top and bottom margins are left out; and where core's CSS for a block
+  loads after the theme's at the same specificity, each rule names the block's class twice.
 - **The dependency goes one way:** components import primitives; primitives never import
-  components. Both import `integrations/` (primitives only its type-only Puck config shape).
+  components. Both import `integrations/`'s schema and Puck helpers, which import no component,
+  so nothing loops back.
+- **A primitive with no content of its own stays a plain component** (the Button, Heading,
+  Image, Paragraph): it takes settings and renders one element, with nothing for a host to fill,
+  so it needs no `frame()`. Its editing version for our blocks stays its own
+  `integrations/wp/edit.tsx`.
 - **WHY primitives rather than each component drawing its own:** one Button in every component
   is what stops buttons and inputs drifting apart.
 - **The cost:** a component saves its primitives' markup inside its own. Changing a primitive's
@@ -454,6 +471,17 @@ content, so in WordPress it holds core blocks (see "Frames").
   fail for each one, so none is missed.
 - **Not for behavior.** Interactive pieces (a combobox, a dialog) take their behavior from an
   unstyled library in interactive components only; not chosen yet (docs/todo.md).
+- **A primitive that holds content is built with `frame()`,** with `kind: 'primitive'` and no
+  block (the Columns and the Column). Its content area is where a host puts content, so in Puck
+  the slot renders as that element: the Columns's slot is its grid, and each Column dropped in
+  is a grid item. Its settings are a `{Name}.props.ts`, as a content component's are.
+  In Puck a host uses the Columns through `withColumns( 'Column' )` and the Column through
+  `inColumns( 'Column' )`, naming the key it registered the Column under: only Columns go in a
+  Columns, picking a distribution adds the empty Columns it names (never removing one), and a
+  Column can't hold a Column.
+  WHY not core's names for the Columns: it lays out on a 12-column grid with five named
+  distributions (P1's names), not free widths, so every page lines up. WordPress editors place
+  core Columns instead, which the theme styles (docs/todo.md).
 
 ## Frames
 
@@ -644,9 +672,18 @@ stylesheet work in every host.
 
 **Plain elements are the host's, with one opt-in.** Components style only their own classes;
 headings, body copy and links are styled by the host (the block theme in WordPress). For React
-hosts, `@ucf/components/elements.css` (`styles/elements.css`) copies the theme's element styles,
-scoped to a Section or `.ucf-elements` and at zero specificity, so it never restyles a site's own
-chrome or beats a component. Storybook and the Puck demo load it.
+hosts, `@ucf/components/elements.css` gives them the theme's element styles, scoped to a Section
+or `.ucf-elements` and at zero specificity, so it never restyles a site's own chrome or beats a
+component. Storybook and the Puck demo load it.
+
+**Element styles are data, like the roles.** `tokens/elements.json` holds them in theme.json's
+own shape (`elements.h2.typography.fontSize`), naming tokens (`{font-size.heading-2}`) and roles
+(`{role.link}`). `npm run build:tokens` (scripts/elements.mjs) writes them twice: as
+`dist/tokens/elements.css` for React hosts, and as `styles` in the theme's kit
+(`dist/theme/theme-json.json`), which the theme's `check:tokens` compares with its theme.json.
+What theme.json can't express (underline thickness, `text-wrap`, colors on `p` and `li`) sits in
+each element's `css` entry: React hosts get it, and the theme writes its own in SCSS, reading the
+same tokens (`custom.link-underline` and the rest).
 
 **Layout widths are tokens too** (`tokens.json` `layout`: `content` 720px, `wide` 1240px, read as
 `--ucf-layout-content` and `--ucf-layout-wide`). In WordPress they point at the active theme's
@@ -841,6 +878,10 @@ Things in the tools that look wrong and aren't. Don't "clean them up".
   (`tsc`) rewrites `.ts` and `.tsx` to `.js` only in relative imports, and refuses a `.ts` or
   `.tsx` ending on any other (TS2877). So an `@/` import names no ending: TypeScript, Vite and
   webpack find the file, and tsc-alias adds `.js` when it rewrites `dist/`.
+- **Storybook's test plugin sizes the page itself.** Before each story it sets 1200 × 900 unless
+  the story's `viewport` global names one of its viewports, so Vitest's `browser.viewport` alone
+  does nothing. `.storybook/viewports.mts` names the three test widths, `preview.ts` selects the
+  project's, and `vitest.setup.ts` fails a story that didn't render at it.
 - **The root `package.json` is not `"type": "module"`.** wp-scripts loads the webpack and
   ESLint configs as CommonJS. `dist/package.json` sets it for the package instead.
 

@@ -1,0 +1,129 @@
+/*
+ * CONTEXT: the Table's styles, for every host and every component that uses it.
+ *
+ * SPEC: core Table as the UCF theme renders it (src/scss/_table.scss there): hairline rows, a
+ * heavy rule under the header, the caption as its title on top. Space around it is the
+ * container's, as for every primitive.
+ * A11Y: the caption moves up visually only, with flex order. A `<figcaption>` names its figure
+ * wherever it sits in the source.
+ * WHY `overflow-x: auto`: core's own, so a table wider than its column scrolls inside its figure.
+ */
+.ucf-c-table {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	overflow-x: auto;
+}
+
+.ucf-c-table:focus-visible {
+	outline: var(--ucf-custom-focus-width) solid var(--ucf-c-focus);
+	outline-offset: 2px;
+}
+
+.ucf-c-table > figcaption {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-heading-5);
+	font-weight: 800;
+	line-height: 1.55;
+	margin: 0 0 var(--ucf-spacing-30);
+	order: -1;
+	text-align: left;
+}
+
+/* SPEC: the theme's size for core Table (theme.json), which core applies to the table, not its
+   figure. */
+.ucf-c-table > table {
+	border-collapse: collapse;
+	font-size: var(--ucf-font-size-data-lg);
+	width: 100%;
+}
+
+.ucf-c-table th,
+.ucf-c-table td {
+	border: 0;
+	border-bottom: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
+	color: var(--ucf-c-body);
+	padding: var(--ucf-spacing-30) var(--ucf-spacing-40);
+	text-align: left;
+	vertical-align: top;
+}
+
+.ucf-c-table thead th {
+	border-bottom: var(--ucf-custom-border-control) solid var(--ucf-c-body);
+	font-weight: 800;
+}
+
+/* UPSTREAM: core rules off its header and footer with 3px borders; here the header's rule is
+   its cells', and a footer has none. */
+.ucf-c-table thead,
+.ucf-c-table tfoot {
+	border: 0;
+}
+
+/* SPEC: a row's own header cell, which core Table writes and the rows setting doesn't yet. */
+.ucf-c-table tbody th {
+	font-weight: 700;
+}
+
+/* SPEC: a column of figures: right-aligned in the mono face, its digits one width. The hook is
+   core's column alignment, which an editor already sets for figures; the rows setting has no
+   alignment yet (docs/todo.md). */
+.ucf-c-table .has-text-align-right {
+	font-family: var(--ucf-font-family-mono);
+	font-variant-numeric: tabular-nums;
+	font-weight: 500;
+	text-align: right;
+}
+
+/*
+ * SPEC: core's Stripes: alternate rows banded, no rules between them.
+ * WHY `raised`: core bands in a fixed light gray, the same on every section, so on a dark one
+ * the white text on it can't be read. A role follows the section; `raised` is core's gray on light.
+ */
+.ucf-c-table[data-variant="stripes"] {
+	border-bottom: var(--ucf-custom-border-hairline) solid var(--ucf-c-raised);
+}
+
+.ucf-c-table[data-variant="stripes"] tbody tr:nth-child(odd) {
+	background-color: var(--ucf-c-raised);
+}
+
+.ucf-c-table[data-variant="stripes"] th,
+.ucf-c-table[data-variant="stripes"] td {
+	border-color: transparent;
+}
+
+/* SPEC: the comparison table: two to four options side by side, the first column held in place
+   while the table scrolls sideways on a phone. */
+.ucf-c-table[data-variant="compare"] {
+	border-bottom: var(--ucf-custom-border-control) solid var(--ucf-c-body);
+}
+
+.ucf-c-table[data-variant="compare"] > table {
+	min-width: 720px;
+}
+
+.ucf-c-table[data-variant="compare"] thead th {
+	font-family: var(--ucf-font-family-display);
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
+	text-transform: uppercase;
+	vertical-align: bottom;
+}
+
+/* WHY the section's own color behind the held column: rows would scroll visibly under it.
+   FIX: its header cell held too; it scrolled away, leaving the column unlabeled. */
+.ucf-c-table[data-variant="compare"] tbody td:first-child,
+.ucf-c-table[data-variant="compare"] thead th:first-child {
+	background-color: var(--ucf-c-surface);
+	left: 0;
+	position: sticky;
+}
+
+.ucf-c-table[data-variant="compare"] tbody td:first-child {
+	font-weight: 800;
+	width: 22%;
+}

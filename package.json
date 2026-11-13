@@ -55,7 +55,6 @@
 			"types": "./dist/components/primitives/button/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/button/integrations/puck/config.js"
 		},
-		"./primitives/button/example.json": "./dist/components/primitives/button/example.json",
 		"./primitives/image": {
 			"types": "./dist/components/primitives/image/index.d.ts",
 			"default": "./dist/components/primitives/image/index.js"
@@ -64,7 +63,6 @@
 			"types": "./dist/components/primitives/image/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/image/integrations/puck/config.js"
 		},
-		"./primitives/image/example.json": "./dist/components/primitives/image/example.json",
 		"./card": {
 			"types": "./dist/components/content/card/index.d.ts",
 			"default": "./dist/components/content/card/index.js"
@@ -81,7 +79,6 @@
 			"types": "./dist/components/primitives/heading/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/heading/integrations/puck/config.js"
 		},
-		"./primitives/heading/example.json": "./dist/components/primitives/heading/example.json",
 		"./primitives/paragraph": {
 			"types": "./dist/components/primitives/paragraph/index.d.ts",
 			"default": "./dist/components/primitives/paragraph/index.js"
@@ -90,7 +87,6 @@
 			"types": "./dist/components/primitives/paragraph/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/paragraph/integrations/puck/config.js"
 		},
-		"./primitives/paragraph/example.json": "./dist/components/primitives/paragraph/example.json",
 		"./event-list": {
 			"types": "./dist/components/live/event-list/index.d.ts",
 			"default": "./dist/components/live/event-list/index.js"
@@ -106,6 +102,70 @@
 		"./degree-list/puck": {
 			"types": "./dist/components/live/degree-list/integrations/puck/config.d.ts",
 			"default": "./dist/components/live/degree-list/integrations/puck/config.js"
+		},
+		"./primitives/columns": {
+			"types": "./dist/components/primitives/columns/index.d.ts",
+			"default": "./dist/components/primitives/columns/index.js"
+		},
+		"./primitives/columns/puck": {
+			"types": "./dist/components/primitives/columns/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/columns/integrations/puck/config.js"
+		},
+		"./primitives/column": {
+			"types": "./dist/components/primitives/column/index.d.ts",
+			"default": "./dist/components/primitives/column/index.js"
+		},
+		"./primitives/column/puck": {
+			"types": "./dist/components/primitives/column/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/column/integrations/puck/config.js"
+		},
+		"./primitives/separator": {
+			"types": "./dist/components/primitives/separator/index.d.ts",
+			"default": "./dist/components/primitives/separator/index.js"
+		},
+		"./primitives/separator/puck": {
+			"types": "./dist/components/primitives/separator/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/separator/integrations/puck/config.js"
+		},
+		"./primitives/code": {
+			"types": "./dist/components/primitives/code/index.d.ts",
+			"default": "./dist/components/primitives/code/index.js"
+		},
+		"./primitives/code/puck": {
+			"types": "./dist/components/primitives/code/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/code/integrations/puck/config.js"
+		},
+		"./primitives/quote": {
+			"types": "./dist/components/primitives/quote/index.d.ts",
+			"default": "./dist/components/primitives/quote/index.js"
+		},
+		"./primitives/quote/puck": {
+			"types": "./dist/components/primitives/quote/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/quote/integrations/puck/config.js"
+		},
+		"./primitives/pullquote": {
+			"types": "./dist/components/primitives/pullquote/index.d.ts",
+			"default": "./dist/components/primitives/pullquote/index.js"
+		},
+		"./primitives/pullquote/puck": {
+			"types": "./dist/components/primitives/pullquote/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/pullquote/integrations/puck/config.js"
+		},
+		"./primitives/list": {
+			"types": "./dist/components/primitives/list/index.d.ts",
+			"default": "./dist/components/primitives/list/index.js"
+		},
+		"./primitives/list/puck": {
+			"types": "./dist/components/primitives/list/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/list/integrations/puck/config.js"
+		},
+		"./primitives/table": {
+			"types": "./dist/components/primitives/table/index.d.ts",
+			"default": "./dist/components/primitives/table/index.js"
+		},
+		"./primitives/table/puck": {
+			"types": "./dist/components/primitives/table/integrations/puck/config.d.ts",
+			"default": "./dist/components/primitives/table/integrations/puck/config.js"
 		}
 	},
 	"files": [
@@ -135,7 +195,7 @@
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
 		"lint:js": "wp-scripts lint-js integrations components examples scripts .storybook webpack.config.js",
-		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\" \"styles/**/*.css\"",
+		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",

@@ -5,4 +5,5 @@
 /** Set per story-test project in vitest.config.mts; unset in Storybook itself. */
 interface ImportMetaEnv {
 	readonly VITE_UCF_COMPOSITION?: string;
+	readonly VITE_UCF_VIEWPORT?: string;
 }

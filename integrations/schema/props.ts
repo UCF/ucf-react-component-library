@@ -32,10 +32,13 @@ export type ChoiceProp = Field & {
 	default: string;
 };
 
-/** Free text. `control: 'media'`: an image's URL, which WordPress picks from its media library. */
+/**
+ * Free text. `control: 'multiline'`: a box for a paragraph or more. `control: 'media'`: an image's
+ * URL, which WordPress picks from its media library.
+ */
 export type TextProp = Field & {
 	type: 'text';
-	control?: 'text' | 'media';
+	control?: 'text' | 'multiline' | 'media';
 	/** For a media control: what the image is for, and the ID and alt props it also sets. */
 	media?: { what: string; id: string; alt: string };
 	default: string;

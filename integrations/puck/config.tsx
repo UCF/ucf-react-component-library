@@ -81,7 +81,14 @@ function fieldOf(
 					...option,
 				} ) ),
 			}
-		: { type: 'text', label: definition.label };
+		: {
+				type:
+					'control' in definition &&
+					definition.control === 'multiline'
+						? 'textarea'
+						: 'text',
+				label: definition.label,
+			};
 }
 
 // ── The config ─────────────────────────────────────────────────────────────────────────────────

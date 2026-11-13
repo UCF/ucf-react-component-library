@@ -11,11 +11,12 @@ import type { SectionProps } from '../components/content/section/Section.tsx';
 import type { Composition } from '../integrations/schema/compositions.ts';
 import '../components/content/section/style.css';
 import tokens from '../tokens/tokens.json';
+import { STORYBOOK_VIEWPORTS } from './viewports.mts';
 // WHY base.css, not the package's ucf.css: stories import their component's source style.css,
 // so a CSS edit shows without rebuilding the package.
 import '../dist/tokens/base.css';
 // WHY: headings and copy in a story look as they do on a UCF page, as in the block theme.
-import '../styles/elements.css';
+import '../dist/tokens/elements.css';
 
 // WHY read from tokens.json: a composition added there shows up in the toolbar with no
 // second edit.
@@ -84,9 +85,20 @@ const preview: Preview = {
 	initialGlobals: {
 		composition: import.meta.env.VITE_UCF_COMPOSITION ?? 'light',
 		width: 'default',
+		// FIX: the story tests' width (.storybook/viewports.mts says why). Unset in Storybook.
+		...( import.meta.env.VITE_UCF_VIEWPORT
+			? {
+					viewport: {
+						value: `ucf-${ import.meta.env.VITE_UCF_VIEWPORT }`,
+						isRotated: false,
+					},
+				}
+			: {} ),
 	},
 	decorators: [ withSection ],
 	parameters: {
+		// The three tested widths, in Storybook's viewport menu as in the story tests.
+		viewport: { options: STORYBOOK_VIEWPORTS },
 		// WHY fullscreen: the Section is a full-width band with its own padding.
 		layout: 'fullscreen',
 		// WHY: content, live, interactive, the order the architecture doc explains them in.

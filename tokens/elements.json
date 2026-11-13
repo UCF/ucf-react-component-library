@@ -1,0 +1,130 @@
+{
+	"$description": "The UCF block theme's styles for plain elements (body copy, headings, links, captions), as data, so the theme and React hosts read one source. scripts/build-tokens.mjs writes them twice: into dist/theme/theme-json.json as theme.json `styles` (references become --wp--preset--* and --wp--custom--*), and into dist/tokens/elements.css for React hosts (references become --ucf-*). Each element is in theme.json's shape. `{group.slug}` names a token in tokens.json; `{role.name}` names a role, which follows the section it sits in. `css` holds what theme.json can't express (underline thickness, text-wrap, colors on p and li): React hosts get it here, and the theme writes it in its own SCSS. SYNC: the theme's tools/sync-tokens.js checks its theme.json `styles` against the kit.",
+	"root": {
+		"typography": {
+			"fontFamily": "{font-family.body}",
+			"fontSize": "{font-size.body}",
+			"lineHeight": "1.65"
+		},
+		"css": {
+			"-webkit-font-smoothing": "antialiased",
+			"text-rendering": "optimizelegibility"
+		}
+	},
+	"elements": {
+		"heading": {
+			"typography": {
+				"fontFamily": "{font-family.display}",
+				"fontWeight": "600",
+				"letterSpacing": "0.01em",
+				"lineHeight": "1.1",
+				"textTransform": "uppercase"
+			},
+			"css": {
+				"$description": "A11Y: a role, so a heading in a Dark section is white, not black on black.",
+				"color": "{role.heading}",
+				"text-wrap": "balance"
+			}
+		},
+		"h1": {
+			"typography": {
+				"fontSize": "{font-size.heading-1}",
+				"fontWeight": "700",
+				"lineHeight": "0.98"
+			}
+		},
+		"h2": {
+			"typography": {
+				"fontSize": "{font-size.heading-2}",
+				"lineHeight": "1.04"
+			}
+		},
+		"h3": {
+			"typography": {
+				"fontSize": "{font-size.heading-3}",
+				"lineHeight": "1.1"
+			}
+		},
+		"h4": {
+			"$description": "SPEC: h4 to h6 are body type, not display: sentence case, heavier.",
+			"typography": {
+				"fontFamily": "{font-family.body}",
+				"letterSpacing": "0",
+				"textTransform": "none",
+				"fontSize": "{font-size.heading-4}",
+				"fontWeight": "800",
+				"lineHeight": "1.3"
+			}
+		},
+		"h5": {
+			"typography": {
+				"fontFamily": "{font-family.body}",
+				"letterSpacing": "0",
+				"textTransform": "none",
+				"fontSize": "{font-size.heading-5}",
+				"fontWeight": "700",
+				"lineHeight": "1.4"
+			}
+		},
+		"h6": {
+			"typography": {
+				"fontFamily": "{font-family.body}",
+				"letterSpacing": "0.01em",
+				"textTransform": "none",
+				"fontSize": "{font-size.heading-6}",
+				"fontWeight": "700",
+				"lineHeight": "1.4"
+			}
+		},
+		"link": {
+			"color": {
+				"text": "{role.link}"
+			},
+			"typography": {
+				"textDecoration": "underline"
+			},
+			"css": {
+				"text-decoration-thickness": "{custom.link-underline}",
+				"text-underline-offset": "{custom.link-underline-offset}",
+				"transition": "color 0.15s ease"
+			},
+			":hover": {
+				"$description": "SPEC: hover thickens the underline as well as changing color, so it never relies on hue.",
+				"color": {
+					"text": "{role.link-hover}"
+				},
+				"typography": {
+					"textDecoration": "underline"
+				},
+				"css": {
+					"text-decoration-thickness": "{custom.link-underline-hover}"
+				}
+			},
+			":focus": {
+				"typography": {
+					"textDecoration": "underline"
+				}
+			}
+		},
+		"caption": {
+			"color": {
+				"text": "{role.muted}"
+			},
+			"typography": {
+				"fontFamily": "{font-family.mono}",
+				"fontSize": "{font-size.data}",
+				"lineHeight": "1.55"
+			}
+		}
+	},
+	"text": {
+		"$description": "Rules for elements theme.json has no entry for. React hosts get them in elements.css; the theme writes its own.",
+		"p, li": {
+			"$description": "WHY a role: copy follows the composition it sits in, as headings and links do.",
+			"color": "{role.body}"
+		},
+		"li": {
+			"margin-bottom": "2px"
+		}
+	}
+}

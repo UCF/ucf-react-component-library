@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Columns > renders the same in WordPress and React: defaults 1`] = `"<div class="ucf-c-columns"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: four 1`] = `"<div class="ucf-c-columns" data-distribution="1:1:1:1"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: three 1`] = `"<div class="ucf-c-columns" data-distribution="1:1:1"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: tight, centered 1`] = `"<div class="ucf-c-columns" data-gap="tight" data-valign="center"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: two, left wider 1`] = `"<div class="ucf-c-columns" data-distribution="2:1"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: two, right wider 1`] = `"<div class="ucf-c-columns" data-distribution="1:2"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: wide, stretched 1`] = `"<div class="ucf-c-columns" data-gap="wide" data-valign="stretch"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;
+
+exports[`Columns > renders the same in WordPress and React: with an id and a class 1`] = `"<div id="facts" class="is-featured ucf-c-columns"><div class="ucf-c-columns__grid"><div class="ucf-c-column"><div class="ucf-c-column__content"><p>One</p></div></div><div class="ucf-c-column"><div class="ucf-c-column__content"><p>Two</p></div></div></div></div>"`;

@@ -1,37 +1,18 @@
 /**
- * The Heading for Puck, where editors place it on its own: Puck has no core blocks.
- *
- * WHY the level is a string here: Puck's select options are strings; the Heading takes a number,
- * as core stores it.
+ * The Heading for Puck, where editors place it on its own: Puck has no core blocks. Its fields and
+ * defaults are its props (Heading.props.ts).
  */
 import Heading, { type HeadingLevel } from '../../Heading.tsx';
-// WHY a type from components/: the one copy of Puck's config shape. Types only; erased at build.
+import { puckFields } from '@/integrations/puck/config';
+// WHY a type from integrations/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/integrations/puck/types';
+import { defaultsIn } from '@/integrations/schema/props';
+import { PROPS, type HeadingEditableProps } from '../../Heading.props.ts';
 
-type Props = {
-	content: string;
-	className: string;
-	level: `${ HeadingLevel }`;
-};
-
-const config: PuckComponentConfig< Props > = {
+const config: PuckComponentConfig< HeadingEditableProps > = {
 	label: 'Heading',
-	fields: {
-		content: { type: 'text', label: 'Text' },
-		// WHY: core's "Additional CSS class(es)". A component's template names a part with it
-		// (the Highlight's statement, the Hero's title), the same class WordPress's template sets, so
-		// the part looks the same in both hosts.
-		className: { type: 'text', label: 'CSS class' },
-		level: {
-			type: 'select',
-			label: 'Level',
-			options: [ '1', '2', '3', '4', '5', '6' ].map( ( value ) => ( {
-				value,
-				label: `H${ value }`,
-			} ) ),
-		},
-	},
-	defaultProps: { content: 'Heading', level: '2', className: '' },
+	fields: puckFields( PROPS ),
+	defaultProps: defaultsIn( PROPS, 'puck' ),
 	// FIX: only the primitive's own props; Puck's `id`, `puck` and `editMode` would reach the
 	// markup.
 	render: ( { content, level, className } ) => (

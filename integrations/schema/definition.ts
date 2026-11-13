@@ -27,9 +27,11 @@ export type ComponentDefinition<
 	title: string;
 	/**
 	 * Content (saved as HTML), live (written by the server on each request) or interactive
-	 * (built in the browser): its bucket. SYNC: Kind in integrations/wp/kind.ts.
+	 * (built in the browser): its bucket. SYNC: Kind in integrations/wp/kind.ts. Or primitive:
+	 * a piece Puck and React sites place, with no WordPress block of its own (the Columns);
+	 * WordPress editors use core's equivalent (docs/architecture.md, "Primitives").
 	 */
-	kind: 'content' | 'live' | 'interactive';
+	kind: 'content' | 'live' | 'interactive' | 'primitive';
 
 	// What it takes
 

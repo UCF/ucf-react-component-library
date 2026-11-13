@@ -26,6 +26,7 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
+import { VIEWPORTS } from './.storybook/viewports.mts';
 import tokens from './tokens/tokens.json' with { type: 'json' };
 
 const dirname = path.dirname( fileURLToPath( import.meta.url ) );
@@ -34,13 +35,6 @@ const dirname = path.dirname( fileURLToPath( import.meta.url ) );
 const COMPOSITIONS = Object.keys( tokens.composition ).filter(
 	( key ) => ! key.startsWith( '$' )
 );
-
-// SPEC: the same three widths as the UCF block themes' accessibility suites.
-const VIEWPORTS = {
-	desktop: { width: 1280, height: 900 },
-	tablet: { width: 780, height: 1024 },
-	mobile: { width: 360, height: 740 },
-};
 
 export default defineConfig( {
 	// SYNC: `@/`, the repo root, as tsconfig.json `paths` defines it. Every project extends this.
@@ -85,6 +79,10 @@ export default defineConfig( {
 					define: {
 						'import.meta.env.VITE_UCF_COMPOSITION':
 							JSON.stringify( composition ),
+						// SYNC: .storybook/preview.ts sizes every story to this width, and
+						// .storybook/vitest.setup.ts checks that it did (.storybook/viewports.mts).
+						'import.meta.env.VITE_UCF_VIEWPORT':
+							JSON.stringify( width ),
 					},
 					test: {
 						name: `storybook:${ composition }:${ width }`,

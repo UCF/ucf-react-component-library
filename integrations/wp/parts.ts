@@ -9,7 +9,7 @@
  * text.
  */
 
-import imageExample from '@/components/primitives/image/example.json';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import { unhandledPart, type ResolvedPart } from '../schema/parts.ts';
 
 // ── Parts → blocks ─────────────────────────────────────────────────────────────────────────────
@@ -54,7 +54,7 @@ export function toBlocks(
 						...( part.alt !== undefined && { alt: part.alt } ),
 						...( part.url !== undefined && { url: part.url } ),
 						...( sample && {
-							url: part.url ?? imageExample.url,
+							url: part.url ?? IMAGE_SAMPLE.url,
 							alt: part.alt ?? '',
 						} ),
 					},

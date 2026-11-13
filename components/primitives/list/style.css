@@ -1,0 +1,113 @@
+/*
+ * CONTEXT: the List's styles, for every host and every component that uses it.
+ *
+ * SPEC: core List as the UCF theme renders it (src/scss/_lists.scss there): gold square bullets,
+ * numerals in the display face, and the theme's four styles. Space around it is the container's,
+ * as for every primitive.
+ * WHY `::marker`, not a drawn `::before`: the marker honors an ordered list's `start` and
+ * `reversed`, which core writes.
+ */
+.ucf-c-list {
+	margin-block: 0;
+}
+
+ul.ucf-c-list {
+	list-style-type: square;
+}
+
+ul.ucf-c-list > li::marker {
+	color: var(--ucf-c-accent);
+}
+
+ol.ucf-c-list > li::marker {
+	color: var(--ucf-c-heading);
+	font-family: var(--ucf-font-family-display);
+	font-weight: 600;
+}
+
+.ucf-c-list > li + li {
+	margin-top: var(--ucf-spacing-30);
+}
+
+/* SPEC: a requirement the reader must meet. The check is drawn, not a glyph, so it needs no
+   font; it takes the body color, which clears contrast on every section. */
+.ucf-c-list[data-variant="check"] {
+	list-style: none;
+	padding-left: 0;
+}
+
+.ucf-c-list[data-variant="check"] > li {
+	padding-left: 1.75em;
+	position: relative;
+}
+
+.ucf-c-list[data-variant="check"] > li::before {
+	border-bottom: 3px solid var(--ucf-c-body);
+	border-right: 3px solid var(--ucf-c-body);
+	content: "";
+	height: 0.75em;
+	left: 0.35em;
+	position: absolute;
+	top: 0.3em;
+	transform: rotate(40deg);
+	width: 0.4em;
+}
+
+/* SPEC: hairline-separated rows, for link lists and short facts; no marker. */
+.ucf-c-list[data-variant="divided"] {
+	list-style: none;
+	padding-left: 0;
+}
+
+.ucf-c-list[data-variant="divided"] > li {
+	border-bottom: var(--ucf-custom-border-hairline) solid var(--ucf-c-line);
+	margin: 0;
+	padding-block: var(--ucf-spacing-30);
+}
+
+/* SPEC: short labels in a row, each a square chip with a hairline border: a profile's expertise
+   or a program's attributes, never a link list. */
+.ucf-c-list[data-variant="tags"] {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ucf-spacing-20);
+	list-style: none;
+	padding-left: 0;
+}
+
+.ucf-c-list[data-variant="tags"] > li {
+	align-items: center;
+	border: var(--ucf-custom-border-hairline) solid var(--ucf-c-line-strong);
+	display: inline-flex;
+	font-size: var(--ucf-font-size-data);
+	font-weight: 600;
+	line-height: 1.2;
+	margin: 0;
+	min-height: 28px;
+	padding: 0 var(--ucf-spacing-20);
+}
+
+/* SPEC: a term and its value, for office hours and contact details: the term above its value,
+   beside it from 1024px. */
+.ucf-c-list[data-variant="definitions"] {
+	list-style: none;
+	padding-left: 0;
+}
+
+.ucf-c-list[data-variant="definitions"] > li {
+	display: grid;
+	gap: var(--ucf-spacing-10) var(--ucf-spacing-50);
+	margin: 0;
+	padding-block: var(--ucf-spacing-20);
+}
+
+.ucf-c-list[data-variant="definitions"] > li > strong:first-child {
+	font-weight: 700;
+}
+
+/* SYNC: the theme's $breakpoint-lg (1024px). */
+@media (min-width: 64rem) {
+	.ucf-c-list[data-variant="definitions"] > li {
+		grid-template-columns: 12rem minmax(0, 1fr);
+	}
+}

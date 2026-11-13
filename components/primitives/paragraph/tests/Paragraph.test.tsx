@@ -8,7 +8,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Paragraph, { type ParagraphProps } from '../Paragraph.tsx';
-import example from '../example.json';
+// WHY written here: the sample this snapshot was taken with. The props' defaults may change;
+// the markup this checks must not.
+const example = {
+	content:
+		'Explore more than 100 bachelor’s programs, taught by faculty who put undergraduate teaching first.',
+};
 
 const cases: Record< string, ParagraphProps > = {
 	example,
