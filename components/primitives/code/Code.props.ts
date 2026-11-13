@@ -1,11 +1,11 @@
 /**
  * The Code's props, in the order Puck shows them. Its Puck fields, its story controls and their
- * defaults are built from these (integrations/schema/props.ts says how).
+ * defaults are built from these (core/define/props.ts says how).
  *
  * SPEC: core Code's one attribute, `content`, so an editor who knows core's knows ours
  * (docs/architecture.md, "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 
 export const PROPS = {
 	/** The code, as written: its line breaks and spaces are kept. */

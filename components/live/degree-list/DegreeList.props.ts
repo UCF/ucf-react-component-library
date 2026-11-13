@@ -1,7 +1,7 @@
 /**
  * The Degree List's props: every prop an editor sets. WordPress's sidebar and block.json
  * attributes, Puck's fields and the stories' controls are built from it
- * (integrations/schema/props.ts).
+ * (core/define/props.ts).
  *
  * SPEC: the `[degree-list]` (UCF-Degree-CPT-Plugin) and `[ucf-external-degree-list]`
  * (UCF-Degree-Search-Plugin) shortcodes: filters by college, department and program type, a
@@ -9,7 +9,7 @@
  * SYNC: each prop's key is a block attribute, saved in every post that uses the block, so it is
  * permanent (docs/architecture.md, "Naming"). `npm run sync:blocks` writes them into block.json.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 import { createClient, PROGRAM_TYPES } from './client.ts';
 
 // WHY the live service's, in every editor: the choices are the service's colleges and

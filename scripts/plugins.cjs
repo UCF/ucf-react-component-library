@@ -19,7 +19,7 @@ const root = path.dirname( __dirname );
 /**
  * The buckets under components/, by role, in build order: the pieces first, since components
  * are built from them and a component's CSS may adjust a primitive's.
- * SYNC: docs/architecture.md, "A component's folder". integrations/tests/parity.test.tsx checks
+ * SYNC: docs/architecture.md, "A component's folder". core/testing/suites/parity.test.tsx checks
  * each bucket holds only its kind.
  */
 const BUCKETS = [ 'primitives', 'content', 'live', 'interactive' ];

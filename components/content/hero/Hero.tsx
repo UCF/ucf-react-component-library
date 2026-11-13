@@ -42,7 +42,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '@/integrations/react/frame';
+} from '@/core/frame/frame';
 import Image from '@/components/primitives/image/Image';
 import { PARTS } from './Hero.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Hero.presets.ts';
@@ -54,7 +54,7 @@ export type HeroProps = OwnProps< typeof PROPS > &
 export type HeroLayout = HeroEditableProps[ 'layout' ];
 export type HeroTone = HeroEditableProps[ 'tone' ];
 
-// SYNC: the composition slugs in integrations/schema/compositions.ts.
+// SYNC: the composition slugs in core/define/compositions.ts.
 const COMPOSITION: Record< HeroTone, string > = {
 	accent: 'gold',
 	dark: 'dark',

@@ -1,14 +1,14 @@
 {
 	// Emits the npm package to dist/: JavaScript, type files, and (via resolveJsonModule) the
 	// example data. Run by scripts/build-package.mjs.
-	// WHY rootDir is the repo: components/ and integrations/ build side by side, into
-	// dist/components/ and dist/integrations/. package.json `exports` maps the
-	// public paths.
-	// WHY only integrations/schema, puck and react: the components' shipped code imports the
-	// first two, and react/ is what a plain React site imports (`@ucf/components/react`).
-	// integrations/wp is the WordPress adapters' (it imports @wordpress/*, which only exists inside
-	// WordPress, and wp-scripts builds it into the plugins), as wp is, left out below.
-	// integrations/storybook and integrations/tests are never shipped.
+	// WHY rootDir is the repo: components/ and core/ build side by side, into dist/components/
+	// and dist/core/. package.json `exports` maps the public paths.
+	// WHY only these parts of core/: the components' shipped code imports core/define and
+	// core/hosts/puck (with core/hosts/options.ts, which Puck's list field uses), and core/frame
+	// is what a plain React site imports (`@ucf/components/react`).
+	// core/hosts/wordpress imports @wordpress/*, which only exists inside WordPress, and
+	// wp-scripts builds it into the plugins, as it does each component's integrations/wp, left
+	// out below. core/hosts/storybook and core/testing are never shipped.
 	"extends": "./tsconfig.json",
 	// WHY resolveFullPaths: an `@/` import has no ending in the source. tsc-alias turns it into a
 	// relative path in dist/ and adds the `.js` plain Node needs (scripts/build-package.mjs).
@@ -26,10 +26,11 @@
 	"include": [
 		"components/**/*.ts",
 		"components/**/*.tsx",
-		"integrations/schema/**/*.ts",
-		"integrations/puck/**/*.ts",
-		"integrations/react/**/*.ts",
-		"integrations/react/**/*.tsx"
+		"core/define/**/*.ts",
+		"core/frame/**/*.ts",
+		"core/frame/**/*.tsx",
+		"core/hosts/options.ts",
+		"core/hosts/puck/**/*.ts"
 	],
 	// WHY a component's storybook/ whole: its stories may share a helper file
 	// (components/content/card/integrations/storybook/shared.tsx).

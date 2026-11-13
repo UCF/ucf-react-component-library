@@ -3,10 +3,10 @@
  * defaults are its props (Button.props.ts).
  */
 import Button from '../../Button.tsx';
-import { puckFields } from '@/integrations/puck/config';
-// WHY a type from integrations/: the one copy of Puck's config shape. Types only; erased at build.
-import type { PuckComponentConfig } from '@/integrations/puck/types';
-import { defaultsIn } from '@/integrations/schema/props';
+import { puckFields } from '@/core/hosts/puck/fields';
+// WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
+import type { PuckComponentConfig } from '@/core/hosts/puck/types';
+import { defaultsIn } from '@/core/define/props';
 import { PROPS, type ButtonEditableProps } from '../../Button.props.ts';
 
 const config: PuckComponentConfig< ButtonEditableProps > = {
@@ -14,7 +14,7 @@ const config: PuckComponentConfig< ButtonEditableProps > = {
 	fields: puckFields( PROPS ),
 	defaultProps: defaultsIn( PROPS, 'puck' ),
 	// FIX: only the Button's own props; Puck's `id`, `puck` and `editMode` would reach the
-	// markup (see PuckRenderProps in integrations/puck/types.ts).
+	// markup (see PuckRenderProps in core/hosts/puck/types.ts).
 	render: ( { text, url, linkTarget, variant, fontSize, className } ) => (
 		<Button
 			className={ className || undefined }

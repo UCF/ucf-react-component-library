@@ -2,7 +2,7 @@
  * The fixed Card example for Puck: a plain config object, so this library needs no Puck dependency.
  *
  * WHY no image ID field: it is the WordPress media library's; Puck sites choose images by URL
- * (`WORDPRESS_ONLY` in integrations/tests/parity.test.tsx).
+ * (`WORDPRESS_ONLY` in core/testing/suites/parity.test.tsx).
  */
 import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
 // WHY the attribute: the npm package is plain ES modules, and Node will not import JSON
@@ -12,7 +12,7 @@ import { CHOICES, type ChoiceKey } from '../../options.ts';
 import type {
 	PuckComponentConfig,
 	PuckScalarField,
-} from '@/integrations/puck/types';
+} from '@/core/hosts/puck/types';
 
 type Props = {
 	title: string;
@@ -55,7 +55,7 @@ const config: PuckComponentConfig< Props > = {
 	},
 	defaultProps: example as Props,
 	// FIX: only the Card's own props; Puck's `id`, `puck` and `editMode` would reach the
-	// markup (see PuckRenderProps in integrations/puck/types.ts).
+	// markup (see PuckRenderProps in core/hosts/puck/types.ts).
 	render: ( { id, puck, editMode, ...props } ) => <FixedCard { ...props } />,
 };
 

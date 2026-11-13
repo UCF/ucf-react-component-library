@@ -1,7 +1,7 @@
 /**
  * The Column's props: none. A Column is a track of its Columns; the Columns decides how wide.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 
 export const PROPS = {} as const satisfies PropDefinitions;
 

@@ -2,7 +2,7 @@
  * The Section's parts: what a new one starts with. It holds anything; these have no look of their
  * own, so no class.
  */
-import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
+import type { PartDefinitions, PartOf } from '@/core/define/parts';
 
 export const PARTS = {
 	/** The band's heading, an h2: a Section is a band of the page, under its h1. */

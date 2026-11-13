@@ -2,10 +2,10 @@
  * The Hero's props, in the order editors see them. Each key is a saved block attribute.
  * SPEC: the values and labels are P1's (registry item `@p1/hero`), less the layouts this port
  * leaves out (Hero.tsx says which and why).
- * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
+ * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 
 export const PROPS = {
 	// Layout

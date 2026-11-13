@@ -3,7 +3,7 @@
  */
 import type { Part } from './Column.parts.ts';
 import type { ColumnEditableProps } from './Column.props.ts';
-import type { Preset as PresetOf } from '@/integrations/schema/presets';
+import type { Preset as PresetOf } from '@/core/define/presets';
 
 export type Preset = PresetOf< ColumnEditableProps, Part >;
 

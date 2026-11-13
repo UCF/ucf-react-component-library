@@ -49,7 +49,7 @@ export default defineConfig( {
 					name: 'unit',
 					include: [
 						'components/**/*.test.{ts,tsx}',
-						'integrations/**/*.test.{ts,tsx}',
+						'core/**/*.test.{ts,tsx}',
 						'examples/**/*.test.{ts,tsx}',
 						'scripts/**/*.test.mjs',
 					],

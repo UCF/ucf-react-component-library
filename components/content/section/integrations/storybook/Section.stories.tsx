@@ -6,7 +6,7 @@ import Highlight from '@/components/content/highlight/Highlight';
 import { PARTS } from '@/components/content/highlight/Highlight.parts';
 import '@/components/content/highlight/style.css';
 import Section from '../../Section.tsx';
-import type { Composition } from '@/integrations/schema/compositions';
+import type { Composition } from '@/core/define/compositions';
 import '../../style.css';
 
 const meta = {

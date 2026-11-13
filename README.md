@@ -64,10 +64,10 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
-integrations/      how a component works in WordPress, Puck and Storybook, written once
-                   for every component: what props and parts may declare (schema/), how each
-                   environment reads it (wp/, puck/, storybook/), and the tests every
-                   component must pass (tests/)
+core/              how a component works in WordPress, Puck and Storybook, written once
+                   for every component: what props and parts may declare (define/), how
+                   frame() builds a content component (frame/), how each environment reads
+                   it (hosts/), and the tests every component must pass (testing/)
 components/        one self-contained folder per component, in a bucket by role:
   primitives/      the pieces components are built from: Button, Image, Heading, Paragraph
                    (Puck places them; WordPress editors use core's blocks instead)
@@ -349,7 +349,7 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
 - **`integrations/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([integrations/puck/types.ts](integrations/puck/types.ts)): `fields` for the editor,
+  ([core/hosts/puck/types.ts](core/hosts/puck/types.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.

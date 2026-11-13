@@ -1,6 +1,6 @@
 /**
  * CONTEXT: what the Card's stories share: the base every story file spreads into its meta,
- * and a preset (Card.presets.ts) as a story, its parts drawn by integrations/storybook/parts.tsx.
+ * and a preset (Card.presets.ts) as a story, its parts drawn by core/hosts/storybook/parts.tsx.
  *
  * WHY three story files: Card.stories.tsx shows the props, Card.presets.stories.tsx the
  * presets, Card.checks.stories.tsx the measured checks. They sit under one "Card" group.
@@ -9,12 +9,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 
 import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
-import { argTypesOf } from '@/integrations/storybook/arg-types';
-import { defaultsIn } from '@/integrations/schema/props';
+import { argTypesOf } from '@/core/hosts/storybook/arg-types';
+import { defaultsIn } from '@/core/define/props';
 import Card from '../../Card.tsx';
 import { presetNamed } from '../../Card.presets.ts';
-import { resolveParts } from '@/integrations/schema/parts';
-import { renderParts } from '@/integrations/storybook/parts';
+import { resolveParts } from '@/core/define/parts';
+import { renderParts } from '@/core/hosts/storybook/parts';
 import { PARTS } from '../../Card.parts.ts';
 import { PROPS } from '../../Card.props.ts';
 import '../../style.css';

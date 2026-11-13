@@ -17,7 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import './alias.mjs';
 
 // Attributes WordPress adds for a block's `supports`, kept as they are: not props.
-// SYNC: WORDPRESS_ONLY in integrations/tests/parity.test.tsx.
+// SYNC: WORDPRESS_ONLY in core/testing/suites/parity.test.tsx.
 const WORDPRESS_OWN = new Set( [ 'align' ] );
 
 /**
@@ -90,7 +90,7 @@ function components( root ) {
 export async function syncBlocks( root, { check = false } = {} ) {
 	const prettier = await import( 'prettier' );
 	const { blockAttributes } = await import(
-		pathToFileURL( path.join( root, 'integrations/wp/attributes.ts' ) )
+		pathToFileURL( path.join( root, 'core/hosts/wordpress/attributes.ts' ) )
 	);
 	const changed = [];
 	for ( const { props, blockJson } of components( root ) ) {

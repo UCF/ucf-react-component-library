@@ -20,9 +20,9 @@ const COPIED = [
 	'package.json',
 	'plugins/ucf-content/plugin.json',
 	'plugins/ucf-degrees/plugin.json',
-	'integrations/tests/parity.test.tsx',
-	'integrations/tests/blocks.test.tsx',
-	'integrations/tests/puck.test.tsx',
+	'core/testing/suites/parity.test.tsx',
+	'core/testing/suites/blocks.test.tsx',
+	'core/testing/suites/puck.test.tsx',
 	'components/content/highlight/index.ts',
 ];
 
@@ -93,7 +93,7 @@ describe( 'planComponent', () => {
 
 	// WHY: all or nothing. A list it can't find must stop it before anything is written.
 	test( 'stops when a list it edits is missing', () => {
-		rmSync( path.join( root, 'integrations/tests/blocks.test.tsx' ) );
+		rmSync( path.join( root, 'core/testing/suites/blocks.test.tsx' ) );
 		expect( () => plan() ).toThrow( /blocks\.test\.tsx is missing/ );
 	} );
 
@@ -209,10 +209,10 @@ describe( 'planComponent', () => {
 			'./dist/components/primitives/badge/index.js'
 		);
 		expect( exports[ './primitives/badge/example.json' ] ).toBeUndefined();
-		expect( read( 'integrations/tests/parity.test.tsx' ) ).toMatch(
+		expect( read( 'core/testing/suites/parity.test.tsx' ) ).toMatch(
 			/expect\( primitives \)\.toEqual\(\s*\[[^\]]*'badge'/
 		);
-		expect( read( 'integrations/tests/puck.test.tsx' ) ).toContain(
+		expect( read( 'core/testing/suites/puck.test.tsx' ) ).toContain(
 			"import badge from '@/components/primitives/badge/integrations/puck/config';"
 		);
 	} );
@@ -220,7 +220,7 @@ describe( 'planComponent', () => {
 	// FIX: adding an import once rewrote the block from the one-line imports it recognized,
 	// and dropped one that spans three lines (`import card, { withTemplate }`).
 	test( 'keeps every import already in puck.test.tsx', () => {
-		const file = 'integrations/tests/puck.test.tsx';
+		const file = 'core/testing/suites/puck.test.tsx';
 		const importsIn = ( source ) =>
 			source.match( /^import [\s\S]*? from '[^']+';$/gm ) ?? [];
 		const before = importsIn( read( file ) );
@@ -293,7 +293,7 @@ describe( 'planComponent', () => {
 			[ 'parity', 'expect( components ).toEqual( [' ],
 			[ 'blocks', '.sort() ).toEqual( [' ],
 		] ) {
-			const source = read( `integrations/tests/${ file }.test.tsx` );
+			const source = read( `core/testing/suites/${ file }.test.tsx` );
 			const list = source.slice( source.indexOf( start ) + start.length );
 			const names = list
 				.slice( 0, list.indexOf( ']' ) )
@@ -304,7 +304,7 @@ describe( 'planComponent', () => {
 			expect( names ).toEqual( [ ...names ].sort() );
 		}
 
-		const puck = read( 'integrations/tests/puck.test.tsx' );
+		const puck = read( 'core/testing/suites/puck.test.tsx' );
 		expect( puck ).toContain(
 			"import pullQuote from '@/components/content/pull-quote/integrations/puck/config';"
 		);

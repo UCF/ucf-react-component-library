@@ -8,7 +8,7 @@
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import FlexibleCard from '../../FlexibleCard.tsx';
 import { VARIANTS, type Variant } from '../../options.ts';
-import type { PuckComponentConfig, PuckSlot } from '@/integrations/puck/types';
+import type { PuckComponentConfig, PuckSlot } from '@/core/hosts/puck/types';
 
 type Props = {
 	variant: Variant;

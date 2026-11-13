@@ -7,7 +7,7 @@ import { expect } from 'storybook/test';
 
 import Heading from '@/components/primitives/heading/Heading';
 import Paragraph from '@/components/primitives/paragraph/Paragraph';
-import { contrast, over } from '@/integrations/storybook/contrast';
+import { contrast, over } from '@/core/hosts/storybook/contrast';
 import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
 import Card from '../../Card.tsx';
 import { PARTS } from '../../Card.parts.ts';

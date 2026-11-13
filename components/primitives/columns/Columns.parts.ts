@@ -2,7 +2,7 @@
  * The Columns's parts: none. It holds Column primitives, which hold anything; it has no parts of
  * its own to fill.
  */
-import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
+import type { PartDefinitions, PartOf } from '@/core/define/parts';
 
 export const PARTS = {} as const satisfies PartDefinitions;
 

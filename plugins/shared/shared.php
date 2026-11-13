@@ -89,7 +89,7 @@ if ( ! function_exists( 'ucf_components_block_category' ) ) {
 	 * all three go first.
 	 *
 	 * SYNC: the kinds in docs/architecture.md, "Three kinds of component", CATEGORY_OF in
-	 * integrations/wp/kind.ts, and Storybook's groups (.storybook/preview.ts). blocks.test.tsx
+	 * core/hosts/wordpress/kind.ts, and Storybook's groups (.storybook/preview.ts). blocks.test.tsx
 	 * checks each block is in its kind's category.
 	 * UPSTREAM: an older copy of this file, loaded first, has no UCF Live; WordPress then lists
 	 * a live block under no category (a console warning, not an error). Release the plugins

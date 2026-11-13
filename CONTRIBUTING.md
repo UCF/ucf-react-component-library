@@ -104,13 +104,13 @@ Decide its **kind** and its **name** first ([`docs/architecture.md`](docs/archit
 
 ## Tests
 
-New code ships with its test. The suites in `integrations/tests/` find every component on their own, and `npm run new:component` adds a new one to every list, so much of this is automatic:
+New code ships with its test. The suites in `core/testing/suites/` find every component on their own, and `npm run new:component` adds a new one to every list, so much of this is automatic:
 
 | You added                        | You write                                                                                                             |
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | A content component              | Its markup contract, `tests/{Name}.test.tsx` (copy `highlight/tests/Highlight.test.tsx`), and stories for its states  |
 | An interactive component         | A test for its data client with a fake `fetch` (see `degree-finder/tests/client.test.ts`), and stories for its states |
-| A design (preset) for a frame    | A story for it. `integrations/tests/presets.test.tsx` checks every preset on its own                                  |
+| A design (preset) for a frame    | A story for it. `core/testing/suites/presets.test.tsx` checks every preset on its own                                 |
 | A primitive                      | Stories for its states. The parity and Puck suites pick it up                                                         |
 | A script in `scripts/`           | A `scripts/{name}.test.mjs`                                                                                           |
 | A token or role in `tokens.json` | Nothing. The token tests read `tokens.json` and check the contrast of every role pair                                 |
@@ -120,7 +120,7 @@ New code ships with its test. The suites in `integrations/tests/` find every com
 Four rules are worth knowing before you write anything:
 
 - **Prove a new test can fail.** Break the code it covers, watch it go red, then restore it. A test that has never failed may be testing nothing.
-- **Don't check markup with a block's `isValid`.** `parse()` recovers mismatched markup by migrating it through the block's `deprecated` array and then reports `isValid: true`. Use `isValidBlockContent()` instead, as `integrations/tests/blocks.test.tsx` does.
+- **Don't check markup with a block's `isValid`.** `parse()` recovers mismatched markup by migrating it through the block's `deprecated` array and then reports `isValid: true`. Use `isValidBlockContent()` instead, as `core/testing/suites/blocks.test.tsx` does.
 - **Never verify a block through the front end.** An invalid block still renders there. In the editor, check `wp.data.select( 'core/block-editor' ).getBlocks()` and watch the console for "Updated Block".
 - **An accessibility check on the wrong section passes.** Every story runs inside each composition, and `.storybook/vitest.setup.ts` fails a story that didn't render inside the one it was meant to. Anything you add there should hold the same line.
 

@@ -1,11 +1,11 @@
 /**
- * The Column in Puck, from its port (integrations/puck/config.tsx): a slot for anything.
+ * The Column in Puck, from its port (core/hosts/puck/config.tsx): a slot for anything.
  *
  * `inColumns()` is how a host uses it beside withColumns() (the Columns's config): a Column holds
  * anything but another Column. WHY opt-in: it names the Column by the host's key.
  */
-import { puckConfig } from '@/integrations/puck/config';
-import type { PuckComponentConfig } from '@/integrations/puck/types';
+import { puckConfig } from '@/core/hosts/puck/config';
+import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import Column from '../../Column.tsx';
 
 const { config, withTemplate } = puckConfig( Column );

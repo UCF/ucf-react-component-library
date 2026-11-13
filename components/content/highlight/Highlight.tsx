@@ -3,7 +3,7 @@
  * ranking, with its source. The accent rule and spacing; the content placed inside is open.
  *
  * `<Highlight preset="key-figure" content={ { figure: 'Nov 1', label: 'Early action' } } />`, or
- * any children. Hosts read `Highlight.port` (integrations/react/frame.tsx).
+ * any children. Hosts read `Highlight.port` (core/frame/frame.tsx).
  * WHY "Highlight", not "Stat": not every one is a number (a partnership, a ranking with a logo).
  * SPEC: the default is the statement, a fact written as a full sentence. The key figure (a large
  * number or date over a label) is for values that are not claims: a deadline, a code.
@@ -16,7 +16,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '@/integrations/react/frame';
+} from '@/core/frame/frame';
 import { PARTS } from './Highlight.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Highlight.presets.ts';
 import { PROPS } from './Highlight.props.ts';

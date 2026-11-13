@@ -1,16 +1,16 @@
 /**
  * The Event List's props: every prop an editor sets, with its type, values, default and field.
  * WordPress's sidebar and block.json attributes, Puck's fields and defaults, and the stories'
- * controls are built from it (integrations/schema/props.ts says how).
+ * controls are built from it (core/define/props.ts says how).
  *
  * SPEC: the UCF Events plugin's `[ucf-events]` settings (feed_url, limit, offset, title,
  * layout, and the message inside the shortcode), less `layout`: its three layouts are one list
  * here, with or without descriptions.
  * SYNC: each prop's key is a block attribute, saved in every post that uses the block, so it is
  * permanent (docs/architecture.md, "Naming"). block.json lists them too, written by
- * `npm run sync:blocks`; integrations/tests/parity.test.tsx fails while the two differ.
+ * `npm run sync:blocks`; core/testing/suites/parity.test.tsx fails while the two differ.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 
 // WHY choices, not free numbers: the schema's fields are text or a choice, and a list of a few
 // events is what this is for. The old plugin's default was 3.

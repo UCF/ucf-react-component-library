@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import ImageEdit, {
 	type ImageValue,
 } from '@/components/primitives/image/integrations/wp/edit';
-import { blockEdit, useBlock } from '@/integrations/wp/block';
+import { blockEdit, useBlock } from '@/core/hosts/wordpress/block';
 import Hero from '../../Hero.tsx';
 
 /**

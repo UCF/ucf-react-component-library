@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { defaultsIn } from '@/integrations/schema/props';
-import { argTypesOf } from '@/integrations/storybook/arg-types';
+import { defaultsIn } from '@/core/define/props';
+import { argTypesOf } from '@/core/hosts/storybook/arg-types';
 import EventList from '../../EventList.tsx';
 import { PROPS } from '../../EventList.props.ts';
 import { SAMPLE_EVENTS } from '../../sample-data.ts';

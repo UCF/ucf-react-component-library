@@ -1,15 +1,15 @@
 /**
  * The Highlight's parts: the content placed inside it. Each part is a look (a statement, a
- * figure, a source) with its kind (text, an image: integrations/schema/parts.ts) and the class
+ * figure, a source) with its kind (text, an image: core/define/parts.ts) and the class
  * that styles it here. Frames style their content by class (docs/architecture.md, "Frames");
- * the shared mappers in integrations/ build each kind for each host.
+ * the shared mappers in core/hosts/ build each kind for each host.
  *
  * The Highlight's own settings are in Highlight.props.ts; named combinations of both, in
  * Highlight.presets.ts.
  *
  * SYNC: style.css styles every class here; tests/Highlight.test.tsx checks.
  */
-import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
+import type { PartDefinitions, PartOf } from '@/core/define/parts';
 
 /**
  * The Highlight's parts: each look, its kind and the class that styles it. A preset names a part

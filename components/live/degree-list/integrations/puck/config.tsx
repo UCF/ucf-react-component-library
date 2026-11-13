@@ -5,9 +5,9 @@
  * for data. A Puck site rendering a saved page on the server should fetch there instead, as the
  * Event List's config says (docs/todo.md, the Puck playground).
  */
-import { defaultsIn } from '@/integrations/schema/props';
-import { puckFields } from '@/integrations/puck/config';
-import type { PuckComponentConfig } from '@/integrations/puck/types';
+import { defaultsIn } from '@/core/define/props';
+import { puckFields } from '@/core/hosts/puck/fields';
+import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import DegreeList from '../../DegreeList.tsx';
 import { PROPS, type DegreeListEditableProps } from '../../DegreeList.props.ts';
 import { usePrograms } from '../../utils/usePrograms.ts';

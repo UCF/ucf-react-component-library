@@ -7,7 +7,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '@/integrations/react/frame';
+} from '@/core/frame/frame';
 import { PARTS } from './Column.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Column.presets.ts';
 import { PROPS } from './Column.props.ts';

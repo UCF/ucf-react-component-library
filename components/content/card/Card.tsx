@@ -2,7 +2,7 @@
  * The Card: a box with any content inside. Why it's built this way: README.md.
  *
  * `<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`, or any children. Hosts read
- * `Card.port` (integrations/react/frame.tsx).
+ * `Card.port` (core/frame/frame.tsx).
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
 import {
@@ -10,7 +10,7 @@ import {
 	type FrameProps,
 	type OwnProps,
 	type PresetProps,
-} from '@/integrations/react/frame';
+} from '@/core/frame/frame';
 import Image from '@/components/primitives/image/Image';
 import { PARTS } from './Card.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Card.presets.ts';

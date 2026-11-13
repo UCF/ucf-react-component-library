@@ -135,7 +135,7 @@ A **preset** is a starting design: some props, plus some parts with sample text.
 Each preset shows up as **Card: Next step** in the WordPress inserter and in Puck's Design
 picker. `DEFAULT_PRESET` is what a plain "Card" starts as (the Story card).
 
-`wpIcon` must be one of the icons listed in `integrations/wp/icons.ts`. The `as const` at the
+`wpIcon` must be one of the icons listed in `core/hosts/wordpress/icons.ts`. The `as const` at the
 end of the list keeps the names exact, so TypeScript can check `preset="next-step"` (below).
 
 ### 5. The markup: `Card.tsx`
@@ -240,7 +240,7 @@ The Card's own test renders it in each preset, checks that WordPress and React p
 HTML, and records that HTML as a **snapshot** in `tests/__snapshots__/`. It also checks that
 every part class in `Card.parts.ts` has a rule in `style.css`.
 
-Shared tests in `integrations/tests/` cover every component without any setup. They check that:
+Shared tests in `core/testing/suites/` cover every component without any setup. They check that:
 
 - **the block saves and reads back cleanly,** the way the editor checks a saved post;
 - **WordPress and Puck have the same settings,** with the same defaults;
@@ -455,7 +455,7 @@ type. The API root and search page are site settings, not something an editor pi
 
 Unlike the Card, the Degree Finder isn't built with `frame()` and has no `.props.ts` file.
 Its `block.json` attribute and its Puck field are written by hand, and
-`integrations/tests/parity.test.tsx` checks they name the same props.
+`core/testing/suites/parity.test.tsx` checks they name the same props.
 
 ### 6. Stories and tests
 
@@ -496,10 +496,10 @@ npm run new:component -- my-component --kind content --plugin ucf-content
 Created components/content/my-component/ (13 files).
 Added it to:
   package.json
-  integrations/tests/parity.test.tsx
+  core/testing/suites/parity.test.tsx
   plugins/ucf-content/plugin.json
-  integrations/tests/blocks.test.tsx
-  integrations/tests/puck.test.tsx
+  core/testing/suites/blocks.test.tsx
+  core/testing/suites/puck.test.tsx
 ```
 
 You now have the Card's files with placeholders in them: one setting (alignment), two parts (a
@@ -514,7 +514,7 @@ Work through the files in the order of Part 1:
    them into `block.json`.
 2. **`{Name}.parts.ts`:** replace the placeholder parts (step 3).
 3. **`{Name}.presets.ts`:** write its designs (step 4). If a `wpIcon` isn't in
-   `integrations/wp/icons.ts` yet, add it to both lists there. Any name from
+   `core/hosts/wordpress/icons.ts` yet, add it to both lists there. Any name from
    `@wordpress/icons` works.
 4. **`{Name}.tsx`:** write the markup, with each setting as a `data-` attribute (step 5).
 5. **`style.css`:** style it with roles and tokens only (step 6).
@@ -594,16 +594,16 @@ The same command starts the other kinds:
 
 ### Changing it later
 
-| To…                                | Edit                                                                                   | Then                     |
-| ---------------------------------- | -------------------------------------------------------------------------------------- | ------------------------ |
-| Add a setting                      | `{Name}.props.ts`, then use it in `{Name}.tsx` and `style.css`                         | `npm run sync:blocks`    |
-| Change a label, help text or panel | `{Name}.props.ts` only                                                                 |                          |
-| Change a default                   | `{Name}.props.ts`. Saved blocks that never set it take the new default                 | `npm run sync:blocks`    |
-| Add a design                       | `{Name}.presets.ts`, a story for it, and its icon in `integrations/wp/icons.ts` if new | `npm test`               |
-| Change what a new one starts with  | `DEFAULT_PRESET` in `{Name}.presets.ts`                                                |                          |
-| Add a part                         | `{Name}.parts.ts`, and its class's rule in `style.css`                                 | `npm test`               |
-| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                         | `npm test`               |
-| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md     | Review the new snapshots |
+| To…                                | Edit                                                                                        | Then                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
+| Add a setting                      | `{Name}.props.ts`, then use it in `{Name}.tsx` and `style.css`                              | `npm run sync:blocks`    |
+| Change a label, help text or panel | `{Name}.props.ts` only                                                                      |                          |
+| Change a default                   | `{Name}.props.ts`. Saved blocks that never set it take the new default                      | `npm run sync:blocks`    |
+| Add a design                       | `{Name}.presets.ts`, a story for it, and its icon in `core/hosts/wordpress/icons.ts` if new | `npm test`               |
+| Change what a new one starts with  | `DEFAULT_PRESET` in `{Name}.presets.ts`                                                     |                          |
+| Add a part                         | `{Name}.parts.ts`, and its class's rule in `style.css`                                      | `npm test`               |
+| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                              | `npm test`               |
+| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md          | Review the new snapshots |
 
 ### If a check fails
 
@@ -611,7 +611,7 @@ The same command starts the other kinds:
 | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | `block.json declares exactly its props` in `parity.test.tsx` | Run `npm run sync:blocks`                                                  |
 | `styles every part class`                                    | Add a rule to `style.css` for each class in `{Name}.parts.ts`              |
-| `names an icon WordPress has` in `presets.test.tsx`          | Add the icon to `integrations/wp/icons.ts`                                 |
+| `names an icon WordPress has` in `presets.test.tsx`          | Add the icon to `core/hosts/wordpress/icons.ts`                            |
 | `reads --ucf-…, a defined role` in `scripts/tokens.test.mjs` | Use a role from `tokens/tokens.json`, such as `--ucf-c-body`               |
 | A snapshot differs                                           | If you meant to change the markup, read the diff, then `npx vitest run -u` |
 | A story fails on one section color                           | Usually contrast: use a role, not a fixed color                            |

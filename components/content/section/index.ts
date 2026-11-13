@@ -7,7 +7,4 @@ export { default as Section, type SectionProps } from './Section.tsx';
 
 export { PARTS as SECTION_PARTS } from './Section.parts.ts';
 export { PRESETS as SECTION_PRESETS } from './Section.presets.ts';
-export {
-	COMPOSITIONS,
-	type Composition,
-} from '@/integrations/schema/compositions';
+export { COMPOSITIONS, type Composition } from '@/core/define/compositions';

@@ -63,4 +63,4 @@ Card
 | `integrations/wp/`        | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
 | `integrations/puck/`      | `config.tsx`: `puckConfig( Card )`, with `withTemplate()` and `withPreset()`                                                                                   |
 | `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
-| `tests/`                  | `Card.test.tsx` (markup); its presets are checked by `integrations/tests/presets.test.tsx`                                                                     |
+| `tests/`                  | `Card.test.tsx` (markup); its presets are checked by `core/testing/suites/presets.test.tsx`                                                                    |

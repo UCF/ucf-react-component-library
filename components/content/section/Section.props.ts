@@ -1,10 +1,10 @@
 /**
  * The Section's props, in the order editors see them. Each key is a saved block attribute.
- * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
+ * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
-import { COMPOSITIONS } from '@/integrations/schema/compositions';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import { COMPOSITIONS } from '@/core/define/compositions';
 
 export const PROPS = {
 	/** The band's background, and so the colors of everything inside it. */

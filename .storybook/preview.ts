@@ -8,7 +8,7 @@ import { createElement } from 'react';
 
 import Section from '../components/content/section/Section.tsx';
 import type { SectionProps } from '../components/content/section/Section.tsx';
-import type { Composition } from '../integrations/schema/compositions.ts';
+import type { Composition } from '../core/define/compositions.ts';
 import '../components/content/section/style.css';
 import tokens from '../tokens/tokens.json';
 import { STORYBOOK_VIEWPORTS } from './viewports.mts';

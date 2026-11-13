@@ -14,7 +14,7 @@
  * parameter name is ignored there too, and returns every program, so queries are built only from
  * the names in programsQuery().
  */
-import type { Option } from '@/integrations/schema/props';
+import type { Option } from '@/core/define/props';
 import type { Program, ProgramFilters } from './types.ts';
 
 /** The Search Service's API. SYNC: ucf_degrees_degree_list_settings() in ucf-degrees.php. */

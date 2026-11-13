@@ -1,5 +1,5 @@
 /**
- * The Columns in Puck, from its port (integrations/puck/config.tsx): its props and a slot, which
+ * The Columns in Puck, from its port (core/hosts/puck/config.tsx): its props and a slot, which
  * renders as the grid, so each Column dropped in is a grid item.
  *
  * `config` as it ships names no other component. `withColumns()` is how a host uses it: only
@@ -7,8 +7,8 @@
  * its count. WHY opt-in: those name the Column by the key the host registered it under, which the
  * library can't know (as withTemplate() does).
  */
-import { puckConfig } from '@/integrations/puck/config';
-import type { PuckComponentConfig } from '@/integrations/puck/types';
+import { puckConfig } from '@/core/hosts/puck/config';
+import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import Columns from '../../Columns.tsx';
 
 const { config, withTemplate } = puckConfig( Columns );

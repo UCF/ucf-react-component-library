@@ -12,8 +12,8 @@
 		"./elements.css": "./dist/elements.css",
 		"./theme/*": "./dist/theme/*",
 		"./react": {
-			"types": "./dist/integrations/react/index.d.ts",
-			"default": "./dist/integrations/react/index.js"
+			"types": "./dist/core/frame/index.d.ts",
+			"default": "./dist/core/frame/index.js"
 		},
 		"./highlight": {
 			"types": "./dist/components/content/highlight/index.d.ts",
@@ -194,7 +194,7 @@
 		"test:stories": "wp-scripts test-unit-js --project='storybook:*'",
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "npm run lint:js && npm run lint:css && npm run lint:php",
-		"lint:js": "wp-scripts lint-js integrations components examples scripts .storybook webpack.config.js",
+		"lint:js": "wp-scripts lint-js core components examples scripts .storybook webpack.config.js",
 		"lint:css": "wp-scripts lint-style \"plugins/shared/*.css\" \"components/**/*.css\" \"examples/**/*.css\"",
 		"lint:php": "composer lint",
 		"format": "prettier --write .",

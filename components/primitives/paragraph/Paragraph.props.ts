@@ -1,11 +1,11 @@
 /**
  * The Paragraph's props, in the order Puck shows them. Its Puck fields, its story controls and their
- * defaults are built from these (integrations/schema/props.ts says how).
+ * defaults are built from these (core/define/props.ts says how).
  *
  * SPEC: named after core Paragraph's attributes, so an editor who knows core's knows ours
  * (docs/architecture.md, "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
+import type { PropDefinitions, PropsOf } from '@/core/define/props';
 
 export const PROPS = {
 	/** What it says. */
