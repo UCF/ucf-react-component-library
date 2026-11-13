@@ -1,7 +1,8 @@
 /**
- * CONTEXT: every component's presets render on a plain React site, with no CMS: from its
- * package entry and `@ucf/components/react` alone (core/frame/parts.tsx), as a Next
- * site would.
+ * Step 7 · React sites · content · every preset renders on a plain React site, with no CMS.
+ *
+ * From its package entry and `@ucf/components/react` alone (core/frame/render-parts.tsx), as a
+ * Next site would.
  */
 import type { ComponentType, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -10,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import { Card as CardWithPresets } from '@/components/content/card/index';
 import { presetContent } from '../../frame/index.ts';
-import type { PartDefinitions } from '../../define/parts.ts';
+import type { PartDefinitions } from '../../frame/types.ts';
 
 type Entry = Record< string, unknown >;
 type Preset = {

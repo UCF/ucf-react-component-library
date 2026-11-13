@@ -1,5 +1,6 @@
 /**
- * Frame: how a content component is built.
+ * Step 5 · content · frame(): joins your markup to its parts and presets, and gives back the
+ * component.
  *
  * Write the component as a plain React component, then pass it to frame() with what it is:
  *
@@ -19,174 +20,35 @@
  * WHY no hooks in the component: WordPress saves its markup, so it must render the same every time.
  */
 
-import type {
-	ComponentPropsWithoutRef,
-	ElementType,
-	ReactElement,
-	ReactNode,
-} from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
-import type { ComponentDefinition } from '../define/definition.ts';
-import {
-	resolveParts,
-	type Kind,
-	type PartDefinitions,
-	type PartOf,
-	type ResolvedPart,
-} from '../define/parts.ts';
-import { findPreset, type Preset } from '../define/presets.ts';
-import {
-	mediaProps,
-	type PropDefinitions,
-	type PropsOf,
-} from '../define/props.ts';
-import { renderParts } from './parts.tsx';
-
-// ── Props ──────────────────────────────────────────────────────────────────────────────────────
-//
-// What a framed component takes, on a React site and in a host.
-
-/** What a site passes for one part, by its kind. */
-type ContentFor< KindName extends Kind > = KindName extends 'text' | 'heading'
-	? string
-	: KindName extends 'link' | 'button'
-		? { text: string; url: string }
-		: { url: string; alt?: string };
-
-/** The content a site passes for a component's parts, by each part's name in its PARTS. */
-export type ContentOf< Parts extends PartDefinitions > = {
-	[ PartName in keyof Parts ]?: ContentFor< Parts[ PartName ][ 'kind' ] >;
-};
-
-/**
- * The HTML attributes a site may pass: a class, an id, style, `aria-*` and `data-*`.
- * WHY not every `<div>` attribute: there are about 270, and they buried the component's own props
- * in the editor's suggestions. Hosts need the rest (WordPress adds its own), so `Frame` takes them.
- */
-type SiteAttributes = Pick<
-	ComponentPropsWithoutRef< 'div' >,
-	'className' | 'id' | 'style'
-> & {
-	[ attribute: `aria-${ string }` ]: string | number | boolean | undefined;
-	[ attribute: `data-${ string }` ]: string | number | boolean | undefined;
-};
-
-/** Every `<div>` attribute. WHY HTML's `content` left out: ours is the parts' content. */
-type HostAttributes = Omit<
-	ComponentPropsWithoutRef< 'div' >,
-	'children' | 'content'
->;
-
-/** A component's own props, its children, and the HTML attributes a site may pass. */
-export type OwnProps< Props extends PropDefinitions > = Partial<
-	PropsOf< Props >
-> &
-	SiteAttributes & {
-		/** What goes in the content area. */
-		children?: ReactNode;
-	};
-
-/** What the component you write gets: its own props, any HTML attribute, and `area`. */
-export type FrameProps< Props extends PropDefinitions > = OwnProps< Props > &
-	HostAttributes & {
-		/** Where content goes: `area( 'content', { className }, children )`. */
-		area: Area;
-	};
-
-/** Any component's presets, for a component with props `Props` and parts `Parts`. */
-type PresetsOf<
-	Props extends PropDefinitions,
-	Parts extends PartDefinitions,
-> = readonly Preset< PropsOf< Props >, PartOf< Parts > >[];
-
-/** The names of the parts a preset holds: `pathway` → `'eyebrow' | 'display' | …`. */
-type PartsIn< Presets extends readonly { name: string }[], Name > =
-	Extract< Presets[ number ], { name: Name } > extends {
-		parts: readonly ( infer Part )[];
-	}
-		? Part extends { part: infer PartName }
-			? PartName
-			: never
-		: never;
-
-/**
- * What the component takes besides its props: a preset to start from, and its parts' content.
- * `Name` is the preset passed, so `content` takes only the parts that preset holds.
- */
-export type PresetProps<
-	Parts extends PartDefinitions,
-	Presets extends readonly { name: string }[] = readonly { name: string }[],
-	Name extends string = Presets[ number ][ 'name' ],
-> = {
-	/** A preset's name in the component's presets: its props and parts are the start. */
-	preset?: Name;
-	/**
-	 * Each of the preset's parts' content, by name. A part left out isn't shown.
-	 * WHY nothing without a preset: there are no parts to fill; pass `children`.
-	 */
-	content?: [ Name ] extends [ never ]
-		? undefined
-		: ContentOf< Pick< Parts, PartsIn< Presets, Name > & keyof Parts > >;
-	/**
-	 * Show the preset's sample text and image for parts with no content, and a sample background image
-	 * where it has one.
-	 */
-	sample?: boolean;
-};
-
-/** The elements a host fills a component's areas with, by area name. */
-export type Areas = Partial< Record< string, ElementType > >;
-
-/**
- * An area: where content goes in the markup. A host's element takes the same props.
- *
- * @param name     Its name. Hosts fill the one named `content` with their editable content.
- * @param props    Its element's props: `className`, and `as`, the element on a React site (a
- *                 `<div>` by default; the Hero's image area is an `<Image>`).
- * @param children What a React site puts there.
- */
-export type Area = ( (
-	name: string,
-	props: { as?: ElementType; className?: string; [ prop: string ]: unknown },
-	children?: ReactNode
-) => ReactElement ) & {
-	/**
-	 * Whether a host fills the area: the Hero shows its image frame while WordPress's picker is
-	 * in it, before an image is chosen.
-	 *
-	 * @param name The area's name.
-	 */
-	hosted: ( name: string ) => boolean;
-};
-
-// ── Building one ───────────────────────────────────────────────────────────────────────────────
-
-/** What a host reads: the definition, and the markup with its areas open. */
-export type Port<
-	Props extends PropDefinitions,
-	Parts extends PartDefinitions,
-	Presets extends PresetsOf< Props, Parts > = PresetsOf< Props, Parts >,
-> = ComponentDefinition< Props, Parts, Presets > & {
-	Frame: (
-		props: OwnProps< Props > & HostAttributes & { areas?: Areas }
-	) => ReactElement;
-};
+import { mediaProps } from '../hosts/read-props.ts';
+import type { PropDefinitions } from '../hosts/prop-definitions.ts';
+import { resolveParts, findPreset } from './read-parts.ts';
+import { renderParts } from './render-parts.tsx';
+import type {
+	Area,
+	Areas,
+	ComponentDefinition,
+	FrameProps,
+	HostAttributes,
+	OwnProps,
+	PartDefinitions,
+	Port,
+	PresetProps,
+	PresetsOf,
+	ResolvedPart,
+} from './types.ts';
 
 /** A type printed as one flat list, so a hover shows each prop and its values. */
 type Flat< T > = { -readonly [ Key in keyof T ]: T[ Key ] } & {};
-
-/** Anything with a port: what the translators take (wp/block.tsx, puck/config.tsx). */
-export type Ported<
-	Props extends PropDefinitions,
-	Parts extends PartDefinitions,
-> = { port: Port< Props, Parts > };
 
 /**
  * A content component, from the component you write and what it is.
  *
  * @param Markup     Your component: its props and `area` in, its markup out.
- * @param definition What it is: slug, title, kind, props, parts, presets (schema/definition.ts).
+ * @param definition What it is: slug, title, kind, props, parts, presets (types.ts).
  */
 export function frame<
 	Props extends PropDefinitions,

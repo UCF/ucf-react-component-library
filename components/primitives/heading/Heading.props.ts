@@ -1,13 +1,13 @@
 /**
  * The Heading's props, in the order Puck shows them. Its Puck fields, its story controls and their
- * defaults are built from these (core/define/props.ts says how).
+ * defaults are built from these (core/hosts/prop-definitions.ts says how).
  *
  * SPEC: named after core Heading's attributes, so an editor who knows core's knows ours
  * (docs/architecture.md, "Primitives").
  * WHY the level is a string: a choice's values are strings, as Puck's options are. The Heading
  * takes a number; each host converts.
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/** What it says. */

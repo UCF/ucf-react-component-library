@@ -1,5 +1,6 @@
 /**
- * Puck: a framed component as a Puck config, read through its port.
+ * Step 6 · Puck · content · builder: the whole Puck config, from a framed component's port
+ * (puckConfig).
  *
  * `puckConfig( Card )` in a component's puck/config.tsx. Its props become fields, its presets a
  * Design picker; it renders the same component a React site does. "Open" fills its content area
@@ -8,16 +9,11 @@
 
 import type { ComponentType } from 'react';
 
-import type { Ported } from '../../frame/frame.tsx';
-import { resolveParts, type PartDefinitions } from '../../define/parts.ts';
-import { findPreset } from '../../define/presets.ts';
-import {
-	defaultsIn,
-	mediaProps,
-	type PropDefinitions,
-	type PropsIn,
-} from '../../define/props.ts';
-import { puckFields } from './fields.ts';
+import type { Ported, PartDefinitions } from '../../frame/types.ts';
+import { resolveParts, findPreset } from '../../frame/read-parts.ts';
+import { defaultsIn, mediaProps, type PropsIn } from '../read-props.ts';
+import type { PropDefinitions } from '../prop-definitions.ts';
+import { puckFields } from './props-to-fields.ts';
 import { type PuckComponentConfig, type PuckSlot } from './types.ts';
 import {
 	applyPreset,
@@ -25,7 +21,7 @@ import {
 	presetFieldsFor,
 	type PresetPuckProps,
 } from './presets.ts';
-import { toPrimitives } from './parts.ts';
+import { toPrimitives } from './parts-to-primitives.ts';
 
 // ── The config ─────────────────────────────────────────────────────────────────────────────────
 

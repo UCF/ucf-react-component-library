@@ -1,5 +1,5 @@
 /**
- * WordPress: a prop as a sidebar control.
+ * Step 6 · WordPress · every component · one prop → its sidebar control (FieldControl).
  *
  * WHY not in the npm package: it imports `@wordpress/components`, which only WordPress has.
  */
@@ -11,7 +11,7 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 
-import type { PropDefinition } from '../../../define/props.ts';
+import type { PropDefinition } from '../../prop-definitions.ts';
 import { ListControl } from './list-control.tsx';
 
 type Props = {

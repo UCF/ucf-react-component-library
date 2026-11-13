@@ -11,12 +11,8 @@
  * takes no part in the component layer (`ucf-c`), whose class prefix that is.
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/core/frame/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import { PARTS } from './Section.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Section.presets.ts';
 import { PROPS } from './Section.props.ts';

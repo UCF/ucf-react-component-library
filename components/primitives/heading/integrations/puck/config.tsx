@@ -3,10 +3,10 @@
  * defaults are its props (Heading.props.ts).
  */
 import Heading, { type HeadingLevel } from '../../Heading.tsx';
-import { puckFields } from '@/core/hosts/puck/fields';
+import { puckFields } from '@/core/hosts/puck/props-to-fields';
 // WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
-import { defaultsIn } from '@/core/define/props';
+import { defaultsIn } from '@/core/hosts/read-props';
 import { PROPS, type HeadingEditableProps } from '../../Heading.props.ts';
 
 const config: PuckComponentConfig< HeadingEditableProps > = {

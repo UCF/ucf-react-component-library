@@ -28,7 +28,7 @@ vi.mock( '../integrations/wp/settings.ts', () => ( {
 
 const { default: Edit } = await import( '../integrations/wp/edit.tsx' );
 const { PROPS } = await import( '../DegreeList.props.ts' );
-const { defaultsIn } = await import( '@/core/define/props' );
+const { defaultsIn } = await import( '@/core/hosts/read-props' );
 
 describe( 'the Degree List in the editor', () => {
 	test( 'shows its preview inside an inert wrapper, links and all', () => {

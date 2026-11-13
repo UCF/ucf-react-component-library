@@ -1,5 +1,5 @@
 /**
- * WordPress: parts as core blocks.
+ * Step 6 · WordPress · content · parts → core blocks.
  *
  * For variations, the block template and the inserter preview.
  * SYNC: puck/parts.ts builds the same parts as primitives.
@@ -10,7 +10,8 @@
  */
 
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
-import { unhandledPart, type ResolvedPart } from '../../define/parts.ts';
+import { unhandledPart } from '../../frame/read-parts.ts';
+import type { ResolvedPart } from '../../frame/types.ts';
 
 // ── Parts → blocks ─────────────────────────────────────────────────────────────────────────────
 

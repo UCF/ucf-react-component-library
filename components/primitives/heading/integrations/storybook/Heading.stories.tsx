@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Heading, { type HeadingProps } from '../../Heading.tsx';
-import { defaultsIn } from '@/core/define/props';
+import { defaultsIn } from '@/core/hosts/read-props';
 import { PROPS } from '../../Heading.props.ts';
 import '../../style.css';
 

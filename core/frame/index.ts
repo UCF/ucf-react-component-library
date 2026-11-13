@@ -1,5 +1,6 @@
 /**
- * React: `@ucf/components/react`, presets on a plain React site with no CMS.
+ * Not a step · a React site's entry, `@ucf/components/react`: presets on a plain React site with
+ * no CMS.
  */
 
 export {
@@ -7,11 +8,7 @@ export {
 	presetContent,
 	renderParts,
 	type PartOptions,
-} from './parts.tsx';
-export {
-	frame,
-	type ContentOf,
-	type FrameProps,
-	type PresetProps,
-} from './frame.tsx';
-export { resolveParts } from '../define/parts.ts';
+} from './render-parts.tsx';
+export { frame } from './frame.tsx';
+export type { ContentOf, FrameProps, PresetProps } from './types.ts';
+export { resolveParts } from './read-parts.ts';

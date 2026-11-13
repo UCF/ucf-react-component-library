@@ -17,8 +17,8 @@ import {
 	PLACEHOLDER_ALT,
 	PLACEHOLDER_IMAGE,
 } from '../../../../../.storybook/placeholder.ts';
-import { defaultsIn } from '@/core/define/props';
-import { argTypesOf } from '@/core/hosts/storybook/arg-types';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import Hero from '../../Hero.tsx';
 import { PARTS } from '../../Hero.parts.ts';
 import { PROPS } from '../../Hero.props.ts';

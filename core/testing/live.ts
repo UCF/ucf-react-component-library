@@ -1,7 +1,9 @@
 /**
- * CONTEXT: what every live component's PHP test needs (docs/architecture.md, "Three kinds of
- * component"): its markup exists in React and in PHP, and the test runs the real PHP under
- * plain `php`, with WordPress's few functions stubbed, and compares the two.
+ * Step 7 · live · what every live component's PHP test needs.
+ *
+ * Its markup exists in React and in PHP; the test runs the real PHP under plain `php`, with
+ * WordPress's few functions stubbed, and compares the two (docs/architecture.md, "Three kinds of
+ * component").
  *
  * Used by each live component's tests/{Name}.php.test.tsx, which runs in happy-dom (for
  * sameHtml()).

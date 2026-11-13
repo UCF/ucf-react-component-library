@@ -1,17 +1,18 @@
 /**
- * The list prop type: any number of values from a list, fixed or loaded (core/define/
- * props.ts), and how each environment shows it. The Degree List's colleges, departments and
- * program types are the first.
+ * Step 7 · every component with a list prop · the list prop type (core/hosts/prop-definitions.ts),
+ * and how each host shows it.
+ *
+ * The Degree List's colleges, departments and program types are the first.
  */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-import { puckFields } from '../../hosts/puck/fields.ts';
-import { loadOptions } from '../../hosts/options.ts';
-import { chosenOf, valuesOf } from '../../define/options.ts';
-import { defaultsIn, type PropDefinitions } from '../../define/props.ts';
-import { argTypesOf } from '../../hosts/storybook/arg-types.ts';
-import { blockAttributes } from '../../hosts/wordpress/attributes.ts';
+import { puckFields } from '../../hosts/puck/props-to-fields.ts';
+import { loadOptions, chosenOf, valuesOf } from '../../hosts/list-options.ts';
+import { defaultsIn } from '../../hosts/read-props.ts';
+import type { PropDefinitions } from '../../hosts/prop-definitions.ts';
+import { argTypesOf } from '../../hosts/storybook/props-to-controls.ts';
+import { blockAttributes } from '../../hosts/wordpress/props-to-attributes.ts';
 
 const OPTIONS = [
 	{ value: 'sciences', label: 'College of Sciences' },

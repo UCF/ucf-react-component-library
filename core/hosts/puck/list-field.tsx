@@ -1,5 +1,5 @@
 /**
- * Puck: a list prop as a field, a group of checkboxes with a filter.
+ * Step 6 · Puck · every component with a list prop · the prop as checkboxes with a filter.
  *
  * WHY checkboxes, not a token field like WordPress's: Puck has no multi-select of its own, and a
  * Puck config can't use WordPress's components. A checkbox per option is the plain HTML control
@@ -9,9 +9,8 @@
 
 import { useId, useState, type CSSProperties } from 'react';
 
-import { useOptions } from '../options.ts';
-import { chosenOf } from '../../define/options.ts';
-import type { ListProp } from '../../define/props.ts';
+import { useOptions, chosenOf } from '../list-options.ts';
+import type { ListProp } from '../prop-definitions.ts';
 import type { PuckCustomField } from './types.ts';
 
 // SPEC: past this many options, a filter box is worth its space.

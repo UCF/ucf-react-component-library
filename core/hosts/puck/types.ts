@@ -1,5 +1,6 @@
 /**
- * Puck: the shape of a Puck config, without depending on Puck.
+ * Step 6 · Puck · every component · Puck's own config shape, without depending on Puck. Our
+ * contract for props is ../prop-definitions.ts.
  *
  * UPSTREAM: follows `@puckeditor/core`'s `ComponentConfig` (0.24); tests/puck.test.tsx checks every
  * config against the real types.

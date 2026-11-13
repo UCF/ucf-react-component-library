@@ -11,12 +11,8 @@
  * `> p:not(...)` selectors outrank a single class.
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/core/frame/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import { PARTS } from './Highlight.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Highlight.presets.ts';
 import { PROPS } from './Highlight.props.ts';

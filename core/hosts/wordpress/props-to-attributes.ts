@@ -1,10 +1,11 @@
 /**
- * WordPress: props as block attributes.
+ * Step 6 · WordPress · every component · props → block attributes.
  *
  * For edit, save and the test that checks block.json.
  */
 
-import { inHost, type PropDefinitions } from '../../define/props.ts';
+import { inHost } from '../read-props.ts';
+import type { PropDefinitions } from '../prop-definitions.ts';
 
 /**
  * A block's attributes, without the ones WordPress adds to every block: only those its block.json

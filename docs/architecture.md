@@ -77,8 +77,8 @@ content core synchronously, once, to a string, and stores the result. Anything t
 between renders (state, effects, data) would produce HTML that no longer matches what was saved.
 A live core's HTML is written on the server, by PHP in WordPress and by a Server Component in
 Next, neither of which waits for an effect. "Nothing" means no host or library code (`react`,
-`@wordpress/*`, `next/*`); its own files and the plain data in `core/define/` (its prop
-definitions' shape, the compositions) are fine, since they render the same every time. A
+`@wordpress/*`, `next/*`); its own files, the types in `core/hosts/prop-definitions.ts` and the plain data in `core/design/`
+(its prop definitions' shape, the compositions) are fine, since they render the same every time. A
 component never imports another component: what two share goes in `core/`.
 
 **WHY an interactive component may share its whole tree:** nothing stores its HTML, so there is nothing for a
@@ -221,10 +221,10 @@ two: `components/content/card/integrations/wp/` for the Card, `core/hosts/wordpr
 component.
 
 **Imports that leave a component's folder start from the repo root, `@/`.** So
-`'../../../../../core/define/props.ts'` is `'@/core/define/props'` from
+`'../../../../../core/hosts/prop-definitions.ts'` is `'@/core/hosts/prop-definitions'` from
 anywhere, and a primitive is `'@/components/primitives/heading/Heading'`. Imports inside a
 component stay relative (`'../../EventList.tsx'`), as do imports inside `core/`
-(`'../../define/props.ts'`) and of `.storybook/` and `tokens/tokens.json`, which are setup and data,
+(`'../prop-definitions.ts'`) and of `.storybook/` and `tokens/tokens.json`, which are setup and data,
 not library code. So do `import.meta.glob()` patterns in tests (`'../../../components/*/*/index.ts'`):
 the tests read component names from the paths they return. An `@/` import of a module has no ending, as Next writes them; a stylesheet or
 JSON file keeps its `.css` or `.json`; a relative import ends in `.ts` or `.tsx` (see "Gotchas").
@@ -243,10 +243,10 @@ change to `package.json`'s `imports`.
 
 Every content component follows this layout: the Card, the Highlight, the Hero and the Section.
 
-**What every component shares is in `core/`** ([core/README.md](../core/README.md)): what a
-component may declare (`define/`), how `frame()` makes a content component from it (`frame/`),
-how WordPress, Puck and Storybook read it (`hosts/`), and the tests every component runs
-(`testing/`). A component's folder holds only its own decisions.
+**What every component shares is in `core/`** ([core/README.md](../core/README.md)): a
+component's settings (`define/`), the token choices a setting can offer (`design/`), the parts,
+presets and `frame()` that make a content component (`frame/`), how WordPress, Puck and
+Storybook read it all (`hosts/`), and the tests every component runs (`testing/`). A component's folder holds only its own decisions.
 
 **One file per kind of definition.** The props are what an editor sets on the component, the
 parts are what goes inside it, and the presets are named combinations of the two. Each changes
@@ -256,10 +256,11 @@ what an example looks like is a preset.
 
 **Files are named `{Name}.{role}.{ext}`:** the first word is the component, the suffix is what
 the file defines. Typing `Card.` in
-a file finder lists everything that defines the Card. In `core/hosts/`, each environment's folder has a
-main file named for what it produces (`wordpress/block.tsx`, `puck/config.tsx`) and a `parts`
-file for how parts render there, mirroring `core/define/parts.ts`; `core/frame/` does the same
-for React.
+a file finder lists everything that defines the Card. Files in `core/` are named the same way
+throughout: `types.ts` and `prop-definitions.ts` hold what a component is written against; a
+`{from}-to-{to}` file makes one translation (`wordpress/parts-to-blocks.ts`,
+`puck/props-to-fields.ts`); a noun names a builder that makes a whole thing
+(`wordpress/block.tsx`, `puck/config.tsx`, `frame/frame.tsx`). See core/README.md.
 
 ### The object model
 
@@ -271,7 +272,7 @@ Component
 │                       types: text, choice, number, list
 │                       field: label · help · control · panel · hosts
 ├─ {Name}.parts.ts      PARTS: each part (title, eyebrow, image…): its kind and its class
-│                       kinds (image, heading, text, link, button): core/define/parts.ts
+│                       kinds (image, heading, text, link, button): core/frame/types.ts
 └─ {Name}.presets.ts    named combinations of the two
     └─ presets          Preset: name · title · description · wpIcon · props · parts
                         a part in a preset: { part: 'title', text, level }
@@ -280,27 +281,28 @@ Component
 
 Each host reads the same objects:
 
-|           | Prop definitions                                                     | Parts                                              | Presets                                                                   |
-| --------- | -------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------- |
-| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)      | (its `style.css` styles PARTS)                     |                                                                           |
-| WordPress | block.json attributes (`npm run sync:blocks`); the sidebar, by panel | `core/hosts/wordpress/parts.ts`: kind → core block | block variations; DEFAULT_PRESET is the block's template and its preview  |
-| Puck      | `puckFields()` and `defaultsIn()`                                    | `core/hosts/puck/parts.ts`: kind → primitive       | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
-| Storybook | `argTypesOf()`, and the defaults as the starting args                | `core/hosts/storybook/parts.tsx`                   | `{Name}.presets.stories.tsx`                                              |
+|           | Prop definitions                                                     | Parts                                                        | Presets                                                                   |
+| --------- | -------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Component | its prop types (`PropsOf`) and defaults (`PROPS.{key}.default`)      | (its `style.css` styles PARTS)                               |                                                                           |
+| WordPress | block.json attributes (`npm run sync:blocks`); the sidebar, by panel | `core/hosts/wordpress/parts-to-blocks.ts`: kind → core block | block variations; DEFAULT_PRESET is the block's template and its preview  |
+| Puck      | `puckFields()` and `defaultsIn()`                                    | `core/hosts/puck/parts-to-primitives.ts`: kind → primitive   | `withPreset( name )`; `withTemplate()` starts with DEFAULT_PRESET's parts |
+| Storybook | `argTypesOf()`, and the defaults as the starting args                | `core/hosts/storybook/parts-to-samples.tsx`                  | `{Name}.presets.stories.tsx`                                              |
 
-`core/define/` defines the shape of each: `props.ts` what prop definitions look like
-and the functions above; `parts.ts` the part kinds, and `resolveParts()`, which gives the
-mappers each part's kind and class from the component's PARTS; `presets.ts` the `Preset` type
-and `findPreset()`. A component's three files hold only its own data.
+The core defines the shape of each beside the code that reads it:
+`core/hosts/prop-definitions.ts` what prop definitions look like (the functions above are in
+`core/hosts/read-props.ts`); `core/frame/types.ts` the part kinds and the `Preset` type;
+`core/frame/read-parts.ts` `resolveParts()`, which gives the mappers each part's kind and class
+from the component's PARTS, and `findPreset()`. A component's three files hold only its own data.
 
 **A list prop holds any number of values from a list** (the Degree List's colleges). Its
 options are fixed, or a function that loads them, for options an API owns and that change
-without a release; each editor loads them once a page (`core/hosts/options.ts`). It
+without a release; each editor loads them once a page (`core/hosts/list-options.ts`). It
 saves values, not labels, since a value is what an API filters by. WordPress stores it as an
 `array` attribute and shows core's `FormTokenField`; Puck shows a custom field of checkboxes
 (`core/hosts/puck/list-field.tsx`), since Puck has no multi-select and its configs can't use
 WordPress's components; Storybook shows checkboxes, or JSON when the options load. A saved value
 the options no longer include is shown as a problem in both editors, not dropped
-(`core/define/options.ts`).
+(`core/hosts/list-options.ts`).
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by
@@ -457,7 +459,7 @@ content, so in WordPress it holds core blocks (see "Frames").
   blocks, so a block's own top and bottom margins are left out; and where core's CSS for a block
   loads after the theme's at the same specificity, each rule names the block's class twice.
 - **The dependency goes one way:** components import primitives; primitives never import
-  components. Both import `core/define/` and the Puck helpers in `core/hosts/puck/`, which import no component,
+  components. Both import `core/hosts/prop-definitions.ts` and the Puck helpers in `core/hosts/puck/`, which import no component,
   so nothing loops back.
 - **A primitive with no content of its own stays a plain component** (the Button, Heading,
   Image, Paragraph): it takes settings and renders one element, with nothing for a host to fill,
@@ -506,8 +508,8 @@ A content component is one of two shapes:
   audience, pathway and media cards; the Highlight's statement, key figure, bracket, side rule
   and centered), they are presets, in one list, `{Name}.presets.ts`: each is the frame's props plus its parts by kind, and `DEFAULT_PRESET` is
   the one a new frame starts with. WordPress registers each as a block variation
-  (core/hosts/wordpress/parts.ts maps parts to core blocks), Puck builds each with
-  `withPreset( name )` (core/hosts/puck/parts.ts maps them to primitives), and the stories render them. A new preset
+  (core/hosts/wordpress/parts-to-blocks.ts maps parts to core blocks), Puck builds each with
+  `withPreset( name )` (core/hosts/puck/parts-to-primitives.ts maps them to primitives), and the stories render them. A new preset
   is a new entry; tests check each reaches both hosts, names an icon WordPress has, and uses
   only the frame's own props.
 - **Parts are named by class.** Where a part has its own look (the Hero's title, the Highlight's
@@ -527,7 +529,7 @@ A content component is one of two shapes:
 
 A content component's `{Name}.tsx` is a plain React component, passed to
 `frame()` (core/frame/frame.tsx) with what it is (slug, title, kind, `wpIcon`, props,
-parts, presets; `ComponentDefinition` in core/define/definition.ts). That gives back a
+parts, presets; `ComponentDefinition` in core/frame/types.ts). That gives back a
 React component that works on its own, presets included, and `{Name}.port`: the definition, and
 `Frame`, the same markup with its areas open for a host to fill.
 

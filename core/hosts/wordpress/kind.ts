@@ -1,6 +1,9 @@
 /**
- * CONTEXT: a component's kind, read from its block.json (docs/architecture.md, "Three kinds of
- * component"). The kind is also its bucket under components/ and its inserter category.
+ * Step 1 · every component · its component kind (content, live, interactive), read back from its
+ * block.json.
+ *
+ * The kind is also its bucket under components/ and its inserter category (docs/architecture.md,
+ * "Three kinds of component").
  *
  *   content      no `render`: save() stores the HTML in the post.
  *   live         `render` and no `viewScript`: render.php writes the whole HTML on each request.

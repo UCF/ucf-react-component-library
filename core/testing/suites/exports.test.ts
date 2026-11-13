@@ -1,7 +1,8 @@
 /**
- * CONTEXT: every component's package entry (`{name}/index.ts`, `@ucf/components/{name}`) exports
- * what a site needs to use it without a CMS (docs/architecture.md, "What a component exports"):
- * the component, and its PARTS and PRESETS when it has them.
+ * Step 7 · every component · its package entry exports what a site needs to use it without a CMS.
+ *
+ * `{name}/index.ts`, `@ucf/components/{name}`: the component, and its PARTS and PRESETS when it
+ * has them (docs/architecture.md, "What a component exports").
  */
 import { describe, expect, it } from 'vitest';
 

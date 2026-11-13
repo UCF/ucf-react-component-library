@@ -3,10 +3,10 @@
  * defaults are its props (Button.props.ts).
  */
 import Button from '../../Button.tsx';
-import { puckFields } from '@/core/hosts/puck/fields';
+import { puckFields } from '@/core/hosts/puck/props-to-fields';
 // WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
-import { defaultsIn } from '@/core/define/props';
+import { defaultsIn } from '@/core/hosts/read-props';
 import { PROPS, type ButtonEditableProps } from '../../Button.props.ts';
 
 const config: PuckComponentConfig< ButtonEditableProps > = {

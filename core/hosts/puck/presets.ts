@@ -1,13 +1,12 @@
 /**
- * Puck: a component's presets, as data.
+ * Step 6 · Puck · content · a component's presets as data: the Design picker and a field per part.
  *
  * A Design picker and a field per part; Puck stores `{ preset, content }`, as a React site passes
  * them. The "Open" design is a slot instead.
  */
 
-import type { Kind, PartDefinitions } from '../../define/parts.ts';
-import { findPreset } from '../../define/presets.ts';
-import type { ContentOf } from '../../frame/frame.tsx';
+import type { Kind, PartDefinitions, ContentOf } from '../../frame/types.ts';
+import { findPreset } from '../../frame/read-parts.ts';
 import type {
 	PuckObjectField,
 	PuckScalarField,

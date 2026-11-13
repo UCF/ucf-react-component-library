@@ -5,7 +5,7 @@
  * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	// Layout

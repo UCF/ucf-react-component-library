@@ -1,15 +1,12 @@
 /**
- * Puck: a component's settings as Puck fields. Every component uses this, whatever its kind:
- * a content component through puckConfig() (config.tsx), and a live or interactive one in its
- * own hand-written Puck config.
+ * Step 6 · Puck · every component · props → Puck fields (puckFields).
+ *
+ * A content component gets them through puckConfig() (config.tsx); a live or interactive one calls
+ * puckFields() in its own Puck config.
  */
 
-import {
-	inHost,
-	type PropDefinition,
-	type PropDefinitions,
-	type PropsIn,
-} from '../../define/props.ts';
+import { inHost, type PropsIn } from '../read-props.ts';
+import type { PropDefinition, PropDefinitions } from '../prop-definitions.ts';
 import { listField } from './list-field.tsx';
 import type {
 	PuckCustomField,

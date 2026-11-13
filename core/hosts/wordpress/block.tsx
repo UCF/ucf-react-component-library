@@ -1,5 +1,6 @@
 /**
- * WordPress: a framed component as a block, read through its port.
+ * Step 6 · WordPress · content · builder: the whole block (edit, save, settings), from a framed
+ * component's port.
  *
  * A block keeps WordPress's usual files, each a one-line call:
  *
@@ -29,19 +30,15 @@ import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.prop
 import ImageEdit, {
 	type ImageValue,
 } from '@/components/primitives/image/integrations/wp/edit';
-import type { Areas, Ported } from '../../frame/frame.tsx';
-import { resolveParts, type PartDefinitions } from '../../define/parts.ts';
-import {
-	mediaProps,
-	panelsOf,
-	type PropDefinitions,
-	type TextProp,
-} from '../../define/props.ts';
-import { toBlocks, toExampleBlocks } from './parts.ts';
+import type { Areas, Ported, PartDefinitions } from '../../frame/types.ts';
+import { resolveParts } from '../../frame/read-parts.ts';
+import { mediaProps, panelsOf } from '../read-props.ts';
+import type { PropDefinitions, TextProp } from '../prop-definitions.ts';
+import { toBlocks, toExampleBlocks } from './parts-to-blocks.ts';
 import { ICONS } from './icons.ts';
-import { FieldControl } from './controls/inspector.tsx';
+import { FieldControl } from './controls/prop-control.tsx';
 
-// ── Sidebar fields ─────────────────────────────────────────────────────────────────────────────
+// ── §1 Sidebar fields: one per prop ──────────────────────────────────────────────────────────────
 
 type Attributes = Record< string, unknown >;
 type SetAttributes = ( attributes: Attributes ) => void;
@@ -149,7 +146,7 @@ export function useBlock(): BlockEditProps< Attributes > {
 	return block;
 }
 
-// ── edit() ─────────────────────────────────────────────────────────────────────────────────────
+// ── §2 edit(): the block in the editor ───────────────────────────────────────────────────────────
 //
 // The editor view.
 
@@ -222,7 +219,7 @@ export function blockEdit<
 	};
 }
 
-// ── save() ─────────────────────────────────────────────────────────────────────────────────────
+// ── §3 save(): what a post stores ────────────────────────────────────────────────────────────────
 //
 // What a post stores.
 
@@ -254,7 +251,7 @@ export function blockSave<
 	};
 }
 
-// ── Settings ───────────────────────────────────────────────────────────────────────────────────
+// ── §4 Settings: icon, preview, presets as variations ────────────────────────────────────────────
 //
 // Icon, inserter preview, variations.
 

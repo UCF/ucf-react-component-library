@@ -1,11 +1,11 @@
 /**
  * The Quote's props, in the order Puck shows them. Its Puck fields, its story controls and their
- * defaults are built from these (core/define/props.ts says how).
+ * defaults are built from these (core/hosts/prop-definitions.ts says how).
  *
  * SPEC: core Quote's `value` and `citation`, so an editor who knows core's knows ours
  * (docs/architecture.md, "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/**

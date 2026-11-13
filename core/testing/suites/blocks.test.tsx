@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 /**
- * CONTEXT: every WordPress block, through the same checks the block editor makes on a saved
- * post. Modeled on the UCF Brand Block Theme's tests/js/blocks.test.js.
+ * Step 7 · WordPress · every block · the checks the block editor makes on a saved post.
+ *
+ * Modeled on the UCF Brand Block Theme's tests/js/blocks.test.js.
  *
  * Per block, per case: create it, serialize it as a post would store it, parse it back, then
  *

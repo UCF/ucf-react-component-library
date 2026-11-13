@@ -339,12 +339,8 @@ function contentFiles( n ) {
  * The ${ n.title }. Why it's built this way: docs/architecture.md, "Built with frame()".
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/core/frame/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import { PARTS } from './${ n.Name }.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './${ n.Name }.presets.ts';
 import { PROPS } from './${ n.Name }.props.ts';
@@ -407,10 +403,7 @@ export default ${ n.Name };
  * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type {
-	PropDefinitions,
-	PropsOf,
-} from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/** The content's alignment, across. */
@@ -434,10 +427,7 @@ export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
  * The ${ n.title }'s parts: what goes inside it, each with its kind and the class that styles it.
  * SYNC: style.css styles every class here; tests/${ n.Name }.test.tsx checks.
  */
-import type {
-	PartDefinitions,
-	PartOf,
-} from '@/core/define/parts';
+import type { PartDefinitions, PartOf } from '@/core/frame/types';
 
 export const PARTS = {
 	/** The title. */
@@ -455,10 +445,8 @@ export type Part = PartOf< typeof PARTS >;
  */
 import type { Part } from './${ n.Name }.parts.ts';
 import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
-import {
-	findPreset,
-	type Preset as PresetOf,
-} from '@/core/define/presets';
+import { findPreset } from '@/core/frame/read-parts';
+import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< ${ n.Name }EditableProps, Part >;
 
@@ -523,9 +511,9 @@ export { PRESETS as ${ NAME }_PRESETS } from './${ n.Name }.presets.ts';
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { defaultsIn } from '@/core/define/props';
-import { argTypesOf } from '@/core/hosts/storybook/arg-types';
-// WHY every primitive's styles: each part kind renders as one (core/hosts/storybook/parts.tsx),
+import { defaultsIn } from '@/core/hosts/read-props';
+import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
+// WHY every primitive's styles: each part kind renders as one (core/hosts/storybook/parts-to-samples.tsx),
 // and an unstyled button fails the contrast check on dark sections.
 import '@/components/primitives/button/style.css';
 import '@/components/primitives/heading/style.css';
@@ -1016,15 +1004,12 @@ export default function ${ n.Name }( {
 		[ `${ n.Name }.props.ts` ]: `/**
  * The ${ n.title }'s props: every prop an editor sets. WordPress's sidebar and block.json
  * attributes, Puck's fields and the stories' controls are built from it
- * (core/define/props.ts).
+ * (core/hosts/prop-definitions.ts).
  *
  * SYNC: each prop's key is a block attribute, saved in every post that uses the block, so it is
  * permanent (docs/architecture.md, "Naming"). \`npm run sync:blocks\` writes them into block.json.
  */
-import type {
-	PropDefinitions,
-	PropsOf,
-} from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/** Where the items come from: a JSON list of { id, title, url }. '' shows none. */
@@ -1224,8 +1209,8 @@ export const Default: Story = {};
  * WHY fetched in the browser here: Puck's editor renders on the client, and \`render\` can't
  * wait for data (components/live/event-list/integrations/puck/config.tsx).
  */
-import { defaultsIn } from '@/core/define/props';
-import { puckFields } from '@/core/hosts/puck/fields';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { puckFields } from '@/core/hosts/puck/props-to-fields';
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
@@ -1280,8 +1265,8 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import { Disabled, Notice, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import { panelsOf } from '@/core/define/props';
-import { FieldControl } from '@/core/hosts/wordpress/controls/inspector';
+import { panelsOf } from '@/core/hosts/read-props';
+import { FieldControl } from '@/core/hosts/wordpress/controls/prop-control';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
 import { useItems } from '../../utils/useItems.ts';
@@ -1593,12 +1578,12 @@ export default function ${ n.Name }( {
 `,
 		[ `${ n.Name }.props.ts` ]: `/**
  * The ${ n.title }'s props, in the order Puck shows them. Its Puck fields, its story controls and
- * their defaults are built from these (core/define/props.ts says how).
+ * their defaults are built from these (core/hosts/prop-definitions.ts says how).
  *
  * SPEC: named after the equivalent core block's attributes, so an editor who knows core's knows
  * ours (docs/architecture.md, "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/** The text. */
@@ -1631,8 +1616,8 @@ export { PROPS as ${ n.Name.replace( /([a-z])([A-Z])/g, '$1_$2' ).toUpperCase() 
 `,
 		[ `integrations/storybook/${ n.Name }.stories.tsx` ]: `import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { defaultsIn } from '@/core/define/props';
-import { argTypesOf } from '@/core/hosts/storybook/arg-types';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { PROPS } from '../../${ n.Name }.props.ts';
 import '../../style.css';
@@ -1686,10 +1671,10 @@ describe( '${ n.Name }', () => {
  * fields and defaults are its props (${ n.Name }.props.ts).
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import { puckFields } from '@/core/hosts/puck/fields';
+import { puckFields } from '@/core/hosts/puck/props-to-fields';
 // WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
-import { defaultsIn } from '@/core/define/props';
+import { defaultsIn } from '@/core/hosts/read-props';
 import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
 
 const config: PuckComponentConfig< ${ n.Name }EditableProps > = {

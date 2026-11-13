@@ -1,7 +1,7 @@
 /**
  * The Column's parts: none. It holds anything.
  */
-import type { PartDefinitions, PartOf } from '@/core/define/parts';
+import type { PartDefinitions, PartOf } from '@/core/frame/types';
 
 export const PARTS = {} as const satisfies PartDefinitions;
 

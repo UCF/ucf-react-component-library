@@ -7,7 +7,7 @@
  * WordPress, editors place core Columns, which the theme styles (docs/architecture.md,
  * "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/**

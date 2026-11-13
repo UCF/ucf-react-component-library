@@ -1,18 +1,19 @@
 /**
- * WordPress: a list prop as a sidebar field, core's FormTokenField (WordPress's select2-style
- * field): type part of a name, pick it, and it becomes a token.
+ * Step 6 · WordPress · every component with a list prop · the prop as a sidebar token field.
+ *
+ * Core's FormTokenField (WordPress's select2-style field): type part of a name, pick it, and it
+ * becomes a token.
  *
  * WHY labels as tokens: FormTokenField matches what an editor types against the suggestion
- * strings themselves, so they must be what an editor reads. core/define/options.ts turns
+ * strings themselves, so they must be what an editor reads. core/hosts/list-options.ts turns
  * them back into values.
  */
 
 import { FormTokenField, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
-import { useOptions } from '../../options.ts';
-import { chosenOf, valuesOf } from '../../../define/options.ts';
-import type { ListProp } from '../../../define/props.ts';
+import { useOptions, chosenOf, valuesOf } from '../../list-options.ts';
+import type { ListProp } from '../../prop-definitions.ts';
 
 type Props = {
 	definition: ListProp;

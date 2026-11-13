@@ -65,9 +65,10 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 
 ```
 core/              how a component works in WordPress, Puck and Storybook, written once
-                   for every component: what props and parts may declare (define/), how
-                   frame() builds a content component (frame/), how each environment reads
-                   it (hosts/), and the tests every component must pass (testing/)
+                   for every component: its settings (define/), the token choices a setting
+                   can offer (design/), the parts, presets and frame() that build a content
+                   component (frame/), how each environment reads it (hosts/), and the tests
+                   every component must pass (testing/)
 components/        one self-contained folder per component, in a bucket by role:
   primitives/      the pieces components are built from: Button, Image, Heading, Paragraph
                    (Puck places them; WordPress editors use core's blocks instead)

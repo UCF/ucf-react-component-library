@@ -1,5 +1,5 @@
 /**
- * WordPress: every icon a block or preset names (`wpIcon`).
+ * Step 6 · WordPress · every component · every icon a block or preset names (`wpIcon`).
  *
  * WHY a list, not `import * as`: the icons are bundled into the plugins, so only these ship.
  */

@@ -1,17 +1,22 @@
 // @vitest-environment happy-dom
 /**
- * CONTEXT: every component's presets (`{Name}.presets.ts`) reach WordPress whole, and use only
- * the component's own props. Found by glob, so a component with presets is checked with no
- * other change. Puck's side is checked in puck.test.tsx.
+ * Step 7 · WordPress · content · every preset reaches WordPress whole, and uses only the
+ * component's own props.
+ *
+ * Found by glob, so a component with presets is checked with no other change. Puck's side is
+ * checked in puck.test.tsx.
  */
 import { getBlockVariations } from '@wordpress/blocks';
 import { describe, expect, it } from 'vitest';
 
-import type { Preset as PresetOf } from '../../define/presets.ts';
+import type { Preset as PresetOf, PartDefinitions } from '../../frame/types.ts';
 import { ICONS } from '../../hosts/wordpress/icons.ts';
-import { toBlocks, type BlockTemplate } from '../../hosts/wordpress/parts.ts';
-import { resolveParts, type PartDefinitions } from '../../define/parts.ts';
-import type { PropDefinitions } from '../../define/props.ts';
+import {
+	toBlocks,
+	type BlockTemplate,
+} from '../../hosts/wordpress/parts-to-blocks.ts';
+import { resolveParts } from '../../frame/read-parts.ts';
+import type { PropDefinitions } from '../../hosts/prop-definitions.ts';
 
 type Preset = PresetOf< Record< string, unknown >, unknown >;
 
@@ -105,7 +110,7 @@ describe.each( Object.keys( presetFiles ).sort() )( '%s', ( component ) => {
 	} );
 
 	// WHY: whatever a new block starts with is published if an editor misses it. Placeholders
-	// show what goes where and are never saved (core/hosts/wordpress/parts.ts).
+	// show what goes where and are never saved (core/hosts/wordpress/parts-to-blocks.ts).
 	it( 'starts a new block with placeholders only: no text, address or image', () => {
 		const parts = partFiles[ component ] ?? {};
 		expect(

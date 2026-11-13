@@ -37,12 +37,8 @@
  *
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/core/frame/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
 import { PARTS } from './Hero.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Hero.presets.ts';
@@ -54,7 +50,7 @@ export type HeroProps = OwnProps< typeof PROPS > &
 export type HeroLayout = HeroEditableProps[ 'layout' ];
 export type HeroTone = HeroEditableProps[ 'tone' ];
 
-// SYNC: the composition slugs in core/define/compositions.ts.
+// SYNC: the composition slugs in core/design/compositions.ts.
 const COMPOSITION: Record< HeroTone, string > = {
 	accent: 'gold',
 	dark: 'dark',

@@ -5,8 +5,8 @@ import {
 	PLACEHOLDER_IMAGE,
 } from '../../../../../.storybook/placeholder.ts';
 import Image, { type ImageProps } from '../../Image.tsx';
-import { defaultsIn } from '@/core/define/props';
-import { argTypesOf } from '@/core/hosts/storybook/arg-types';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import { PROPS } from '../../Image.props.ts';
 import '../../style.css';
 

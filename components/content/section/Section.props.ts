@@ -3,8 +3,8 @@
  * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
-import { COMPOSITIONS } from '@/core/define/compositions';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
+import { COMPOSITIONS } from '@/core/design/compositions';
 
 export const PROPS = {
 	/** The band's background, and so the colors of everything inside it. */

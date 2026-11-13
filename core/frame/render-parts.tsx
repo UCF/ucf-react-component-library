@@ -1,5 +1,5 @@
 /**
- * React: parts as React elements.
+ * Step 5 · content · parts → React elements, for React sites and frame().
  *
  * For a site that places them itself: `<Card { ...pathway.props }>{ presetContent( CARD_PARTS,
  * pathway ) }</Card>`.
@@ -12,15 +12,10 @@ import Button from '@/components/primitives/button/Button';
 import Heading from '@/components/primitives/heading/Heading';
 import Image from '@/components/primitives/image/Image';
 import Paragraph from '@/components/primitives/paragraph/Paragraph';
-import {
-	resolveParts,
-	unhandledPart,
-	type PartDefinitions,
-	type PartOf,
-	type ResolvedPart,
-} from '../define/parts.ts';
+import { resolveParts, unhandledPart } from './read-parts.ts';
+import type { PartDefinitions, PartOf, ResolvedPart } from './types.ts';
 
-export { findPreset } from '../define/presets.ts';
+export { findPreset } from './read-parts.ts';
 
 // ── Rendering parts ────────────────────────────────────────────────────────────────────────────
 

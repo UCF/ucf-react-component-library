@@ -5,12 +5,8 @@
  * `Card.port` (core/frame/frame.tsx).
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/core/frame/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
 import { PARTS } from './Card.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './Card.presets.ts';

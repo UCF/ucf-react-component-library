@@ -1,11 +1,11 @@
 /**
  * The Separator's props, in the order Puck shows them. Its Puck fields, its story controls and
- * their defaults are built from these (core/define/props.ts says how).
+ * their defaults are built from these (core/hosts/prop-definitions.ts says how).
  *
  * SPEC: core Separator's three styles, so an editor who knows core's knows ours
  * (docs/architecture.md, "Primitives").
  */
-import type { PropDefinitions, PropsOf } from '@/core/define/props';
+import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 
 export const PROPS = {
 	/** A short rule, centered (core's default); the full width; or three dots. */

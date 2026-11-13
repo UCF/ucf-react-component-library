@@ -90,7 +90,9 @@ function components( root ) {
 export async function syncBlocks( root, { check = false } = {} ) {
 	const prettier = await import( 'prettier' );
 	const { blockAttributes } = await import(
-		pathToFileURL( path.join( root, 'core/hosts/wordpress/attributes.ts' ) )
+		pathToFileURL(
+			path.join( root, 'core/hosts/wordpress/props-to-attributes.ts' )
+		)
 	);
 	const changed = [];
 	for ( const { props, blockJson } of components( root ) ) {

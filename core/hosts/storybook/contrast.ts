@@ -1,5 +1,6 @@
 /**
- * Storybook: color contrast measured in the browser, for checks axe can't make.
+ * Step 7 · Storybook · every component · color contrast measured in the browser, for checks axe
+ * can't make.
  */
 
 /**

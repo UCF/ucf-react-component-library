@@ -17,7 +17,7 @@ import type { ComponentType } from 'react';
 import ImageEdit from '@/components/primitives/image/integrations/wp/edit';
 import FixedCard, { type FixedCardProps } from '../../FixedCard.tsx';
 import { CHOICES, type ChoiceKey } from '../../options.ts';
-import { ownAttributes } from '@/core/hosts/wordpress/attributes';
+import { ownAttributes } from '@/core/hosts/wordpress/props-to-attributes';
 import metadata from './block.json';
 
 // UPSTREAM: block-editor's type files are generated from JSDoc, and PlainText's has no props.

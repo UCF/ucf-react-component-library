@@ -6,8 +6,8 @@
  * (Puck's `resolveData`, or the site's own Server Component calling client.ts); work it out in
  * the Puck playground (docs/todo.md).
  */
-import { defaultsIn } from '@/core/define/props';
-import { puckFields } from '@/core/hosts/puck/fields';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { puckFields } from '@/core/hosts/puck/props-to-fields';
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import EventList from '../../EventList.tsx';
 import { PROPS, type EventListEditableProps } from '../../EventList.props.ts';

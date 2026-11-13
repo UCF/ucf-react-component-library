@@ -11,7 +11,8 @@
  */
 import type { Part } from './Highlight.parts.ts';
 import type { HighlightEditableProps } from './Highlight.props.ts';
-import { findPreset, type Preset as PresetOf } from '@/core/define/presets';
+import { findPreset } from '@/core/frame/read-parts';
+import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< HighlightEditableProps, Part >;
 

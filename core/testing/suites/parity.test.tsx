@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 /**
- * CONTEXT: checks that a component's WordPress block and its Puck config stay in step, so a
- * component works the same in both.
+ * Step 7 · WordPress and Puck · every component · its block and its Puck config stay in step, so
+ * it works the same in both.
  *
  *   - Both hosts exist: every component has a Puck config and a block. And it has stories,
  *     which is where its accessibility is checked.
@@ -21,13 +21,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test } from 'vitest';
 
 import type { PuckComponentConfig, PuckField } from '../../hosts/puck/types.ts';
-import {
-	defaultsIn,
-	inHost,
-	type PropDefinitions,
-} from '../../define/props.ts';
+import { defaultsIn, inHost } from '../../hosts/read-props.ts';
+import type { PropDefinitions } from '../../hosts/prop-definitions.ts';
 import { PRESET_FIELDS } from '../../hosts/puck/presets.ts';
-import { blockAttributes } from '../../hosts/wordpress/attributes.ts';
+import { blockAttributes } from '../../hosts/wordpress/props-to-attributes.ts';
 import { kindOf } from '../../hosts/wordpress/kind.ts';
 
 import.meta.glob(

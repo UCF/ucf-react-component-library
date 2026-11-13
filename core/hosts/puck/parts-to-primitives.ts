@@ -1,5 +1,5 @@
 /**
- * Puck: parts as primitives, for Puck's templates.
+ * Step 6 · Puck · content · parts → primitives, for Puck's templates.
  *
  * SYNC: wp/parts.ts builds the same parts as core blocks; each `type` is the key the README tells
  * hosts to register the primitive under.
@@ -9,7 +9,8 @@
  * no `#` address, for the same reason.
  */
 
-import { unhandledPart, type ResolvedPart } from '../../define/parts.ts';
+import { unhandledPart } from '../../frame/read-parts.ts';
+import type { ResolvedPart } from '../../frame/types.ts';
 import type { PuckSlot } from './types.ts';
 
 /**

@@ -1,5 +1,6 @@
 /**
- * Storybook: parts drawn for the stories, with the primitives' styles and the sample photo.
+ * Step 6 · Storybook · content · parts → React for the stories, with the primitives' styles and
+ * the sample photo.
  */
 
 import '@/components/primitives/button/style.css';
@@ -7,8 +8,8 @@ import '@/components/primitives/heading/style.css';
 import '@/components/primitives/image/style.css';
 import '@/components/primitives/paragraph/style.css';
 import { PLACEHOLDER_IMAGE } from '../../../.storybook/placeholder.ts';
-import { renderParts as renderPartsWith } from '../../frame/parts.tsx';
-import type { ResolvedPart } from '../../define/parts.ts';
+import { renderParts as renderPartsWith } from '../../frame/render-parts.tsx';
+import type { ResolvedPart } from '../../frame/types.ts';
 
 /**
  * Parts as primitives, with the sample photo.

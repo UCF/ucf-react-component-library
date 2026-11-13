@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Button, { type ButtonProps } from '../../Button.tsx';
-import { defaultsIn } from '@/core/define/props';
-import { argTypesOf } from '@/core/hosts/storybook/arg-types';
+import { defaultsIn } from '@/core/hosts/read-props';
+import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import { PROPS } from '../../Button.props.ts';
 import '../../style.css';
 

@@ -1,6 +1,7 @@
 /**
- * CONTEXT: checks every Puck config against the real Puck, which the library itself never
- * imports (core/hosts/puck/types.ts).
+ * Step 7 · Puck · every component · every Puck config, checked against the real Puck.
+ *
+ * The library itself never imports Puck (core/hosts/puck/types.ts).
  *
  *   - Types: each config must be assignable to Puck's own `ComponentConfig`. This is checked by
  *     `npm run typecheck`, not by the test run: a config that no longer fits Puck's shape is a

@@ -1,10 +1,10 @@
 /**
- * Storybook: a component's props as story controls, with the values editors get.
+ * Step 6 · Storybook · every component · props → story controls, with the values editors get.
  */
 
 import type { ArgTypes } from '@storybook/react-vite';
 
-import type { PropDefinitions } from '../../define/props.ts';
+import type { PropDefinitions } from '../prop-definitions.ts';
 
 /**
  * Inline radio buttons or a select for each choice prop; checkboxes for a list prop with fixed
