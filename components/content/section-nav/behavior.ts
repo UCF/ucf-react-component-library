@@ -5,7 +5,8 @@
  *
  * WHY a script on top, not state in the component: the links must be in the saved HTML and work
  * without it (docs/architecture.md, "An accordion is content"). Without this script every link
- * still works, in a row that scrolls across.
+ * still works, in a row whose links wrap their text, and which scrolls across when even that is
+ * too wide (a phone).
  * WHY plain DOM, no React: WordPress runs it as the block's viewScript (integrations/wp/view.ts),
  * and a React site calls it from an effect: `useEffect( () => enhanceSectionNav( nav ), [] )`.
  */

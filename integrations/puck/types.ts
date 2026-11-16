@@ -5,7 +5,14 @@
  * config against the real types.
  */
 
-import type { ElementType, ReactElement } from 'react';
+import type {
+	ComponentType,
+	ElementType,
+	ReactElement,
+	ReactNode,
+} from 'react';
+
+import type { Link } from '../schema/props.ts';
 
 // ── Fields ─────────────────────────────────────────────────────────────────────────────────────
 
@@ -88,6 +95,40 @@ export type PuckArrayField< Item > = {
 		[ Key in keyof Item ]-?: PuckFieldFor< NonNullable< Item[ Key ] > >;
 	};
 	defaultItemProps?: Item;
+	/** What a closed item shows in place of "Item 1": a link's text. */
+	getItemSummary?: ( item: Item, index?: number ) => string;
+};
+
+// ── Puck's own controls ────────────────────────────────────────────────────────────────────────
+
+/**
+ * Puck's field controls, lent by the site: `AutoField`, `FieldLabel` and `Button` from
+ * `@puckeditor/core`. A custom field that draws them looks like the rest of Puck's sidebar.
+ * WHY lent: the library doesn't depend on Puck. UPSTREAM: only the props this library passes;
+ * tests/puck.test.tsx checks Puck's own against these.
+ */
+export type PuckControls = {
+	/** Draws a field from its definition, as Puck does, with no label: here, a links field. */
+	AutoField: ComponentType< {
+		field: Omit< PuckArrayField< Link >, 'label' >;
+		value: Link[];
+		onChange: ( value: Link[] ) => void;
+		readOnly?: boolean;
+	} >;
+	FieldLabel: ComponentType< {
+		label: string;
+		el?: 'label' | 'div';
+		readOnly?: boolean;
+		children?: ReactNode;
+	} >;
+	Button: ComponentType< {
+		children: ReactNode;
+		onClick?: () => void;
+		variant?: 'primary' | 'secondary';
+		disabled?: boolean;
+		fullWidth?: boolean;
+		type?: 'button';
+	} >;
 };
 
 /**

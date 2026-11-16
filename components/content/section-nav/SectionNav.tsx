@@ -25,6 +25,7 @@ export type SectionNavProps = OwnProps< typeof PROPS > &
 
 function SectionNavMarkup( {
 	links = [ ...PROPS.links.default ],
+	linkLayout = PROPS.linkLayout.default,
 	// WHY taken out: it holds no content, so neither reaches the `<nav>`.
 	children: _children,
 	area: _area,
@@ -35,7 +36,15 @@ function SectionNavMarkup( {
 		<nav
 			aria-label="On this page"
 			{ ...props }
-			className={ [ className, 'ucf-c', 'ucf-c-section-nav' ]
+			className={ [
+				className,
+				'ucf-c',
+				'ucf-c-section-nav',
+				// WHY no class for Left: it is the bar's own layout; only Spread changes it.
+				linkLayout === 'left'
+					? null
+					: `ucf-c-section-nav--${ linkLayout }`,
+			]
 				.filter( Boolean )
 				.join( ' ' ) }
 		>
@@ -60,6 +69,7 @@ function SectionNavMarkup( {
  * A bar of links to the page's sections, which sticks to the top of the window:
  *
  *   <SectionNav links={ [ { label: 'Apply', href: '#apply' } ] } />
+ *   <SectionNav linkLayout="spread" links={ … } />   the links spread across the bar
  *
  * Place it between Sections, not inside one: it sticks only while its parent is on screen.
  * Its props: SectionNav.props.ts.

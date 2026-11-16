@@ -5,11 +5,17 @@
  * (integrations/puck/section-links.ts), and the links field that fills from them
  * (integrations/puck/links-field.tsx, through withPageSections()).
  */
-import type { ComponentConfig } from '@puckeditor/core';
+import type {
+	AutoField,
+	Button,
+	ComponentConfig,
+	FieldLabel,
+} from '@puckeditor/core';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
+import type { PuckArrayField, PuckControls } from '@/integrations/puck/types';
 import type { Link } from '@/integrations/schema/props';
 import config, { withPageSections } from '../integrations/puck/config.tsx';
 import { LinksField } from '../integrations/puck/links-field.tsx';
@@ -27,10 +33,41 @@ const section = ( anchor: string, blocks: unknown[] = [] ) =>
 	item( 'Section', { anchor, blocks } );
 const heading = ( content: string ) => item( 'Heading', { content } );
 
-// The type check: withPageSections() gives a config Puck takes.
-withPageSections( () => ( { content: [] } ) ) satisfies ComponentConfig<
+// The type checks: Puck's own controls are ones withPageSections() takes, and it gives a config
+// Puck takes. WHY a cast: only their types are checked; nothing draws the field here.
+const puck = null as unknown as {
+	AutoField: typeof AutoField;
+	FieldLabel: typeof FieldLabel;
+	Button: typeof Button;
+};
+withPageSections( () => ( { content: [] } ), puck ) satisfies ComponentConfig<
 	typeof config.defaultProps
 >;
+
+/**
+ * Stand-ins for Puck's controls: Puck's need its editor around them.
+ * WHY the array field drawn as its links' text: so a test sees what it was given.
+ */
+const CONTROLS: PuckControls = {
+	AutoField: ( { value } ) => (
+		<ul>
+			{ value.map( ( link, index ) => (
+				<li key={ index }>{ link.label }</li>
+			) ) }
+		</ul>
+	),
+	FieldLabel: ( { label, children } ) => (
+		<div>
+			{ label }
+			{ children }
+		</div>
+	),
+	Button: ( { children, onClick, disabled } ) => (
+		<button type="button" onClick={ onClick } disabled={ disabled }>
+			{ children }
+		</button>
+	),
+};
 
 describe( 'puckSectionLinks', () => {
 	it( 'links each Section with an anchor, by its first heading, in page order', () => {
@@ -124,6 +161,8 @@ describe( 'the links field', () => {
 			createRoot( container ).render(
 				<LinksField
 					label="Links"
+					field={ config.fields.links as PuckArrayField< Link > }
+					puck={ CONTROLS }
 					value={ value }
 					onChange={ ( links ) => changes.push( links ) }
 					readOnly={ readOnly }

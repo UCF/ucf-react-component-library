@@ -29,6 +29,7 @@ const LINKS: Link[] = [
 
 type PageProps = {
 	links: Link[];
+	linkLayout?: 'left' | 'spread';
 	composition: string;
 	script: boolean;
 };
@@ -40,10 +41,11 @@ type PageProps = {
  *
  * @param props             What the page holds.
  * @param props.links       The Section Nav's links; each `#anchor` gets a Section.
+ * @param props.linkLayout  Where the links sit in the bar.
  * @param props.composition The Sections' composition, from the toolbar.
  * @param props.script      Whether behavior.ts runs, as WordPress's viewScript does.
  */
-function Page( { links, composition, script }: PageProps ) {
+function Page( { links, linkLayout, composition, script }: PageProps ) {
 	const page = useRef< HTMLDivElement >( null );
 	useEffect( () => {
 		const nav =
@@ -58,7 +60,7 @@ function Page( { links, composition, script }: PageProps ) {
 				<Heading level={ 1 } content="Nursing, BSN" />
 				<Paragraph content="Jump to a section of this page from the gold bar below." />
 			</Section>
-			<SectionNav links={ links } />
+			<SectionNav links={ links } linkLayout={ linkLayout } />
 			{ links
 				.filter( ( link ) => link.href.startsWith( '#' ) )
 				.map( ( link ) => (
@@ -89,6 +91,7 @@ const meta = {
 	render: ( args, { globals } ) => (
 		<Page
 			links={ [ ...( args.links ?? [] ) ] }
+			linkLayout={ args.linkLayout }
 			composition={ String( globals.composition ?? 'light' ) }
 			script
 		/>
@@ -136,7 +139,36 @@ export const Default: Story = {
 	},
 };
 
-/** More links than fit across: on wide screens the row scrolls sideways. */
+/**
+ * Main-Site-Theme's `justify-between` layout, as on the ucf.edu home page: the first link at
+ * the left edge, the last at the right, the rest spread between.
+ */
+export const Spread: Story = {
+	args: { linkLayout: 'spread' },
+	play: async ( { canvasElement } ) => {
+		if ( window.innerWidth < 992 ) {
+			return;
+		}
+		const list = canvasElement.querySelector< HTMLElement >(
+			'.ucf-c-section-nav__list'
+		);
+		const items = [
+			...( list?.querySelectorAll( '.ucf-c-section-nav__item' ) ?? [] ),
+		];
+		const end = list
+			? list.getBoundingClientRect().right -
+				parseFloat( getComputedStyle( list ).paddingRight )
+			: 0;
+		await expect(
+			items.at( -1 )?.getBoundingClientRect().right
+		).toBeCloseTo( end, 0 );
+	},
+};
+
+/**
+ * More links than fit across: on wide screens their text wraps and the bar grows taller, as on
+ * ucf.edu/robotics/. A jump to a section still marks it.
+ */
 export const ManyLinks: Story = {
 	args: {
 		links: [
@@ -147,9 +179,29 @@ export const ManyLinks: Story = {
 			{ label: 'Frequently Asked Questions', href: '#faq' },
 		],
 	},
+	play: async ( { canvasElement } ) => {
+		if ( window.innerWidth < 992 ) {
+			return;
+		}
+		const nav =
+			canvasElement.querySelector< HTMLElement >( '.ucf-c-section-nav' );
+		const list = nav?.querySelector( '.ucf-c-section-nav__list' );
+		// Every link in the bar: none scrolled out of sight.
+		await expect( list?.scrollWidth ).toBe( list?.clientWidth );
+
+		// The taller bar still marks the section a jump lands on.
+		canvasElement.ownerDocument
+			.getElementById( 'research' )
+			?.scrollIntoView( { behavior: 'instant' } );
+		await waitFor( () =>
+			expect(
+				nav?.querySelector( '[aria-current="location"]' )
+			).toHaveTextContent( 'Research' )
+		);
+	},
 };
 
-/** Without its script: every link in one row that scrolls across, at every width. */
+/** Without its script: every link in one row at every width, scrolling across on a phone. */
 export const WithoutScript: Story = {
 	render: ( args, { globals } ) => (
 		<Page

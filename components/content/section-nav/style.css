@@ -3,7 +3,9 @@
  *
  * SPEC: the ucf.edu section menu: the Section Menus plugin's markup (`navbar
  * navbar-toggleable-md navbar-light bg-primary`) as Main-Site-Theme's Athena build styles it,
- * in its justify-between layout. The sizes below are Athena's. Its gold (#fc0) is the library's
+ * in both its layouts: the plugin's default, links at the left (ucf.edu/faculty/), and the
+ * theme's `justify-between`, links spread across (`--spread`, the home page). The sizes below
+ * are Athena's. Its gold (#fc0) is the library's
  * gold token instead, which WordPress points at the theme's.
  * WHY tokens, not the section's roles: it is gold on every section, as on ucf.edu, so it
  * reads gold and black directly rather than the roles of where it is placed.
@@ -37,7 +39,6 @@
 
 .ucf-c-section-nav .ucf-c-section-nav__list {
 	display: flex;
-	justify-content: space-between;
 	box-sizing: border-box;
 	/* WHY: with no links yet, the bar keeps its height, blank, so an editor can see and select
 	   it. SYNC: the bar's height, in scroll-padding-top below. */
@@ -46,10 +47,15 @@
 	margin: 0 auto;
 	padding: 0 var(--ucf-custom-gutter);
 	list-style: none;
-	/* WHY a row that scrolls across when the links don't fit: without the script there is no
-	   menu button, and every link must still be in reach. */
+	/* SPEC: as on ucf.edu/robotics/, links that don't fit on one line shrink and wrap their
+	   text, and the bar grows taller. WHY it still scrolls across: without the script there
+	   is no menu button, and a row too wide even wrapped (a phone) must still be in reach. */
 	overflow-x: auto;
-	white-space: nowrap;
+}
+
+/* SPEC: Main-Site-Theme's `justify-between` layout (`w-100 justify-content-between`). */
+.ucf-c-section-nav--spread .ucf-c-section-nav__list {
+	justify-content: space-between;
 }
 
 .ucf-c-section-nav .ucf-c-section-nav__item {
@@ -157,6 +163,8 @@
  * must stop short of the bar and scroll smoothly. Only on a page that has a Section Nav.
  * SYNC: the bar's height, 3.9rem + 2px at both widths: a link's 0.9rem line and 3rem of
  * padding, or the button's 2rem icon, borders and margins; and the bar's two 1px borders.
+ * WHY not more when the links wrap to two lines: the bar is then 0.9rem taller, and covers only
+ * that much of the section's top padding, not its heading.
  */
 html:has(.ucf-c-section-nav) {
 	scroll-padding-top: calc(3.9rem + 2px);

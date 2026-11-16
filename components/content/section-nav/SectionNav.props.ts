@@ -17,6 +17,23 @@ export const PROPS = {
 		panel: 'Section Nav',
 		default: [],
 	},
+	/**
+	 * Where the links sit in the bar: packed at the left, or spread across it.
+	 * SPEC: the Section Menus shortcode's `layout`: its default, and Main-Site-Theme's
+	 * `justify-between` (the ucf.edu home page and /robotics/; /faculty/ is the default).
+	 * WHY not `layout`: WordPress's own layout support stores an object under that name.
+	 */
+	linkLayout: {
+		type: 'choice',
+		label: 'Layout',
+		panel: 'Section Nav',
+		control: 'radio',
+		options: [
+			{ value: 'left', label: 'Left' },
+			{ value: 'spread', label: 'Spread across' },
+		],
+		default: 'left',
+	},
 } as const satisfies PropDefinitions;
 
 /** The props above, typed. */

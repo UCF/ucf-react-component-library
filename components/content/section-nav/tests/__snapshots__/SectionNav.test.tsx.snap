@@ -3,3 +3,5 @@
 exports[`SectionNav > renders the same in WordPress and React: defaults 1`] = `"<nav aria-label="On this page" class="wp-block-ucf-content-section-nav ucf-c ucf-c-section-nav"><ul class="ucf-c-section-nav__list"></ul></nav>"`;
 
 exports[`SectionNav > renders the same in WordPress and React: links 1`] = `"<nav aria-label="On this page" class="wp-block-ucf-content-section-nav ucf-c ucf-c-section-nav"><ul class="ucf-c-section-nav__list"><li class="ucf-c-section-nav__item"><a class="ucf-c-section-nav__link" href="#overview">Overview</a></li><li class="ucf-c-section-nav__item"><a class="ucf-c-section-nav__link" href="#tuition">Tuition &amp; Aid</a></li><li class="ucf-c-section-nav__item"><a class="ucf-c-section-nav__link" href="https://www.ucf.edu/apply/">Apply</a></li></ul></nav>"`;
+
+exports[`SectionNav > renders the same in WordPress and React: spread 1`] = `"<nav aria-label="On this page" class="wp-block-ucf-content-section-nav ucf-c ucf-c-section-nav ucf-c-section-nav--spread"><ul class="ucf-c-section-nav__list"><li class="ucf-c-section-nav__item"><a class="ucf-c-section-nav__link" href="#overview">Overview</a></li></ul></nav>"`;

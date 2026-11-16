@@ -22,6 +22,10 @@ const cases: Record< string, SectionNavProps > = {
 			{ label: 'Apply', href: 'https://www.ucf.edu/apply/' },
 		],
 	},
+	spread: {
+		linkLayout: 'spread',
+		links: [ { label: 'Overview', href: '#overview' } ],
+	},
 };
 
 describe( 'SectionNav', () => {
@@ -42,6 +46,17 @@ describe( 'SectionNav', () => {
 		expect(
 			renderToStaticMarkup( <SectionNav aria-label="In this program" /> )
 		).toContain( 'aria-label="In this program"' );
+	} );
+
+	// SPEC: the Section Menus plugin's two layouts: its default packs the links at the left,
+	// Main-Site-Theme's `justify-between` spreads them across.
+	it( 'marks the spread layout with a class, and the left one with none', () => {
+		expect(
+			renderToStaticMarkup( <SectionNav linkLayout="spread" /> )
+		).toContain( 'ucf-c-section-nav--spread' );
+		expect(
+			renderToStaticMarkup( <SectionNav linkLayout="left" /> )
+		).not.toContain( 'ucf-c-section-nav--' );
 	} );
 
 	// WHY: it holds no content; children passed to it must not land in the bar.

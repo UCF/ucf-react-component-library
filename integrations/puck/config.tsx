@@ -87,6 +87,7 @@ function fieldOf(
 				href: { type: 'text', label: 'Address' },
 			},
 			defaultItemProps: { label: '', href: '' },
+			getItemSummary: ( link ) => link.label || link.href || 'New link',
 		};
 	}
 	return definition.type === 'choice'

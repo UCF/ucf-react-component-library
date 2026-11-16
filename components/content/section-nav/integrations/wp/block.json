@@ -32,6 +32,10 @@
 		"align": {
 			"type": "string",
 			"default": "full"
+		},
+		"linkLayout": {
+			"type": "string",
+			"default": "left"
 		}
 	},
 	"supports": {

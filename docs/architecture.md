@@ -304,7 +304,10 @@ the options no longer include is shown as a problem in both editors, not dropped
 **A links prop holds any number of links,** each a `label` and an `href` (the Section Nav's).
 Unlike a list, an editor types both, so there are no options. WordPress stores it as an `array`
 attribute of objects and shows a text and an address field per link
-(`integrations/wp/links-control.tsx`); Puck shows its own array field; Storybook shows JSON.
+(`integrations/wp/links-control.tsx`); Puck shows its own array field; Storybook shows JSON. A
+Puck field that needs more than Puck's own field types draws them with Puck's `AutoField`,
+`FieldLabel` and `Button`, which the site lends (`PuckControls` in `integrations/puck/types.ts`),
+so it looks like the rest of Puck's sidebar and the library still doesn't depend on Puck.
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by
