@@ -4,6 +4,10 @@ import { useEffect, useRef } from 'react';
 import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { argTypesOf } from '@/integrations/storybook/arg-types';
+import {
+	COMPOSITIONS,
+	type Composition,
+} from '@/integrations/schema/compositions';
 import type { Link } from '@/integrations/schema/props';
 import Section from '@/components/content/section/Section';
 import Heading from '@/components/primitives/heading/Heading';
@@ -31,6 +35,10 @@ type PageProps = {
 	script: boolean;
 };
 
+// Each link's Section takes the next composition, so the bar is seen over every one.
+const sectionOf = ( index: number ): Composition =>
+	COMPOSITIONS[ index % COMPOSITIONS.length ]?.value ?? 'light';
+
 /**
  * A page: an opening Section, the Section Nav, then a Section per link.
  * WHY build the Sections here: the bar sits between Sections, not inside one.
@@ -38,7 +46,7 @@ type PageProps = {
  * @param props             Props.
  * @param props.links       The links; each `#anchor` gets a Section.
  * @param props.linkLayout  Left or spread.
- * @param props.composition The Sections' composition, from the toolbar.
+ * @param props.composition The opening Section's, from the toolbar.
  * @param props.script      Whether behavior.ts runs.
  */
 function Page( { links, linkLayout, composition, script }: PageProps ) {
@@ -48,22 +56,23 @@ function Page( { links, linkLayout, composition, script }: PageProps ) {
 			page.current?.querySelector< HTMLElement >( '.ucf-c-section-nav' );
 		return script && nav ? enhanceSectionNav( nav ) : undefined;
 	}, [ script, links ] );
-	const sectionOf = composition as 'light';
 	// WHY one wrapper: the bar only sticks within its parent.
 	return (
 		<div ref={ page }>
-			<Section composition={ sectionOf }>
+			{ /* WHY the toolbar's: each test run must render in its own composition
+			     (.storybook/vitest.setup.ts). */ }
+			<Section composition={ composition as Composition }>
 				<Heading level={ 1 } content="Nursing, BSN" />
 				<Paragraph content="Jump to a section of this page from the gold bar below." />
 			</Section>
 			<SectionNav links={ links } linkLayout={ linkLayout } />
 			{ links
 				.filter( ( link ) => link.href.startsWith( '#' ) )
-				.map( ( link ) => (
+				.map( ( link, index ) => (
 					<Section
 						key={ link.href }
 						id={ link.href.slice( 1 ) }
-						composition={ sectionOf }
+						composition={ sectionOf( index ) }
 						style={ { minHeight: '80vh' } }
 					>
 						<Heading content={ link.label } />
