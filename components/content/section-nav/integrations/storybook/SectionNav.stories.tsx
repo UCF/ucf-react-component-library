@@ -118,13 +118,75 @@ export const Default: Story = {
 		await expect( toggle?.checkVisibility() ).toBe( narrow );
 		await expect( list?.checkVisibility() ).toBe( ! narrow );
 
-		if ( narrow && toggle ) {
+		if ( narrow && toggle && list ) {
+			// As much space at the right of the bars as at the left of the text.
+			const button = toggle.getBoundingClientRect();
+			const text = toggle
+				.querySelector( '.ucf-c-section-nav__toggle-text' )
+				?.getBoundingClientRect();
+			const iconElement = toggle.querySelector(
+				'.ucf-c-section-nav__toggle-icon'
+			);
+			const icon = iconElement?.getBoundingClientRect();
+			// The bars, centered in the icon's box: their height, at the glyph's 448:512.
+			const [ , drawn = 0 ] = getComputedStyle( iconElement as Element )
+				.maskSize.split( ' ' )
+				.map( parseFloat );
+			const barsRight =
+				( icon?.left ?? 0 ) +
+				( ( icon?.width ?? 0 ) + ( drawn * 448 ) / 512 ) / 2;
+			await expect(
+				button.right - barsRight - ( ( text?.left ?? 0 ) - button.left )
+			).toBeCloseTo( 0, 0 );
+
+			// The page under the bar, which the open menu draws over, not down.
+			const under = nav?.nextElementSibling;
+			const underTop = under?.getBoundingClientRect().top;
 			await userEvent.click( toggle );
 			await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
-			await expect( list?.checkVisibility() ).toBe( true );
+			await expect( list.checkVisibility() ).toBe( true );
+			// It slides open, from shorter than its links to all of them.
+			const [ opening ] = list.getAnimations();
+			await expect( opening ).toBeDefined();
+			// From nothing: its first frame is no taller than its two lines, not a jump.
+			opening?.pause();
+			if ( opening ) {
+				opening.currentTime = 0;
+			}
+			await expect(
+				list.getBoundingClientRect().height
+			).toBeLessThanOrEqual( 2 );
+			opening?.play();
+			await opening?.finished;
+			await expect( list.clientHeight ).toBe( list.scrollHeight );
+			await expect( under?.getBoundingClientRect().top ).toBe( underTop );
+			// A line above the links, edge to edge, in the tint of the section in view.
+			const line = getComputedStyle( list );
+			const current = list.querySelector( '[aria-current]' );
+			await expect( current ).not.toBeNull();
+			await expect( line.borderTopWidth ).toBe( '1px' );
+			await expect( line.borderTopColor ).toBe(
+				getComputedStyle( current as Element ).backgroundColor
+			);
+			await expect( list.getBoundingClientRect().width ).toBe(
+				nav?.clientWidth
+			);
+
 			await userEvent.keyboard( '{Escape}' );
 			await expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 			await expect( toggle ).toHaveFocus();
+			// It slides shut: the links show until it has.
+			const [ closing ] = list.getAnimations();
+			await expect( closing ).toBeDefined();
+			await expect( list.checkVisibility() ).toBe( true );
+			// The button is closed already, not black until the links are gone.
+			await expect( getComputedStyle( toggle ).backgroundColor ).toBe(
+				'rgba(0, 0, 0, 0)'
+			);
+			await closing?.finished;
+			await waitFor( () =>
+				expect( list.checkVisibility() ).toBe( false )
+			);
 		}
 
 		// The section in view is marked once the page scrolls to it.

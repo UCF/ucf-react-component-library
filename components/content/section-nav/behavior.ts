@@ -1,6 +1,6 @@
 /**
  * The Section Nav's behavior, added on top of its saved markup, as the old Section Menus
- * plugin's was: a "Skip to Section" button that opens the links on narrow screens, the link to
+ * plugin's was: a "Skip to Section" button that slides the links open on narrow screens, the link to
  * the section in view marked, and a shadow while the bar is stuck to the top of the window.
  *
  * WHY a script on top, not state in the component: the links must be in the saved HTML and work
@@ -52,9 +52,40 @@ export function enhanceSectionNav(
 	toggle.append( text, icon );
 	toggle.setAttribute( 'aria-controls', list.id );
 	toggle.setAttribute( 'aria-expanded', 'false' );
+	// SPEC: Bootstrap's collapse, as the old menu opened: its height slides over 0.35s, ease.
+	// WHY the Web Animations API, not a CSS transition: CSS can't move a height to or from
+	// `auto` in every browser, and this needs no cleanup listener when a click cuts it short.
+	let motion: Animation | undefined;
 	const setOpen = ( open: boolean ) => {
 		toggle.setAttribute( 'aria-expanded', String( open ) );
-		nav.toggleAttribute( 'data-open', open );
+		// From where it is now, mid-slide or not.
+		const from = nav.hasAttribute( 'data-open' )
+			? list.getBoundingClientRect().height
+			: 0;
+		motion?.cancel();
+		motion = undefined;
+		const slides =
+			typeof list.animate === 'function' &&
+			toggle.checkVisibility?.() &&
+			matchMedia( '(prefers-reduced-motion: no-preference)' ).matches;
+		if ( ! slides ) {
+			nav.toggleAttribute( 'data-open', open );
+			return;
+		}
+		// WHY open while it closes too: the links must show while their height slides to 0.
+		nav.toggleAttribute( 'data-open', true );
+		const to = open ? list.getBoundingClientRect().height : 0;
+		motion = list.animate(
+			[
+				{ height: `${ from }px`, overflow: 'hidden' },
+				{ height: `${ to }px`, overflow: 'hidden' },
+			],
+			{ duration: 350, easing: 'ease' }
+		);
+		motion.onfinish = () => {
+			motion = undefined;
+			nav.toggleAttribute( 'data-open', open );
+		};
 	};
 	toggle.addEventListener( 'click', () =>
 		setOpen( toggle.getAttribute( 'aria-expanded' ) !== 'true' )
@@ -123,6 +154,7 @@ export function enhanceSectionNav(
 	mark();
 
 	return () => {
+		motion?.cancel();
 		cancelAnimationFrame( frame );
 		window.removeEventListener( 'scroll', onScroll );
 		window.removeEventListener( 'resize', onScroll );
