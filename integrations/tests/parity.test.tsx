@@ -145,6 +145,19 @@ const wordPressOnly = ( component: string ) =>
 			.map( ( [ key ] ) => key )
 	);
 
+/**
+ * The props a component's definitions give to Puck only: no block attribute of their own (the
+ * Section's `anchor`, which WordPress keeps as its own anchor support).
+ *
+ * @param component A component's folder name.
+ */
+const puckOnly = ( component: string ) =>
+	new Set(
+		Object.entries( propsByComponent[ component ] ?? {} )
+			.filter( ( [ , definition ] ) => ! inHost( definition, 'wp' ) )
+			.map( ( [ key ] ) => key )
+	);
+
 // Every component: each folder with a core the package exports.
 const components = Object.keys(
 	import.meta.glob( '../../components/{content,live,interactive}/*/index.ts' )
@@ -174,6 +187,7 @@ test( 'finds every component', () => {
 		'hero',
 		'highlight',
 		'section',
+		'section-nav',
 	] );
 } );
 
@@ -312,7 +326,11 @@ describe.each( withBlock )( '%s', ( component ) => {
 	// WHY the preset layer left out too: `preset`, `content` and `blocks` are what Puck and a
 	// React site store for a component with presets (integrations/puck/presets.ts), not
 	// attributes; WordPress keeps the content as inner blocks.
-	const notAttributes = new Set< string >( [ ...slots, ...PRESET_FIELDS ] );
+	const notAttributes = new Set< string >( [
+		...slots,
+		...PRESET_FIELDS,
+		...puckOnly( component ),
+	] );
 	const puckProps = ( object: object = {} ) =>
 		sorted( object ).filter( ( key ) => ! notAttributes.has( key ) );
 	const blockProps = sorted( json.attributes ).filter(

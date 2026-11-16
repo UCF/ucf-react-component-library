@@ -32,8 +32,10 @@ import ImageEdit, {
 import type { Areas, Ported } from '../react/frame.tsx';
 import { resolveParts, type PartDefinitions } from '../schema/parts.ts';
 import {
+	inHost,
 	mediaProps,
 	panelsOf,
+	type PropDefinition,
 	type PropDefinitions,
 	type TextProp,
 } from '../schema/props.ts';
@@ -116,9 +118,12 @@ const looseFrame = ( component: HasFrame ) =>
 	component.port.Frame as ComponentType< Record< string, unknown > >;
 
 /**
- * A block's attributes that are the component's props.
+ * A block's attributes that are the component's props, in WordPress.
  * FIX: WordPress's own (`className`, `anchor`, `align`) would replace useBlockProps()'s class or
  * reach the markup as stray attributes.
+ * WHY WordPress's props only: a Puck-only prop named as one of WordPress's attributes (the
+ * Section's `anchor`) would reach the markup from it, and in the editor its `id` would replace
+ * the block's own.
  *
  * @param attributes  The block's attributes.
  * @param definitions The component's prop definitions.
@@ -128,7 +133,11 @@ const ownProps = (
 	definitions: PropDefinitions
 ): Attributes =>
 	Object.fromEntries(
-		Object.entries( attributes ).filter( ( [ key ] ) => key in definitions )
+		Object.entries( attributes ).filter(
+			( [ key ] ) =>
+				key in definitions &&
+				inHost( definitions[ key ] as PropDefinition, 'wp' )
+		)
 	);
 
 /** The block being edited, for an area's element (the Hero's image picker). */

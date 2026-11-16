@@ -33,6 +33,7 @@ wp/             WordPress                                   (the plugins only)
   attributes.ts   blockAttributes(), ownAttributes()
   inspector.tsx   FieldControl: a prop as a sidebar control
   list-control.tsx  a list prop as core's FormTokenField
+  links-control.tsx a links prop as a text field and an address field per link
   icons.ts        every icon a block or preset names
   kind.ts         kindOf(): content, live or interactive, from block.json; CATEGORY_OF
 

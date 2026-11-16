@@ -25,9 +25,13 @@ import {
 	isValidBlockContent,
 	parse,
 	serialize,
+	type BlockEditProps,
 } from '@wordpress/blocks';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test } from 'vitest';
 
+import Section from '@/components/content/section/Section';
+import { blockEdit } from '../wp/block.tsx';
 import { CATEGORY_OF, kindOf } from '../wp/kind.ts';
 
 // Registers every block, as each plugin's editor script does.
@@ -120,6 +124,7 @@ test( 'finds every block', () => {
 		'hero',
 		'highlight',
 		'section',
+		'section-nav',
 	] );
 } );
 
@@ -244,6 +249,48 @@ describe.each( blocks.filter( ( block ) => ! block.dynamic ) )(
 		} );
 	}
 );
+
+// WHY: the Section's `anchor` prop is Puck's; WordPress keeps its own anchor support, under the
+// same name. A Section saved with one must still validate, with its anchor as its one `id`.
+test( 'a Section saved with an anchor is valid, with that anchor as its id', () => {
+	const stored = serialize( [
+		createBlock( 'ucf-content/section', { anchor: 'apply' } ),
+	] );
+	const [ parsed ] = parse( stored );
+	expect( stored.match( / id="/g ) ).toHaveLength( 1 );
+	expect( stored ).toContain( ' id="apply"' );
+	expect( parsed?.attributes.anchor ).toBe( 'apply' );
+	expect(
+		isValidBlockContent(
+			parsed?.name ?? '',
+			parsed?.attributes ?? {},
+			parsed?.originalContent ?? ''
+		)
+	).toBe( true );
+} );
+
+// WHY: in the editor a block's `id` is WordPress's own (`block-{clientId}`), which it uses to
+// find the block. A Puck-only prop named as one of WordPress's attributes must not replace it.
+test( 'the Section keeps the editor’s own id, whatever its anchor', () => {
+	const Edit = blockEdit( Section );
+	const props = {
+		clientId: 'abc',
+		name: 'ucf-content/section',
+		attributes: { anchor: 'apply', composition: 'light' },
+		setAttributes: () => {},
+		isSelected: false,
+	};
+	// UPSTREAM: BlockEditProps has more fields than edit() reads.
+	const html = renderToStaticMarkup(
+		<Edit
+			{ ...( props as unknown as BlockEditProps<
+				Record< string, unknown >
+			> ) }
+		/>
+	);
+	expect( html ).toMatch( /^<section [^>]*id="block-/ );
+	expect( html ).not.toContain( 'id="apply"' );
+} );
 
 // WHY its own test: a frame is only useful with blocks inside it, and a block that holds
 // others can save and parse its own markup correctly while losing what it holds.

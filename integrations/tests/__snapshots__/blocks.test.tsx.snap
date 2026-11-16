@@ -132,6 +132,12 @@ exports[`ucf-content/section holding other blocks > saves them inside its inner 
 <!-- /wp:ucf-content/section -->"
 `;
 
+exports[`ucf-content/section-nav > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/section-nav -->
+<nav aria-label="On this page" class="wp-block-ucf-content-section-nav alignfull ucf-c ucf-c-section-nav"><ul class="ucf-c-section-nav__list"></ul></nav>
+<!-- /wp:ucf-content/section-nav -->"
+`;
+
 exports[`ucf-degrees/degree-finder > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-finder /-->"`;
 
 exports[`ucf-degrees/degree-list > defaults > matches the stored markup snapshot 1`] = `"<!-- wp:ucf-degrees/degree-list /-->"`;

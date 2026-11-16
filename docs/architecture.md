@@ -267,7 +267,7 @@ A frame (see "Frames") is its props, its parts, and presets built from both:
 ```
 Component
 ├─ {Name}.props.ts      PROPS: each prop's key · type · options · default · field
-│                       types: text, choice, number, list
+│                       types: text, choice, number, list, links
 │                       field: label · help · control · panel · hosts
 ├─ {Name}.parts.ts      PARTS: each part (title, eyebrow, image…): its kind and its class
 │                       kinds (image, heading, text, link, button): integrations/schema/parts.ts
@@ -300,6 +300,11 @@ saves values, not labels, since a value is what an API filters by. WordPress sto
 WordPress's components; Storybook shows checkboxes, or JSON when the options load. A saved value
 the options no longer include is shown as a problem in both editors, not dropped
 (`integrations/schema/options.ts`).
+
+**A links prop holds any number of links,** each a `label` and an `href` (the Section Nav's).
+Unlike a list, an editor types both, so there are no options. WordPress stores it as an `array`
+attribute of objects and shows a text and an address field per link
+(`integrations/wp/links-control.tsx`); Puck shows its own array field; Storybook shows JSON.
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by

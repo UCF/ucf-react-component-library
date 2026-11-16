@@ -62,7 +62,9 @@ export type PuckFieldFor< Value > = [ Value ] extends [ PuckSlot ]
 	: Value extends readonly ( infer Item )[]
 		? Item extends string
 			? PuckCustomField< Value >
-			: PuckArrayField< Item >
+			: // UPSTREAM: Puck takes a custom field for any prop; the Section Nav's links use one
+				// to read the page (its withPageSections()).
+				PuckArrayField< Item > | PuckCustomField< Value >
 		: Value extends object
 			? PuckObjectField< Value >
 			: PuckScalarField;
@@ -82,7 +84,9 @@ export type PuckField =
 export type PuckArrayField< Item > = {
 	type: 'array';
 	label?: string;
-	arrayFields: { [ Key in keyof Item ]: PuckField };
+	arrayFields: {
+		[ Key in keyof Item ]-?: PuckFieldFor< NonNullable< Item[ Key ] > >;
+	};
 	defaultItemProps?: Item;
 };
 

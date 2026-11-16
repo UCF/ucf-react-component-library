@@ -1,0 +1,169 @@
+/*
+ * The Section Nav's styles, for every host.
+ *
+ * SPEC: the ucf.edu section menu: the Section Menus plugin's markup (`navbar
+ * navbar-toggleable-md navbar-light bg-primary`) as Main-Site-Theme's Athena build styles it,
+ * in its justify-between layout. The sizes below are Athena's. Its gold (#fc0) is the library's
+ * gold token instead, which WordPress points at the theme's.
+ * WHY tokens, not the section's roles: it is gold on every section, as on ucf.edu, so it
+ * reads gold and black directly rather than the roles of where it is placed.
+ * A11Y: black on gold (#EDB80D) is 11.46:1, and stays above 9:1 under the hover tint.
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ */
+.ucf-c-section-nav {
+	/* FIX: the menu button's margins collapsed through the bar, leaving it 42px tall, not
+	   3.9rem, so a jump stopped short of the line where the section in view is marked. */
+	display: flow-root;
+	position: sticky;
+	top: 0;
+	/* WHY: it passes over the page's content, which may be positioned too. */
+	z-index: 10;
+	/* SYNC: 2px of the bar's height, in scroll-padding-top below.
+	   SPEC: a light gold line above and below. WHY a mix, not a token: no light gold is
+	   defined; this one follows the gold token, so it follows the theme's in WordPress. */
+	border-block: 1px solid
+		color-mix(in srgb, var(--ucf-color-gold) 50%, var(--ucf-color-white));
+	background: var(--ucf-color-gold);
+	color: var(--ucf-color-black);
+	font-family: var(--ucf-font-family-body);
+	transition: box-shadow 0.2s ease-in-out;
+}
+
+/* SPEC: the plugin's shadow while the bar is fixed to the top (section-menu.scss). The script
+   sets data-stuck. */
+.ucf-c-section-nav[data-stuck] {
+	box-shadow: 0 2px 32px rgb(0 0 0 / 50%);
+}
+
+.ucf-c-section-nav .ucf-c-section-nav__list {
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+	/* WHY: with no links yet, the bar keeps its height, blank, so an editor can see and select
+	   it. SYNC: the bar's height, in scroll-padding-top below. */
+	min-height: 3.9rem;
+	max-width: var(--ucf-layout-wide);
+	margin: 0 auto;
+	padding: 0 var(--ucf-custom-gutter);
+	list-style: none;
+	/* WHY a row that scrolls across when the links don't fit: without the script there is no
+	   menu button, and every link must still be in reach. */
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.ucf-c-section-nav .ucf-c-section-nav__item {
+	margin: 0;
+}
+
+/* SPEC: Athena's `.navbar-nav .nav-link`, at its 992px-and-up padding. */
+.ucf-c-section-nav .ucf-c-section-nav__link {
+	display: flex;
+	align-items: center;
+	padding: 1.5rem 0.8rem;
+	/* FIX: not `inherit`: the host colors every `li` with the section's body role (white on
+	   Dark), and the bar is gold whatever the section. */
+	color: var(--ucf-color-black);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	line-height: 1.2;
+	text-decoration: none;
+	text-transform: uppercase;
+	transition: background-color 0.2s ease-in-out;
+}
+
+/* SPEC: Athena's `.navbar-light.bg-primary` hover, focus and active link: a dark tint, no
+   underline. The section in view is the active one. */
+.ucf-c-section-nav .ucf-c-section-nav__link:hover,
+.ucf-c-section-nav .ucf-c-section-nav__link:focus-visible,
+.ucf-c-section-nav .ucf-c-section-nav__link[aria-current] {
+	background-color: rgb(0 0 0 / 10%);
+}
+
+/* The menu button, added by behavior.ts; shown only on narrow screens. */
+.ucf-c-section-nav .ucf-c-section-nav__toggle {
+	display: none;
+}
+
+.ucf-c-section-nav .ucf-c-section-nav__link:focus-visible,
+.ucf-c-section-nav .ucf-c-section-nav__toggle:focus-visible {
+	/* A11Y: inset, so the scrolling list doesn't clip it. */
+	outline: var(--ucf-custom-focus-width, 3px) solid var(--ucf-color-black);
+	outline-offset: calc(-1 * var(--ucf-custom-focus-width, 3px));
+}
+
+/* SPEC: the old menu collapsed below Bootstrap's lg breakpoint, 992px. */
+@media (max-width: 991.98px) {
+	/* SPEC: Athena's `.navbar-toggler` with its `.navbar-toggler-text`: at the right, a 3px
+	   black border, text then a menu icon. */
+	.ucf-c-section-nav[data-enhanced] .ucf-c-section-nav__toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		width: max-content;
+		margin: calc(0.825rem - 3px) var(--ucf-custom-gutter)
+			calc(0.825rem - 3px) auto;
+		padding: calc(0.25rem - 2px) 0.75rem;
+		border: 3px solid var(--ucf-color-black);
+		border-radius: 0;
+		background: none;
+		color: var(--ucf-color-black);
+		font: inherit;
+		line-height: 1;
+		cursor: pointer;
+	}
+
+	/* SPEC: open, the button turns black with white text and icon. */
+	.ucf-c-section-nav[data-open] .ucf-c-section-nav__toggle {
+		background: var(--ucf-color-black);
+		color: var(--ucf-color-white);
+	}
+
+	.ucf-c-section-nav .ucf-c-section-nav__toggle-text {
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	/* SPEC: Athena's three-line menu icon, 2rem square. WHY a mask: it takes the button's
+	   color, so it turns white with it. */
+	.ucf-c-section-nav .ucf-c-section-nav__toggle-icon {
+		width: 2rem;
+		height: 2rem;
+		background-color: currentcolor;
+		mask: url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%23000' stroke-width='2' stroke-linecap='round' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E")
+			center / 100% 100% no-repeat;
+	}
+
+	.ucf-c-section-nav[data-enhanced] .ucf-c-section-nav__list {
+		display: none;
+	}
+
+	/* SPEC: open, the links stack, each a full-width row: Athena's below-992px padding. */
+	.ucf-c-section-nav[data-open] .ucf-c-section-nav__list {
+		display: block;
+		padding: 0;
+		white-space: normal;
+	}
+
+	.ucf-c-section-nav[data-open] .ucf-c-section-nav__link {
+		padding: 1rem var(--ucf-custom-gutter);
+	}
+}
+
+/*
+ * WHY on the page, not the bar: a jump to `#apply` scrolls the window, so the window is what
+ * must stop short of the bar and scroll smoothly. Only on a page that has a Section Nav.
+ * SYNC: the bar's height, 3.9rem + 2px at both widths: a link's 0.9rem line and 3rem of
+ * padding, or the button's 2rem icon, borders and margins; and the bar's two 1px borders.
+ */
+html:has(.ucf-c-section-nav) {
+	scroll-padding-top: calc(3.9rem + 2px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	html:has(.ucf-c-section-nav) {
+		scroll-behavior: smooth;
+	}
+}

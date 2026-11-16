@@ -69,7 +69,21 @@ export type ListProp = Field & {
 	default: readonly string[];
 };
 
-export type PropDefinition = ChoiceProp | TextProp | NumberProp | ListProp;
+/** One link: its text, and where it goes (`#apply` on the same page, or any address). */
+export type Link = { readonly label: string; readonly href: string };
+
+/**
+ * Any number of links, in order, each typed in or set by the block: a Section Nav's.
+ * WHY its own type, not a list: a list's values come from fixed options, and a link's text and
+ * address are an editor's own.
+ */
+export type LinksProp = Field & {
+	type: 'links';
+	default: readonly Link[];
+};
+
+export type PropDefinition =
+	ChoiceProp | TextProp | NumberProp | ListProp | LinksProp;
 
 export type PropDefinitions = Record< string, PropDefinition >;
 
@@ -88,7 +102,10 @@ type ValueOf< Definition > = Definition extends {
 		? number
 		: Definition extends { type: 'list' }
 			? readonly string[]
-			: string;
+			: Definition extends { type: 'links' }
+				? // UPSTREAM: Puck's array field takes a mutable array only.
+					Link[]
+				: string;
 
 /** The props, typed. WHY a mapped type: each prop keeps the doc comment on its definition. */
 export type PropsOf< Props extends PropDefinitions > = {

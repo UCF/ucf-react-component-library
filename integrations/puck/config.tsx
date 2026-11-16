@@ -15,12 +15,14 @@ import {
 	defaultsIn,
 	inHost,
 	mediaProps,
+	type Link,
 	type PropDefinition,
 	type PropDefinitions,
 	type PropsIn,
 } from '../schema/props.ts';
 import { listField } from './list-field.tsx';
 import {
+	type PuckArrayField,
 	type PuckCustomField,
 	type PuckFieldFor,
 	type PuckScalarField,
@@ -38,8 +40,8 @@ import { toPrimitives } from './parts.ts';
 // ── Fields ─────────────────────────────────────────────────────────────────────────────────────
 
 /**
- * Prop definitions as Puck fields: radio buttons or a select for a choice, a text field otherwise,
- * for every prop Puck has.
+ * Prop definitions as Puck fields: radio buttons or a select for a choice, checkboxes for a list,
+ * Puck's own array field for links, a text field otherwise, for every prop Puck has.
  *
  * @param definitions A component's prop definitions.
  */
@@ -56,7 +58,7 @@ export function puckFields< Props extends PropDefinitions >(
 			.map(
 				( [ key, definition ] ): [
 					string,
-					PuckScalarField | PuckCustomField< readonly string[] >,
+					ReturnType< typeof fieldOf >,
 				] => [ key, fieldOf( definition ) ]
 			)
 	) as never;
@@ -69,9 +71,23 @@ export function puckFields< Props extends PropDefinitions >(
  */
 function fieldOf(
 	definition: PropDefinition
-): PuckScalarField | PuckCustomField< readonly string[] > {
+):
+	| PuckScalarField
+	| PuckCustomField< readonly string[] >
+	| PuckArrayField< Link > {
 	if ( definition.type === 'list' ) {
 		return listField( definition );
+	}
+	if ( definition.type === 'links' ) {
+		return {
+			type: 'array',
+			label: definition.label,
+			arrayFields: {
+				label: { type: 'text', label: 'Text' },
+				href: { type: 'text', label: 'Address' },
+			},
+			defaultItemProps: { label: '', href: '' },
+		};
 	}
 	return definition.type === 'choice'
 		? {

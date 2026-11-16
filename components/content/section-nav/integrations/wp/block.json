@@ -1,0 +1,44 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/section-nav",
+	"title": "Section Nav",
+	"category": "ucf-content",
+	"description": "A bar of links to the page's sections that stays at the top of the window. Place it between Sections; it links each Section given an HTML anchor.",
+	"keywords": [
+		"jump links",
+		"anchor",
+		"table of contents",
+		"on this page",
+		"menu"
+	],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"links": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"label": {
+						"type": "string"
+					},
+					"href": {
+						"type": "string"
+					}
+				}
+			},
+			"default": []
+		},
+		"align": {
+			"type": "string",
+			"default": "full"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "full" ]
+	},
+	"editorScript": "file:./index.tsx",
+	"viewScript": "file:./view.ts",
+	"style": "file:./style-index.css"
+}
