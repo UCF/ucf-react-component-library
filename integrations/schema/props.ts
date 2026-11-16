@@ -69,17 +69,51 @@ export type ListProp = Field & {
 	default: readonly string[];
 };
 
-/** A link: its text and address (`#apply` or any URL). */
+/** A link to a Section on the page: its text and anchor (`#apply`). */
 export type Link = { readonly label: string; readonly href: string };
 
 /**
- * An ordered list of links (the Section Nav's).
- * WHY not a list prop: a list's values come from fixed options.
+ * An ordered list of links to the page's Sections (the Section Nav's).
+ * WHY not a list prop: each link's text is the editor's own.
  */
 export type LinksProp = Field & {
 	type: 'links';
 	default: readonly Link[];
 };
+
+/**
+ * Whether an address is an anchor on this page: `#` and a name.
+ *
+ * @param href A link's address.
+ */
+export const isAnchor = ( href: string ): boolean => /^#\S+$/.test( href );
+
+/**
+ * The choices for a link's target: the page's Sections, then any saved target no longer on it.
+ *
+ * @param sections The page's Section links.
+ * @param links    The links already saved.
+ */
+export function targetOptions(
+	sections: readonly Link[],
+	links: readonly Link[]
+): { label: string; value: string }[] {
+	const onPage = new Set( sections.map( ( section ) => section.href ) );
+	const missing = [ ...new Set( links.map( ( link ) => link.href ) ) ].filter(
+		( href ) => href && ! onPage.has( href )
+	);
+	return [
+		{ label: 'Choose a section', value: '' },
+		...sections.map( ( section ) => ( {
+			label: `${ section.label } (${ section.href })`,
+			value: section.href,
+		} ) ),
+		...missing.map( ( href ) => ( {
+			label: `${ href } (not on this page)`,
+			value: href,
+		} ) ),
+	];
+}
 
 export type PropDefinition =
 	ChoiceProp | TextProp | NumberProp | ListProp | LinksProp;

@@ -84,7 +84,7 @@ function fieldOf(
 			label: definition.label,
 			arrayFields: {
 				label: { type: 'text', label: 'Text' },
-				href: { type: 'text', label: 'Address' },
+				href: { type: 'text', label: 'Anchor (#section)' },
 			},
 			defaultItemProps: { label: '', href: '' },
 			getItemSummary: ( link ) => link.label || link.href || 'New link',

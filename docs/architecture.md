@@ -301,13 +301,12 @@ WordPress's components; Storybook shows checkboxes, or JSON when the options loa
 the options no longer include is shown as a problem in both editors, not dropped
 (`integrations/schema/options.ts`).
 
-**A links prop holds any number of links,** each a `label` and an `href` (the Section Nav's).
-Unlike a list, an editor types both, so there are no options. WordPress stores it as an `array`
-attribute of objects and shows a text and an address field per link
-(`integrations/wp/links-control.tsx`); Puck shows its own array field; Storybook shows JSON. A
-Puck field that needs more than Puck's own field types draws them with Puck's `AutoField`,
-`FieldLabel` and `Button`, which the site lends (`PuckControls` in `integrations/puck/types.ts`),
-so it looks like the rest of Puck's sidebar and the library still doesn't depend on Puck.
+**A links prop holds links to Sections on the page** (the Section Nav's): each a `label` and an
+`href` that is a `#anchor`. Anything else is left out when it renders. WordPress stores it as an
+`array` attribute of objects. Each editor shows a text field and a picker of the page's anchored
+Sections per link (`integrations/wp/links-control.tsx`, the Section Nav's Puck `links-field.tsx`).
+Puck fields like this draw with Puck's own `AutoField`, `FieldLabel` and `Button`, which the
+site passes in (`PuckControls`), so the library doesn't depend on Puck.
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by

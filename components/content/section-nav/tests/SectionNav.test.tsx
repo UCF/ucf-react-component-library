@@ -18,7 +18,7 @@ const cases: Record< string, SectionNavProps > = {
 		links: [
 			{ label: 'Overview', href: '#overview' },
 			{ label: 'Tuition & Aid', href: '#tuition' },
-			{ label: 'Apply', href: 'https://www.ucf.edu/apply/' },
+			{ label: 'Apply', href: '#apply' },
 		],
 	},
 	spread: {
@@ -66,5 +66,29 @@ describe( 'SectionNav', () => {
 				</SectionNav>
 			)
 		).not.toContain( 'Stray' );
+	} );
+
+	// WHY: it only jumps within the page; anything else (a URL, `javascript:`) is left out.
+	it( 'renders only links to an anchor on the page, in WordPress and React', () => {
+		const element = (
+			<SectionNav
+				links={ [
+					'#apply',
+					'#',
+					'https://www.ucf.edu/',
+					'/admissions/',
+					'javascript:alert(1)',
+					' #tuition',
+				].map( ( href ) => ( { label: 'x', href } ) ) }
+			/>
+		);
+		const html = renderToStaticMarkup( element );
+
+		expect( renderToString( element ) ).toBe( html );
+		expect(
+			[ ...html.matchAll( / href="([^"]*)"/g ) ].map(
+				( [ , href ] ) => href
+			)
+		).toEqual( [ '#apply' ] );
 	} );
 } );

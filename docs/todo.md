@@ -260,7 +260,8 @@ blocks. Compare the two first. Also check our configs against Puck 0.21 (the typ
 
 - **Check it in a running WordPress.** Nothing has run it in an editor yet. Insert one on a page whose
   Sections have HTML anchors: it should fill itself; "Update from sections" should keep renamed text;
-  a saved post should reload with no "unexpected or invalid content" (`getBlocks()`). Check that it
+  each link's Section picker should list the page's anchored Sections (it reads them through a
+  React context, which must reach the sidebar's Fill); a saved post should reload with no "unexpected or invalid content" (`getBlocks()`). Check that it
   spans the page and sticks in the block theme, and that its viewScript loads: `position: sticky` stops working under an ancestor with `overflow`
   set.
 - **The admin bar covers it** for signed-in users: it sticks at `top: 0`, under WordPress's bar.

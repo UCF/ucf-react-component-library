@@ -42,16 +42,20 @@ withPageSections( () => ( { content: [] } ), puck ) satisfies ComponentConfig<
 
 /**
  * Stand-ins for Puck's controls, which need Puck's editor.
- * WHY labels as text: so tests can read the links.
+ * WHY labels as text: so tests can read the links. `drawn` keeps the last field drawn.
  */
+let drawn: Omit< PuckArrayField< Link >, 'label' > | undefined;
 const CONTROLS: PuckControls = {
-	AutoField: ( { value } ) => (
-		<ul>
-			{ value.map( ( link, index ) => (
-				<li key={ index }>{ link.label }</li>
-			) ) }
-		</ul>
-	),
+	AutoField: ( { field, value } ) => {
+		drawn = field;
+		return (
+			<ul>
+				{ value.map( ( link, index ) => (
+					<li key={ index }>{ link.label }</li>
+				) ) }
+			</ul>
+		);
+	},
 	FieldLabel: ( { label, children } ) => (
 		<div>
 			{ label }
@@ -193,9 +197,21 @@ describe( 'the links field', () => {
 			[
 				{ label: 'Overview', href: '#overview' },
 				{ label: 'Costs', href: '#tuition' },
-				{ label: 'Apply', href: 'https://www.ucf.edu/apply/' },
 			],
 		] );
+	} );
+
+	it( 'offers only the page’s Sections as a link’s target', async () => {
+		await render( [ { label: 'Costs', href: '#tuition' } ], SECTIONS );
+		expect( drawn?.arrayFields.href ).toEqual( {
+			type: 'select',
+			label: 'Section',
+			options: [
+				{ label: 'Choose a section', value: '' },
+				{ label: 'Overview (#overview)', value: '#overview' },
+				{ label: 'Tuition and Aid (#tuition)', value: '#tuition' },
+			],
+		} );
 	} );
 
 	it( 'changes nothing while Puck has it locked', async () => {

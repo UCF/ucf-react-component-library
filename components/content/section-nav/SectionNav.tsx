@@ -14,6 +14,7 @@ import {
 } from '@/integrations/react/frame';
 import { PARTS } from './SectionNav.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './SectionNav.presets.ts';
+import { isAnchor } from '@/integrations/schema/props';
 import { PROPS } from './SectionNav.props.ts';
 
 /** The Section Nav's props, plus HTML attributes. */
@@ -46,17 +47,20 @@ function SectionNavMarkup( {
 				.join( ' ' ) }
 		>
 			<ul className="ucf-c-section-nav__list">
-				{ links.map( ( link, index ) => (
-					// WHY the index as key: two links may share an address.
-					<li key={ index } className="ucf-c-section-nav__item">
-						<a
-							className="ucf-c-section-nav__link"
-							href={ link.href }
-						>
-							{ link.label }
-						</a>
-					</li>
-				) ) }
+				{ /* WHY anchors only: it jumps within the page; a URL or `javascript:` is left out. */ }
+				{ links
+					.filter( ( link ) => isAnchor( link.href ) )
+					.map( ( link, index ) => (
+						// WHY the index as key: two links may share an address.
+						<li key={ index } className="ucf-c-section-nav__item">
+							<a
+								className="ucf-c-section-nav__link"
+								href={ link.href }
+							>
+								{ link.label }
+							</a>
+						</li>
+					) ) }
 			</ul>
 		</nav>
 	);

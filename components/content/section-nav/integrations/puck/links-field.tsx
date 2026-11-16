@@ -6,7 +6,7 @@
  */
 import { useEffect } from 'react';
 
-import type { Link } from '@/integrations/schema/props';
+import { targetOptions, type Link } from '@/integrations/schema/props';
 import type {
 	PuckArrayField,
 	PuckControls,
@@ -60,13 +60,25 @@ export function LinksField( {
 	}, [ empty, sectionKey, readOnly ] );
 
 	// WHY no label: FieldLabel draws it above the button.
-	const { label: _label, ...arrayField } = field;
+	const { label: _label, ...rest } = field;
+	// WHY a select: links only go to Sections on this page.
+	const arrayField = {
+		...rest,
+		arrayFields: {
+			...rest.arrayFields,
+			href: {
+				type: 'select' as const,
+				label: 'Section',
+				options: targetOptions( sections, links ),
+			},
+		},
+	};
 
 	return (
 		<FieldLabel label={ label } el="div" readOnly={ readOnly }>
 			<p>
 				{ sections.length > 0
-					? 'Updating adds Sections given an anchor since, and drops those that lost one. Renamed text and links elsewhere stay.'
+					? 'Adds newly anchored Sections and removes ones that lost their anchor. Your text changes are kept.'
 					: 'No Section on this page has an HTML anchor yet.' }
 			</p>
 			<Button

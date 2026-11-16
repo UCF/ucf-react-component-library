@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import type { Link } from '@/integrations/schema/props';
 import { blockEdit } from '@/integrations/wp/block';
+import { LinkTargets } from '@/integrations/wp/links-control';
 import SectionNav from '../../SectionNav.tsx';
 import { updateLinks } from '../../utils/links.ts';
 import {
@@ -62,7 +63,7 @@ export default function SectionNavEdit( props: BlockEditProps< Attributes > ) {
 				<p>
 					{ sections.length > 0
 						? __(
-								'Updating adds Sections given an anchor since, and drops those that lost one. Renamed text and links elsewhere stay.',
+								'Adds newly anchored Sections and removes ones that lost their anchor. Your text changes are kept.',
 								'ucf-content'
 							)
 						: __(
@@ -86,10 +87,11 @@ export default function SectionNavEdit( props: BlockEditProps< Attributes > ) {
 	);
 
 	// WHY no placeholder: an empty bar keeps its height and can be selected (style.css).
+	// The Links field's Section picker reads the page's Sections from LinkTargets.
 	return (
-		<>
+		<LinkTargets.Provider value={ sections }>
 			{ sidebar }
 			<Edit { ...props } />
-		</>
+		</LinkTargets.Provider>
 	);
 }

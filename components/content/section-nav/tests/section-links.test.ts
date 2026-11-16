@@ -127,7 +127,7 @@ describe( 'textOf', () => {
 } );
 
 describe( 'updateLinks', () => {
-	it( 'follows the page, keeping renamed text and links elsewhere', () => {
+	it( 'follows the page, keeping renamed text', () => {
 		expect(
 			updateLinks(
 				[
@@ -143,7 +143,6 @@ describe( 'updateLinks', () => {
 		).toEqual( [
 			{ label: 'Overview', href: '#overview' },
 			{ label: 'Costs', href: '#tuition' },
-			{ label: 'Apply', href: 'https://www.ucf.edu/apply/' },
 		] );
 	} );
 } );

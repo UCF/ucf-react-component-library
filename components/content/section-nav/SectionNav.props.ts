@@ -5,11 +5,11 @@
 import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
 
 export const PROPS = {
-	/** `{ label, href }` in order. New ones fill from Sections with an HTML anchor. */
+	/** `{ label, href: '#anchor' }` in order. New ones fill from Sections with an HTML anchor. */
 	links: {
 		type: 'links',
 		label: 'Links',
-		help: 'Each Section with an HTML anchor (Advanced) can be linked as #anchor.',
+		help: 'Links go to Sections on this page that have an HTML anchor (Advanced).',
 		panel: 'Section Nav',
 		default: [],
 	},

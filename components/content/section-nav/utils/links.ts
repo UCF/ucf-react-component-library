@@ -40,8 +40,7 @@ export function textOf( html: unknown ): string {
 }
 
 /**
- * The page's Section links, keeping the editor's renamed labels and any links off the page.
- * Links to Sections that lost their anchor are dropped.
+ * The page's Section links, keeping the editor's renamed labels.
  *
  * @param current  The Section Nav's links.
  * @param sections The page's Section links (sectionLinks()).
@@ -53,11 +52,8 @@ export function updateLinks(
 	const labels = new Map(
 		current.map( ( link ) => [ link.href, link.label ] )
 	);
-	return [
-		...sections.map( ( link ) => ( {
-			href: link.href,
-			label: labels.get( link.href ) || link.label,
-		} ) ),
-		...current.filter( ( link ) => ! link.href.startsWith( '#' ) ),
-	];
+	return sections.map( ( link ) => ( {
+		href: link.href,
+		label: labels.get( link.href ) || link.label,
+	} ) );
 }

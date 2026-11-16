@@ -1,14 +1,24 @@
 /**
- * CONTEXT: a links prop in the WordPress sidebar: text and address per link, with move, remove
- * and add buttons.
+ * CONTEXT: a links prop in the WordPress sidebar: text and target Section per link, with move,
+ * remove and add buttons.
  *
- * WHY text fields, not LinkControl: its search can't find same-page `#anchors`.
+ * WHY a select, not an address: links only go to Sections on this page.
  */
 
-import { Button, Flex, FlexBlock, TextControl } from '@wordpress/components';
+import {
+	Button,
+	Flex,
+	FlexBlock,
+	SelectControl,
+	TextControl,
+} from '@wordpress/components';
+import { createContext, useContext } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
-import type { Link, LinksProp } from '../schema/props.ts';
+import { targetOptions, type Link, type LinksProp } from '../schema/props.ts';
+
+/** The page's Section links a link may target, provided by the block's edit(). */
+export const LinkTargets = createContext< readonly Link[] >( [] );
 
 type Props = {
 	definition: LinksProp;
@@ -26,6 +36,7 @@ type Props = {
  */
 export function LinksControl( { definition, value, onChange }: Props ) {
 	const links = [ ...value ];
+	const options = targetOptions( useContext( LinkTargets ), links );
 	const change = ( index: number, link: Partial< Link > ) =>
 		onChange(
 			links.map( ( item, at ) =>
@@ -74,14 +85,11 @@ export function LinksControl( { definition, value, onChange }: Props ) {
 						value={ link.label }
 						onChange={ ( label ) => change( index, { label } ) }
 					/>
-					<TextControl
+					<SelectControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'Address', 'ucf-content' ) }
-						help={ __(
-							'#anchor for a section on this page',
-							'ucf-content'
-						) }
+						label={ __( 'Section', 'ucf-content' ) }
+						options={ options }
 						value={ link.href }
 						onChange={ ( href ) => change( index, { href } ) }
 					/>
