@@ -1,7 +1,6 @@
 /**
- * The markup contract: WordPress's serializer and React DOM produce the same HTML, and it
- * matches the committed snapshot. See components/content/highlight/tests/Highlight.test.tsx for
- * why.
+ * CONTEXT: the markup contract: WordPress and React render the same HTML, matching the
+ * snapshot. Why: components/content/highlight/tests/Highlight.test.tsx.
  */
 import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -48,8 +47,7 @@ describe( 'SectionNav', () => {
 		).toContain( 'aria-label="In this program"' );
 	} );
 
-	// SPEC: the Section Menus plugin's two layouts: its default packs the links at the left,
-	// Main-Site-Theme's `justify-between` spreads them across.
+	// SPEC: Section Menus' default (left) and `justify-between` (spread) layouts.
 	it( 'marks the spread layout with a class, and the left one with none', () => {
 		expect(
 			renderToStaticMarkup( <SectionNav linkLayout="spread" /> )
@@ -59,7 +57,7 @@ describe( 'SectionNav', () => {
 		).not.toContain( 'ucf-c-section-nav--' );
 	} );
 
-	// WHY: it holds no content; children passed to it must not land in the bar.
+	// WHY: it takes no content, so stray children must not render.
 	it( 'renders no children', () => {
 		expect(
 			renderToStaticMarkup(

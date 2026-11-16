@@ -1,9 +1,6 @@
 // @vitest-environment happy-dom
 // WHY happy-dom: the block-editor store needs a `window`.
-/**
- * The page's Sections as links (integrations/wp/section-links.ts): which Sections are linked,
- * their text, and what an update keeps.
- */
+/** CONTEXT: integrations/wp/section-links.ts and utils/links.ts. */
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { createRegistry } from '@wordpress/data';
@@ -27,7 +24,7 @@ const section = ( anchor: string | undefined, inner: BlockNode[] = [] ) =>
 const heading = ( content: string ) => block( 'core/heading', { content } );
 
 describe( 'pageSections', () => {
-	// WHY the real store: what it leaves out of getBlocks() is the bug pageSections() fixes.
+	// WHY the real store: the bug is in what its getBlocks() leaves out.
 	registerBlockType( 'ucf-content/section', {
 		title: 'Section',
 		attributes: { anchor: { type: 'string' } },
@@ -40,10 +37,7 @@ describe( 'pageSections', () => {
 		save: () => null,
 	} as never );
 
-	/**
-	 * A page as the editor holds it when it shows its template: the Sections inside the Post
-	 * Content block, as its controlled inner blocks.
-	 */
+	/** A page shown with its template: Sections inside Post Content's inner blocks. */
 	const templatePage = () => {
 		const registry = createRegistry();
 		registry.register( blockEditorStore );

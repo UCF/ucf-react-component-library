@@ -1,23 +1,21 @@
 /**
- * Puck: the page's Sections as Section Nav links, from Puck's page data. A Section is linked
- * when it has an HTML anchor; its link's text is its first heading's, as in WordPress
- * (integrations/wp/section-links.ts).
+ * CONTEXT: Section Nav links from Puck's page data: one per Section with an HTML anchor,
+ * labeled with its first heading. SYNC: integrations/wp/section-links.ts.
  *
- * WHY by the keys a site passes: a Puck page names each component by the key the site
- * registered it under (the demo's `Section` and `Heading`), which the library can't know.
+ * WHY keys: Puck names components by the site's registered keys, which the library can't know.
  */
 import type { Link } from '@/integrations/schema/props';
 import type { PuckSlot } from '@/integrations/puck/types';
 import { textOf } from '../../utils/links.ts';
 
-/** A Puck page as its data holds it: only what is read here. */
+/** The parts of Puck's page data read here. */
 export type PuckPage = {
 	content: PuckSlot;
-	/** Puck's older drop zones, by name: more components, outside the slots. */
+	/** Puck's legacy drop zones. */
 	zones?: Record< string, PuckSlot >;
 };
 
-/** The keys a site registered the Section and the Heading under. */
+/** The site's component keys for Section and Heading. */
 export type SectionKeys = { section: string; heading: string };
 
 type Item = PuckSlot[ number ];
@@ -29,7 +27,7 @@ const isItem = ( value: unknown ): value is Item =>
 	typeof ( value as Item ).props === 'object';
 
 /**
- * The components inside one: every slot it has (a Section's contents, a Column's).
+ * The components in every slot of a component.
  *
  * @param item A component on the page.
  */
@@ -39,17 +37,17 @@ const inside = ( item: Item ): Item[] =>
 	);
 
 /**
- * The first heading among some components, depth first: a Section's title.
+ * A Section's title: its first heading, depth first.
  *
  * @param items A Section's contents.
- * @param keys  The keys the site registered the Section and the Heading under.
+ * @param keys  The site's component keys.
  */
 function firstHeading( items: readonly Item[], keys: SectionKeys ): string {
 	for ( const item of items ) {
 		if ( item.type === keys.heading ) {
 			return textOf( item.props.content );
 		}
-		// WHY not into another Section: its heading is that Section's title.
+		// WHY skip nested Sections: their headings are their own titles.
 		if ( item.type !== keys.section ) {
 			const found = firstHeading( inside( item ), keys );
 			if ( found ) {
@@ -61,12 +59,11 @@ function firstHeading( items: readonly Item[], keys: SectionKeys ): string {
 }
 
 /**
- * A link to each Section with an HTML anchor, in page order, Sections inside others (and
- * inside Columns) included. One with no heading is labeled with its anchor, for an editor to
- * rename.
+ * A link to each anchored Section, in page order, nested ones included. A Section with no
+ * heading is labeled with its anchor.
  *
  * @param page Puck's page data.
- * @param keys The keys the site registered the Section and the Heading under.
+ * @param keys The site's component keys.
  */
 export function puckSectionLinks( page: PuckPage, keys: SectionKeys ): Link[] {
 	const links: Link[] = [];

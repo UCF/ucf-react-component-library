@@ -1,9 +1,8 @@
 /**
- * WordPress: a links prop as a sidebar field: each link's text and address, with buttons to move
- * it, remove it, and add one.
+ * CONTEXT: a links prop in the WordPress sidebar: text and address per link, with move, remove
+ * and add buttons.
  *
- * WHY text fields, not LinkControl: most links here are `#anchors` on the same page, which
- * LinkControl's search can't find; a typed address is what the anchor field shows.
+ * WHY text fields, not LinkControl: its search can't find same-page `#anchors`.
  */
 
 import { Button, Flex, FlexBlock, TextControl } from '@wordpress/components';
@@ -18,12 +17,12 @@ type Props = {
 };
 
 /**
- * The links in order, each editable, movable and removable, and a button to add one.
+ * The links control.
  *
- * @param props            The prop's definition, its links, and what to call when they change.
+ * @param props            Props.
  * @param props.definition A links prop.
- * @param props.value      Its links.
- * @param props.onChange   Called with the new links.
+ * @param props.value      The links.
+ * @param props.onChange   Called with new links.
  */
 export function LinksControl( { definition, value, onChange }: Props ) {
 	const links = [ ...value ];

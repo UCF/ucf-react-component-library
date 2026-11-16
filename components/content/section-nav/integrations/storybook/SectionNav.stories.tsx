@@ -1,7 +1,4 @@
-/**
- * The Section Nav on a page: full width between Sections, sticking as the page scrolls, its
- * behavior (behavior.ts) on as WordPress's viewScript turns it on.
- */
+/** CONTEXT: the Section Nav on a page of Sections, with behavior.ts running. */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef } from 'react';
 import { expect, userEvent, waitFor } from 'storybook/test';
@@ -35,15 +32,14 @@ type PageProps = {
 };
 
 /**
- * A page: an opening Section, the Section Nav, then a Section for each link.
- * WHY the Sections in the story, not around it: the bar spans the page between Sections, as it
- * is placed in WordPress; inside a Section it would sit in its padded column.
+ * A page: an opening Section, the Section Nav, then a Section per link.
+ * WHY build the Sections here: the bar sits between Sections, not inside one.
  *
- * @param props             What the page holds.
- * @param props.links       The Section Nav's links; each `#anchor` gets a Section.
- * @param props.linkLayout  Where the links sit in the bar.
+ * @param props             Props.
+ * @param props.links       The links; each `#anchor` gets a Section.
+ * @param props.linkLayout  Left or spread.
  * @param props.composition The Sections' composition, from the toolbar.
- * @param props.script      Whether behavior.ts runs, as WordPress's viewScript does.
+ * @param props.script      Whether behavior.ts runs.
  */
 function Page( { links, linkLayout, composition, script }: PageProps ) {
 	const page = useRef< HTMLDivElement >( null );
@@ -53,7 +49,7 @@ function Page( { links, linkLayout, composition, script }: PageProps ) {
 		return script && nav ? enhanceSectionNav( nav ) : undefined;
 	}, [ script, links ] );
 	const sectionOf = composition as 'light';
-	// WHY a wrapper as tall as the page: the bar sticks while its parent is on screen.
+	// WHY one wrapper: the bar only sticks within its parent.
 	return (
 		<div ref={ page }>
 			<Section composition={ sectionOf }>
@@ -85,7 +81,7 @@ const meta = {
 	component: SectionNav,
 	// WHY its own Sections: see Page.
 	parameters: { section: false },
-	// WHY links, not the defaults: a new one starts empty, and WordPress fills it from the page.
+	// WHY links: the default is empty.
 	args: { links: LINKS },
 	argTypes: argTypesOf( PROPS ),
 	render: ( args, { globals } ) => (
@@ -102,10 +98,7 @@ export default meta;
 
 type Story = StoryObj< typeof meta >;
 
-/**
- * A program page. Below 992px the links are behind "Skip to Section"; the link to the section
- * in view is underlined.
- */
+/** A program page. Below 992px the links are behind "Skip to Section". */
 export const Default: Story = {
 	play: async ( { canvasElement } ) => {
 		const nav = canvasElement.querySelector( '.ucf-c-section-nav' );
@@ -119,7 +112,7 @@ export const Default: Story = {
 		await expect( list?.checkVisibility() ).toBe( ! narrow );
 
 		if ( narrow && toggle && list ) {
-			// As much space at the right of the bars as at the left of the text.
+			// Even space: right of the bars equals left of the text.
 			const button = toggle.getBoundingClientRect();
 			const text = toggle
 				.querySelector( '.ucf-c-section-nav__toggle-text' )
@@ -128,7 +121,7 @@ export const Default: Story = {
 				'.ucf-c-section-nav__toggle-icon'
 			);
 			const icon = iconElement?.getBoundingClientRect();
-			// The bars, centered in the icon's box: their height, at the glyph's 448:512.
+			// The drawn bars' right edge (glyph is 448×512, centered).
 			const [ , drawn = 0 ] = getComputedStyle( iconElement as Element )
 				.maskSize.split( ' ' )
 				.map( parseFloat );
@@ -139,16 +132,16 @@ export const Default: Story = {
 				button.right - barsRight - ( ( text?.left ?? 0 ) - button.left )
 			).toBeCloseTo( 0, 0 );
 
-			// The page under the bar, which the open menu draws over, not down.
+			// Opening must not move the page under the bar.
 			const under = nav?.nextElementSibling;
 			const underTop = under?.getBoundingClientRect().top;
 			await userEvent.click( toggle );
 			await expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
 			await expect( list.checkVisibility() ).toBe( true );
-			// It slides open, from shorter than its links to all of them.
+			// It slides open.
 			const [ opening ] = list.getAnimations();
 			await expect( opening ).toBeDefined();
-			// From nothing: its first frame is no taller than its two lines, not a jump.
+			// From 0 (just its 2px of borders), with no jump.
 			opening?.pause();
 			if ( opening ) {
 				opening.currentTime = 0;
@@ -160,7 +153,7 @@ export const Default: Story = {
 			await opening?.finished;
 			await expect( list.clientHeight ).toBe( list.scrollHeight );
 			await expect( under?.getBoundingClientRect().top ).toBe( underTop );
-			// A line above the links, edge to edge, in the tint of the section in view.
+			// A full-width line above the links, in the active link's tint.
 			const line = getComputedStyle( list );
 			const current = list.querySelector( '[aria-current]' );
 			await expect( current ).not.toBeNull();
@@ -175,11 +168,11 @@ export const Default: Story = {
 			await userEvent.keyboard( '{Escape}' );
 			await expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
 			await expect( toggle ).toHaveFocus();
-			// It slides shut: the links show until it has.
+			// It slides shut, links visible until done.
 			const [ closing ] = list.getAnimations();
 			await expect( closing ).toBeDefined();
 			await expect( list.checkVisibility() ).toBe( true );
-			// The button is closed already, not black until the links are gone.
+			// The button un-blacks immediately, not after the slide.
 			await expect( getComputedStyle( toggle ).backgroundColor ).toBe(
 				'rgba(0, 0, 0, 0)'
 			);
@@ -189,7 +182,7 @@ export const Default: Story = {
 			);
 		}
 
-		// The section in view is marked once the page scrolls to it.
+		// Scrolling to a section marks its link.
 		canvasElement.ownerDocument
 			.getElementById( 'careers' )
 			?.scrollIntoView( { behavior: 'instant' } );
@@ -201,10 +194,7 @@ export const Default: Story = {
 	},
 };
 
-/**
- * Main-Site-Theme's `justify-between` layout, as on the ucf.edu home page: the first link at
- * the left edge, the last at the right, the rest spread between.
- */
+/** Links spread across the bar, as on the ucf.edu home page. */
 export const Spread: Story = {
 	args: { linkLayout: 'spread' },
 	play: async ( { canvasElement } ) => {
@@ -227,10 +217,7 @@ export const Spread: Story = {
 	},
 };
 
-/**
- * More links than fit across: on wide screens their text wraps and the bar grows taller, as on
- * ucf.edu/robotics/. A jump to a section still marks it.
- */
+/** More links than fit: labels wrap and the bar grows taller, as on ucf.edu/robotics/. */
 export const ManyLinks: Story = {
 	args: {
 		links: [
@@ -248,10 +235,10 @@ export const ManyLinks: Story = {
 		const nav =
 			canvasElement.querySelector< HTMLElement >( '.ucf-c-section-nav' );
 		const list = nav?.querySelector( '.ucf-c-section-nav__list' );
-		// Every link in the bar: none scrolled out of sight.
+		// Nothing scrolled out of sight.
 		await expect( list?.scrollWidth ).toBe( list?.clientWidth );
 
-		// The taller bar still marks the section a jump lands on.
+		// The taller bar still marks the right section.
 		canvasElement.ownerDocument
 			.getElementById( 'research' )
 			?.scrollIntoView( { behavior: 'instant' } );
@@ -263,7 +250,7 @@ export const ManyLinks: Story = {
 	},
 };
 
-/** Without its script: every link in one row at every width, scrolling across on a phone. */
+/** Without the script: links stay in the bar at every width, scrolling across on a phone. */
 export const WithoutScript: Story = {
 	render: ( args, { globals } ) => (
 		<Page
@@ -274,14 +261,14 @@ export const WithoutScript: Story = {
 	),
 };
 
-/** No links yet: the bar, blank, at its full height, so an editor can see and select it. */
+/** No links: a blank bar at full height, so editors can select it. */
 export const Empty: Story = {
 	args: { links: [] },
 	play: async ( { canvasElement } ) => {
 		const nav =
 			canvasElement.querySelector< HTMLElement >( '.ucf-c-section-nav' );
 		await expect( nav?.checkVisibility() ).toBe( true );
-		// SYNC: the bar's height in style.css, 3.9rem and its two 1px borders.
+		// SYNC: the bar's height in style.css.
 		await expect( nav?.getBoundingClientRect().height ).toBeCloseTo(
 			3.9 * 16 + 2,
 			0

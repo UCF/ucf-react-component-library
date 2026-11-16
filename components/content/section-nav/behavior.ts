@@ -1,14 +1,11 @@
 /**
- * The Section Nav's behavior, added on top of its saved markup, as the old Section Menus
- * plugin's was: a "Skip to Section" button that slides the links open on narrow screens, the link to
- * the section in view marked, and a shadow while the bar is stuck to the top of the window.
+ * CONTEXT: the Section Nav's script: the phone menu button, marking the section in view, and
+ * flagging when the bar is stuck.
  *
- * WHY a script on top, not state in the component: the links must be in the saved HTML and work
- * without it (docs/architecture.md, "An accordion is content"). Without this script every link
- * still works, in a row whose links wrap their text, and which scrolls across when even that is
- * too wide (a phone).
- * WHY plain DOM, no React: WordPress runs it as the block's viewScript (integrations/wp/view.ts),
- * and a React site calls it from an effect: `useEffect( () => enhanceSectionNav( nav ), [] )`.
+ * WHY on top of the markup: the links work without it (docs/architecture.md, "An accordion is
+ * content").
+ * WHY plain DOM: WordPress runs it as a viewScript (integrations/wp/view.ts); React calls it
+ * from an effect.
  */
 
 // SYNC: the class names in SectionNav.tsx and style.css.
@@ -19,27 +16,25 @@ const TOGGLE = 'ucf-c-section-nav__toggle';
 let count = 0;
 
 /**
- * Adds the menu button and the marking of the section in view to one Section Nav.
+ * Enhances one Section Nav.
  *
  * @param nav           The Section Nav's `<nav>`.
- * @param options       What it shows.
+ * @param options       Options.
  * @param options.label The button's text.
- * @return Undoes it: removes the button and stops watching the page.
+ * @return A cleanup function that undoes it.
  */
 export function enhanceSectionNav(
 	nav: HTMLElement,
 	{ label = 'Skip to Section' }: { label?: string } = {}
 ): () => void {
 	const list = nav.querySelector< HTMLElement >( LIST );
-	// WHY not with no links: the menu button would open nothing. A host that adds links later
-	// calls this again (as the Puck demo's effect does when its links change).
+	// WHY skip with no links: the button would open nothing. Hosts call again once links exist.
 	if ( ! list?.querySelector( LINK ) || nav.dataset.enhanced !== undefined ) {
 		return () => {};
 	}
 	nav.dataset.enhanced = '';
 	list.id ||= `ucf-section-nav-${ ++count }`;
 
-	// The menu button: its text, and a menu icon. CSS shows it on narrow screens only.
 	const toggle = document.createElement( 'button' );
 	toggle.type = 'button';
 	toggle.className = TOGGLE;
@@ -52,13 +47,12 @@ export function enhanceSectionNav(
 	toggle.append( text, icon );
 	toggle.setAttribute( 'aria-controls', list.id );
 	toggle.setAttribute( 'aria-expanded', 'false' );
-	// SPEC: Bootstrap's collapse, as the old menu opened: its height slides over 0.35s, ease.
-	// WHY the Web Animations API, not a CSS transition: CSS can't move a height to or from
-	// `auto` in every browser, and this needs no cleanup listener when a click cuts it short.
+	// SPEC: Bootstrap's collapse: height slides over 0.35s, ease.
+	// WHY the Web Animations API: CSS can't transition height to `auto` in every browser.
 	let motion: Animation | undefined;
 	const setOpen = ( open: boolean ) => {
 		toggle.setAttribute( 'aria-expanded', String( open ) );
-		// From where it is now, mid-slide or not.
+		// WHY measure first: a second tap reverses from mid-slide.
 		const from = nav.hasAttribute( 'data-open' )
 			? list.getBoundingClientRect().height
 			: 0;
@@ -72,7 +66,7 @@ export function enhanceSectionNav(
 			nav.toggleAttribute( 'data-open', open );
 			return;
 		}
-		// WHY open while it closes too: the links must show while their height slides to 0.
+		// WHY open while closing: the links stay visible until the slide ends.
 		nav.toggleAttribute( 'data-open', true );
 		const to = open ? list.getBoundingClientRect().height : 0;
 		motion = list.animate(
@@ -96,7 +90,7 @@ export function enhanceSectionNav(
 			setOpen( false );
 		}
 	};
-	// A11Y: Escape closes it and returns focus to the button (WAI-ARIA disclosure pattern).
+	// A11Y: Escape closes and refocuses the button (WAI-ARIA disclosure).
 	const onKey = ( event: KeyboardEvent ) => {
 		if ( event.key === 'Escape' && nav.hasAttribute( 'data-open' ) ) {
 			setOpen( false );
@@ -122,7 +116,6 @@ export function enhanceSectionNav(
 		.filter( ( item ) => item !== null );
 	const mark = () => {
 		const bar = nav.getBoundingClientRect();
-		// Stuck: held at the top of the window, with page under it. CSS gives it a shadow then.
 		nav.toggleAttribute( 'data-stuck', bar.top <= 0 && window.scrollY > 0 );
 		const line = bar.bottom + 1;
 		let current: HTMLAnchorElement | null = null;
@@ -139,7 +132,7 @@ export function enhanceSectionNav(
 			}
 		}
 	};
-	// WHY a frame: the page's layout is read once per frame at most, however fast it scrolls.
+	// WHY a frame: layout is read at most once per frame while scrolling.
 	let frame = 0;
 	const onScroll = () => {
 		if ( ! frame ) {

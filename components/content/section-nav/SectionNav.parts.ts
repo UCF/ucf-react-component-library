@@ -1,6 +1,4 @@
-/**
- * The Section Nav's parts: none. Its links are a prop, not content an editor places inside it.
- */
+/** CONTEXT: the Section Nav's parts: none. Its links are a prop. */
 import type { PartDefinitions, PartOf } from '@/integrations/schema/parts';
 
 export const PARTS = {} as const satisfies PartDefinitions;

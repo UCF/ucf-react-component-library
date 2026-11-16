@@ -1,32 +1,31 @@
 /**
- * WordPress: the page's Sections as Section Nav links. A Section is linked when it has an HTML
- * anchor; its link's text is its first heading's.
+ * CONTEXT: Section Nav links from the block editor: one per Section with an HTML anchor,
+ * labeled with its first heading. SYNC: integrations/puck/section-links.ts.
  *
- * WHY plain functions over the editor's store: tests/section-links.test.ts runs them on a real
- * block-editor store without an editor, and edit.tsx calls them from useSelect.
+ * WHY plain functions: tests run them on a real store without an editor.
  */
 import type { Link } from '@/integrations/schema/props';
 import { textOf } from '../../utils/links.ts';
 
-/** A block as the editor's store gives it: only what is read here. */
+/** The parts of a block read here. */
 export type BlockNode = {
 	name: string;
 	attributes: Record< string, unknown >;
 	innerBlocks: readonly BlockNode[];
 };
 
-/** The block-editor store's selectors read here. */
+/** The block-editor selectors used here. */
 export type BlockSelectors = {
 	getBlocksByName: ( name: string ) => readonly string[];
 	getBlock: ( clientId: string ) => BlockNode | null;
 };
 
-// SYNC: the Section's block name, in components/content/section/integrations/wp/block.json.
+// SYNC: components/content/section/integrations/wp/block.json.
 const SECTION = 'ucf-content/section';
 const HEADING = 'core/heading';
 
 /**
- * The first heading among some blocks, depth first: a Section's title.
+ * A Section's title: its first heading, depth first.
  *
  * @param blocks A Section's inner blocks.
  */
@@ -35,7 +34,7 @@ function firstHeading( blocks: readonly BlockNode[] ): string {
 		if ( block.name === HEADING ) {
 			return textOf( block.attributes.content );
 		}
-		// WHY not into another Section: its heading is that Section's title.
+		// WHY skip nested Sections: their headings are their own titles.
 		if ( block.name !== SECTION ) {
 			const inner = firstHeading( block.innerBlocks );
 			if ( inner ) {
@@ -47,14 +46,11 @@ function firstHeading( blocks: readonly BlockNode[] ): string {
 }
 
 /**
- * Every Section in the editor, in page order, Sections inside others included.
- * FIX: not by walking getBlocks() down from the top. A page that shows its template keeps its
- * content as the Post Content block's controlled inner blocks, which getBlocks() leaves out, so
- * no Section was found. getBlocksByName() reads every block in the editor, in order.
- * WHY getBlock() for each: it returns the same object while the block is unchanged, so
- * useSelect re-renders only when a Section changes.
+ * Every Section in the editor, in page order.
+ * FIX: getBlocks() misses Sections inside Post Content when the template is shown.
+ * WHY getBlock(): it keeps the same object while unchanged, so useSelect re-renders less.
  *
- * @param store The block-editor store's selectors.
+ * @param store The block-editor selectors.
  */
 export function pageSections( store: BlockSelectors ): BlockNode[] {
 	return store
@@ -64,8 +60,7 @@ export function pageSections( store: BlockSelectors ): BlockNode[] {
 }
 
 /**
- * A link to each Section with an HTML anchor, in the order given. One with no heading is
- * labeled with its anchor, for an editor to rename.
+ * A link to each anchored Section. A Section with no heading is labeled with its anchor.
  *
  * @param sections The page's Sections (pageSections()).
  */

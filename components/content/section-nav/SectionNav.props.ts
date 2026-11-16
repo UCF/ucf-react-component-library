@@ -1,15 +1,11 @@
 /**
- * The Section Nav's props, in the order editors see them. Each key is a saved block attribute.
- * SYNC: block.json's attributes; integrations/tests/parity.test.tsx checks. Renaming one needs a
- * block deprecation.
+ * CONTEXT: the Section Nav's props, in editor order. Each key is a saved block attribute.
+ * SYNC: block.json (parity.test.tsx checks). Renaming one needs a block deprecation.
  */
 import type { PropDefinitions, PropsOf } from '@/integrations/schema/props';
 
 export const PROPS = {
-	/**
-	 * The links, in order: `{ label: 'Apply', href: '#apply' }`. In WordPress a new Section Nav
-	 * fills them from the page's Sections that have an HTML anchor (integrations/wp/edit.tsx).
-	 */
+	/** `{ label, href }` in order. New ones fill from Sections with an HTML anchor. */
 	links: {
 		type: 'links',
 		label: 'Links',
@@ -18,10 +14,8 @@ export const PROPS = {
 		default: [],
 	},
 	/**
-	 * Where the links sit in the bar: packed at the left, or spread across it.
-	 * SPEC: the Section Menus shortcode's `layout`: its default, and Main-Site-Theme's
-	 * `justify-between` (the ucf.edu home page and /robotics/; /faculty/ is the default).
-	 * WHY not `layout`: WordPress's own layout support stores an object under that name.
+	 * SPEC: the Section Menus `layout`: default (left) or `justify-between` (spread).
+	 * WHY not named `layout`: WordPress reserves that attribute.
 	 */
 	linkLayout: {
 		type: 'choice',

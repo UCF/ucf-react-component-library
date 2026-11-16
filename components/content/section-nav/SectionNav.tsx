@@ -1,13 +1,10 @@
 /**
- * The Section Nav: a bar of links to the sections of a page, which stays at the top of the
- * window while the page scrolls past it.
+ * CONTEXT: the Section Nav: a sticky bar of links to the page's sections.
  *
- * WHY content, not interactive: the links are in the saved HTML and work without JavaScript.
- * Sticking, smooth scrolling and stopping short of the bar are CSS (style.css).
- * WHY a prop, not an area: the links are data a block can fill from the page (WordPress's
- * edit.tsx reads the Sections' anchors), and their markup stays ours rather than core's List.
- * A11Y: a `<nav>` with its own name, so it is a landmark apart from the site's navigation.
- * SYNC: WordPress stores this markup in every post that uses the block.
+ * WHY content, not interactive: the links are saved HTML and work without JavaScript.
+ * WHY links as a prop, not an area: editors fill them from the page's Sections.
+ * A11Y: a named `<nav>`, a landmark apart from the site's navigation.
+ * SYNC: WordPress saves this markup in every post that uses it.
  */
 import {
 	frame,
@@ -19,14 +16,14 @@ import { PARTS } from './SectionNav.parts.ts';
 import { DEFAULT_PRESET, PRESETS } from './SectionNav.presets.ts';
 import { PROPS } from './SectionNav.props.ts';
 
-/** Everything the Section Nav takes: its links, and a site's HTML attributes. */
+/** The Section Nav's props, plus HTML attributes. */
 export type SectionNavProps = OwnProps< typeof PROPS > &
 	PresetProps< typeof PARTS, typeof PRESETS >;
 
 function SectionNavMarkup( {
 	links = [ ...PROPS.links.default ],
 	linkLayout = PROPS.linkLayout.default,
-	// WHY taken out: it holds no content, so neither reaches the `<nav>`.
+	// WHY dropped: it has no children or areas.
 	children: _children,
 	area: _area,
 	className,
@@ -40,7 +37,7 @@ function SectionNavMarkup( {
 				className,
 				'ucf-c',
 				'ucf-c-section-nav',
-				// WHY no class for Left: it is the bar's own layout; only Spread changes it.
+				// WHY no class for Left: it's the default.
 				linkLayout === 'left'
 					? null
 					: `ucf-c-section-nav--${ linkLayout }`,
@@ -66,13 +63,12 @@ function SectionNavMarkup( {
 }
 
 /**
- * A bar of links to the page's sections, which sticks to the top of the window:
+ * A sticky bar of links to the page's sections:
  *
  *   <SectionNav links={ [ { label: 'Apply', href: '#apply' } ] } />
- *   <SectionNav linkLayout="spread" links={ … } />   the links spread across the bar
+ *   <SectionNav linkLayout="spread" links={ … } />
  *
- * Place it between Sections, not inside one: it sticks only while its parent is on screen.
- * Its props: SectionNav.props.ts.
+ * Place it between Sections, not inside one: it only sticks within its parent.
  */
 const SectionNav = frame( SectionNavMarkup, {
 	// Who it is

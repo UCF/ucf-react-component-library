@@ -121,9 +121,7 @@ const looseFrame = ( component: HasFrame ) =>
  * A block's attributes that are the component's props, in WordPress.
  * FIX: WordPress's own (`className`, `anchor`, `align`) would replace useBlockProps()'s class or
  * reach the markup as stray attributes.
- * WHY WordPress's props only: a Puck-only prop named as one of WordPress's attributes (the
- * Section's `anchor`) would reach the markup from it, and in the editor its `id` would replace
- * the block's own.
+ * WHY skip Puck-only props: the Section's `anchor` would replace the editor's own block `id`.
  *
  * @param attributes  The block's attributes.
  * @param definitions The component's prop definitions.

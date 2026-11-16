@@ -51,8 +51,7 @@ export function blockAttributes( definitions: PropDefinitions ) {
 }
 
 /**
- * One prop as a block attribute: a list's values and a links prop's links as arrays, a number as
- * a number, anything else as a string.
+ * A prop's block attribute type: lists and links are arrays, numbers numbers, the rest strings.
  *
  * @param definition A prop.
  */

@@ -1,8 +1,8 @@
 /**
- * The Section Nav in Puck, from its port (integrations/puck/config.tsx).
+ * CONTEXT: the Section Nav in Puck.
  *
- *   config               its links as Puck's array field, typed by hand
- *   withPageSections()   its links filled from the page's Sections, as in WordPress:
+ *   config               links typed by hand
+ *   withPageSections()   links filled from the page's Sections:
  *
  *     import { AutoField, Button, createUsePuck, FieldLabel } from '@puckeditor/core';
  *
@@ -12,9 +12,7 @@
  *       { AutoField, FieldLabel, Button }
  *     );
  *
- * WHY the site lends the hook and the controls: Puck shows a field none of the page, and this
- * library's Puck configs don't import Puck. WHY the keys: a Puck page names each component by
- * the key the site registered it under.
+ * WHY the site passes these in: the library doesn't import Puck.
  */
 import { useMemo } from 'react';
 
@@ -32,11 +30,11 @@ import {
 const { config } = puckConfig( SectionNav );
 
 /**
- * The Section Nav, its links filled from the page's Sections that have an HTML anchor.
+ * The config, with links filled from Sections that have an HTML anchor.
  *
- * @param usePage A hook that returns Puck's page data, from inside Puck's editor.
- * @param puck    Puck's `AutoField`, `FieldLabel` and `Button`, which draw the field.
- * @param keys    The keys the site registered the Section and the Heading under.
+ * @param usePage A hook returning Puck's page data.
+ * @param puck    Puck's `AutoField`, `FieldLabel` and `Button`.
+ * @param keys    The site's component keys for Section and Heading.
  */
 const withPageSections = (
 	usePage: () => PuckPage,
@@ -52,7 +50,7 @@ const withPageSections = (
 		fields: {
 			...config.fields,
 			links: linksField(
-				// WHY the cast: puckFields() makes a links prop an array field (fieldOf()).
+				// WHY the cast: fieldOf() makes a links prop an array field.
 				config.fields.links as PuckArrayField< Link >,
 				useSections,
 				puck

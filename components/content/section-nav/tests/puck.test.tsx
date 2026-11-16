@@ -1,10 +1,6 @@
 // @vitest-environment happy-dom
 // WHY happy-dom: the links field is rendered and clicked.
-/**
- * The Section Nav in Puck: the page's Sections read from Puck's data
- * (integrations/puck/section-links.ts), and the links field that fills from them
- * (integrations/puck/links-field.tsx, through withPageSections()).
- */
+/** CONTEXT: integrations/puck/section-links.ts and links-field.tsx. */
 import type {
 	AutoField,
 	Button,
@@ -33,8 +29,8 @@ const section = ( anchor: string, blocks: unknown[] = [] ) =>
 	item( 'Section', { anchor, blocks } );
 const heading = ( content: string ) => item( 'Heading', { content } );
 
-// The type checks: Puck's own controls are ones withPageSections() takes, and it gives a config
-// Puck takes. WHY a cast: only their types are checked; nothing draws the field here.
+// Type check: withPageSections() accepts Puck's real controls and returns a valid config.
+// WHY a cast: only types are checked here.
 const puck = null as unknown as {
 	AutoField: typeof AutoField;
 	FieldLabel: typeof FieldLabel;
@@ -45,8 +41,8 @@ withPageSections( () => ( { content: [] } ), puck ) satisfies ComponentConfig<
 >;
 
 /**
- * Stand-ins for Puck's controls: Puck's need its editor around them.
- * WHY the array field drawn as its links' text: so a test sees what it was given.
+ * Stand-ins for Puck's controls, which need Puck's editor.
+ * WHY labels as text: so tests can read the links.
  */
 const CONTROLS: PuckControls = {
 	AutoField: ( { value } ) => (

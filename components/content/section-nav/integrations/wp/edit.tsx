@@ -1,11 +1,8 @@
 /**
- * The Section Nav's editor view: blockEdit()'s sidebar and markup, filled from the page.
+ * CONTEXT: the Section Nav in the block editor. Empty, it fills from the page's anchored
+ * Sections; after that, "Update from sections" refreshes them.
  *
- * While it has no links, it takes one for each Section with an HTML anchor, and follows them as
- * they change. Once it has links, they are the editor's: "Update from sections" brings them up to
- * date with the page, keeping renamed text and links elsewhere (section-links.ts).
- * WHY not always following the page: an editor's own order, text and removals would be undone
- * on every change to a Section.
+ * WHY not always follow the page: it would undo the editor's own order, labels and removals.
  */
 import {
 	InspectorControls,
@@ -32,16 +29,14 @@ type Attributes = { links?: readonly Link[] } & Record< string, unknown >;
 const Edit = blockEdit( SectionNav );
 
 /**
- * The page's Section links, from the editor's store.
- * WHY the Sections from useSelect and the links from useMemo: useSelect compares the Sections
- * one by one, and they stay the same objects while unchanged; links built inside it would be
- * new objects on every store update.
+ * The page's Section links.
+ * WHY build links in useMemo: built inside useSelect they'd be new objects on every update.
  */
 function usePageSections(): Link[] {
 	const sections = useSelect(
 		( select ) =>
 			pageSections(
-				// UPSTREAM: the store's types name its own block type, wider than BlockNode.
+				// UPSTREAM: the store's block type is wider than BlockNode.
 				select( blockEditorStore ) as unknown as BlockSelectors
 			),
 		[]
@@ -90,8 +85,7 @@ export default function SectionNavEdit( props: BlockEditProps< Attributes > ) {
 		</InspectorControls>
 	);
 
-	// WHY no placeholder while empty: the bar keeps its height (style.css), blank, so it can
-	// be seen and selected as it is.
+	// WHY no placeholder: an empty bar keeps its height and can be selected (style.css).
 	return (
 		<>
 			{ sidebar }

@@ -146,8 +146,7 @@ const wordPressOnly = ( component: string ) =>
 	);
 
 /**
- * The props a component's definitions give to Puck only: no block attribute of their own (the
- * Section's `anchor`, which WordPress keeps as its own anchor support).
+ * A component's Puck-only props, which have no block attribute (the Section's `anchor`).
  *
  * @param component A component's folder name.
  */

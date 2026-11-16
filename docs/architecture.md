@@ -907,3 +907,21 @@ The block theme's vocabulary. Comments say **why**, not what, and each is tagged
 | `SPEC:`     | A value that comes from a design, not from reasoning  |
 | `PERF:`     | A measured cost, not a guess                          |
 | `CONTEXT:`  | A file- or section-level orientation banner           |
+
+Keep each comment short enough to read at a glance:
+
+- **One or two lines.** A `CONTEXT:` banner may run a few more. Reasoning that needs more space
+  belongs in the commit message, or in this doc.
+- **One idea per comment.** Give each tag its own line; don't chain several into a paragraph.
+- **The current rule, not its history.** No "the old one…", "used to" or the bug's backstory; a
+  `FIX:` names the bug in a clause.
+- **Nothing the code already says.** Skip what any developer knows about CSS, React or
+  WordPress.
+- **Plain sentences.** Write for someone reading the file cold.
+- **JSDoc says what a value is,** in a few words: `@param value The links.`, not a restatement
+  of the type or "Props.".
+
+```css
+/* SPEC: UCF icon `menu`, Font Awesome Pro Sharp Solid `bars`.
+   WHY a mask: it takes the button's text color. */
+```

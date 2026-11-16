@@ -1,7 +1,6 @@
 /**
- * The Section Nav's links, the same in every host: a heading's text as a link's, and an update
- * from the page that keeps an editor's changes. WordPress (integrations/wp/section-links.ts) and
- * Puck (integrations/puck/section-links.ts) each find the page's Sections their own way.
+ * CONTEXT: link helpers shared by both editors. Each editor finds the page's Sections in its
+ * own section-links.ts.
  */
 import type { Link } from '@/integrations/schema/props';
 
@@ -15,9 +14,8 @@ const ENTITIES: Record< string, string > = {
 };
 
 /**
- * A heading's text: its saved HTML without tags, entities decoded, spaces collapsed.
- * UPSTREAM: core/heading's `content` is HTML, as a string or a RichTextData that prints as one;
- * Puck's Heading holds plain text, which passes through unchanged.
+ * A heading's plain text: tags stripped, entities decoded, spaces collapsed.
+ * UPSTREAM: core/heading's `content` is HTML (or RichTextData); Puck's is plain text.
  *
  * @param html A heading's content.
  */
@@ -42,9 +40,8 @@ export function textOf( html: unknown ): string {
 }
 
 /**
- * The page's Section links, with an editor's changes kept: a link they renamed keeps its text,
- * and a link to anywhere but a section of this page stays, after the Sections'. A link to a
- * Section that lost its anchor goes.
+ * The page's Section links, keeping the editor's renamed labels and any links off the page.
+ * Links to Sections that lost their anchor are dropped.
  *
  * @param current  The Section Nav's links.
  * @param sections The page's Section links (sectionLinks()).

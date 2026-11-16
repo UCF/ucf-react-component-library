@@ -50,11 +50,10 @@ export const PROPS = {
 		default: 'default',
 	},
 	/**
-	 * Its `id`, so a link (`#apply`) or the Section Nav can jump to it.
-	 * WHY Puck only: WordPress gives every Section its own HTML anchor field (block.json
-	 * `supports.anchor`) and saves it as the `id`; declaring it here too would make it a stored
-	 * attribute, and Sections saved with an anchor would no longer validate.
-	 * SYNC: the name of WordPress's attribute, so content moves between hosts unchanged.
+	 * Its `id`, so links like `#apply` can jump to it.
+	 * WHY Puck only: WordPress has its own anchor support; an attribute here would break
+	 * validation of saved Sections.
+	 * SYNC: named like WordPress's attribute, so content moves between hosts.
 	 */
 	anchor: {
 		type: 'text',

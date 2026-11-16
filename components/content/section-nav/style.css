@@ -1,28 +1,21 @@
 /*
- * The Section Nav's styles, for every host.
+ * CONTEXT: the Section Nav's styles, for every host.
  *
- * SPEC: the ucf.edu section menu: the Section Menus plugin's markup (`navbar
- * navbar-toggleable-md navbar-light bg-primary`) as Main-Site-Theme's Athena build styles it,
- * in both its layouts: the plugin's default, links at the left (ucf.edu/faculty/), and the
- * theme's `justify-between`, links spread across (`--spread`, the home page). The sizes below
- * are Athena's. Its gold (#fc0) is the library's
- * gold token instead, which WordPress points at the theme's.
- * WHY tokens, not the section's roles: it is gold on every section, as on ucf.edu, so it
- * reads gold and black directly rather than the roles of where it is placed.
- * A11Y: black on gold (#EDB80D) is 11.46:1, and stays above 9:1 under the hover tint.
- * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named `style.css`.
+ * SPEC: ucf.edu's section menu (Section Menus plugin, styled by Athena). Default layout puts
+ * the links at the left (ucf.edu/faculty/); `--spread` is the theme's `justify-between`
+ * (the home page).
+ * WHY tokens, not the section's roles: the bar is gold and black on every section.
+ * A11Y: black on gold is 11.46:1, above 9:1 under the hover tint.
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet named `style.css`.
  */
 .ucf-c-section-nav {
-	/* FIX: the menu button's margins collapsed through the bar, leaving it 42px tall, not
-	   3.9rem, so a jump stopped short of the line where the section in view is marked. */
+	/* FIX: without it the button's margins collapse and the bar is 42px, not 3.9rem. */
 	display: flow-root;
 	position: sticky;
 	top: 0;
-	/* WHY: it passes over the page's content, which may be positioned too. */
 	z-index: 10;
-	/* SYNC: 2px of the bar's height, in scroll-padding-top below.
-	   SPEC: a light gold line above and below. WHY a mix, not a token: no light gold is
-	   defined; this one follows the gold token, so it follows the theme's in WordPress. */
+	/* SPEC: light gold lines above and below. WHY a mix: there is no light gold token.
+	   SYNC: scroll-padding-top below counts these 2px. */
 	border-block: 1px solid
 		color-mix(in srgb, var(--ucf-color-gold) 50%, var(--ucf-color-white));
 	background: var(--ucf-color-gold);
@@ -31,8 +24,7 @@
 	transition: box-shadow 0.2s ease-in-out;
 }
 
-/* SPEC: the plugin's shadow while the bar is fixed to the top (section-menu.scss). The script
-   sets data-stuck. */
+/* SPEC: the plugin's shadow while stuck. behavior.ts sets data-stuck. */
 .ucf-c-section-nav[data-stuck] {
 	box-shadow: 0 2px 32px rgb(0 0 0 / 50%);
 }
@@ -40,20 +32,18 @@
 .ucf-c-section-nav .ucf-c-section-nav__list {
 	display: flex;
 	box-sizing: border-box;
-	/* WHY: with no links yet, the bar keeps its height, blank, so an editor can see and select
-	   it. SYNC: the bar's height, in scroll-padding-top below. */
+	/* WHY: an empty bar keeps its height, so editors can select it.
+	   SYNC: scroll-padding-top below. */
 	min-height: 3.9rem;
 	max-width: var(--ucf-layout-wide);
 	margin: 0 auto;
 	padding: 0 var(--ucf-custom-gutter);
 	list-style: none;
-	/* SPEC: as on ucf.edu/robotics/, links that don't fit on one line shrink and wrap their
-	   text, and the bar grows taller. WHY it still scrolls across: without the script there
-	   is no menu button, and a row too wide even wrapped (a phone) must still be in reach. */
+	/* SPEC: long labels wrap, as on ucf.edu/robotics/.
+	   WHY scroll: without the script there is no menu button on phones. */
 	overflow-x: auto;
 }
 
-/* SPEC: Main-Site-Theme's `justify-between` layout (`w-100 justify-content-between`). */
 .ucf-c-section-nav--spread .ucf-c-section-nav__list {
 	justify-content: space-between;
 }
@@ -62,13 +52,12 @@
 	margin: 0;
 }
 
-/* SPEC: Athena's `.navbar-nav .nav-link`, at its 992px-and-up padding. */
+/* SPEC: Athena's `.nav-link`, desktop padding. */
 .ucf-c-section-nav .ucf-c-section-nav__link {
 	display: flex;
 	align-items: center;
 	padding: 1.5rem 0.8rem;
-	/* FIX: not `inherit`: the host colors every `li` with the section's body role (white on
-	   Dark), and the bar is gold whatever the section. */
+	/* FIX: not `inherit`; hosts color `li` text white on dark sections. */
 	color: var(--ucf-color-black);
 	font-size: 0.75rem;
 	font-weight: 700;
@@ -79,15 +68,14 @@
 	transition: background-color 0.2s ease-in-out;
 }
 
-/* SPEC: Athena's `.navbar-light.bg-primary` hover, focus and active link: a dark tint, no
-   underline. The section in view is the active one. */
+/* SPEC: Athena's hover and active tint. The section in view is the active one. */
 .ucf-c-section-nav .ucf-c-section-nav__link:hover,
 .ucf-c-section-nav .ucf-c-section-nav__link:focus-visible,
 .ucf-c-section-nav .ucf-c-section-nav__link[aria-current] {
 	background-color: rgb(0 0 0 / 10%);
 }
 
-/* The menu button, added by behavior.ts; shown only on narrow screens. */
+/* The menu button, added by behavior.ts; shown on narrow screens only. */
 .ucf-c-section-nav .ucf-c-section-nav__toggle {
 	display: none;
 }
@@ -99,15 +87,13 @@
 	outline-offset: calc(-1 * var(--ucf-custom-focus-width, 3px));
 }
 
-/* SPEC: the old menu collapsed below Bootstrap's lg breakpoint, 992px. */
+/* SPEC: Bootstrap's lg breakpoint, where the old menu collapsed. */
 @media (max-width: 991.98px) {
-	/* SPEC: Athena's `.navbar-toggler` with its `.navbar-toggler-text`: at the right, a 3px
-	   black border, text then a menu icon. */
+	/* SPEC: Athena's `.navbar-toggler`. */
 	.ucf-c-section-nav[data-enhanced] .ucf-c-section-nav__toggle {
 		display: flex;
 		align-items: center;
-		/* WHY not Athena's 0.25rem: its icon box had empty space at its left; this keeps the
-		   gap between the text and the bars as it looked. SYNC: the icon's width below. */
+		/* SYNC: the icon's width; together they space the bars evenly in the button. */
 		gap: 0.625rem;
 		width: max-content;
 		margin: calc(0.825rem - 3px) var(--ucf-custom-gutter)
@@ -122,9 +108,7 @@
 		cursor: pointer;
 	}
 
-	/* SPEC: open, the button turns black with white text and icon.
-	   WHY aria-expanded, not data-open: data-open stays while the menu slides shut, and the
-	   button changes the moment it is pressed. */
+	/* WHY aria-expanded, not data-open: the button changes on press, not after the slide. */
 	.ucf-c-section-nav .ucf-c-section-nav__toggle[aria-expanded="true"] {
 		background: var(--ucf-color-black);
 		color: var(--ucf-color-white);
@@ -136,14 +120,9 @@
 		text-transform: uppercase;
 	}
 
-	/* SPEC: the UCF icon set's `menu`, in the design system's Sharp Solid (Font Awesome Pro
-	   6.5.2 `bars`, under UCF's license: UCF-WordPress-Theme's fa-sharp-solid-900), its square
-	   ends matching the bar's square corners. Drawn 1.5rem tall in Athena's 2rem-tall box.
-	   WHY the box only as wide as the glyph (1.5rem × 448/512): a 2rem box left empty space
-	   beside the bars, so the button looked wider on the right than at its text's left. The
-	   button's padding alone sets that side now, as it sets the left.
-	   WHY a mask: it takes the button's color, so it turns white with it.
-	   SYNC: the theme's assets/icons/menu.svg, which is still the Free Solid glyph. */
+	/* SPEC: UCF icon `menu`, Font Awesome Pro Sharp Solid `bars`. The box is the glyph's width.
+	   WHY a mask: it takes the button's text color.
+	   SYNC: the block theme's assets/icons/menu.svg. */
 	.ucf-c-section-nav .ucf-c-section-nav__toggle-icon {
 		width: 1.3125rem;
 		height: 2rem;
@@ -156,29 +135,21 @@
 		display: none;
 	}
 
-	/* SPEC: open, the links stack, each a full-width row: Athena's below-992px padding. */
+	/* The open menu: links stacked under the bar. */
 	.ucf-c-section-nav[data-open] .ucf-c-section-nav__list {
 		display: block;
-		/* SPEC: it draws over the page, as the old menu did while fixed to the top.
-		   WHY over the page wherever the bar is (the old one pushed the page down while in
-		   place): the bar is sticky, so a taller bar moves everything under it, and the page
-		   would jump as it sticks or opens. At 100%, it covers the bar's bottom line. */
+		/* WHY over the page: in flow, opening it would push the content under the sticky bar. */
 		position: absolute;
 		top: 100%;
 		right: 0;
 		left: 0;
-		/* FIX: the closed bar's min-height held the sliding menu at 3.9rem, so it jumped
-		   there, stalled, then grew (and stalled again closing). */
+		/* FIX: the bar's min-height stalled the slide at 3.9rem. */
 		min-height: 0;
-		/* WHY: over the page, a long menu must scroll itself to reach its last links.
-		   SYNC: the bar's height, in scroll-padding-top below. */
+		/* WHY: a long menu scrolls itself. SYNC: the bar's height. */
 		max-height: calc(100dvh - 3.9rem - 2px);
 		overflow-y: auto;
 		padding: 0;
-		/* A line edge to edge between the bar and the links, in the tint that marks the
-		   section in view, so the bar keeps its shape above them. (Athena's is black and inset
-		   by the gutter.) SYNC: the link tint above. Below, the bar's own bottom line.
-		   SYNC: the bar's border-block. */
+		/* SYNC: the link tint above, and the bar's border-block. */
 		border-top: 1px solid rgb(0 0 0 / 10%);
 		border-bottom: 1px solid
 			color-mix(
@@ -187,25 +158,22 @@
 				var(--ucf-color-white)
 			);
 		background: var(--ucf-color-gold);
-		/* SPEC: the plugin's shadow, as the bar has when stuck: it lies over the page.
-		   FIX: clipped to below the menu; above, it darkened the bottom of the bar. */
+		/* SPEC: the stuck bar's shadow, clipped so it falls below the menu only. */
 		box-shadow: 0 2px 32px rgb(0 0 0 / 50%);
 		clip-path: inset(0 0 -4rem);
 		white-space: normal;
 	}
 
+	/* SPEC: Athena's mobile link padding. */
 	.ucf-c-section-nav[data-open] .ucf-c-section-nav__link {
 		padding: 1rem var(--ucf-custom-gutter);
 	}
 }
 
 /*
- * WHY on the page, not the bar: a jump to `#apply` scrolls the window, so the window is what
- * must stop short of the bar and scroll smoothly. Only on a page that has a Section Nav.
- * SYNC: the bar's height, 3.9rem + 2px at both widths: a link's 0.9rem line and 3rem of
- * padding, or the button's 2rem icon, borders and margins; and the bar's two 1px borders.
- * WHY not more when the links wrap to two lines: the bar is then 0.9rem taller, and covers only
- * that much of the section's top padding, not its heading.
+ * WHY on the page: a jump to `#apply` scrolls the window, so the window must stop short of the
+ * bar. Wrapped two-line links make the bar taller, which only covers some section padding.
+ * SYNC: the bar's height, 3.9rem + 2px (links or button, plus its two borders).
  */
 html:has(.ucf-c-section-nav) {
 	scroll-padding-top: calc(3.9rem + 2px);

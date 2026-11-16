@@ -1,8 +1,4 @@
-/**
- * Front end: adds the Section Nav's behavior (behavior.ts) to every one on the page.
- * WHY no React: the links are already in the saved HTML; this only adds the menu button and
- * the marking of the section in view.
- */
+/** CONTEXT: front end: runs behavior.ts on every Section Nav on the page. */
 import { __ } from '@wordpress/i18n';
 
 import { enhanceSectionNav } from '../../behavior.ts';

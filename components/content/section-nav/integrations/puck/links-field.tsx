@@ -1,13 +1,8 @@
 /**
- * Puck: the Section Nav's links as a field that reads the page: Puck's own array field for the
- * links, under "Update from sections".
+ * CONTEXT: the Puck links field: an "Update from sections" button over Puck's array field.
+ * Empty, it fills itself from the page's Sections, as in WordPress.
  *
- * While it has no links, it takes one for each Section with an HTML anchor, as WordPress's
- * edit.tsx does. Once it has links, they are the editor's; "Update from sections" brings them up
- * to date, keeping renamed text and links elsewhere (utils/links.ts).
- * WHY a custom field around Puck's array field: an array field takes no button of ours.
- * WHY the site lends Puck's controls and the hook that reads the page (withPageSections() in
- * config.tsx): this library's Puck configs don't import Puck.
+ * WHY a custom field: Puck's array field can't hold our button.
  */
 import { useEffect } from 'react';
 
@@ -21,27 +16,25 @@ import { updateLinks } from '../../utils/links.ts';
 
 type Props = {
 	label: string;
-	/** The links' own fields: the config's array field. */
 	field: PuckArrayField< Link >;
 	value: readonly Link[];
 	onChange: ( value: Link[] ) => void;
 	readOnly?: boolean;
-	/** The page's Section links, read through the site's hook. */
 	useSections: () => Link[];
 	puck: PuckControls;
 };
 
 /**
- * The update from the page's Sections, and the links in Puck's array field.
+ * The links field.
  *
- * @param props             The field's links and what to call when they change.
- * @param props.label       The field's label.
- * @param props.field       The array field that draws the links.
- * @param props.value       Its links.
- * @param props.onChange    Called with the new links.
+ * @param props             Props.
+ * @param props.label       Field label.
+ * @param props.field       The config's array field for the links.
+ * @param props.value       The links.
+ * @param props.onChange    Called with new links.
  * @param props.readOnly    Whether Puck has locked the field.
- * @param props.useSections Reads the page's Section links.
- * @param props.puck        Puck's controls, from the site.
+ * @param props.useSections Hook returning the page's Section links.
+ * @param props.puck        Puck's controls.
  */
 export function LinksField( {
 	label,
@@ -62,11 +55,11 @@ export function LinksField( {
 		if ( empty && sections.length > 0 && ! readOnly ) {
 			onChange( sections );
 		}
-		// WHY by its JSON: the site's hook may build a new array on every render.
+		// WHY JSON: the hook may return a new array each render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ empty, sectionKey, readOnly ] );
 
-	// WHY without its label: FieldLabel draws it, over the button too.
+	// WHY no label: FieldLabel draws it above the button.
 	const { label: _label, ...arrayField } = field;
 
 	return (
@@ -96,11 +89,11 @@ export function LinksField( {
 }
 
 /**
- * The field for Puck's config.
+ * The links field as a Puck custom field.
  *
  * @param field       The config's array field for the links.
- * @param useSections Reads the page's Section links.
- * @param puck        Puck's controls, from the site.
+ * @param useSections Hook returning the page's Section links.
+ * @param puck        Puck's controls.
  */
 export const linksField = (
 	field: PuckArrayField< Link >,

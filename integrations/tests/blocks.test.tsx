@@ -250,8 +250,7 @@ describe.each( blocks.filter( ( block ) => ! block.dynamic ) )(
 	}
 );
 
-// WHY: the Section's `anchor` prop is Puck's; WordPress keeps its own anchor support, under the
-// same name. A Section saved with one must still validate, with its anchor as its one `id`.
+// WHY: `anchor` is a Puck-only prop sharing WordPress's anchor name; saved Sections must validate.
 test( 'a Section saved with an anchor is valid, with that anchor as its id', () => {
 	const stored = serialize( [
 		createBlock( 'ucf-content/section', { anchor: 'apply' } ),
@@ -269,8 +268,7 @@ test( 'a Section saved with an anchor is valid, with that anchor as its id', () 
 	).toBe( true );
 } );
 
-// WHY: in the editor a block's `id` is WordPress's own (`block-{clientId}`), which it uses to
-// find the block. A Puck-only prop named as one of WordPress's attributes must not replace it.
+// WHY: the editor finds blocks by their `id` (`block-{clientId}`); `anchor` must not replace it.
 test( 'the Section keeps the editor’s own id, whatever its anchor', () => {
 	const Edit = blockEdit( Section );
 	const props = {
