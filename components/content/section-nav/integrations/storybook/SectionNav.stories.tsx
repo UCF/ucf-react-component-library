@@ -237,6 +237,16 @@ export const ManyLinks: Story = {
 		const list = nav?.querySelector( '.ucf-c-section-nav__list' );
 		// Nothing scrolled out of sight.
 		await expect( list?.scrollWidth ).toBe( list?.clientWidth );
+		// Every link fills the bar's height, so its tint reaches top to bottom.
+		const rowHeight = list?.getBoundingClientRect().height ?? 0;
+		for ( const link of list?.querySelectorAll(
+			'.ucf-c-section-nav__link'
+		) ?? [] ) {
+			await expect( link.getBoundingClientRect().height ).toBeCloseTo(
+				rowHeight,
+				1
+			);
+		}
 
 		// The taller bar still marks the right section.
 		canvasElement.ownerDocument

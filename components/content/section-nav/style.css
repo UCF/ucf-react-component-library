@@ -48,13 +48,16 @@
 	justify-content: space-between;
 }
 
+/* FIX: a flex item, so each link fills the row's height when another label wraps. */
 .ucf-c-section-nav .ucf-c-section-nav__item {
+	display: flex;
 	margin: 0;
 }
 
 /* SPEC: Athena's `.nav-link`, desktop padding. */
 .ucf-c-section-nav .ucf-c-section-nav__link {
 	display: flex;
+	flex: 1;
 	align-items: center;
 	padding: 1.5rem 0.8rem;
 	/* FIX: not `inherit`; hosts color `li` text white on dark sections. */
