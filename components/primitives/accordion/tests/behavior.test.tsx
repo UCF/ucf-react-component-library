@@ -106,6 +106,14 @@ describe( 'enhanceAccordion', () => {
 		expect( toggles[ 1 ].getAttribute( 'aria-expanded' ) ).toBe( 'false' );
 	} );
 
+	it( 'ignores a link it can’t decode', () => {
+		history.replaceState( null, '', '#100%' );
+		const { accordion, toggles } = page();
+		expect( () => enhance( accordion ) ).not.toThrow();
+		expect( toggles[ 0 ].getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		window.dispatchEvent( new HashChangeEvent( 'hashchange' ) );
+	} );
+
 	it( 'leaves an Accordion in an answer to its own call', () => {
 		const { accordion, toggles } = page();
 		enhance( accordion );

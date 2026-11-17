@@ -94,7 +94,13 @@ export function enhanceAccordion( accordion: HTMLElement ): () => void {
 
 	// SPEC: as core's: a link to something in a closed answer opens it.
 	const openTarget = () => {
-		const hash = decodeURIComponent( location.hash.slice( 1 ) );
+		let hash: string;
+		try {
+			hash = decodeURIComponent( location.hash.slice( 1 ) );
+		} catch {
+			// FIX: a malformed fragment (`#100%`) throws, which would stop the enhancing.
+			return;
+		}
 		const target = hash ? document.getElementById( hash ) : null;
 		for ( const parts of items ) {
 			if ( target && parts.panel.contains( target ) ) {
