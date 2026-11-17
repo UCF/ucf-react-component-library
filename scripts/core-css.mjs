@@ -1,7 +1,7 @@
 /**
  * CONTEXT: a primitive's CSS, rewritten for the core block WordPress editors place instead, so the
- * block theme styles core's Button, List, Table, Quote, Pullquote, Separator and Code with the
- * primitives' own rules (docs/architecture.md, "Primitives"). build-tokens.mjs writes it into the
+ * block theme styles core's Button, List, Table, Quote, Pullquote, Separator, Code and Accordion
+ * with the primitives' own rules (docs/architecture.md, "Primitives"). build-tokens.mjs writes it into the
  * theme's kit as dist/theme/_core-blocks.scss.
  *
  *   Selectors  our class and data attributes become core's markup and classes, from MAPS below:
@@ -33,9 +33,14 @@ import { root, target, wpName } from './tokens.mjs';
  *                  each attribute value names the core class that means the same thing.
  *   `wrapper`, `link`  for a block whose element ours is inside of (the Button): our class is on
  *                  `link`, and each attribute adds to either.
+ *   `parts`        for a block with parts of its own (the Accordion Item): each of our
+ *                  `__part` classes as core's class for it. Every class of ours in a rule maps,
+ *                  wherever it stands.
  *   `outrankCore`  core's own CSS for the block competes with ours: each rule names the block's
  *                  class twice, one class above core's. Left off where it doesn't (List), so the
  *                  theme's own variations (`.ucf-toc .wp-block-list`) still outrank ours.
+ *   `keepMargins`  the block's own top and bottom margins are kept: blocks the layout would
+ *                  space apart that the design runs together (Accordion Items).
  *   `skip`         properties core sets another way, so ours would fight it.
  *   `overrides`    the properties an editor's own color settings replace (OVERRIDES below).
  */
@@ -116,6 +121,32 @@ const MAPS = {
 		root: '.wp-block-code',
 		outrankCore: true,
 		attributes: {},
+	},
+	accordion: {
+		source: 'components/primitives/accordion/style.css',
+		className: 'ucf-c-accordion',
+		root: '.wp-block-accordion',
+		attributes: {},
+	},
+	// WHY one map for core's Item, Heading and Panel: the primitive folds them into one.
+	'accordion-item': {
+		source: 'components/primitives/accordion-item/style.css',
+		className: 'ucf-c-accordion-item',
+		root: '.wp-block-accordion-item',
+		parts: {
+			heading: '.wp-block-accordion-heading',
+			toggle: '.wp-block-accordion-heading__toggle',
+			title: '.wp-block-accordion-heading__toggle-title',
+			icon: '.wp-block-accordion-heading__toggle-icon',
+			panel: '.wp-block-accordion-panel',
+		},
+		// UPSTREAM: core's rotation of an open item's icon is (0,4,0); ours, (0,5,0).
+		outrankCore: true,
+		// WHY: core's flow layout would space the items; the hairline separates them.
+		keepMargins: true,
+		attributes: { 'data-open': '.is-open' },
+		// WHY none: it sets no color an editor's would replace; its lines are currentcolor or a role.
+		overrides: [],
 	},
 };
 
@@ -235,6 +266,9 @@ function rulesOf( css, where, media = '' ) {
  * @param {string} where    Its file, for errors.
  */
 function coreSelector( map, selector, extra, where ) {
+	if ( map.parts ) {
+		return partsSelector( map, selector, extra, where );
+	}
 	const match = new RegExp(
 		`^([a-z]*)\\.${ map.className }((?:\\[[^\\]]+\\])*)((?::[a-z-]+)*)(.*)$`
 	).exec( selector );
@@ -263,6 +297,56 @@ function coreSelector( map, selector, extra, where ) {
 	const wrapper = map.wrapper + to.map( ( t ) => t.wrapper ?? '' ).join( '' );
 	const link = map.link + to.map( ( t ) => t.link ?? '' ).join( '' );
 	return `${ wrapper } > ${ link }${ extra }${ state }`;
+}
+
+/**
+ * One of our selectors as core's, for a block with parts: each of our classes, and the data
+ * attributes on it, as core's. Other attributes (`[hidden]`) are the elements' own and stay.
+ *
+ * @param {Object} map      The primitive's map.
+ * @param {string} selector Ours.
+ * @param {string} extra    An override's condition; a block with parts has none.
+ * @param {string} where    Its file, for errors.
+ */
+function partsSelector( map, selector, extra, where ) {
+	if ( extra ) {
+		throw new Error( `${ where }: a block with parts takes no overrides.` );
+	}
+	const ours = new RegExp(
+		`\\.${ map.className }(?:__([a-z-]+))?(?![a-z-])((?:\\[[^\\]]+\\])*)`,
+		'g'
+	);
+	if ( ! ours.test( selector ) ) {
+		throw new Error( `${ where }: no core selector for "${ selector }".` );
+	}
+	const out = selector.replace( ours, ( _, part, attributes ) => {
+		const block = map.outrankCore ? map.root.repeat( 2 ) : map.root;
+		const core = part ? map.parts[ part ] : block;
+		if ( ! core ) {
+			throw new Error(
+				`${ where }: no core class for "__${ part }" in "${ selector }".`
+			);
+		}
+		const to = [ ...attributes.matchAll( /\[([^\]]+)\]/g ) ].map(
+			( [ whole, attribute ] ) => {
+				if ( ! attribute.startsWith( 'data-' ) ) {
+					return whole;
+				}
+				const found = map.attributes[ attribute ];
+				if ( ! found ) {
+					throw new Error(
+						`${ where }: no core class for [${ attribute }] in "${ selector }".`
+					);
+				}
+				return found;
+			}
+		);
+		return `${ core }${ to.join( '' ) }`;
+	} );
+	if ( out.includes( 'ucf-c-' ) ) {
+		throw new Error( `${ where }: no core selector for "${ selector }".` );
+	}
+	return out;
 }
 
 /**
@@ -321,7 +405,9 @@ export function coreCss( tokens, name, css ) {
 		);
 		// Each override's declarations get their own rule; the rest share one.
 		const groups = new Map();
-		for ( const [ property, value ] of map.root && onBlock
+		for ( const [ property, value ] of map.root &&
+		onBlock &&
+		! map.keepMargins
 			? withoutBlockMargins( declarations, where )
 			: declarations ) {
 			if ( map.skip?.includes( property ) ) {

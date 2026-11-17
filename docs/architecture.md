@@ -395,13 +395,13 @@ change its markup), we own it**, as a component here with the same markup in eve
 | Paragraph, Heading, List, Quote, Separator, Code | Section (in place of Group)                        |
 | Table (styled by `elements.css`; see below)      | Cover / Hero, Buttons and Button, Image and Figure |
 | Columns and Column (a primitive in Puck)         |                                                    |
-|                                                  | Media and text, Gallery, Details / Accordion, Tabs |
+| Accordion (a primitive in Puck)                  | Media and text, Gallery, Details, Tabs             |
 
 - **WHY core for plain text:** Paragraph, Heading and List save bare `<p>`, `<h2>`, `<ul>`, the
   same elements Puck and Next render, so they are already at parity, and rebuilding their
   editing (levels, anchors, splitting, pasting) would gain nothing. In WordPress they stay core
   blocks, which the theme styles. Puck has no core blocks, so each is also a primitive Puck
-  editors place (the Separator, Code, Quote, Pullquote, List and Table), whose CSS reproduces
+  editors place (the Separator, Code, Quote, Pullquote, List, Table and Accordion), whose CSS reproduces
   the theme's and, through `scripts/core-css.mjs`, becomes it (see "Primitives").
 - **WHY our own for the rest:** core's markup carries wrappers and classes we don't choose,
   global styles inject inline CSS, its design controls let editors break the system, and
@@ -459,9 +459,11 @@ content, so in WordPress it holds core blocks (see "Frames").
   (`.ucf-c-button[data-variant="outline"]` as `.wp-block-button.is-style-outline >
 .wp-block-button__link`, our roles as the theme's) into the theme's kit,
   `dist/theme/_core-blocks.scss`. A selector or token it can't map fails the build. It maps the
-  Button, List, Table, Quote, Pullquote, Separator and Code. In WordPress the layout spaces
-  blocks, so a block's own top and bottom margins are left out; and where core's CSS for a block
-  loads after the theme's at the same specificity, each rule names the block's class twice.
+  Button, List, Table, Quote, Pullquote, Separator, Code and Accordion. In WordPress the layout
+  spaces blocks, so a block's own top and bottom margins are left out (not the Accordion Items',
+  which a hairline separates); and where core's CSS for a block loads after the theme's at the
+  same specificity, each rule names the block's class twice. A block with parts of its own (the
+  Accordion Item) maps each `__part` class to core's class for it.
 - **The dependency goes one way:** components import primitives; primitives never import
   components. Both import `integrations/`'s schema and Puck helpers, which import no component,
   so nothing loops back.
@@ -477,15 +479,18 @@ content, so in WordPress it holds core blocks (see "Frames").
   (`Button.v1.tsx`) and give every block that uses it a deprecation. The stored-markup snapshots
   fail for each one, so none is missed.
 - **Not for behavior.** Interactive pieces (a combobox, a dialog) take their behavior from an
-  unstyled library in interactive components only; not chosen yet (docs/todo.md).
+  unstyled library in interactive components only; not chosen yet (docs/todo.md). A primitive
+  that only shows or hides its own content (the Accordion) has a plain-DOM `behavior.ts`, as the
+  Section Nav does, which a React host runs from an effect. In WordPress core's block runs its own.
 - **A primitive that holds content is built with `frame()`,** with `kind: 'primitive'` and no
-  block (the Columns and the Column). Its content area is where a host puts content, so in Puck
+  block (the Columns and the Column, the Accordion and the Accordion Item). Its content area is where a host puts content, so in Puck
   the slot renders as that element: the Columns's slot is its grid, and each Column dropped in
   is a grid item. Its settings are a `{Name}.props.ts`, as a content component's are.
   In Puck a host uses the Columns through `withColumns( 'Column' )` and the Column through
   `inColumns( 'Column' )`, naming the key it registered the Column under: only Columns go in a
   Columns, picking a distribution adds the empty Columns it names (never removing one), and a
-  Column can't hold a Column.
+  Column can't hold a Column. It uses the Accordion through `withItems( 'AccordionItem' )`: only
+  Accordion Items go in, and a new one starts with two. An Accordion Item's slot is its answer.
   WHY not core's names for the Columns: it lays out on a 12-column grid with five named
   distributions (P1's names), not free widths, so every page lines up. WordPress editors place
   core Columns instead, which the theme styles (docs/todo.md).
