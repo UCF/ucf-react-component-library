@@ -166,6 +166,14 @@
 		"./primitives/table/puck": {
 			"types": "./dist/components/primitives/table/integrations/puck/config.d.ts",
 			"default": "./dist/components/primitives/table/integrations/puck/config.js"
+		},
+		"./section-nav": {
+			"types": "./dist/components/content/section-nav/index.d.ts",
+			"default": "./dist/components/content/section-nav/index.js"
+		},
+		"./section-nav/puck": {
+			"types": "./dist/components/content/section-nav/integrations/puck/config.d.ts",
+			"default": "./dist/components/content/section-nav/integrations/puck/config.js"
 		}
 	},
 	"files": [
@@ -213,6 +221,7 @@
 		"@wordpress/block-editor": "^19.0.0",
 		"@wordpress/blocks": "^17.0.0",
 		"@wordpress/components": "^43.0.0",
+		"@wordpress/data": "^11.0.0",
 		"@wordpress/element": "^10.0.0",
 		"@wordpress/i18n": "^7.0.0",
 		"@wordpress/icons": "^19.0.0",

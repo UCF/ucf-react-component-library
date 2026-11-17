@@ -242,7 +242,8 @@ Components are built from primitives in `components/primitives/` (architecture.m
 
 ## Section
 
-**On hold: don't add settings to the Section yet.** UCF will likely build on Pantheon's P1
+**On hold: don't add settings to the Section yet,** besides its Puck-only `anchor`, which the
+Section Nav needs. UCF will likely build on Pantheon's P1
 starter kit (Next.js 16, Puck 0.21, Tailwind v4), and the Section should match its base layout
 blocks. Compare the two first. Also check our configs against Puck 0.21 (the type test pins
 0.24), and that Tailwind's reset doesn't override `ucf.css` and `elements.css`.
@@ -254,6 +255,17 @@ blocks. Compare the two first. Also check our configs against Puck 0.21 (the typ
   `tools/sync-tokens.js`, so the theme fails while its `theme.json` widths disagree.
 - **What may go inside.** Decide whether a Section may hold another Section, and whether to
   limit it to UCF blocks (`allowedBlocks`, and Puck's `allow`).
+
+## Section Nav
+
+- **Check it in a running WordPress.** Nothing has run it in an editor yet. Insert one on a page whose
+  Sections have HTML anchors: it should fill itself; "Update from sections" should keep renamed text;
+  each link's Section picker should list the page's anchored Sections (it reads them through a
+  React context, which must reach the sidebar's Fill); a saved post should reload with no "unexpected or invalid content" (`getBlocks()`). Check that it
+  spans the page and sticks in the block theme, and that its viewScript loads: `position: sticky` stops working under an ancestor with `overflow`
+  set.
+- **The admin bar covers it** for signed-in users: it sticks at `top: 0`, under WordPress's bar.
+- **A `README.md`**, as the Card has.
 
 ## Element styles
 

@@ -5,7 +5,14 @@
  * config against the real types.
  */
 
-import type { ElementType, ReactElement } from 'react';
+import type {
+	ComponentType,
+	ElementType,
+	ReactElement,
+	ReactNode,
+} from 'react';
+
+import type { Link } from '../schema/props.ts';
 
 // ── Fields ─────────────────────────────────────────────────────────────────────────────────────
 
@@ -62,7 +69,8 @@ export type PuckFieldFor< Value > = [ Value ] extends [ PuckSlot ]
 	: Value extends readonly ( infer Item )[]
 		? Item extends string
 			? PuckCustomField< Value >
-			: PuckArrayField< Item >
+			: // UPSTREAM: Puck takes a custom field for any prop (the Section Nav's links).
+				PuckArrayField< Item > | PuckCustomField< Value >
 		: Value extends object
 			? PuckObjectField< Value >
 			: PuckScalarField;
@@ -82,8 +90,43 @@ export type PuckField =
 export type PuckArrayField< Item > = {
 	type: 'array';
 	label?: string;
-	arrayFields: { [ Key in keyof Item ]: PuckField };
+	arrayFields: {
+		[ Key in keyof Item ]-?: PuckFieldFor< NonNullable< Item[ Key ] > >;
+	};
 	defaultItemProps?: Item;
+	/** A collapsed item's title, in place of "Item 1". */
+	getItemSummary?: ( item: Item, index?: number ) => string;
+};
+
+// ── Puck's own controls ────────────────────────────────────────────────────────────────────────
+
+/**
+ * Puck's `AutoField`, `FieldLabel` and `Button`, passed in by the site so custom fields match
+ * Puck's sidebar.
+ * WHY passed in: the library doesn't depend on Puck. Only the props used here are typed;
+ * tests/puck.test.tsx checks them against Puck's.
+ */
+export type PuckControls = {
+	AutoField: ComponentType< {
+		field: Omit< PuckArrayField< Link >, 'label' >;
+		value: Link[];
+		onChange: ( value: Link[] ) => void;
+		readOnly?: boolean;
+	} >;
+	FieldLabel: ComponentType< {
+		label: string;
+		el?: 'label' | 'div';
+		readOnly?: boolean;
+		children?: ReactNode;
+	} >;
+	Button: ComponentType< {
+		children: ReactNode;
+		onClick?: () => void;
+		variant?: 'primary' | 'secondary';
+		disabled?: boolean;
+		fullWidth?: boolean;
+		type?: 'button';
+	} >;
 };
 
 /**

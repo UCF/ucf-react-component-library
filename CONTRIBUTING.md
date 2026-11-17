@@ -136,6 +136,6 @@ This project follows the [WordPress Coding Standards](https://developer.wordpres
 - **JavaScript, TypeScript & JSON** — formatted with Prettier (`npm run format`) and linted with `@wordpress/scripts` (`npm run lint:js`). Don't silence a rule without writing down why.
 - **CSS** — colors only as `var(--ucf-c-{role})`, never a raw value or another layer's token. Linted with Stylelint (`npm run lint:css`).
 - **Indentation** — tabs, enforced by `.editorconfig`.
-- **Comments** — say why, not what, and are tagged (`WHY:`, `FIX:`, `CONTEXT:` and the rest of the vocabulary in the architecture doc). Keep a comment with its code when moving it.
+- **Comments** — say why, not what, and are tagged (`WHY:`, `FIX:`, `CONTEXT:` and the rest of the vocabulary in the architecture doc). Keep them to one or two lines, one idea each, with no history; the architecture doc's "Comments" section has the rules. Keep a comment with its code when moving it.
 
 Architectural conventions specific to this library — the three layers, content versus interactive components, slots, primitives, frames, distribution and the token roles — are documented in [`docs/architecture.md`](docs/architecture.md). Please review it before opening a pull request that adds a component, a primitive, a block or a token.

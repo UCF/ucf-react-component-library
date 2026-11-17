@@ -4,7 +4,11 @@
  * For edit, save and the test that checks block.json.
  */
 
-import { inHost, type PropDefinitions } from '../schema/props.ts';
+import {
+	inHost,
+	type PropDefinition,
+	type PropDefinitions,
+} from '../schema/props.ts';
 
 /**
  * A block's attributes, without the ones WordPress adds to every block: only those its block.json
@@ -41,19 +45,36 @@ export function blockAttributes( definitions: PropDefinitions ) {
 			.filter( ( [ , definition ] ) => inHost( definition, 'wp' ) )
 			.map( ( [ key, definition ] ) => [
 				key,
-				definition.type === 'list'
-					? {
-							type: 'array',
-							items: { type: 'string' },
-							default: definition.default,
-						}
-					: {
-							type:
-								definition.type === 'number'
-									? 'number'
-									: 'string',
-							default: definition.default,
-						},
+				attributeOf( definition ),
 			] )
 	);
+}
+
+/**
+ * A prop's block attribute type: lists and links are arrays, numbers numbers, the rest strings.
+ *
+ * @param definition A prop.
+ */
+function attributeOf( definition: PropDefinition ) {
+	const { default: value } = definition;
+	switch ( definition.type ) {
+		case 'list':
+			return { type: 'array', items: { type: 'string' }, default: value };
+		case 'links':
+			return {
+				type: 'array',
+				items: {
+					type: 'object',
+					properties: {
+						label: { type: 'string' },
+						href: { type: 'string' },
+					},
+				},
+				default: value,
+			};
+		case 'number':
+			return { type: 'number', default: value };
+		default:
+			return { type: 'string', default: value };
+	}
 }

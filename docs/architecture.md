@@ -267,7 +267,7 @@ A frame (see "Frames") is its props, its parts, and presets built from both:
 ```
 Component
 ├─ {Name}.props.ts      PROPS: each prop's key · type · options · default · field
-│                       types: text, choice, number, list
+│                       types: text, choice, number, list, links
 │                       field: label · help · control · panel · hosts
 ├─ {Name}.parts.ts      PARTS: each part (title, eyebrow, image…): its kind and its class
 │                       kinds (image, heading, text, link, button): integrations/schema/parts.ts
@@ -300,6 +300,13 @@ saves values, not labels, since a value is what an API filters by. WordPress sto
 WordPress's components; Storybook shows checkboxes, or JSON when the options load. A saved value
 the options no longer include is shown as a problem in both editors, not dropped
 (`integrations/schema/options.ts`).
+
+**A links prop holds links to Sections on the page** (the Section Nav's): each a `label` and an
+`href` that is a `#anchor`. Anything else is left out when it renders. WordPress stores it as an
+`array` attribute of objects. Each editor shows a text field and a picker of the page's anchored
+Sections per link (`integrations/wp/links-control.tsx`, the Section Nav's Puck `links-field.tsx`).
+Puck fields like this draw with Puck's own `AutoField`, `FieldLabel` and `Button`, which the
+site passes in (`PuckControls`), so the library doesn't depend on Puck.
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by
@@ -899,3 +906,21 @@ The block theme's vocabulary. Comments say **why**, not what, and each is tagged
 | `SPEC:`     | A value that comes from a design, not from reasoning  |
 | `PERF:`     | A measured cost, not a guess                          |
 | `CONTEXT:`  | A file- or section-level orientation banner           |
+
+Keep each comment short enough to read at a glance:
+
+- **One or two lines.** A `CONTEXT:` banner may run a few more. Reasoning that needs more space
+  belongs in the commit message, or in this doc.
+- **One idea per comment.** Give each tag its own line; don't chain several into a paragraph.
+- **The current rule, not its history.** No "the old one…", "used to" or the bug's backstory; a
+  `FIX:` names the bug in a clause.
+- **Nothing the code already says.** Skip what any developer knows about CSS, React or
+  WordPress.
+- **Plain sentences.** Write for someone reading the file cold.
+- **JSDoc says what a value is,** in a few words: `@param value The links.`, not a restatement
+  of the type or "Props.".
+
+```css
+/* SPEC: UCF icon `menu`, Font Awesome Pro Sharp Solid `bars`.
+   WHY a mask: it takes the button's text color. */
+```

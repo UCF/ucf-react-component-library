@@ -25,9 +25,13 @@ import {
 	isValidBlockContent,
 	parse,
 	serialize,
+	type BlockEditProps,
 } from '@wordpress/blocks';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, test } from 'vitest';
 
+import Section from '@/components/content/section/Section';
+import { blockEdit } from '../wp/block.tsx';
 import { CATEGORY_OF, kindOf } from '../wp/kind.ts';
 
 // Registers every block, as each plugin's editor script does.
@@ -120,6 +124,7 @@ test( 'finds every block', () => {
 		'hero',
 		'highlight',
 		'section',
+		'section-nav',
 	] );
 } );
 
@@ -244,6 +249,46 @@ describe.each( blocks.filter( ( block ) => ! block.dynamic ) )(
 		} );
 	}
 );
+
+// WHY: `anchor` is a Puck-only prop sharing WordPress's anchor name; saved Sections must validate.
+test( 'a Section saved with an anchor is valid, with that anchor as its id', () => {
+	const stored = serialize( [
+		createBlock( 'ucf-content/section', { anchor: 'apply' } ),
+	] );
+	const [ parsed ] = parse( stored );
+	expect( stored.match( / id="/g ) ).toHaveLength( 1 );
+	expect( stored ).toContain( ' id="apply"' );
+	expect( parsed?.attributes.anchor ).toBe( 'apply' );
+	expect(
+		isValidBlockContent(
+			parsed?.name ?? '',
+			parsed?.attributes ?? {},
+			parsed?.originalContent ?? ''
+		)
+	).toBe( true );
+} );
+
+// WHY: the editor finds blocks by their `id` (`block-{clientId}`); `anchor` must not replace it.
+test( 'the Section keeps the editor’s own id, whatever its anchor', () => {
+	const Edit = blockEdit( Section );
+	const props = {
+		clientId: 'abc',
+		name: 'ucf-content/section',
+		attributes: { anchor: 'apply', composition: 'light' },
+		setAttributes: () => {},
+		isSelected: false,
+	};
+	// UPSTREAM: BlockEditProps has more fields than edit() reads.
+	const html = renderToStaticMarkup(
+		<Edit
+			{ ...( props as unknown as BlockEditProps<
+				Record< string, unknown >
+			> ) }
+		/>
+	);
+	expect( html ).toMatch( /^<section [^>]*id="block-/ );
+	expect( html ).not.toContain( 'id="apply"' );
+} );
 
 // WHY its own test: a frame is only useful with blocks inside it, and a block that holds
 // others can save and parse its own markup correctly while losing what it holds.

@@ -26,7 +26,7 @@ then their own component. [`docs/todo.md`](docs/todo.md) lists open work.
 | Changing a content component's markup | Major version plus a block deprecation                        |
 | Tests                                 | What each component needs                                     |
 | Gotchas                               | The list not to "clean up"                                    |
-| Comments                              | The tag vocabulary                                            |
+| Comments                              | The tag vocabulary; keeping them short                        |
 
 ## Working practices
 
@@ -48,7 +48,8 @@ then their own component. [`docs/todo.md`](docs/todo.md) lists open work.
   clean now; keep them that way, and don't silence a rule without writing down why.
 - **Generated output is never committed or hand-edited:** `dist/`, `plugins/*/build/`,
   `storybook-static/`.
-- **Comments say why, and are tagged.** The vocabulary is in the architecture doc. Keep a
+- **Comments say why, are tagged, and are short:** one or two lines, one idea each, no
+  history. The vocabulary and the length rules are in the architecture doc, "Comments". Keep a
   comment with its code when moving it, including the file paths it names.
 - **Docs describe the code as it is now, for someone reading it cold.** No dates, "decided",
   "used to", "we tried", "now" or "no longer" in `README.md`, `CONTRIBUTING.md`, `docs/` or a
