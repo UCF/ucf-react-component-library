@@ -85,7 +85,10 @@ export function LinksField( {
 				type="button"
 				variant="secondary"
 				fullWidth
-				disabled={ readOnly || sections.length === 0 }
+				// WHY with links but no Sections: updating clears links that lost their anchor.
+				disabled={
+					readOnly || ( sections.length === 0 && links.length === 0 )
+				}
 				onClick={ () => onChange( updateLinks( links, sections ) ) }
 			>
 				Update from sections

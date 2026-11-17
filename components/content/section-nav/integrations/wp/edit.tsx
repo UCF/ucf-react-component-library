@@ -73,7 +73,8 @@ export default function SectionNavEdit( props: BlockEditProps< Attributes > ) {
 				</p>
 				<Button
 					variant="secondary"
-					disabled={ sections.length === 0 }
+					// WHY with links but no Sections: updating clears links that lost their anchor.
+					disabled={ sections.length === 0 && links.length === 0 }
 					onClick={ () =>
 						setAttributes( {
 							links: updateLinks( links, sections ),

@@ -217,4 +217,16 @@ describe( 'the links field', () => {
 	it( 'changes nothing while Puck has it locked', async () => {
 		expect( await render( [], SECTIONS, true ) ).toEqual( [] );
 	} );
+
+	it( 'clears links to Sections that all lost their anchor', async () => {
+		const changes = await render(
+			[ { label: 'Costs', href: '#tuition' } ],
+			[]
+		);
+		const update = [ ...container.querySelectorAll( 'button' ) ].find(
+			( button ) => button.textContent === 'Update from sections'
+		);
+		await act( async () => update?.click() );
+		expect( changes ).toEqual( [ [] ] );
+	} );
 } );
