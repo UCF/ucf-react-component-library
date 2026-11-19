@@ -11,8 +11,13 @@ const entries = import.meta.glob< Record< string, unknown > >(
 	{ eager: true }
 );
 const files = Object.keys(
-	import.meta.glob( '../../../components/*/*/*.{parts,presets}.ts' )
+	import.meta.glob( '../../../components/*/*/frame/{parts,presets}.ts' )
 );
+
+// FIX: a glob that matches nothing skips every parts and presets check below.
+it( 'finds the frames’ parts and presets', () => {
+	expect( files.length ).toBeGreaterThan( 0 );
+} );
 
 // `../../../components/content/card/index.ts` → `card`.
 const componentOf = ( file: string ) => file.split( '/' )[ 5 ] ?? file;
@@ -34,7 +39,7 @@ describe.each(
 		files.some(
 			( file ) =>
 				componentOf( file ) === component &&
-				file.endsWith( `.${ suffix }.ts` )
+				file.endsWith( `/frame/${ suffix }.ts` )
 		);
 
 	it( 'exports the component by its name', () => {
