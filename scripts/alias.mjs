@@ -1,6 +1,6 @@
 /**
  * Teaches plain Node the `@/` alias, for scripts that load the TypeScript source directly
- * (scripts/sync-blocks.mjs reads each component's `{Name}.props.ts`). Import it before any
+ * (scripts/sync-blocks.mjs reads each component's `props.ts`). Import it before any
  * source file.
  *
  * SYNC: `@/` is the repo root, as tsconfig.json `paths` defines it (docs/architecture.md, "A

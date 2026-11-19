@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { panelsOf } from '@/core/hosts/read-props';
 import { FieldControl } from '@/core/hosts/wordpress/controls/prop-control';
 import DegreeList from '../../DegreeList.tsx';
-import { PROPS, type DegreeListEditableProps } from '../../DegreeList.props.ts';
+import { PROPS, type DegreeListEditableProps } from '../../props.ts';
 import { usePrograms } from '../../utils/usePrograms.ts';
 import { editorSettings } from './settings.ts';
 

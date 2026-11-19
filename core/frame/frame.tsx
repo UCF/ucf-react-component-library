@@ -22,7 +22,7 @@
 
 import type { ReactElement, ReactNode } from 'react';
 
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import { mediaProps } from '../hosts/read-props.ts';
 import type { PropDefinitions } from '../hosts/prop-definitions.ts';
 import { resolveParts, findPreset } from './read-parts.ts';

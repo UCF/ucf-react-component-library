@@ -1,6 +1,6 @@
 /**
  * The Card's props: the frame holding content no preset has, with a control for every prop
- * (Card.props.ts). The presets are in Card.presets.stories.tsx.
+ * (props.ts). The presets are in Card.presets.stories.tsx.
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -8,7 +8,7 @@ import Button from '@/components/primitives/button/Button';
 import Heading from '@/components/primitives/heading/Heading';
 import Paragraph from '@/components/primitives/paragraph/Paragraph';
 import Card from '../../Card.tsx';
-import { PARTS } from '../../frame/Card.parts.ts';
+import { PARTS } from '../../frame/parts.ts';
 import { base } from './shared.tsx';
 
 const meta = {

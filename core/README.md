@@ -18,8 +18,8 @@ it's for, and what it does:
 | Step | What you do               | Who             | You write                               | The core's part                                                       |
 | ---- | ------------------------- | --------------- | --------------------------------------- | --------------------------------------------------------------------- |
 | 1    | Decide its kind           | every component | its folder: `components/{kind}/{name}/` | `hosts/wordpress/kind.ts` reads it back from block.json               |
-| 2    | Describe its props        | every component | `{Name}.props.ts`                       | `hosts/prop-definitions.ts`, `design/compositions.ts`                 |
-| 3    | Describe what goes inside | content         | `frame/{Name}.parts.ts`, `.presets.ts`  | `frame/types.ts` §1–2                                                 |
+| 2    | Describe its props        | every component | `props.ts`                              | `hosts/prop-definitions.ts`, `design/compositions.ts`                 |
+| 3    | Describe what goes inside | content         | `frame/parts.ts`, `.presets.ts`         | `frame/types.ts` §1–2                                                 |
 | 4    | Write its markup          | every component | `{Name}.tsx`                            | `frame/types.ts` §3 for content (`FrameProps`); plain React otherwise |
 | 5    | `frame()` it              | content         | the `frame( … )` call in `{Name}.tsx`   | `frame/frame.tsx`, `frame/read-parts.ts`, `frame/render-parts.tsx`    |
 | 6    | Put it in each host       | every component | `hosts/wp/`, `puck/`, `storybook/`      | `hosts/`: builders for content, controls for everyone                 |
@@ -84,7 +84,7 @@ frame/                       CONTENT components                       (shipped a
   index.ts                     a React site's entry
 
 hosts/                       each environment, and EVERY component's props
-  prop-definitions.ts     2  ★ what you write in {Name}.props.ts: ChoiceProp, TextProp, NumberProp,
+  prop-definitions.ts     2  ★ what you write in props.ts: ChoiceProp, TextProp, NumberProp,
                                ListProp, PropDefinitions; PropsOf
   read-props.ts           6  ★ how the hosts read props: defaultsIn(), panelsOf(), inHost(), mediaProps()
   list-options.ts         6    a list prop's options in the editors: loaded once a page; values ↔ labels
@@ -124,7 +124,7 @@ suites are the exception; they find every component by searching `components/`.
 | **host**               | somewhere a component runs: WordPress, Puck, Storybook, a React site                                      |
 | **component kind**     | content, live, interactive or primitive: decides which steps a component has (step 1)                     |
 | **prop**               | a setting an editor sets on a component (Look, Colors), like a function's argument                        |
-| **prop definition**    | your description of one prop in `{Name}.props.ts`: its values, default and how an editor shows it         |
+| **prop definition**    | your description of one prop in `props.ts`: its values, default and how an editor shows it                |
 | **field**, **control** | what a host makes from a prop definition: a Puck field, a WordPress sidebar control, a story control      |
 | **attribute**          | how WordPress saves a prop in a post; named in block.json                                                 |
 | **part**               | one piece of content inside a content component: its title, an image, a button                            |
@@ -142,7 +142,7 @@ suites are the exception; they find every component by searching `components/`.
 The Card's **Look** prop (`variant`: plain, boxed or ruled), from where you write it to every place
 it shows up.
 
-**Step 2. You describe it** in `components/content/card/Card.props.ts`:
+**Step 2. You describe it** in `components/content/card/props.ts`:
 
 ```ts
 variant: {
@@ -201,14 +201,14 @@ fifth rows: its own `edit.tsx` calls `FieldControl`, and its Puck config calls `
 Content components only. Props are values; **parts** are the content inside a component: its
 title, image, buttons. The Card's `title`:
 
-**Step 3. You describe it** in `frame/Card.parts.ts`, with its part kind and the class that styles it
+**Step 3. You describe it** in `frame/parts.ts`, with its part kind and the class that styles it
 (the types are in `frame/types.ts` §1):
 
 ```ts
 title: { kind: 'heading', className: 'ucf-c-card__title' },
 ```
 
-A preset in `frame/Card.presets.ts` then uses it: a design says which parts it has, in order.
+A preset in `frame/presets.ts` then uses it: a design says which parts it has, in order.
 
 **Step 4. Your markup leaves a space for parts.** `Card.tsx` doesn't render the title itself. It
 opens an **area** called `content`, and whatever the host provides goes there:

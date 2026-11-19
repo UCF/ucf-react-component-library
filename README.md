@@ -314,13 +314,13 @@ components/{bucket}/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `highlight`            | **Live (server)**: `event-list`                              | **Interactive (client)**: `degree-finder`      |
-| --------------- | -------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs            | Must exist before JavaScript runs, from fetched data         | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else   | The same: the fetched data arrives as a prop                 | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                    | None (`import type` only)                                    | `react` and its own files                      |
-| First line      | Nothing special                              | Nothing special                                              | `'use client';`                                |
-| Extra files     | `{Name}.props.ts`, `frame/` (parts, presets) | `{Name}.props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`          | **Live (server)**: `event-list`                       | **Interactive (client)**: `degree-finder`      |
+| --------------- | ------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs          | Must exist before JavaScript runs, from fetched data  | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else | The same: the fetched data arrives as a prop          | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                  | None (`import type` only)                             | `react` and its own files                      |
+| First line      | Nothing special                            | Nothing special                                       | `'use client';`                                |
+| Extra files     | `props.ts`, `frame/` (parts, presets)      | `props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in through a **slot**: a content component's areas
 (`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks

@@ -1,6 +1,6 @@
 /**
  * `npm run sync:blocks`: writes each component's block.json `attributes` from its props
- * (`{Name}.props.ts`), so no one writes an attribute by hand. `--check` changes nothing and lists
+ * (`props.ts`), so no one writes an attribute by hand. `--check` changes nothing and lists
  * the files that are out of date.
  *
  * WHY block.json stays a file on disk, and only its attributes are written: PHP registers the
@@ -67,9 +67,7 @@ function components( root ) {
 		return readdirSync( dir ).flatMap( ( name ) => {
 			const folder = path.join( dir, name );
 			const props = existsSync( folder )
-				? readdirSync( folder ).find( ( file ) =>
-						file.endsWith( '.props.ts' )
-					)
+				? readdirSync( folder ).find( ( file ) => file === 'props.ts' )
 				: undefined;
 			const blockJson = path.join( folder, 'hosts/wp/block.json' );
 			return props && existsSync( blockJson )

@@ -13,7 +13,7 @@
  * SPEC: the `[degree-list]` shortcode's classic layout: a list of links, one per program.
  */
 import Heading from '@/components/primitives/heading/Heading';
-import type { DegreeListEditableProps } from './DegreeList.props.ts';
+import type { DegreeListEditableProps } from './props.ts';
 import type { Program } from './types.ts';
 
 export type DegreeListProps = Partial<

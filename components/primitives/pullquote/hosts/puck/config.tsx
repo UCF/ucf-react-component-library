@@ -1,13 +1,13 @@
 /**
  * The Pullquote for Puck, where editors place it on its own: Puck has no core blocks. Its
- * fields and defaults are its props (Pullquote.props.ts).
+ * fields and defaults are its props (props.ts).
  */
 import Pullquote from '../../Pullquote.tsx';
 import { puckFields } from '@/core/hosts/puck/props-to-fields';
 // WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import { defaultsIn } from '@/core/hosts/read-props';
-import { PROPS, type PullquoteEditableProps } from '../../Pullquote.props.ts';
+import { PROPS, type PullquoteEditableProps } from '../../props.ts';
 
 const config: PuckComponentConfig< PullquoteEditableProps > = {
 	label: 'Pullquote',

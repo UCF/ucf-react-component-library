@@ -1,6 +1,6 @@
 /**
  * CONTEXT: what the Card's stories share: the base every story file spreads into its meta,
- * and a preset (Card.presets.ts) as a story, its parts drawn by core/hosts/storybook/parts-to-samples.tsx.
+ * and a preset (presets.ts) as a story, its parts drawn by core/hosts/storybook/parts-to-samples.tsx.
  *
  * WHY three story files: Card.stories.tsx shows the props, Card.presets.stories.tsx the
  * presets, Card.checks.stories.tsx the measured checks. They sit under one "Card" group.
@@ -12,11 +12,11 @@ import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import { defaultsIn } from '@/core/hosts/read-props';
 import Card from '../../Card.tsx';
-import { presetNamed } from '../../frame/Card.presets.ts';
+import { presetNamed } from '../../frame/presets.ts';
 import { resolveParts } from '@/core/frame/read-parts';
 import { renderParts } from '@/core/hosts/storybook/parts-to-samples';
-import { PARTS } from '../../frame/Card.parts.ts';
-import { PROPS } from '../../Card.props.ts';
+import { PARTS } from '../../frame/parts.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 export type Story = StoryObj< typeof Card >;
@@ -43,7 +43,7 @@ export const base = {
  * A preset as a story: its props over the defaults, as in WordPress and Puck, its parts, and
  * the sample image when it has a background.
  *
- * @param name A preset's name in Card.presets.ts.
+ * @param name A preset's name in presets.ts.
  */
 export function preset( name: string ): Story {
 	const { props, background, parts } = presetNamed( name );
@@ -91,7 +91,7 @@ export function Row( {
 /**
  * The same preset several times in a row.
  *
- * @param name    A preset's name in Card.presets.ts.
+ * @param name    A preset's name in presets.ts.
  * @param columns How many cards, and so how many to a row on a wide screen.
  */
 export function grid( name: string, columns: number ): Story {

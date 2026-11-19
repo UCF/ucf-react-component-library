@@ -1,5 +1,5 @@
 /**
- * The Card's presets (Card.presets.ts), each alone and, where the pages set them in rows, as
+ * The Card's presets (presets.ts), each alone and, where the pages set them in rows, as
  * a row. A new preset gets a story here.
  */
 import type { Meta, StoryObj } from '@storybook/react-vite';

@@ -91,13 +91,13 @@ const examples: Record< string, Record< string, string > > = Object.fromEntries(
 	).map( ( [ file, data ] ) => [ componentOf( file ), data ] )
 );
 
-// Each component's prop definitions (`PROPS` in `{Name}.props.ts`), by component.
+// Each component's prop definitions (`PROPS` in `props.ts`), by component.
 // SYNC: as components move to the layout in docs/architecture.md, "A component's folder",
 // they are checked here with no other change.
 const propsByComponent: Record< string, PropDefinitions > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< PropDefinitions >(
-			'../../../components/{content,live,interactive}/*/*.props.ts',
+			'../../../components/{content,live,interactive}/*/props.ts',
 			{
 				eager: true,
 				import: 'PROPS',
@@ -111,7 +111,7 @@ const defaultPresets: Record< string, { props: Record< string, unknown > } > =
 	Object.fromEntries(
 		Object.entries(
 			import.meta.glob< { props: Record< string, unknown > } >(
-				'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
+				'../../../components/{content,live,interactive}/*/frame/presets.ts',
 				{ eager: true, import: 'DEFAULT_PRESET' }
 			)
 		).map( ( [ file, preset ] ) => [ componentOf( file ), preset ] )

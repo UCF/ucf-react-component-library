@@ -5,4 +5,4 @@ export { default as Image, type ImageProps } from './Image.tsx';
 
 // Its pieces, for a site that builds its own
 
-export { PROPS as IMAGE_PROPS, SAMPLE as IMAGE_SAMPLE } from './Image.props.ts';
+export { PROPS as IMAGE_PROPS, SAMPLE as IMAGE_SAMPLE } from './props.ts';

@@ -73,12 +73,12 @@ const examples: Record<
 	).map( ( [ file, data ] ) => [ componentOf( file ), data ] )
 );
 
-// Each component's presets (`{Name}.presets.ts`), by component: the props each one saves.
+// Each component's presets (`presets.ts`), by component: the props each one saves.
 type Preset = { name: string; props: Record< string, unknown > };
 const presets: Record< string, Preset[] > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< Preset[] >(
-			'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
+			'../../../components/{content,live,interactive}/*/frame/presets.ts',
 			{
 				eager: true,
 				import: 'PRESETS',

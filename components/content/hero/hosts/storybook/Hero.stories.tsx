@@ -20,8 +20,8 @@ import {
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import Hero from '../../Hero.tsx';
-import { PARTS } from '../../frame/Hero.parts.ts';
-import { PROPS } from '../../Hero.props.ts';
+import { PARTS } from '../../frame/parts.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 const meta = {
@@ -38,7 +38,7 @@ const meta = {
 	argTypes: argTypesOf( PROPS ),
 	// WHY: a band of its own, so the Section around it runs edge to edge with the least padding.
 	parameters: { section: { width: 'wide', spacing: 'compact' } },
-	// The default preset's copy (Hero.presets.ts), from the primitives.
+	// The default preset's copy (presets.ts), from the primitives.
 	// WHY the buttons in a row here: Puck has no Buttons group yet, and WordPress uses core's.
 	render: ( args ) => (
 		<Hero { ...args }>

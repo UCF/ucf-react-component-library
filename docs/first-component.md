@@ -23,9 +23,9 @@ Everything about it is in one folder:
 
 ```
 components/content/card/
-  Card.props.ts            the settings an editor can change
-  frame/Card.parts.ts      the pieces of content that go inside
-  frame/Card.presets.ts    its five designs
+  props.ts                 the settings an editor can change
+  frame/parts.ts           the pieces of content that go inside
+  frame/presets.ts         its five designs
   Card.tsx                 the markup
   style.css                how it looks
   index.ts                 what the npm package exports
@@ -55,7 +55,7 @@ The name is spelled the same way everywhere: folder `card`, React `Card`, CSS `u
 WordPress block `ucf-content/card`. **The block name is permanent once a site uses it,**
 because WordPress stores it in every post.
 
-### 2. Its settings: `Card.props.ts`
+### 2. Its settings: `props.ts`
 
 A **prop** is a setting an editor can change. Here is one of the Card's:
 
@@ -88,7 +88,7 @@ media library's ID, which only WordPress has, so Puck doesn't show it.
 
 **A prop's key is saved in every post,** like the block name. Pick keys you're happy to keep.
 
-### 3. What goes inside: `frame/Card.parts.ts`
+### 3. What goes inside: `frame/parts.ts`
 
 A **part** is one piece of content inside the Card, with the class that styles it:
 
@@ -109,7 +109,7 @@ button needs no class, because the Button styles itself.
 
 Parts are where a Card starts, not a lock. Editors can change, move or remove anything inside.
 
-### 4. Its designs: `frame/Card.presets.ts`
+### 4. Its designs: `frame/presets.ts`
 
 A **preset** is a starting design: some props, plus some parts with sample text. This is the
 "Next step" card:
@@ -238,7 +238,7 @@ Each host gets a short adapter. They're one line each, because the shared code i
 
 The Card's own test renders it in each preset, checks that WordPress and React produce the same
 HTML, and records that HTML as a **snapshot** in `tests/__snapshots__/`. It also checks that
-every part class in `frame/Card.parts.ts` has a rule in `style.css`.
+every part class in `frame/parts.ts` has a rule in `style.css`.
 
 Shared tests in `core/testing/suites/` cover every component without any setup. They check that:
 
@@ -510,10 +510,10 @@ title and a sentence) and one preset. It already passes every check. Find it in 
 
 Work through the files in the order of Part 1:
 
-1. **`{Name}.props.ts`:** add its settings (step 2). Then run `npm run sync:blocks` to write
+1. **`props.ts`:** add its settings (step 2). Then run `npm run sync:blocks` to write
    them into `block.json`.
-2. **`frame/{Name}.parts.ts`:** replace the placeholder parts (step 3).
-3. **`frame/{Name}.presets.ts`:** write its designs (step 4). If a `wpIcon` isn't in
+2. **`frame/parts.ts`:** replace the placeholder parts (step 3).
+3. **`frame/presets.ts`:** write its designs (step 4). If a `wpIcon` isn't in
    `core/hosts/wordpress/icons.ts` yet, add it to both lists there. Any name from
    `@wordpress/icons` works.
 4. **`{Name}.tsx`:** write the markup, with each setting as a `data-` attribute (step 5).
@@ -594,23 +594,23 @@ The same command starts the other kinds:
 
 ### Changing it later
 
-| To…                                | Edit                                                                                              | Then                     |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------ |
-| Add a setting                      | `{Name}.props.ts`, then use it in `{Name}.tsx` and `style.css`                                    | `npm run sync:blocks`    |
-| Change a label, help text or panel | `{Name}.props.ts` only                                                                            |                          |
-| Change a default                   | `{Name}.props.ts`. Saved blocks that never set it take the new default                            | `npm run sync:blocks`    |
-| Add a design                       | `frame/{Name}.presets.ts`, a story for it, and its icon in `core/hosts/wordpress/icons.ts` if new | `npm test`               |
-| Change what a new one starts with  | `DEFAULT_PRESET` in `frame/{Name}.presets.ts`                                                     |                          |
-| Add a part                         | `frame/{Name}.parts.ts`, and its class's rule in `style.css`                                      | `npm test`               |
-| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                                    | `npm test`               |
-| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md                | Review the new snapshots |
+| To…                                | Edit                                                                                       | Then                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------ |
+| Add a setting                      | `props.ts`, then use it in `{Name}.tsx` and `style.css`                                    | `npm run sync:blocks`    |
+| Change a label, help text or panel | `props.ts` only                                                                            |                          |
+| Change a default                   | `props.ts`. Saved blocks that never set it take the new default                            | `npm run sync:blocks`    |
+| Add a design                       | `frame/presets.ts`, a story for it, and its icon in `core/hosts/wordpress/icons.ts` if new | `npm test`               |
+| Change what a new one starts with  | `DEFAULT_PRESET` in `frame/presets.ts`                                                     |                          |
+| Add a part                         | `frame/parts.ts`, and its class's rule in `style.css`                                      | `npm test`               |
+| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                             | `npm test`               |
+| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md         | Review the new snapshots |
 
 ### If a check fails
 
 | Failure                                                      | Fix                                                                        |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | `block.json declares exactly its props` in `parity.test.tsx` | Run `npm run sync:blocks`                                                  |
-| `styles every part class`                                    | Add a rule to `style.css` for each class in `frame/{Name}.parts.ts`        |
+| `styles every part class`                                    | Add a rule to `style.css` for each class in `frame/parts.ts`               |
 | `names an icon WordPress has` in `presets.test.tsx`          | Add the icon to `core/hosts/wordpress/icons.ts`                            |
 | `reads --ucf-…, a defined role` in `scripts/tokens.test.mjs` | Use a role from `tokens/tokens.json`, such as `--ucf-c-body`               |
 | A snapshot differs                                           | If you meant to change the markup, read the diff, then `npx vitest run -u` |

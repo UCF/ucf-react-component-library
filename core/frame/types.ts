@@ -2,7 +2,7 @@
  * Steps 3–5 · content · the types a content component is written against: its parts, its presets,
  * the props its markup gets, its definition and its port.
  *
- * Each content component's {Name}.parts.ts, {Name}.presets.ts and {Name}.tsx are written against
+ * Each content component's parts.ts, presets.ts and {Name}.tsx are written against
  * these.
  *
  * Types only: nothing here runs. The code that uses them is beside this file: read-parts.ts
@@ -22,7 +22,7 @@ import type { PropDefinitions, PropsOf } from '../hosts/prop-definitions.ts';
 //
 // A part is one piece of content inside a component (a title, an eyebrow, an image). Each has a
 // kind, shared by every component, and a class that gives it the component's look
-// ({Name}.parts.ts). A preset names a part and fills it: `{ part: 'title', text, level }`.
+// (parts.ts). A preset names a part and fills it: `{ part: 'title', text, level }`.
 
 /** Each kind of part, and the content it carries. */
 export type KindContent = {
@@ -71,7 +71,7 @@ export type ResolvedPart = {
 
 // ── §2 Presets: named designs ────────────────────────────────────────────────────────────────────
 //
-// A named mix of a component's props and parts ("Card: Pathway"). {Name}.presets.ts.
+// A named mix of a component's props and parts ("Card: Pathway"). presets.ts.
 
 /** A preset of a component with props `Props` and parts `Part`. */
 export type Preset< Props, Part > = {
@@ -239,11 +239,11 @@ export type ComponentDefinition<
 
 	// What it takes
 
-	/** {Name}.props.ts */
+	/** props.ts */
 	props: Props;
-	/** {Name}.parts.ts */
+	/** parts.ts */
 	parts: Parts;
-	/** {Name}.presets.ts */
+	/** presets.ts */
 	presets: Presets;
 	/** The preset a new one starts with. */
 	defaultPreset: Preset< PropsOf< Props >, PartOf< Parts > >;

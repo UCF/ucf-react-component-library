@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import DegreeList from '../../DegreeList.tsx';
-import { PROPS } from '../../DegreeList.props.ts';
+import { PROPS } from '../../props.ts';
 import { SAMPLE_PROGRAMS } from '../../sample-data.ts';
 // FIX: the Heading primitive's rules, first, so the list's overrides follow them (as the Event
 // List's stories load them).

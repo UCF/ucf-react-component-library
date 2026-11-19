@@ -10,7 +10,7 @@ import Paragraph from '@/components/primitives/paragraph/Paragraph';
 import { contrast, over } from '@/core/hosts/storybook/contrast';
 import { PLACEHOLDER_IMAGE } from '../../../../../.storybook/placeholder.ts';
 import Card from '../../Card.tsx';
-import { PARTS } from '../../frame/Card.parts.ts';
+import { PARTS } from '../../frame/parts.ts';
 import { base, Row } from './shared.tsx';
 
 const meta = {

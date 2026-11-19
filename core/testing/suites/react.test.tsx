@@ -8,7 +8,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import { Card as CardWithPresets } from '@/components/content/card/index';
 import { presetContent } from '../../frame/index.ts';
 import type { PartDefinitions } from '../../frame/types.ts';

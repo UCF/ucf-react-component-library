@@ -11,7 +11,7 @@ import '@/components/primitives/table/style.css';
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import Columns, { type ColumnsProps } from '../../Columns.tsx';
-import { PROPS } from '../../Columns.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 const defaults = defaultsIn( PROPS, 'puck' );

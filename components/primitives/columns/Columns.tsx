@@ -10,9 +10,9 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './frame/Columns.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/Columns.presets.ts';
-import { PROPS } from './Columns.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Columns takes: its props, its Column children, and a site's HTML attributes. */
 export type ColumnsProps = OwnProps< typeof PROPS > &
@@ -59,7 +59,7 @@ function ColumnsMarkup( {
  *     <Column>…</Column>
  *   </Columns>
  *
- * Its props: Columns.props.ts.
+ * Its props: props.ts.
  */
 const Columns = frame( ColumnsMarkup, {
 	// Who it is

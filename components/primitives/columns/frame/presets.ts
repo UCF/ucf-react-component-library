@@ -1,8 +1,8 @@
 /**
  * The Columns's presets: none. Its distributions are a setting, not designs to pick from.
  */
-import type { Part } from './Columns.parts.ts';
-import type { ColumnsEditableProps } from '../Columns.props.ts';
+import type { Part } from './parts.ts';
+import type { ColumnsEditableProps } from '../props.ts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< ColumnsEditableProps, Part >;

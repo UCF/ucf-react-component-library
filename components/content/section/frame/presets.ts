@@ -2,8 +2,8 @@
  * The Section's presets: none. A Section holds anything, so it has no designs to pick from; a new
  * one starts with DEFAULT_PRESET's heading and paragraph.
  */
-import type { Part } from './Section.parts.ts';
-import type { SectionEditableProps } from '../Section.props.ts';
+import type { Part } from './parts.ts';
+import type { SectionEditableProps } from '../props.ts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< SectionEditableProps, Part >;

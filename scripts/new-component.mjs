@@ -341,9 +341,9 @@ function contentFiles( n ) {
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './frame/${ n.Name }.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/${ n.Name }.presets.ts';
-import { PROPS } from './${ n.Name }.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the ${ n.title } takes: its props, \`preset\`, \`content\`, and a site's HTML attributes. */
 export type ${ n.Name }Props = OwnProps< typeof PROPS > &
@@ -378,7 +378,7 @@ function ${ n.Name }Markup( {
  *
  *   <${ n.Name } preset="standard" content={ { title: 'A title' } } />
  *
- * Its props, presets and parts: ${ n.Name }.props.ts, ${ n.Name }.presets.ts, ${ n.Name }.parts.ts.
+ * Its props, presets and parts: props.ts, presets.ts, parts.ts.
  */
 const ${ n.Name } = frame( ${ n.Name }Markup, {
 	// Who it is
@@ -398,7 +398,7 @@ const ${ n.Name } = frame( ${ n.Name }Markup, {
 
 export default ${ n.Name };
 `,
-		[ `${ n.Name }.props.ts` ]: `/**
+		[ `props.ts` ]: `/**
  * The ${ n.title }'s props, in the order editors see them. Each key is a saved block attribute.
  * SYNC: block.json's attributes; core/testing/suites/parity.test.tsx checks. Renaming one needs a
  * block deprecation.
@@ -423,7 +423,7 @@ export const PROPS = {
 /** The props above, typed. */
 export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 `,
-		[ `frame/${ n.Name }.parts.ts` ]: `/**
+		[ `frame/parts.ts` ]: `/**
  * The ${ n.title }'s parts: what goes inside it, each with its kind and the class that styles it.
  * SYNC: style.css styles every class here; tests/${ n.Name }.test.tsx checks.
  */
@@ -439,12 +439,12 @@ export const PARTS = {
 /** A part in a preset: \`{ part: 'title', level: 2, text: 'A title' }\`. */
 export type Part = PartOf< typeof PARTS >;
 `,
-		[ `frame/${ n.Name }.presets.ts` ]: `/**
+		[ `frame/presets.ts` ]: `/**
  * The ${ n.title }'s presets: its designs, each a mix of props and parts. WordPress shows each as
  * a variation, Puck in its Design picker.
  */
-import type { Part } from './${ n.Name }.parts.ts';
-import type { ${ n.Name }EditableProps } from '../${ n.Name }.props.ts';
+import type { Part } from './parts.ts';
+import type { ${ n.Name }EditableProps } from '../props.ts';
 import { findPreset } from '@/core/frame/read-parts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 
@@ -479,15 +479,15 @@ export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx
 
 // Its pieces, for a site that builds its own
 
-export { PARTS as ${ NAME }_PARTS } from './frame/${ n.Name }.parts.ts';
-export { PRESETS as ${ NAME }_PRESETS } from './frame/${ n.Name }.presets.ts';
+export { PARTS as ${ NAME }_PARTS } from './frame/parts.ts';
+export { PRESETS as ${ NAME }_PRESETS } from './frame/presets.ts';
 `,
 		'style.css': `/*
  * The ${ n.title }'s styles, for every host.
  *
  * Reads only \`--ucf-*\` names, and colors only as component-layer roles (\`--ucf-c-body\` and
  * so on). The root carries \`ucf-c\`, so the roles are the section's (docs/architecture.md).
- * SYNC: every class in ${ n.Name }.parts.ts.
+ * SYNC: every class in parts.ts.
  * UPSTREAM: wp-scripts only emits a front-end stylesheet for a file named \`style.css\`.
  */
 .ucf-c-${ n.name } {
@@ -520,7 +520,7 @@ import '@/components/primitives/heading/style.css';
 import '@/components/primitives/image/style.css';
 import '@/components/primitives/paragraph/style.css';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import { PROPS } from '../../${ n.Name }.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 const meta = {
@@ -551,8 +551,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import ${ n.Name }, { type ${ n.Name }Props } from '../${ n.Name }.tsx';
-import { PARTS } from '../frame/${ n.Name }.parts.ts';
-import { PRESETS } from '../frame/${ n.Name }.presets.ts';
+import { PARTS } from '../frame/parts.ts';
+import { PRESETS } from '../frame/presets.ts';
 
 // What \`useBlockProps.save()\` adds for this block.
 // SYNC: the block name in wp/block.json.
@@ -966,7 +966,7 @@ function liveFiles( n ) {
  *
  * The linked list is a placeholder that shows data reaching every host. Replace it.
  */
-import type { ${ n.Name }EditableProps } from './${ n.Name }.props.ts';
+import type { ${ n.Name }EditableProps } from './props.ts';
 import type { ${ n.Name }Item } from './types.ts';
 
 export type ${ n.Name }Props = Partial< Pick< ${ n.Name }EditableProps, 'title' > > & {
@@ -1001,7 +1001,7 @@ export default function ${ n.Name }( {
 	);
 }
 `,
-		[ `${ n.Name }.props.ts` ]: `/**
+		[ `props.ts` ]: `/**
  * The ${ n.title }'s props: every prop an editor sets. WordPress's sidebar and block.json
  * attributes, Puck's fields and the stories' controls are built from it
  * (core/hosts/prop-definitions.ts).
@@ -1149,7 +1149,7 @@ export function useItems( feedUrl: string ) {
  * \`@ucf/components/${ n.name }\`. SYNC: docs/architecture.md, "What a component exports".
  */
 export { default as ${ n.Name }, type ${ n.Name }Props } from './${ n.Name }.tsx';
-export { PROPS as ${ NAME }_PROPS } from './${ n.Name }.props.ts';
+export { PROPS as ${ NAME }_PROPS } from './props.ts';
 export { createClient, normalizeItems } from './client.ts';
 export type { ${ n.Name }Item } from './types.ts';
 `,
@@ -1213,7 +1213,7 @@ import { defaultsIn } from '@/core/hosts/read-props';
 import { puckFields } from '@/core/hosts/puck/props-to-fields';
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
+import { PROPS, type ${ n.Name }EditableProps } from '../../props.ts';
 import { useItems } from '../../utils/useItems.ts';
 
 /**
@@ -1268,7 +1268,7 @@ import { __ } from '@wordpress/i18n';
 import { panelsOf } from '@/core/hosts/read-props';
 import { FieldControl } from '@/core/hosts/wordpress/controls/prop-control';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
+import { PROPS, type ${ n.Name }EditableProps } from '../../props.ts';
 import { useItems } from '../../utils/useItems.ts';
 
 export type Attributes = ${ n.Name }EditableProps;
@@ -1576,7 +1576,7 @@ export default function ${ n.Name }( {
 	);
 }
 `,
-		[ `${ n.Name }.props.ts` ]: `/**
+		[ `props.ts` ]: `/**
  * The ${ n.title }'s props, in the order Puck shows them. Its Puck fields, its story controls and
  * their defaults are built from these (core/hosts/prop-definitions.ts says how).
  *
@@ -1602,7 +1602,7 @@ export type ${ n.Name }EditableProps = PropsOf< typeof PROPS >;
 
 // Its pieces, for a site that builds its own
 
-export { PROPS as ${ n.Name.replace( /([a-z])([A-Z])/g, '$1_$2' ).toUpperCase() }_PROPS } from './${ n.Name }.props.ts';
+export { PROPS as ${ n.Name.replace( /([a-z])([A-Z])/g, '$1_$2' ).toUpperCase() }_PROPS } from './props.ts';
 `,
 		'style.css': `/*
  * CONTEXT: the ${ n.title }'s styles, for every host and every component that uses it.
@@ -1619,7 +1619,7 @@ export { PROPS as ${ n.Name.replace( /([a-z])([A-Z])/g, '$1_$2' ).toUpperCase() 
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import ${ n.Name } from '../../${ n.Name }.tsx';
-import { PROPS } from '../../${ n.Name }.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 const meta = {
@@ -1668,14 +1668,14 @@ describe( '${ n.Name }', () => {
 `,
 		'hosts/puck/config.tsx': `/**
  * The ${ n.title } for Puck, where editors place it on its own: Puck has no core blocks. Its
- * fields and defaults are its props (${ n.Name }.props.ts).
+ * fields and defaults are its props (props.ts).
  */
 import ${ n.Name } from '../../${ n.Name }.tsx';
 import { puckFields } from '@/core/hosts/puck/props-to-fields';
 // WHY a type from core/: the one copy of Puck's config shape. Types only; erased at build.
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import { defaultsIn } from '@/core/hosts/read-props';
-import { PROPS, type ${ n.Name }EditableProps } from '../../${ n.Name }.props.ts';
+import { PROPS, type ${ n.Name }EditableProps } from '../../props.ts';
 
 const config: PuckComponentConfig< ${ n.Name }EditableProps > = {
 	label: '${ n.title }',
@@ -1834,9 +1834,9 @@ async function main() {
 	if ( options.kind === 'primitive' ) {
 		console.log( `
 Next:
-  1. Replace the placeholder prop and markup in ${ Name }.tsx, and the prop in ${ Name }.props.ts,
+  1. Replace the placeholder prop and markup in ${ Name }.tsx, and the prop in props.ts,
      named after core's equivalent block's attributes. Puck's fields and the story controls are
-     built from ${ Name }.props.ts.
+     built from props.ts.
   2. Give wp/edit.tsx the same editing tools core's block has.
   3. Run \`npm test\` to write the new markup snapshot, then review it: every block that uses
      this primitive will save it.
@@ -1847,9 +1847,9 @@ Next:
 		console.log( `
 Next (docs/architecture.md, "Built with frame()"):
   1. Write the markup in ${ Name }Markup (${ Name }.tsx); mark where content goes with area().
-  2. Add props to ${ Name }.props.ts, then run \`npm run sync:blocks\` to write them into
-     wp/block.json. Add parts to frame/${ Name }.parts.ts, each with its class in style.css.
-  3. Replace the standard preset in frame/${ Name }.presets.ts with the designs it has.
+  2. Add props to props.ts, then run \`npm run sync:blocks\` to write them into
+     wp/block.json. Add parts to frame/parts.ts, each with its class in style.css.
+  3. Replace the standard preset in frame/presets.ts with the designs it has.
   4. Write the block's description in wp/block.json.
   5. Run \`npm test\` to write the new markup snapshots, then review them: they are what every
      saved post will store.
@@ -1862,7 +1862,7 @@ Next (docs/architecture.md, "Three kinds of component"; components/live/event-li
   1. Replace the placeholder feed in client.ts and types.ts, and the same steps in
      wp/client.php. Write tests/fixtures/ from the real feed.
   2. Replace the markup in ${ Name }.tsx, and the same markup in wp/render.php.
-  3. Add props to ${ Name }.props.ts, then run \`npm run sync:blocks\`.
+  3. Add props to props.ts, then run \`npm run sync:blocks\`.
   4. Add the plugin's PHP prefix and text domain to phpcs.xml.dist if they're new.
   5. Run \`npm test\`: tests/${ Name }.php.test.tsx fails while the PHP and React markup differ.
   Then: npm run check && npm run test:stories` );

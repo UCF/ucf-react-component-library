@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import Paragraph from '@/components/primitives/paragraph/Paragraph';
 import '@/components/primitives/paragraph/style.css';
 import Highlight from '@/components/content/highlight/Highlight';
-import { PARTS } from '@/components/content/highlight/frame/Highlight.parts';
+import { PARTS } from '@/components/content/highlight/frame/parts';
 import '@/components/content/highlight/style.css';
 import Section from '../../Section.tsx';
 import type { Composition } from '@/core/design/compositions';

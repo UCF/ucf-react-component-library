@@ -13,9 +13,9 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './frame/Section.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/Section.presets.ts';
-import { PROPS } from './Section.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Section takes: its props, its children, and a site's HTML attributes. */
 export type SectionProps = OwnProps< typeof PROPS > &
@@ -59,7 +59,7 @@ function SectionMarkup( {
  *
  *   <Section composition="dark" width="constrained">…</Section>
  *
- * Its props: Section.props.ts.
+ * Its props: props.ts.
  */
 const Section = frame( SectionMarkup, {
 	// Who it is

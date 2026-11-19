@@ -10,7 +10,7 @@ import { defaultsIn } from '@/core/hosts/read-props';
 import { puckFields } from '@/core/hosts/puck/props-to-fields';
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import EventList from '../../EventList.tsx';
-import { PROPS, type EventListEditableProps } from '../../EventList.props.ts';
+import { PROPS, type EventListEditableProps } from '../../props.ts';
 import { useEvents } from '../../utils/useEvents.ts';
 
 /**

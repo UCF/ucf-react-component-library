@@ -9,7 +9,7 @@
  * text.
  */
 
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import { unhandledPart } from '../../frame/read-parts.ts';
 import type { ResolvedPart } from '../../frame/types.ts';
 

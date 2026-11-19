@@ -34,7 +34,7 @@ import {
 	tempFile,
 } from '@/core/testing/live';
 import EventList from '../EventList.tsx';
-import type { EventListEditableProps } from '../EventList.props.ts';
+import type { EventListEditableProps } from '../props.ts';
 import { normalizeEvents } from '../client.ts';
 import { plainText } from '../utils/text.ts';
 

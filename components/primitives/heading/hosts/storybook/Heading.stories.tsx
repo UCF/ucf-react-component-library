@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import Heading, { type HeadingProps } from '../../Heading.tsx';
 import { defaultsIn } from '@/core/hosts/read-props';
-import { PROPS } from '../../Heading.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 // The props' defaults, as Puck starts with them, less the empty CSS class. WHY the level a number

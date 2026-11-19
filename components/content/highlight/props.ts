@@ -4,10 +4,10 @@
  * from here; WordPress's sidebar and block.json attributes, Puck's fields and defaults, and the
  * stories' controls are built from it (core/hosts/prop-definitions.ts says how).
  *
- * The content placed inside the Highlight is in Highlight.parts.ts; named combinations of both,
- * in Highlight.presets.ts. What each word means: docs/architecture.md, "A component's folder".
+ * The content placed inside the Highlight is in parts.ts; named combinations of both,
+ * in presets.ts. What each word means: docs/architecture.md, "A component's folder".
  *
- * SPEC: they combine into the UCF highlight designs (Highlight.presets.ts).
+ * SPEC: they combine into the UCF highlight designs (presets.ts).
  * SYNC: each prop's key is a block attribute, saved in every post that uses the block.
  * Renaming one needs a block deprecation (docs/architecture.md, "Naming"). block.json lists
  * them too; core/testing/suites/parity.test.tsx fails while the two differ.

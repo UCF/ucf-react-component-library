@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import Code from '../../Code.tsx';
-import { PROPS } from '../../Code.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 const meta = {

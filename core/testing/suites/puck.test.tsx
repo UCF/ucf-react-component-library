@@ -31,7 +31,7 @@ import card, {
 import {
 	DEFAULT_PRESET as DEFAULT_CARD_PRESET,
 	PRESETS as CARD_PRESETS,
-} from '@/components/content/card/frame/Card.presets';
+} from '@/components/content/card/frame/presets';
 import degreeFinder from '@/components/interactive/degree-finder/hosts/puck/config';
 import eventList from '@/components/live/event-list/hosts/puck/config';
 import pullquote from '@/components/primitives/pullquote/hosts/puck/config';
@@ -49,8 +49,8 @@ import highlight, {
 	withTemplate as highlightWithTemplate,
 	withPreset as highlightWithPreset,
 } from '@/components/content/highlight/hosts/puck/config';
-import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/frame/Highlight.presets';
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/frame/presets';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import type { PuckComponentConfig } from '../../hosts/puck/types.ts';
 
 type PropsOf< Config > =

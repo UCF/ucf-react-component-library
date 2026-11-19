@@ -13,7 +13,7 @@
  * date block, the title, then when and where.
  */
 import Heading from '@/components/primitives/heading/Heading';
-import { PROPS, type EventListEditableProps } from './EventList.props.ts';
+import { PROPS, type EventListEditableProps } from './props.ts';
 import type { EventItem } from './types.ts';
 import { dateBlock, whenText } from './utils/dates.ts';
 

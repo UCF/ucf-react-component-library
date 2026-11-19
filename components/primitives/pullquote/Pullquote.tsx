@@ -10,7 +10,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { PullquoteEditableProps } from './Pullquote.props.ts';
+import type { PullquoteEditableProps } from './props.ts';
 
 export type PullquoteProps = Partial< PullquoteEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'figure' >, 'children' >;

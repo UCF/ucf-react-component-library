@@ -2,8 +2,8 @@
  * The Hero's presets: none yet. A new one starts with DEFAULT_PRESET, P1's copy: an eyebrow, a
  * title, a description and two buttons.
  */
-import type { Part } from './Hero.parts.ts';
-import type { HeroEditableProps } from '../Hero.props.ts';
+import type { Part } from './parts.ts';
+import type { HeroEditableProps } from '../props.ts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< HeroEditableProps, Part >;

@@ -9,7 +9,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { QuoteEditableProps } from './Quote.props.ts';
+import type { QuoteEditableProps } from './props.ts';
 
 export type QuoteProps = Partial< QuoteEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'blockquote' >, 'children' >;

@@ -6,15 +6,15 @@ import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import { renderParts } from '@/core/hosts/storybook/parts-to-samples';
 import Highlight from '../../Highlight.tsx';
-import { PARTS, type Part } from '../../frame/Highlight.parts.ts';
-import { presetNamed } from '../../frame/Highlight.presets.ts';
-import { PROPS } from '../../Highlight.props.ts';
+import { PARTS, type Part } from '../../frame/parts.ts';
+import { presetNamed } from '../../frame/presets.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 /**
  * A preset as a story: its props, and its parts, or a row of other parts set the same way.
  *
- * @param name    A preset's name in Highlight.presets.ts.
+ * @param name    A preset's name in presets.ts.
  * @param content Parts in place of the preset's own, for a row of different ones.
  */
 function preset( name: string, content?: ( readonly Part[] )[] ): Story {
@@ -45,7 +45,7 @@ function preset( name: string, content?: ( readonly Part[] )[] ): Story {
 /**
  * A text part.
  *
- * @param part  Its look's name in Highlight.parts.ts.
+ * @param part  Its look's name in parts.ts.
  * @param value Its text.
  */
 const text = (

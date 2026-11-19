@@ -34,7 +34,7 @@ import {
 	tempFile,
 } from '@/core/testing/live';
 import DegreeList from '../DegreeList.tsx';
-import type { DegreeListEditableProps } from '../DegreeList.props.ts';
+import type { DegreeListEditableProps } from '../props.ts';
 import { normalizePrograms, programsQuery } from '../client.ts';
 import type { ProgramFilters } from '../types.ts';
 

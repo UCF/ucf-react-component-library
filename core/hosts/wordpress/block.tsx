@@ -26,7 +26,7 @@ import { Button, PanelBody } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createContext, useContext, type ComponentType } from 'react';
 
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import ImageEdit, {
 	type ImageValue,
 } from '@/components/primitives/image/hosts/wp/edit';

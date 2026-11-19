@@ -1,16 +1,16 @@
 /**
- * CONTEXT: the Highlight's presets: named combinations of its props (Highlight.props.ts) and the
- * parts placed inside it (Highlight.parts.ts), as data every host reads. WordPress registers
+ * CONTEXT: the Highlight's presets: named combinations of its props (props.ts) and the
+ * parts placed inside it (parts.ts), as data every host reads. WordPress registers
  * each as a block variation (hosts/wp/index.tsx), Puck as a component of its own
  * (withPreset() in core/hosts/puck/config.tsx), and core/hosts/storybook renders them. A
- * new Highlight starts with DEFAULT_PRESET's parts. As the Card's (card/frame/Card.presets.ts).
+ * new Highlight starts with DEFAULT_PRESET's parts. As the Card's (card/frame/presets.ts).
  *
  * SPEC: the presets are UCF's highlight designs, from its current pages: the stats band, the
  * admissions key figures, the careers bracket, the engineering side rule and the centered
  * space-band highlights.
  */
-import type { Part } from './Highlight.parts.ts';
-import type { HighlightEditableProps } from '../Highlight.props.ts';
+import type { Part } from './parts.ts';
+import type { HighlightEditableProps } from '../props.ts';
 import { findPreset } from '@/core/frame/read-parts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 

@@ -1,8 +1,8 @@
 /**
  * The Column's presets: none. A Column holds anything, so it has no designs to pick from.
  */
-import type { Part } from './Column.parts.ts';
-import type { ColumnEditableProps } from '../Column.props.ts';
+import type { Part } from './parts.ts';
+import type { ColumnEditableProps } from '../props.ts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 
 export type Preset = PresetOf< ColumnEditableProps, Part >;

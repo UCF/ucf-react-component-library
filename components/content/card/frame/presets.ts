@@ -2,8 +2,8 @@
  * The Card's presets: UCF's card designs, each a mix of props and parts.
  * SPEC: from UCF's pages: story, next step, admissions audience tiles, pathway cards, media tiles.
  */
-import type { Part } from './Card.parts.ts';
-import type { CardEditableProps } from '../Card.props.ts';
+import type { Part } from './parts.ts';
+import type { CardEditableProps } from '../props.ts';
 import { findPreset } from '@/core/frame/read-parts';
 import type { Preset as PresetOf } from '@/core/frame/types';
 

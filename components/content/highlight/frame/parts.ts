@@ -4,8 +4,8 @@
  * that styles it here. Frames style their content by class (docs/architecture.md, "Frames");
  * the shared mappers in core/hosts/ build each kind for each host.
  *
- * The Highlight's own settings are in Highlight.props.ts; named combinations of both, in
- * Highlight.presets.ts.
+ * The Highlight's own settings are in props.ts; named combinations of both, in
+ * presets.ts.
  *
  * SYNC: style.css styles every class here; tests/Highlight.test.tsx checks.
  */

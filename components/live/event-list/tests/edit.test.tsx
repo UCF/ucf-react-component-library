@@ -26,7 +26,7 @@ vi.mock( '../hosts/wp/settings.ts', () => ( {
 } ) );
 
 const { default: Edit } = await import( '../hosts/wp/edit.tsx' );
-const { PROPS } = await import( '../EventList.props.ts' );
+const { PROPS } = await import( '../props.ts' );
 const { defaultsIn } = await import( '@/core/hosts/read-props' );
 
 describe( 'the Event List in the editor', () => {

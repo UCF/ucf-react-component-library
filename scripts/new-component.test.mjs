@@ -104,9 +104,9 @@ describe( 'planComponent', () => {
 				'components/content/pull-quote/PullQuote.tsx',
 				'components/content/pull-quote/tests/PullQuote.test.tsx',
 				'components/content/pull-quote/hosts/storybook/PullQuote.stories.tsx',
-				'components/content/pull-quote/PullQuote.props.ts',
-				'components/content/pull-quote/frame/PullQuote.parts.ts',
-				'components/content/pull-quote/frame/PullQuote.presets.ts',
+				'components/content/pull-quote/props.ts',
+				'components/content/pull-quote/frame/parts.ts',
+				'components/content/pull-quote/frame/presets.ts',
 				'components/content/pull-quote/hosts/wp/save.tsx',
 			] )
 		);
@@ -186,12 +186,12 @@ describe( 'planComponent', () => {
 		expect( [ ...files.keys() ] ).toEqual(
 			expect.arrayContaining( [
 				'components/primitives/badge/Badge.tsx',
-				'components/primitives/badge/Badge.props.ts',
+				'components/primitives/badge/props.ts',
 				'components/primitives/badge/hosts/puck/config.tsx',
 				'components/primitives/badge/hosts/wp/edit.tsx',
 			] )
 		);
-		// WHY: its sample is its props' defaults (Badge.props.ts), as every primitive's is.
+		// WHY: its sample is its props' defaults (props.ts), as every primitive's is.
 		expect( [ ...files.keys() ] ).not.toContain(
 			'components/primitives/badge/example.json'
 		);

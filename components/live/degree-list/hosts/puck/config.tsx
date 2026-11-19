@@ -9,7 +9,7 @@ import { defaultsIn } from '@/core/hosts/read-props';
 import { puckFields } from '@/core/hosts/puck/props-to-fields';
 import type { PuckComponentConfig } from '@/core/hosts/puck/types';
 import DegreeList from '../../DegreeList.tsx';
-import { PROPS, type DegreeListEditableProps } from '../../DegreeList.props.ts';
+import { PROPS, type DegreeListEditableProps } from '../../props.ts';
 import { usePrograms } from '../../utils/usePrograms.ts';
 
 /**

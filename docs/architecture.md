@@ -172,10 +172,10 @@ One name per component, spelled the same way in every layer:
 ```
 components/{bucket}/{name}/
   {Name}.tsx             the component: props in, markup out (the markup)
-  {Name}.props.ts        its props: each one's type, values, default and field (below)
+  props.ts               its props: each one's type, values, default and field (below)
   frame/                 frames only (built with frame()):
-    {Name}.parts.ts      the content placed inside, each part's kind and class
-    {Name}.presets.ts    named combinations of props and parts
+    parts.ts             the content placed inside, each part's kind and class
+    presets.ts           named combinations of props and parts
   index.ts               what the npm package exports for it
   style.css              reads --ucf-* only
   README.md              its object model, filled in
@@ -258,9 +258,10 @@ fails when the folder and the `frame()` call disagree). There is
 no separate sample-props file: what a new one starts with is the defaults (in the props), and
 what an example looks like is a preset.
 
-**Files are named `{Name}.{role}.{ext}`:** the first word is the component, the suffix is what
-the file defines. Typing `Card.` in
-a file finder lists everything that defines the Card. Files in `core/` are named the same way
+**A definition file is named for what it defines:** `props.ts`, `frame/parts.ts`,
+`frame/presets.ts`. The folder names the component, so the file doesn't repeat it, as in
+`core/`. Files that need a name before their suffix keep the component's: `{Name}.tsx`,
+`{Name}.stories.tsx`, `{Name}.test.tsx`. Files in `core/` are named the same way
 throughout: `types.ts` and `prop-definitions.ts` hold what a component is written against; a
 `{from}-to-{to}` file makes one translation (`wordpress/parts-to-blocks.ts`,
 `puck/props-to-fields.ts`); a noun names a builder that makes a whole thing
@@ -272,12 +273,12 @@ A frame (see "Frames") is its props, its parts, and presets built from both:
 
 ```
 Component
-├─ {Name}.props.ts      PROPS: each prop's key · type · options · default · field
+├─ props.ts             PROPS: each prop's key · type · options · default · field
 │                       types: text, choice, number, list
 │                       field: label · help · control · panel · hosts
-├─ frame/{Name}.parts.ts    PARTS: each part (title, eyebrow, image…): its kind and its class
-│                           kinds (image, heading, text, link, button): core/frame/types.ts
-└─ frame/{Name}.presets.ts  named combinations of the two
+├─ frame/parts.ts       PARTS: each part (title, eyebrow, image…): its kind and its class
+│                       kinds (image, heading, text, link, button): core/frame/types.ts
+└─ frame/presets.ts     named combinations of the two
     └─ presets          Preset: name · title · description · wpIcon · props · parts
                         a part in a preset: { part: 'title', text, level }
                         DEFAULT_PRESET: what a new one starts with, and the inserter's preview
@@ -319,10 +320,10 @@ know:
 
 | Word         | Means                                                                           | Where                                       |
 | ------------ | ------------------------------------------------------------------------------- | ------------------------------------------- |
-| **prop**     | a value the component takes; its prop definitions describe the ones editors set | `{Name}.props.ts`                           |
-| **field**    | how a prop appears in an editor: label, help, control, panel                    | `{Name}.props.ts`                           |
-| **part**     | one piece of content inside a frame: its kind, and the class that styles it     | `{Name}.parts.ts`                           |
-| **preset**   | a named mix of props and parts ("Card: Pathway")                                | `{Name}.presets.ts`                         |
+| **prop**     | a value the component takes; its prop definitions describe the ones editors set | `props.ts`                                  |
+| **field**    | how a prop appears in an editor: label, help, control, panel                    | `props.ts`                                  |
+| **part**     | one piece of content inside a frame: its kind, and the class that styles it     | `parts.ts`                                  |
+| **preset**   | a named mix of props and parts ("Card: Pathway")                                | `presets.ts`                                |
 | **template** | the parts a new frame starts with: the default preset's                         | `DEFAULT_PRESET`, `withTemplate()`          |
 | **mapper**   | turns parts into one host's pieces                                              | `core/hosts/*/parts.ts`                     |
 | **adapter**  | the code that plugs the component into one host                                 | `core/hosts/wordpress/`, `core/hosts/puck/` |
@@ -350,12 +351,12 @@ platform: `hosts/wp/` is not WordPress, it is the code that plugs the core into 
 A component's package entry (`index.ts`, `@ucf/components/{name}`) exports what a site needs to
 use it with no CMS:
 
-| Export           | When                       | Example                              |
-| ---------------- | -------------------------- | ------------------------------------ |
-| `{Name}`         | always                     | `Card`                               |
-| `{Name}Props`    | always (a type)            | `CardProps`                          |
-| `{NAME}_PARTS`   | it has `{Name}.parts.ts`   | `CARD_PARTS`: each part's class      |
-| `{NAME}_PRESETS` | it has `{Name}.presets.ts` | `CARD_PRESETS`: its designs, as data |
+| Export           | When                | Example                              |
+| ---------------- | ------------------- | ------------------------------------ |
+| `{Name}`         | always              | `Card`                               |
+| `{Name}Props`    | always (a type)     | `CardProps`                          |
+| `{NAME}_PARTS`   | it has `parts.ts`   | `CARD_PARTS`: each part's class      |
+| `{NAME}_PRESETS` | it has `presets.ts` | `CARD_PRESETS`: its designs, as data |
 
 A component built with `frame()` (core/frame/frame.tsx; see "Built with frame()") takes
 `preset`, `content` and `sample` besides its props: a plain React site passes data
@@ -439,7 +440,7 @@ content, so in WordPress it holds core blocks (see "Frames").
 | A content editor, or a frame's area | Core blocks (Button, Image…)    | Our primitives   |
 | A component's own markup (the Card) | Our primitives, in their markup | Our primitives   |
 
-- **A primitive is a component:** a core, a `{Name}.props.ts`, `style.css`, stories, a markup
+- **A primitive is a component:** a core, a `props.ts`, `style.css`, stories, a markup
   test and a Puck config, where Puck editors place it, since Puck has no core blocks. Its Puck
   fields, its story controls and their defaults are built from its props, as a content
   component's are; its sample is its props' defaults. The Image's sample picture is also the
@@ -481,7 +482,7 @@ content, so in WordPress it holds core blocks (see "Frames").
 - **A primitive that holds content is built with `frame()`,** with `kind: 'primitive'` and no
   block (the Columns and the Column). Its content area is where a host puts content, so in Puck
   the slot renders as that element: the Columns's slot is its grid, and each Column dropped in
-  is a grid item. Its settings are a `{Name}.props.ts`, as a content component's are.
+  is a grid item. Its settings are a `props.ts`, as a content component's are.
   In Puck a host uses the Columns through `withColumns( 'Column' )` and the Column through
   `inColumns( 'Column' )`, naming the key it registered the Column under: only Columns go in a
   Columns, picking a distribution adds the empty Columns it names (never removing one), and a
@@ -510,14 +511,14 @@ A content component is one of two shapes:
   under other names. Editors may change, move or remove anything in it.
 - **Presets are data.** Where a frame has several named designs (the Card's story, next step,
   audience, pathway and media cards; the Highlight's statement, key figure, bracket, side rule
-  and centered), they are presets, in one list, `{Name}.presets.ts`: each is the frame's props plus its parts by kind, and `DEFAULT_PRESET` is
+  and centered), they are presets, in one list, `presets.ts`: each is the frame's props plus its parts by kind, and `DEFAULT_PRESET` is
   the one a new frame starts with. WordPress registers each as a block variation
   (core/hosts/wordpress/parts-to-blocks.ts maps parts to core blocks), Puck builds each with
   `withPreset( name )` (core/hosts/puck/parts-to-primitives.ts maps them to primitives), and the stories render them. A new preset
   is a new entry; tests check each reaches both hosts, names an icon WordPress has, and uses
   only the frame's own props.
 - **Parts are named by class.** Where a part has its own look (the Hero's title, the Highlight's
-  statement), the template sets a class on it (`PARTS`, in `{Name}.parts.ts`) in both hosts: core's
+  statement), the template sets a class on it (`PARTS`, in `parts.ts`) in both hosts: core's
   "Additional CSS class(es)" in WordPress, the primitive's CSS class field in Puck. The frame's
   CSS styles it as `.ucf-c-{frame} .ucf-c-{frame}__{part}`, two classes, so it wins over the one
   class a core block or a primitive styles itself with.
@@ -555,7 +556,7 @@ WHY the component first and frame() last: it reads as the React component it is,
 `memo( Card )` would. WHY a named `const Card`: a hover on `<Card` then lists its props, each
 with its values, and the doc comment above it. The props follow the presets: `preset` takes only a preset's name, and
 `content` only the parts that preset holds, so `<Card preset="pathway" content={ { tag } } />`
-is a type error (the tag is the media tile's). WHY `as const` on `{Name}.presets.ts`: it keeps the
+is a type error (the tag is the media tile's). WHY `as const` on `presets.ts`: it keeps the
 names and parts exact for those types. An area is where content goes: a `<div>` on a React site, or the element a
 host passes (`<Card.port.Frame areas={ { content: InnerBlocksArea } } />`). Hosts fill the one
 named `content`. WHY areas on the port, not props: a host-only piece then never appears in the

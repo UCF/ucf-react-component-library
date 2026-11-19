@@ -7,7 +7,7 @@ import {
 import Image, { type ImageProps } from '../../Image.tsx';
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
-import { PROPS } from '../../Image.props.ts';
+import { PROPS } from '../../props.ts';
 import '../../style.css';
 
 // The props' defaults, as Puck starts with them, less the empty CSS class.

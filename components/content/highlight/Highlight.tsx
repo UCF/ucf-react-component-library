@@ -13,9 +13,9 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './frame/Highlight.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/Highlight.presets.ts';
-import { PROPS } from './Highlight.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Highlight takes: its props, `preset`, `content`, and a site's HTML attributes. */
 export type HighlightProps = OwnProps< typeof PROPS > &
@@ -53,7 +53,7 @@ function HighlightMarkup( {
  *
  *   <Highlight preset="key-figure" content={ { figure: 'Nov 1', label: 'Early action deadline' } } />
  *
- * Its props, presets and parts: Highlight.props.ts, Highlight.presets.ts, Highlight.parts.ts.
+ * Its props, presets and parts: props.ts, presets.ts, parts.ts.
  */
 const Highlight = frame( HighlightMarkup, {
 	// Who it is

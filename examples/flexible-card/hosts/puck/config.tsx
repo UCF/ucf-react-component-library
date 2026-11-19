@@ -5,7 +5,7 @@
  * the frame's inner element, Puck's drop zone is that element, so the markup matches what the
  * frame renders in Next, with no extra wrapper.
  */
-import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
+import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/props';
 import FlexibleCard from '../../FlexibleCard.tsx';
 import { VARIANTS, type Variant } from '../../options.ts';
 import type { PuckComponentConfig, PuckSlot } from '@/core/hosts/puck/types';

@@ -33,7 +33,7 @@ $ucf_events_events = ucf_events_event_list_events(
 );
 
 // A11Y: every list has a heading; an empty or blank one shows the default.
-// SYNC: headingOf() and PROPS.title.default in EventList.tsx and EventList.props.ts.
+// SYNC: headingOf() and PROPS.title.default in EventList.tsx and props.ts.
 $ucf_events_title = trim( (string) ( $attributes['title'] ?? '' ), " \t\n\r" );
 $ucf_events_title = '' === $ucf_events_title ? 'Upcoming events' : $ucf_events_title;
 

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { defaultsIn } from '@/core/hosts/read-props';
 import { argTypesOf } from '@/core/hosts/storybook/props-to-controls';
 import EventList from '../../EventList.tsx';
-import { PROPS } from '../../EventList.props.ts';
+import { PROPS } from '../../props.ts';
 import { SAMPLE_EVENTS } from '../../sample-data.ts';
 // FIX: the Heading primitive's rules, first, so the list's overrides follow them. Without it
 // they arrived only once another story (the Hero's) had loaded them.

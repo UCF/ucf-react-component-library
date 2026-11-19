@@ -11,7 +11,7 @@
  *
  * A frame: the Hero draws the band, the image and the layout; its copy is open content placed
  * inside (the eyebrow, title, description and buttons P1 has as fields). A new Hero starts with
- * those (DEFAULT_PRESET in Hero.presets.ts), each with the class that styles it (Hero.parts.ts).
+ * those (DEFAULT_PRESET in presets.ts), each with the class that styles it (parts.ts).
  * It has two areas: `content`, the copy, and `media`, the image, where WordPress's editor puts
  * its picker (hosts/wp/edit.tsx). The cost: nothing makes a Hero have a title, and nothing
  * else can read it as a field.
@@ -40,9 +40,9 @@
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
-import { PARTS } from './frame/Hero.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/Hero.presets.ts';
-import { PROPS, type HeroEditableProps } from './Hero.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS, type HeroEditableProps } from './props.ts';
 
 /** Everything the Hero takes: its props, its copy as children, and a site's HTML attributes. */
 export type HeroProps = OwnProps< typeof PROPS > &
@@ -148,7 +148,7 @@ function HeroMarkup( {
  *
  *   <Hero layout="full image" imageSrc="/campus.jpg">…</Hero>
  *
- * Its props and parts: Hero.props.ts, Hero.parts.ts.
+ * Its props and parts: props.ts, parts.ts.
  */
 const Hero = frame( HeroMarkup, {
 	// Who it is

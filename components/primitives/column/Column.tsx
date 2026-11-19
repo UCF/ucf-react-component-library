@@ -4,9 +4,9 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './frame/Column.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './frame/Column.presets.ts';
-import { PROPS } from './Column.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Column takes: its children, and a site's HTML attributes. */
 export type ColumnProps = OwnProps< typeof PROPS > &

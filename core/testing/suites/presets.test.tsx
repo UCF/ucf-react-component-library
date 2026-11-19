@@ -20,7 +20,7 @@ import type { PropDefinitions } from '../../hosts/prop-definitions.ts';
 
 type Preset = PresetOf< Record< string, unknown >, unknown >;
 
-// `../../../components/content/card/frame/Card.presets.ts` → `card`.
+// `../../../components/content/card/frame/presets.ts` → `card`.
 const componentOf = ( file: string ) => file.split( '/' )[ 5 ] ?? file;
 
 const byComponent = < T, >( modules: Record< string, T > ) =>
@@ -33,7 +33,7 @@ const byComponent = < T, >( modules: Record< string, T > ) =>
 
 const presetFiles = byComponent(
 	import.meta.glob< { PRESETS: Preset[]; DEFAULT_PRESET: Preset } >(
-		'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
+		'../../../components/{content,live,interactive}/*/frame/presets.ts',
 		{ eager: true }
 	)
 );
@@ -50,7 +50,7 @@ const blockJsons = byComponent(
 );
 const partFiles = byComponent(
 	import.meta.glob< PartDefinitions >(
-		'../../../components/{content,live,interactive}/*/frame/*.parts.ts',
+		'../../../components/{content,live,interactive}/*/frame/parts.ts',
 		{ eager: true, import: 'PARTS' }
 	)
 );
@@ -84,7 +84,7 @@ const asBlocks = ( template: BlockTemplate ): Block[] =>
 
 const definitions = byComponent(
 	import.meta.glob< PropDefinitions >(
-		'../../../components/{content,live,interactive}/*/*.props.ts',
+		'../../../components/{content,live,interactive}/*/props.ts',
 		{
 			eager: true,
 			import: 'PROPS',

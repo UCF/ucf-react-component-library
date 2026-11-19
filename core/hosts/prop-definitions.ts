@@ -1,5 +1,5 @@
 /**
- * Step 2 · every component · the types you describe props with, in {Name}.props.ts.
+ * Step 2 · every component · the types you describe props with, in props.ts.
  *
  * This is our contract with every host; for Puck's own config shape, see puck/types.ts.
  *
