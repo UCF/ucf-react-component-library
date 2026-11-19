@@ -19,7 +19,7 @@ it's for, and what it does:
 | ---- | ------------------------- | --------------- | --------------------------------------- | --------------------------------------------------------------------- |
 | 1    | Decide its kind           | every component | its folder: `components/{kind}/{name}/` | `hosts/wordpress/kind.ts` reads it back from block.json               |
 | 2    | Describe its props        | every component | `props.ts`                              | `hosts/prop-definitions.ts`, `design/compositions.ts`                 |
-| 3    | Describe what goes inside | content         | `frame/parts.ts`, `.presets.ts`         | `frame/types.ts` §1–2                                                 |
+| 3    | Describe what goes inside | content         | `frame/parts.ts`, `frame/presets.ts`    | `frame/types.ts` §1–2                                                 |
 | 4    | Write its markup          | every component | `{Name}.tsx`                            | `frame/types.ts` §3 for content (`FrameProps`); plain React otherwise |
 | 5    | `frame()` it              | content         | the `frame( … )` call in `{Name}.tsx`   | `frame/frame.tsx`, `frame/read-parts.ts`, `frame/render-parts.tsx`    |
 | 6    | Put it in each host       | every component | `hosts/wp/`, `puck/`, `storybook/`      | `hosts/`: builders for content, controls for everyone                 |

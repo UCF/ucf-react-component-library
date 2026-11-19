@@ -453,7 +453,7 @@ import { DegreeFinder } from '@ucf/components/degree-finder';
 The Puck config (`hosts/puck/config.tsx`) is a plain object with one field, the degree
 type. The API root and search page are site settings, not something an editor picks per page.
 
-Unlike the Card, the Degree Finder isn't built with `frame()` and has no `.props.ts` file.
+Unlike the Card, the Degree Finder isn't built with `frame()` and has no `props.ts` file.
 Its `block.json` attribute and its Puck field are written by hand, and
 `core/testing/suites/parity.test.tsx` checks they name the same props.
 
