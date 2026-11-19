@@ -18,6 +18,7 @@ import {
 	sidesTop,
 	starFilled,
 	stretchFullWidth,
+	tableOfContents,
 } from '@wordpress/icons';
 
 export const ICONS: Record< string, JSX.Element > = {
@@ -34,4 +35,5 @@ export const ICONS: Record< string, JSX.Element > = {
 	sidesTop,
 	starFilled,
 	stretchFullWidth,
+	tableOfContents,
 };

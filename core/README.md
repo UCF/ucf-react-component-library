@@ -94,6 +94,7 @@ hosts/                       each environment, and EVERY component's props
     controls/
       prop-control.tsx    6  ★ EVERY: one prop → its sidebar control (FieldControl)
       list-control.tsx    6    EVERY: a list prop as a token field
+      links-control.tsx   6    EVERY: a links prop as a text field and a Section picker per link
     icons.ts              6    every icon a block or preset names
     parts-to-blocks.ts    6    CONTENT: parts → core blocks
     block.tsx             6  ★ CONTENT: the whole block: §1 sidebar · §2 edit · §3 save · §4 settings

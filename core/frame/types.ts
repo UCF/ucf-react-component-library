@@ -219,7 +219,7 @@ export type ComponentDefinition<
 	Props extends PropDefinitions,
 	Parts extends PartDefinitions,
 	// WHY its own parameter: kept exact (`as const`), the presets type the names and content a
-	// site may pass (react/frame.tsx).
+	// site may pass (frame.tsx).
 	Presets extends readonly Preset< PropsOf< Props >, PartOf< Parts > >[] =
 		readonly Preset< PropsOf< Props >, PartOf< Parts > >[],
 > = {

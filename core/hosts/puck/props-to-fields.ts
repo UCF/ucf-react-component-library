@@ -6,17 +6,22 @@
  */
 
 import { inHost, type PropsIn } from '../read-props.ts';
-import type { PropDefinition, PropDefinitions } from '../prop-definitions.ts';
+import type {
+	Link,
+	PropDefinition,
+	PropDefinitions,
+} from '../prop-definitions.ts';
 import { listField } from './list-field.tsx';
 import type {
+	PuckArrayField,
 	PuckCustomField,
 	PuckFieldFor,
 	PuckScalarField,
 } from './types.ts';
 
 /**
- * Prop definitions as Puck fields: radio buttons or a select for a choice, a text field otherwise,
- * for every prop Puck has.
+ * Prop definitions as Puck fields: radio buttons or a select for a choice, checkboxes for a list,
+ * Puck's own array field for links, a text field otherwise, for every prop Puck has.
  *
  * @param definitions A component's prop definitions.
  */
@@ -33,7 +38,7 @@ export function puckFields< Props extends PropDefinitions >(
 			.map(
 				( [ key, definition ] ): [
 					string,
-					PuckScalarField | PuckCustomField< readonly string[] >,
+					ReturnType< typeof fieldOf >,
 				] => [ key, fieldOf( definition ) ]
 			)
 	) as never;
@@ -46,9 +51,24 @@ export function puckFields< Props extends PropDefinitions >(
  */
 function fieldOf(
 	definition: PropDefinition
-): PuckScalarField | PuckCustomField< readonly string[] > {
+):
+	| PuckScalarField
+	| PuckCustomField< readonly string[] >
+	| PuckArrayField< Link > {
 	if ( definition.type === 'list' ) {
 		return listField( definition );
+	}
+	if ( definition.type === 'links' ) {
+		return {
+			type: 'array',
+			label: definition.label,
+			arrayFields: {
+				label: { type: 'text', label: 'Text' },
+				href: { type: 'text', label: 'Anchor (#section)' },
+			},
+			defaultItemProps: { label: '', href: '' },
+			getItemSummary: ( link ) => link.label || link.href || 'New link',
+		};
 	}
 	return definition.type === 'choice'
 		? {

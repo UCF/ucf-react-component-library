@@ -166,14 +166,15 @@ Good enough to build on today (architecture.md, "Tests"). Missing, in the order 
 **Core's text blocks as primitives, for Puck** (WordPress keeps the core blocks). Each one's CSS
 reproduces what the theme renders for the core block, measured on a page of every style, then
 becomes the theme's through `scripts/core-css.mjs`. Built and mapped: Separator, Code, Quote,
-Pullquote, List and Table, in `dist/theme/_core-blocks.scss`.
+Pullquote, List, Table and Accordion, in `dist/theme/_core-blocks.scss`.
 
 Next: the theme loads it (`tools/sync-tokens.js` copies it, `main.scss` uses it where it uses
-`lists`) in place of `src/scss/_lists.scss`, `_table.scss`, `_quote.scss` and the
-`.wp-block-separator` rule in `_base.scss`. Checked by compiling a copy of the theme's stylesheet
+`lists`) in place of `src/scss/_lists.scss`, `_table.scss`, `_quote.scss`, the
+`.wp-block-separator` rule in `_base.scss` and the Accordion half of `_accordion.scss` (its
+Details half stays). Checked by compiling a copy of the theme's stylesheet
 that way and diffing every computed style of these blocks against the theme's own, on the style
-guide and the admissions pages at 1440px and 390px: Lists, plain Tables, the Pullquote and the
-default and Wide separators come out the same. Show Jim first, with the Button (below). What
+guide and the admissions pages at 1440px and 390px: Lists, plain Tables, the Pullquote, the
+default and Wide separators and the FAQ's Accordion, closed, open and hovered, come out the same. Show Jim first, with the Button (below). What
 changes in the theme:
 
 - **The Quote's marks:** larger and fitted to the words.
@@ -236,13 +237,24 @@ Components are built from primitives in `components/primitives/` (architecture.m
 1. **Cover / Hero frame:** media, scrim, height, split, patterns inside.
 1. **Lock core down** in the plugin: the allowed block list, and core's design controls off.
    Do it alongside the next primitive.
+1. **Accordion** (built, for Puck and React sites; WordPress editors place core Accordion).
+   Still to do:
+
+    - Core Accordion's other settings: `autoclose` (one item open at a time), `showIcon`,
+      `iconPosition`, `openByDefault` on an item, and `headingLevel` on the Accordion for every
+      item, in place of each item's own. The first two need a yes/no prop type.
+    - In Puck, an Accordion Item can be placed outside an Accordion.
+    - Details, the design system's plain disclosure (core Details in the theme), sharing the
+      marker.
+
 1. **Heading and Paragraph** (built, for the frames' Puck templates). Their rules copy
    the values in `tokens/elements.json` (`SYNC:`); generate their CSS from it, as elements.css
    is. Decide whether Paragraph needs a Lead size.
 
 ## Section
 
-**On hold: don't add settings to the Section yet.** UCF will likely build on Pantheon's P1
+**On hold: don't add settings to the Section yet,** besides its Puck-only `anchor`, which the
+Section Nav needs. UCF will likely build on Pantheon's P1
 starter kit (Next.js 16, Puck 0.21, Tailwind v4), and the Section should match its base layout
 blocks. Compare the two first. Also check our configs against Puck 0.21 (the type test pins
 0.24), and that Tailwind's reset doesn't override `ucf.css` and `elements.css`.
@@ -254,6 +266,17 @@ blocks. Compare the two first. Also check our configs against Puck 0.21 (the typ
   `tools/sync-tokens.js`, so the theme fails while its `theme.json` widths disagree.
 - **What may go inside.** Decide whether a Section may hold another Section, and whether to
   limit it to UCF blocks (`allowedBlocks`, and Puck's `allow`).
+
+## Section Nav
+
+- **Check it in a running WordPress.** Nothing has run it in an editor yet. Insert one on a page whose
+  Sections have HTML anchors: it should fill itself; "Update from sections" should keep renamed text;
+  each link's Section picker should list the page's anchored Sections (it reads them through a
+  React context, which must reach the sidebar's Fill); a saved post should reload with no "unexpected or invalid content" (`getBlocks()`). Check that it
+  spans the page and sticks in the block theme, and that its viewScript loads: `position: sticky` stops working under an ancestor with `overflow`
+  set.
+- **The admin bar covers it** for signed-in users: it sticks at `top: 0`, under WordPress's bar.
+- **A `README.md`**, as the Card has.
 
 ## Element styles
 

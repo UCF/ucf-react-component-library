@@ -11,19 +11,20 @@ import {
 	TextareaControl,
 } from '@wordpress/components';
 
-import type { PropDefinition } from '../../prop-definitions.ts';
+import type { Link, PropDefinition } from '../../prop-definitions.ts';
+import { LinksControl } from './links-control.tsx';
 import { ListControl } from './list-control.tsx';
 
 type Props = {
 	definition: PropDefinition;
-	/** The prop's value: a string, or a list prop's values. */
+	/** The prop's value: a string, a list prop's values, or a links prop's links. */
 	value: unknown;
-	onChange: ( value: string | string[] ) => void;
+	onChange: ( value: string | string[] | Link[] ) => void;
 };
 
 /**
- * Tokens for a list, radio buttons or a select for a choice, a text box for multiline text, a
- * text field otherwise.
+ * Tokens for a list, a field per link for links, radio buttons or a select for a choice, a text
+ * box for multiline text, a text field otherwise.
  *
  * @param props            The prop's definition, its value, and what to call when it changes.
  * @param props.definition The prop's definition (its field: label, help, control, options).
@@ -34,6 +35,15 @@ export function FieldControl( { definition, value, onChange }: Props ) {
 	if ( definition.type === 'list' ) {
 		return (
 			<ListControl
+				definition={ definition }
+				value={ Array.isArray( value ) ? value : [] }
+				onChange={ onChange }
+			/>
+		);
+	}
+	if ( definition.type === 'links' ) {
+		return (
+			<LinksControl
 				definition={ definition }
 				value={ Array.isArray( value ) ? value : [] }
 				onChange={ onChange }

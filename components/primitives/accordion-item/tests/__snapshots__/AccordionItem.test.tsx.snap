@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AccordionItem > renders the same in WordPress and React: a question at h2 1`] = `"<div class="ucf-c ucf-c-accordion-item"><h2 class="ucf-c-accordion-item__heading"><button type="button" class="ucf-c-accordion-item__toggle"><span class="ucf-c-accordion-item__title">Can I change my major after I am admitted?</span><span class="ucf-c-accordion-item__icon" aria-hidden="true"></span></button></h2><div class="ucf-c-accordion-item__panel"><p>Usually yes, through a change-of-major process.</p></div></div>"`;
+
+exports[`AccordionItem > renders the same in WordPress and React: defaults 1`] = `"<div class="ucf-c ucf-c-accordion-item"><h3 class="ucf-c-accordion-item__heading"><button type="button" class="ucf-c-accordion-item__toggle"><span class="ucf-c-accordion-item__title">Question</span><span class="ucf-c-accordion-item__icon" aria-hidden="true"></span></button></h3><div class="ucf-c-accordion-item__panel"><p>Usually yes, through a change-of-major process.</p></div></div>"`;
+
+exports[`AccordionItem > renders the same in WordPress and React: with an id and a class 1`] = `"<div id="majors" class="is-featured ucf-c ucf-c-accordion-item"><h3 class="ucf-c-accordion-item__heading"><button type="button" class="ucf-c-accordion-item__toggle"><span class="ucf-c-accordion-item__title">Question</span><span class="ucf-c-accordion-item__icon" aria-hidden="true"></span></button></h3><div class="ucf-c-accordion-item__panel"><p>Usually yes, through a change-of-major process.</p></div></div>"`;

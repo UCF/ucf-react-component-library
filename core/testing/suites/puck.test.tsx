@@ -16,7 +16,10 @@ import type { ComponentConfig } from '@puckeditor/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
+import sectionNav from '@/components/content/section-nav/hosts/puck/config';
 import degreeList from '@/components/live/degree-list/hosts/puck/config';
+import accordionItem from '@/components/primitives/accordion-item/hosts/puck/config';
+import accordion from '@/components/primitives/accordion/hosts/puck/config';
 import button from '@/components/primitives/button/hosts/puck/config';
 import code from '@/components/primitives/code/hosts/puck/config';
 import column from '@/components/primitives/column/hosts/puck/config';
@@ -76,6 +79,9 @@ const CONFIGS = {
 	List: list,
 	Table: table,
 	'Degree List': degreeList,
+	'Section Nav': sectionNav,
+	Accordion: accordion,
+	'Accordion Item': accordionItem,
 };
 
 // The type check. WHY one line per config: each is its own Props, and a mismatch then names
@@ -99,6 +105,9 @@ pullquote satisfies ComponentConfig< PropsOf< typeof pullquote > >;
 list satisfies ComponentConfig< PropsOf< typeof list > >;
 table satisfies ComponentConfig< PropsOf< typeof table > >;
 degreeList satisfies ComponentConfig< PropsOf< typeof degreeList > >;
+sectionNav satisfies ComponentConfig< PropsOf< typeof sectionNav > >;
+accordion satisfies ComponentConfig< PropsOf< typeof accordion > >;
+accordionItem satisfies ComponentConfig< PropsOf< typeof accordionItem > >;
 
 // What Puck adds to every render call (PuckComponent in @puckeditor/core).
 const puckProps = {

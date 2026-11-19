@@ -115,6 +115,8 @@ describe( 'the text primitives as core blocks', () => {
 			'pullquote',
 			'separator',
 			'code',
+			'accordion',
+			'accordion-item',
 		] ) {
 			const css = coreCss( tokens, name );
 			expect( css ).toContain( `.wp-block-${ name }` );
@@ -164,5 +166,51 @@ describe( 'the text primitives as core blocks', () => {
 		expect( table ).toContain(
 			'background-color: var(--ucf-surface, var(--wp--preset--color--white));'
 		);
+	} );
+} );
+
+describe( 'the Accordion as core Accordion', () => {
+	const item = coreCss( tokens, 'accordion-item' );
+
+	test( 'maps the group, and every part of an item to core’s Item, Heading and Panel', () => {
+		expect( coreCss( tokens, 'accordion' ) ).toContain(
+			'.wp-block-accordion {'
+		);
+		for ( const part of [
+			'.wp-block-accordion-heading {',
+			'.wp-block-accordion-heading__toggle {',
+			'.wp-block-accordion-heading__toggle:hover .wp-block-accordion-heading__toggle-title {',
+			'.wp-block-accordion-heading__toggle-icon {',
+			'.wp-block-accordion-panel {',
+		] ) {
+			expect( item ).toContain(
+				`.wp-block-accordion-item.wp-block-accordion-item ${ part }`
+			);
+		}
+		expect( item ).not.toMatch( /ucf-c-|\[data-|--ucf-c-|--ucf-font-/ );
+	} );
+
+	// UPSTREAM: core turns an open item's icon with (0,4,0); ours must outrank it.
+	test( 'puts the open state on core’s `is-open`, above core’s rotation', () => {
+		expect( item ).toMatch(
+			/\.wp-block-accordion-item\.wp-block-accordion-item\.is-open > \.wp-block-accordion-heading \.wp-block-accordion-heading__toggle-icon \{[^}]*transform: none;/
+		);
+	} );
+
+	test( 'keeps an element’s own attributes, and the items’ zero margins', () => {
+		expect( item ).toContain( '.wp-block-accordion-panel[hidden] {' );
+		expect( item ).toMatch(
+			/\.wp-block-accordion-item\.wp-block-accordion-item \{[^}]*margin-block: 0;/
+		);
+	} );
+
+	test( 'fails on a part core has no class for', () => {
+		expect( () =>
+			coreCss(
+				tokens,
+				'accordion-item',
+				'.ucf-c-accordion-item .ucf-c-accordion-item__badge { color: red; }'
+			)
+		).toThrow( /no core class for "__badge"/ );
 	} );
 } );

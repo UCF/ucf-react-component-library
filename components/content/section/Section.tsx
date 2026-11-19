@@ -25,6 +25,7 @@ function SectionMarkup( {
 	composition = PROPS.composition.default,
 	width = PROPS.width.default,
 	spacing = PROPS.spacing.default,
+	anchor = PROPS.anchor.default,
 	children,
 	className,
 	area,
@@ -33,6 +34,8 @@ function SectionMarkup( {
 	return (
 		<section
 			{ ...props }
+			// WHY only when set: in WordPress the `id` comes in `props`, from its own anchor.
+			{ ...( anchor ? { id: anchor } : {} ) }
 			className={ [
 				className,
 				'ucf-section',

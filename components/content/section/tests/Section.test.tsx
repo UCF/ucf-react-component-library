@@ -21,6 +21,8 @@ const cases: Record< string, SectionProps > = {
 	},
 	compact: { spacing: 'compact' },
 	'with an id and a class': { id: 'programs', className: 'is-featured' },
+	// Puck's HTML anchor field.
+	'with an anchor': { anchor: 'tuition-and-aid' },
 };
 
 describe( 'Section', () => {

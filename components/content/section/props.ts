@@ -49,6 +49,19 @@ export const PROPS = {
 		],
 		default: 'default',
 	},
+	/**
+	 * Its `id`, so links like `#apply` can jump to it.
+	 * WHY Puck only: WordPress has its own anchor support; an attribute here would break
+	 * validation of saved Sections.
+	 * SYNC: named like WordPress's attribute, so content moves between hosts.
+	 */
+	anchor: {
+		type: 'text',
+		label: 'HTML anchor',
+		help: 'A word or two with hyphens, no spaces (tuition-and-aid). Link to it as #tuition-and-aid.',
+		hosts: [ 'puck' ],
+		default: '',
+	},
 } as const satisfies PropDefinitions;
 
 /** The props above, typed: `width` is `'default' | 'constrained' | 'wide'`, and so on. */

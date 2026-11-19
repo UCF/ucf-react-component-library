@@ -32,8 +32,12 @@ import ImageEdit, {
 } from '@/components/primitives/image/hosts/wp/edit';
 import type { Areas, Ported, PartDefinitions } from '../../frame/types.ts';
 import { resolveParts } from '../../frame/read-parts.ts';
-import { mediaProps, panelsOf } from '../read-props.ts';
-import type { PropDefinitions, TextProp } from '../prop-definitions.ts';
+import { inHost, mediaProps, panelsOf } from '../read-props.ts';
+import type {
+	PropDefinition,
+	PropDefinitions,
+	TextProp,
+} from '../prop-definitions.ts';
 import { toBlocks, toExampleBlocks } from './parts-to-blocks.ts';
 import { ICONS } from './icons.ts';
 import { FieldControl } from './controls/prop-control.tsx';
@@ -113,9 +117,10 @@ const looseFrame = ( component: HasFrame ) =>
 	component.port.Frame as ComponentType< Record< string, unknown > >;
 
 /**
- * A block's attributes that are the component's props.
+ * A block's attributes that are the component's props, in WordPress.
  * FIX: WordPress's own (`className`, `anchor`, `align`) would replace useBlockProps()'s class or
  * reach the markup as stray attributes.
+ * WHY skip Puck-only props: the Section's `anchor` would replace the editor's own block `id`.
  *
  * @param attributes  The block's attributes.
  * @param definitions The component's prop definitions.
@@ -125,7 +130,11 @@ const ownProps = (
 	definitions: PropDefinitions
 ): Attributes =>
 	Object.fromEntries(
-		Object.entries( attributes ).filter( ( [ key ] ) => key in definitions )
+		Object.entries( attributes ).filter(
+			( [ key ] ) =>
+				key in definitions &&
+				inHost( definitions[ key ] as PropDefinition, 'wp' )
+		)
 	);
 
 /** The block being edited, for an area's element (the Hero's image picker). */

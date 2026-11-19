@@ -1,0 +1,10 @@
+/*
+ * CONTEXT: the Accordion's styles, for every host. The items' are the Accordion Item's.
+ *
+ * SPEC: core Accordion as the UCF theme renders it (src/scss/_accordion.scss there): a hairline
+ * in `line-strong` above the first item; each item draws the one below it.
+ * SYNC: scripts/core-css.mjs rewrites this for core Accordion, the theme's copy.
+ */
+.ucf-c-accordion {
+	border-top: var(--ucf-custom-border-hairline) solid var(--ucf-c-line-strong);
+}
