@@ -99,11 +99,11 @@ buckets has its own scaffold (`npm run new:component -- --kind live`) and its ow
 
 **A live component's two copies,** and what keeps them the same:
 
-| In JavaScript                     | In PHP (WordPress)            | Compared by                 |
-| --------------------------------- | ----------------------------- | --------------------------- |
-| `client.ts`: fetch, clean up data | `integrations/wp/client.php`  | `tests/{Name}.php.test.tsx` |
-| `{Name}.tsx`: the markup          | `integrations/wp/render.php`  | `tests/{Name}.php.test.tsx` |
-| `utils/`: helpers for the markup  | `integrations/wp/helpers.php` | the same test               |
+| In JavaScript                     | In PHP (WordPress)     | Compared by                 |
+| --------------------------------- | ---------------------- | --------------------------- |
+| `client.ts`: fetch, clean up data | `hosts/wp/client.php`  | `tests/{Name}.php.test.tsx` |
+| `{Name}.tsx`: the markup          | `hosts/wp/render.php`  | `tests/{Name}.php.test.tsx` |
+| `utils/`: helpers for the markup  | `hosts/wp/helpers.php` | the same test               |
 
 **`render.php` is the markup, written as a template:** it fetches at the top, then the HTML,
 with `<?php echo esc_html( … ); ?>` where values go, so a WordPress developer finds the markup
@@ -173,8 +173,9 @@ One name per component, spelled the same way in every layer:
 components/{bucket}/{name}/
   {Name}.tsx             the component: props in, markup out (the markup)
   {Name}.props.ts        its props: each one's type, values, default and field (below)
-  {Name}.parts.ts        frames: the content placed inside, each part's kind and class
-  {Name}.presets.ts      frames with designs: named combinations of props and parts
+  frame/                 frames only (built with frame()):
+    {Name}.parts.ts      the content placed inside, each part's kind and class
+    {Name}.presets.ts    named combinations of props and parts
   index.ts               what the npm package exports for it
   style.css              reads --ucf-* only
   README.md              its object model, filled in
@@ -184,7 +185,7 @@ components/{bucket}/{name}/
   sample-client.ts       interactive components: the same interface with no network
   sample-data.ts         live components: sample data for its stories and tests
   types.ts
-  integrations/          where the component runs, one folder per environment:
+  hosts/                 where the component runs, one folder per environment:
     wp/                  the WordPress adapter: block.json, index.tsx, edit.tsx, and save.tsx
                          (content), render.php + client.php + helpers.php (live), or
                          render.php + view.tsx (interactive)
@@ -208,16 +209,16 @@ every name (block names, `@ucf/components/{name}`, plugin.json): a component tha
 moves folder without breaking a site. Names are unique across buckets; scripts/plugins.cjs
 (`componentDirs()`) finds a component by name and fails on a duplicate.
 
-WHY one `integrations/` folder: the top level then holds what the component _is_ (markup,
+WHY one `hosts/` folder: the top level then holds what the component _is_ (markup,
 props, parts, presets, styles), and everything about _where it runs_ is bundled in one place.
 `wp/` and `puck/` are the component's **adapters** (the word list below). WHY `style.css`, not
 `{Name}.css`: WordPress's build (wp-scripts) makes only a
 file named `style.css` the block's front-end stylesheet; any other name becomes editor-only.
 
-**A component's `integrations/` mirrors `core/hosts/`.** Each of its folders holds the
+**A component's `hosts/` mirrors `core/hosts/`.** Each of its folders holds the
 component's own half (its block, its Puck config, its stories); the matching folder in
 `core/hosts/` holds the half every component shares. Something about WordPress is in one of the
-two: `components/content/card/integrations/wp/` for the Card, `core/hosts/wordpress/` for every
+two: `components/content/card/hosts/wp/` for the Card, `core/hosts/wordpress/` for every
 component.
 
 **Imports that leave a component's folder start from the repo root, `@/`.** So
@@ -250,7 +251,10 @@ Storybook read it all (`hosts/`), and the tests every component runs (`testing/`
 
 **One file per kind of definition.** The props are what an editor sets on the component, the
 parts are what goes inside it, and the presets are named combinations of the two. Each changes
-for its own reason (a new setting, a new look, a new design), so each has its own file. There is
+for its own reason (a new setting, a new look, a new design), so each has its own file. WHY the
+parts and presets in `frame/`: only a frame has them, so the folder marks a component built with
+`frame()`; every component has props, so they stay at the top (core/testing/suites/parity.test.tsx
+fails when the folder and the `frame()` call disagree). There is
 no separate sample-props file: what a new one starts with is the defaults (in the props), and
 what an example looks like is a preset.
 
@@ -271,9 +275,9 @@ Component
 ├─ {Name}.props.ts      PROPS: each prop's key · type · options · default · field
 │                       types: text, choice, number, list
 │                       field: label · help · control · panel · hosts
-├─ {Name}.parts.ts      PARTS: each part (title, eyebrow, image…): its kind and its class
-│                       kinds (image, heading, text, link, button): core/frame/types.ts
-└─ {Name}.presets.ts    named combinations of the two
+├─ frame/{Name}.parts.ts    PARTS: each part (title, eyebrow, image…): its kind and its class
+│                           kinds (image, heading, text, link, button): core/frame/types.ts
+└─ frame/{Name}.presets.ts  named combinations of the two
     └─ presets          Preset: name · title · description · wpIcon · props · parts
                         a part in a preset: { part: 'title', text, level }
                         DEFAULT_PRESET: what a new one starts with, and the inserter's preview
@@ -325,7 +329,7 @@ know:
 | **host**     | a platform that renders components: WordPress, Puck, Next                       |                                             |
 
 Other names for the same things stay where they belong: WordPress calls a preset a
-**variation** and a prop an **attribute** (inside `integrations/wp/`); UCF's pages call a preset a
+**variation** and a prop an **attribute** (inside `hosts/wp/`); UCF's pages call a preset a
 **design** (in comments that cite them, and in editor-facing text). A prop's key is its block
 attribute, so a prop named `variant` (the Card's Look) keeps that name.
 
@@ -339,7 +343,7 @@ without untangling it from the others.
 **There is no `next/` adapter.** Next's pieces go in through slots (below), so the library holds
 no Next code. A host gets an adapter only when it needs something besides props, like Puck's
 config object or WordPress's block files. WHY "adapter" for the code and "host" for the
-platform: `integrations/wp/` is not WordPress, it is the code that plugs the core into WordPress.
+platform: `hosts/wp/` is not WordPress, it is the code that plugs the core into WordPress.
 
 ## What a component exports
 
@@ -440,10 +444,10 @@ content, so in WordPress it holds core blocks (see "Frames").
   fields, its story controls and their defaults are built from its props, as a content
   component's are; its sample is its props' defaults. The Image's sample picture is also the
   stand-in wherever a component needs one (`IMAGE_SAMPLE`). It has **no WordPress block**:
-  WordPress editors use core's equivalent. Instead it has `integrations/wp/edit.tsx`, its editing
+  WordPress editors use core's equivalent. Instead it has `hosts/wp/edit.tsx`, its editing
   version, which our blocks' `edit()` renders where their `save()` renders the plain primitive.
   With no block, its `style.css` reaches WordPress only through each block that uses it: that
-  block's `integrations/wp/index.tsx` imports it before the component's own `style.css`
+  block's `hosts/wp/index.tsx` imports it before the component's own `style.css`
   (`core/testing/suites/parity.test.tsx` fails when one is missing).
 - **Its settings are core's.** Props are named after the equivalent core block's attributes
   (the Button's `text`, `url`, `linkTarget`, and core's Fill and Outline styles), and its editing
@@ -464,7 +468,7 @@ content, so in WordPress it holds core blocks (see "Frames").
 - **A primitive with no content of its own stays a plain component** (the Button, Heading,
   Image, Paragraph): it takes settings and renders one element, with nothing for a host to fill,
   so it needs no `frame()`. Its editing version for our blocks stays its own
-  `integrations/wp/edit.tsx`.
+  `hosts/wp/edit.tsx`.
 - **WHY primitives rather than each component drawing its own:** one Button in every component
   is what stops buttons and inputs drifting apart.
 - **The cost:** a component saves its primitives' markup inside its own. Changing a primitive's
@@ -576,18 +580,18 @@ has goes in its own file).
 Each environment has one translator that turns any framed component into its
 integration, reading its port:
 
-| Environment | Translator                                                                      | A component's file becomes                                        |
-| ----------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| React site  | `frame()`, core/frame/frame.tsx                                                 | `const Card = frame( CardMarkup, { … } )` in Card.tsx             |
-| Puck        | `puckConfig()`, core/hosts/puck/config.tsx                                      | `puckConfig( Card )` in integrations/puck/config.tsx              |
-| WordPress   | `blockEdit()`, `blockSave()`, `blockSettings()`, core/hosts/wordpress/block.tsx | one line each in integrations/wp/edit.tsx, save.tsx and index.tsx |
+| Environment | Translator                                                                      | A component's file becomes                                 |
+| ----------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| React site  | `frame()`, core/frame/frame.tsx                                                 | `const Card = frame( CardMarkup, { … } )` in Card.tsx      |
+| Puck        | `puckConfig()`, core/hosts/puck/config.tsx                                      | `puckConfig( Card )` in hosts/puck/config.tsx              |
+| WordPress   | `blockEdit()`, `blockSave()`, `blockSettings()`, core/hosts/wordpress/block.tsx | one line each in hosts/wp/edit.tsx, save.tsx and index.tsx |
 
 WHY one translator per environment, not one file for all: the component and its port are plain
 data and React, safe to import anywhere; WordPress's code must never reach the npm package,
 nor Puck's the plugins. WHY translators, not each component's own adapter code: a fix or a new
 editing feature lands in every component at once.
 
-Every component keeps its `integrations/` folder, with each environment's usual files: for a
+Every component keeps its `hosts/` folder, with each environment's usual files: for a
 block, `block.json`, `index.tsx`, `edit.tsx` and `save.tsx`, each a one-line call to the
 translator. WHY not generate them away: they are signposts. A WordPress developer finds the
 files WordPress documents, where they expect them, and `save.tsx` is where to look for what a
@@ -602,7 +606,7 @@ its own. An interactive component's folder also holds what is truly its own (`re
 A frame has three layers, designed from the React render out:
 
 ```
-integrations   each environment stores one layer: data, or open content
+hosts          each environment stores one layer: data, or open content
      │
 content        preset + content → the preset's parts, filled        (core/frame/frame.tsx)
      │ children
@@ -652,7 +656,7 @@ whose blocks it ships. `build:plugins` builds each into `plugins/{plugin}/build/
 | `ucf-events`  | `ucf-events/event-list`                                |
 
 - **The plugin owns its list,** so a plugin's contents are readable in one place. The build
-  fails if a component with an `integrations/wp/` is in no plugin or in two.
+  fails if a component with an `hosts/wp/` is in no plugin or in two.
 - **Each block is namespaced by its plugin,** so blocks from different plugins never clash and
   the name says where to look.
 - **`plugins/shared/shared.php` is copied into every plugin** as `build/shared.php`, so each
@@ -800,7 +804,7 @@ it makes those blocks invalid. So:
 
 1. Treat it as a major version.
 2. Copy the old markup into a frozen component (`Highlight.v1.tsx`) and add a `deprecated` entry
-   in `integrations/wp/index.tsx` that renders it.
+   in `hosts/wp/index.tsx` that renders it.
 3. Only then update the snapshot (`npx vitest run -u`).
 
 `npm test` fails on any markup change so this can't happen by accident. Interactive components have

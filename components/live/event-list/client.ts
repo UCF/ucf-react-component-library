@@ -5,7 +5,7 @@
  *
  * Used wherever the events are fetched in JavaScript: a Next Server Component, the WordPress
  * editor's preview, Puck. On a WordPress page, PHP fetches instead, with the same rules:
- * SYNC: integrations/wp/client.php, step for step. tests/EventList.php.test.tsx runs both on
+ * SYNC: hosts/wp/client.php, step for step. tests/EventList.php.test.tsx runs both on
  * the same feed and fails when their markup differs.
  *
  * UPSTREAM: the feed is UNL Events (events.ucf.edu); a calendar's `…/feed.json` is a JSON array.

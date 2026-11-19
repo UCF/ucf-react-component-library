@@ -13,8 +13,8 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './Highlight.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Highlight.presets.ts';
+import { PARTS } from './frame/Highlight.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/Highlight.presets.ts';
 import { PROPS } from './Highlight.props.ts';
 
 /** Everything the Highlight takes: its props, `preset`, `content`, and a site's HTML attributes. */

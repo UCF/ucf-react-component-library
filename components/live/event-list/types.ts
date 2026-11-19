@@ -1,6 +1,6 @@
 /**
  * An event as the Event List shows it: the feed's fields it uses, cleaned up by client.ts (and
- * its PHP copy, integrations/wp/client.php).
+ * its PHP copy, hosts/wp/client.php).
  *
  * WHY not `Event`: that is the DOM's event type, in scope everywhere.
  */

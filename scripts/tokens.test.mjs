@@ -255,8 +255,8 @@ describe( 'component layer', () => {
 						file.endsWith( '.tsx' ) &&
 						! file.includes( 'stories' ) &&
 						! file.includes( 'test' ) &&
-						// The component's own files, not its integrations (WordPress, Puck, stories).
-						! /^integrations\//.test( file )
+						// The component's own files, not its hosts (WordPress, Puck, stories).
+						! /^hosts\//.test( file )
 				)
 				.map( ( file ) =>
 					readFileSync( path.join( root, folder, file ), 'utf8' )

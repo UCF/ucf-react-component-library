@@ -15,15 +15,15 @@ it's for, and what it does:
 /** Step 6 · WordPress · every component · one prop → its sidebar control (FieldControl). */
 ```
 
-| Step | What you do               | Who             | You write                                 | The core's part                                                       |
-| ---- | ------------------------- | --------------- | ----------------------------------------- | --------------------------------------------------------------------- |
-| 1    | Decide its kind           | every component | its folder: `components/{kind}/{name}/`   | `hosts/wordpress/kind.ts` reads it back from block.json               |
-| 2    | Describe its props        | every component | `{Name}.props.ts`                         | `hosts/prop-definitions.ts`, `design/compositions.ts`                 |
-| 3    | Describe what goes inside | content         | `{Name}.parts.ts`, `{Name}.presets.ts`    | `frame/types.ts` §1–2                                                 |
-| 4    | Write its markup          | every component | `{Name}.tsx`                              | `frame/types.ts` §3 for content (`FrameProps`); plain React otherwise |
-| 5    | `frame()` it              | content         | the `frame( … )` call in `{Name}.tsx`     | `frame/frame.tsx`, `frame/read-parts.ts`, `frame/render-parts.tsx`    |
-| 6    | Put it in each host       | every component | `integrations/wp/`, `puck/`, `storybook/` | `hosts/`: builders for content, controls for everyone                 |
-| 7    | Check it                  | every component | `tests/`                                  | `testing/`                                                            |
+| Step | What you do               | Who             | You write                               | The core's part                                                       |
+| ---- | ------------------------- | --------------- | --------------------------------------- | --------------------------------------------------------------------- |
+| 1    | Decide its kind           | every component | its folder: `components/{kind}/{name}/` | `hosts/wordpress/kind.ts` reads it back from block.json               |
+| 2    | Describe its props        | every component | `{Name}.props.ts`                       | `hosts/prop-definitions.ts`, `design/compositions.ts`                 |
+| 3    | Describe what goes inside | content         | `frame/{Name}.parts.ts`, `.presets.ts`  | `frame/types.ts` §1–2                                                 |
+| 4    | Write its markup          | every component | `{Name}.tsx`                            | `frame/types.ts` §3 for content (`FrameProps`); plain React otherwise |
+| 5    | `frame()` it              | content         | the `frame( … )` call in `{Name}.tsx`   | `frame/frame.tsx`, `frame/read-parts.ts`, `frame/render-parts.tsx`    |
+| 6    | Put it in each host       | every component | `hosts/wp/`, `puck/`, `storybook/`      | `hosts/`: builders for content, controls for everyone                 |
+| 7    | Check it                  | every component | `tests/`                                | `testing/`                                                            |
 
 ## Which steps are yours?
 
@@ -172,7 +172,7 @@ returns the `Card` a React site imports, with `Card.port` attached. Every builde
 the port, which is why the Card's own WordPress files are one line each:
 
 ```ts
-// components/content/card/integrations/wp/edit.tsx
+// components/content/card/hosts/wp/edit.tsx
 export default blockEdit( Card );
 ```
 
@@ -201,14 +201,14 @@ fifth rows: its own `edit.tsx` calls `FieldControl`, and its Puck config calls `
 Content components only. Props are values; **parts** are the content inside a component: its
 title, image, buttons. The Card's `title`:
 
-**Step 3. You describe it** in `Card.parts.ts`, with its part kind and the class that styles it
+**Step 3. You describe it** in `frame/Card.parts.ts`, with its part kind and the class that styles it
 (the types are in `frame/types.ts` §1):
 
 ```ts
 title: { kind: 'heading', className: 'ucf-c-card__title' },
 ```
 
-A preset in `Card.presets.ts` then uses it: a design says which parts it has, in order.
+A preset in `frame/Card.presets.ts` then uses it: a design says which parts it has, in order.
 
 **Step 4. Your markup leaves a space for parts.** `Card.tsx` doesn't render the title itself. It
 opens an **area** called `content`, and whatever the host provides goes there:

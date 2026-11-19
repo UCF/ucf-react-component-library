@@ -83,7 +83,7 @@ export type Preset< Props, Part > = {
 	description: string;
 	/**
 	 * Its icon in WordPress's inserter, by its name in `@wordpress/icons` (the component's
-	 * integrations/wp/index.tsx looks it up): the shape of the preset where it can be.
+	 * hosts/wp/index.tsx looks it up): the shape of the preset where it can be.
 	 */
 	wpIcon: string;
 	/** The props it sets; the rest keep their defaults. */

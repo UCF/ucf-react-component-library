@@ -4,8 +4,8 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './Column.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Column.presets.ts';
+import { PARTS } from './frame/Column.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/Column.presets.ts';
 import { PROPS } from './Column.props.ts';
 
 /** Everything the Column takes: its children, and a site's HTML attributes. */

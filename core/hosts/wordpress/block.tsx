@@ -29,7 +29,7 @@ import { createContext, useContext, type ComponentType } from 'react';
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import ImageEdit, {
 	type ImageValue,
-} from '@/components/primitives/image/integrations/wp/edit';
+} from '@/components/primitives/image/hosts/wp/edit';
 import type { Areas, Ported, PartDefinitions } from '../../frame/types.ts';
 import { resolveParts } from '../../frame/read-parts.ts';
 import { mediaProps, panelsOf } from '../read-props.ts';

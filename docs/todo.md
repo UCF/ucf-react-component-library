@@ -11,7 +11,7 @@ The current goal is a correct development process, not a pipeline.
    (`core/testing/suites/puck.test.tsx`), but nothing renders them in the real Puck editor.
 
     - A small app in `playground/`, with Vite and `@puckeditor/core` as dev dependencies only,
-      so the library itself stays free of Puck. It loads every `integrations/puck/config.tsx`,
+      so the library itself stays free of Puck. It loads every `hosts/puck/config.tsx`,
       opens the Puck editor on a saved sample page, and loads `dist/ucf.css` and the
       compositions.
     - A test that renders each config through Puck's `<Render>` with sample data, so a config

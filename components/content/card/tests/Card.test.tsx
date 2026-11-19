@@ -9,8 +9,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Card, { type CardProps } from '../Card.tsx';
-import { PRESETS, type Preset } from '../Card.presets.ts';
-import { PARTS } from '../Card.parts.ts';
+import { PRESETS, type Preset } from '../frame/Card.presets.ts';
+import { PARTS } from '../frame/Card.parts.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in wp/block.json.

@@ -105,7 +105,7 @@ function assertEveryBlockHasOnePlugin( plugins ) {
 	const dirs = componentDirs();
 	const withBlocks = [ ...dirs ]
 		.filter( ( [ , { dir } ] ) =>
-			existsSync( path.join( dir, 'integrations/wp/block.json' ) )
+			existsSync( path.join( dir, 'hosts/wp/block.json' ) )
 		)
 		.map( ( [ name ] ) => name );
 
@@ -126,7 +126,7 @@ function assertEveryBlockHasOnePlugin( plugins ) {
 		for ( const name of plugin.blocks ) {
 			if ( ! withBlocks.includes( name ) ) {
 				throw new Error(
-					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no integrations/wp/block.json in components/.`
+					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no hosts/wp/block.json in components/.`
 				);
 			}
 		}

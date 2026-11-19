@@ -21,11 +21,11 @@ vi.mock( '../utils/useEvents.ts', () => ( {
 		events: SAMPLE_EVENTS.slice( 0, 2 ),
 	} ),
 } ) );
-vi.mock( '../integrations/wp/settings.ts', () => ( {
+vi.mock( '../hosts/wp/settings.ts', () => ( {
 	editorSettings: () => ( {} ),
 } ) );
 
-const { default: Edit } = await import( '../integrations/wp/edit.tsx' );
+const { default: Edit } = await import( '../hosts/wp/edit.tsx' );
 const { PROPS } = await import( '../EventList.props.ts' );
 const { defaultsIn } = await import( '@/core/hosts/read-props' );
 

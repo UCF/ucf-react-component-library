@@ -1,7 +1,7 @@
 /**
  * The Columns's markup contract: WordPress's serializer and React DOM's give the same HTML, and it
  * matches the snapshot. How it lays out is checked in the browser
- * (integrations/storybook/Columns.stories.tsx, the Layout story).
+ * (hosts/storybook/Columns.stories.tsx, the Layout story).
  */
 import { renderToString } from '@wordpress/element';
 import { renderToStaticMarkup } from 'react-dom/server';

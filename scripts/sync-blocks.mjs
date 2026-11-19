@@ -71,7 +71,7 @@ function components( root ) {
 						file.endsWith( '.props.ts' )
 					)
 				: undefined;
-			const blockJson = path.join( folder, 'integrations/wp/block.json' );
+			const blockJson = path.join( folder, 'hosts/wp/block.json' );
 			return props && existsSync( blockJson )
 				? [ { props: path.join( folder, props ), blockJson } ]
 				: [];

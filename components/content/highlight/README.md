@@ -11,10 +11,10 @@ each change: [docs/first-component.md](../../../docs/first-component.md), "Chang
 ```
 Highlight
 ├─ Highlight.props.ts     rule · contentAlign                            panel "Highlight"
-├─ Highlight.parts.ts     statement · figure · label · detail ·          text
+├─ frame/Highlight.parts.tsstatement · figure · label · detail ·          text
 │                         source · citation
 │                         logo                                           image (keeps its shape)
-└─ Highlight.presets.ts   statement (DEFAULT_PRESET) · key-figure · bracket · side-rule · centered
+└─ frame/Highlight.presets.tsstatement (DEFAULT_PRESET) · key-figure · bracket · side-rule · centered
 ```
 
 | Preset       | Props                  | Parts                       |
@@ -27,14 +27,14 @@ Highlight
 
 ## Files
 
-| File                      | What it holds                                                                                 |
-| ------------------------- | --------------------------------------------------------------------------------------------- |
-| `Highlight.tsx`           | the component: props in, markup out                                                           |
-| `Highlight.props.ts`      | the props: each one's type, values, default and field                                         |
-| `Highlight.parts.ts`      | the parts: each one's kind and the class that styles it                                       |
-| `Highlight.presets.ts`    | the presets, and `DEFAULT_PRESET`                                                             |
-| `style.css`               | the rule, the spacing, and every class in PARTS                                               |
-| `integrations/wp/`        | the block: `block.json`, `index.tsx` (presets as variations, `ICONS`), `edit.tsx`, `save.tsx` |
-| `integrations/puck/`      | `config.tsx` (`withTemplate()`, `withPreset()`)                                               |
-| `integrations/storybook/` | `Highlight.stories.tsx`: each preset, and rows as the UCF pages set them                      |
-| `tests/`                  | `Highlight.test.tsx` (markup)                                                                 |
+| File                         | What it holds                                                                                 |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `Highlight.tsx`              | the component: props in, markup out                                                           |
+| `Highlight.props.ts`         | the props: each one's type, values, default and field                                         |
+| `frame/Highlight.parts.ts`   | the parts: each one's kind and the class that styles it                                       |
+| `frame/Highlight.presets.ts` | the presets, and `DEFAULT_PRESET`                                                             |
+| `style.css`                  | the rule, the spacing, and every class in PARTS                                               |
+| `hosts/wp/`                  | the block: `block.json`, `index.tsx` (presets as variations, `ICONS`), `edit.tsx`, `save.tsx` |
+| `hosts/puck/`                | `config.tsx` (`withTemplate()`, `withPreset()`)                                               |
+| `hosts/storybook/`           | `Highlight.stories.tsx`: each preset, and rows as the UCF pages set them                      |
+| `tests/`                     | `Highlight.test.tsx` (markup)                                                                 |

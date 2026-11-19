@@ -8,7 +8,7 @@
 	// read-props.ts, list-options.ts), and core/frame is what a plain React site imports
 	// (`@ucf/components/react`). core/hosts/wordpress imports @wordpress/*, which only exists
 	// inside WordPress, and wp-scripts builds it into the plugins, as it does each component's
-	// integrations/wp, left out below. core/hosts/storybook and core/testing are never shipped.
+	// hosts/wp, left out below. core/hosts/storybook and core/testing are never shipped.
 	"extends": "./tsconfig.json",
 	// WHY resolveFullPaths: an `@/` import has no ending in the source. tsc-alias turns it into a
 	// relative path in dist/ and adds the `.js` plain Node needs (scripts/build-package.mjs).
@@ -35,9 +35,9 @@
 		"core/hosts/puck/**/*.ts"
 	],
 	// WHY a component's storybook/ whole: its stories may share a helper file
-	// (components/content/card/integrations/storybook/shared.tsx).
+	// (components/content/card/hosts/storybook/shared.tsx).
 	"exclude": [
-		"components/*/*/integrations/wp/**",
+		"components/*/*/hosts/wp/**",
 		"**/storybook/**",
 		"**/*.test.*",
 		"**/*.stories.*"

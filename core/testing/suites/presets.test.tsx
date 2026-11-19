@@ -20,7 +20,7 @@ import type { PropDefinitions } from '../../hosts/prop-definitions.ts';
 
 type Preset = PresetOf< Record< string, unknown >, unknown >;
 
-// `../../../components/content/card/Card.presets.ts` → `card`.
+// `../../../components/content/card/frame/Card.presets.ts` → `card`.
 const componentOf = ( file: string ) => file.split( '/' )[ 5 ] ?? file;
 
 const byComponent = < T, >( modules: Record< string, T > ) =>
@@ -33,24 +33,24 @@ const byComponent = < T, >( modules: Record< string, T > ) =>
 
 const presetFiles = byComponent(
 	import.meta.glob< { PRESETS: Preset[]; DEFAULT_PRESET: Preset } >(
-		'../../../components/{content,live,interactive}/*/*.presets.ts',
+		'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
 		{ eager: true }
 	)
 );
 // WHY eager: importing each block's index.tsx registers it, with its presets as variations.
 import.meta.glob(
-	'../../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	'../../../components/{content,live,interactive}/*/hosts/wp/index.tsx',
 	{ eager: true }
 );
 const blockJsons = byComponent(
 	import.meta.glob< { name: string; title: string } >(
-		'../../../components/{content,live,interactive}/*/integrations/wp/block.json',
+		'../../../components/{content,live,interactive}/*/hosts/wp/block.json',
 		{ eager: true, import: 'default' }
 	)
 );
 const partFiles = byComponent(
 	import.meta.glob< PartDefinitions >(
-		'../../../components/{content,live,interactive}/*/*.parts.ts',
+		'../../../components/{content,live,interactive}/*/frame/*.parts.ts',
 		{ eager: true, import: 'PARTS' }
 	)
 );

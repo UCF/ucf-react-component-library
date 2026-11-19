@@ -16,40 +16,40 @@ import type { ComponentConfig } from '@puckeditor/core';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import degreeList from '@/components/live/degree-list/integrations/puck/config';
-import button from '@/components/primitives/button/integrations/puck/config';
-import code from '@/components/primitives/code/integrations/puck/config';
-import column from '@/components/primitives/column/integrations/puck/config';
-import columns from '@/components/primitives/columns/integrations/puck/config';
-import heading from '@/components/primitives/heading/integrations/puck/config';
-import image from '@/components/primitives/image/integrations/puck/config';
-import paragraph from '@/components/primitives/paragraph/integrations/puck/config';
+import degreeList from '@/components/live/degree-list/hosts/puck/config';
+import button from '@/components/primitives/button/hosts/puck/config';
+import code from '@/components/primitives/code/hosts/puck/config';
+import column from '@/components/primitives/column/hosts/puck/config';
+import columns from '@/components/primitives/columns/hosts/puck/config';
+import heading from '@/components/primitives/heading/hosts/puck/config';
+import image from '@/components/primitives/image/hosts/puck/config';
+import paragraph from '@/components/primitives/paragraph/hosts/puck/config';
 import card, {
 	withTemplate as cardWithTemplate,
 	withPreset as cardWithPreset,
-} from '@/components/content/card/integrations/puck/config';
+} from '@/components/content/card/hosts/puck/config';
 import {
 	DEFAULT_PRESET as DEFAULT_CARD_PRESET,
 	PRESETS as CARD_PRESETS,
-} from '@/components/content/card/Card.presets';
-import degreeFinder from '@/components/interactive/degree-finder/integrations/puck/config';
-import eventList from '@/components/live/event-list/integrations/puck/config';
-import pullquote from '@/components/primitives/pullquote/integrations/puck/config';
-import quote from '@/components/primitives/quote/integrations/puck/config';
-import separator from '@/components/primitives/separator/integrations/puck/config';
-import list from '@/components/primitives/list/integrations/puck/config';
-import table from '@/components/primitives/table/integrations/puck/config';
+} from '@/components/content/card/frame/Card.presets';
+import degreeFinder from '@/components/interactive/degree-finder/hosts/puck/config';
+import eventList from '@/components/live/event-list/hosts/puck/config';
+import pullquote from '@/components/primitives/pullquote/hosts/puck/config';
+import quote from '@/components/primitives/quote/hosts/puck/config';
+import separator from '@/components/primitives/separator/hosts/puck/config';
+import list from '@/components/primitives/list/hosts/puck/config';
+import table from '@/components/primitives/table/hosts/puck/config';
 import hero, {
 	withTemplate as heroWithTemplate,
-} from '@/components/content/hero/integrations/puck/config';
+} from '@/components/content/hero/hosts/puck/config';
 import section, {
 	withTemplate as sectionWithTemplate,
-} from '@/components/content/section/integrations/puck/config';
+} from '@/components/content/section/hosts/puck/config';
 import highlight, {
 	withTemplate as highlightWithTemplate,
 	withPreset as highlightWithPreset,
-} from '@/components/content/highlight/integrations/puck/config';
-import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/Highlight.presets';
+} from '@/components/content/highlight/hosts/puck/config';
+import { PRESETS as HIGHLIGHT_PRESETS } from '@/components/content/highlight/frame/Highlight.presets';
 import { SAMPLE as IMAGE_SAMPLE } from '@/components/primitives/image/Image.props';
 import type { PuckComponentConfig } from '../../hosts/puck/types.ts';
 

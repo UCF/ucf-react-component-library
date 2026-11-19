@@ -4,7 +4,7 @@
  * Service responses.
  *
  * A live block's markup exists twice: DegreeList.tsx (every React host) and
- * integrations/wp/render.php (WordPress, which can't run React on the server), each fed by its
+ * hosts/wp/render.php (WordPress, which can't run React on the server), each fed by its
  * own copy of the service rules (client.ts and client.php). This runs the real PHP under plain
  * `php`, with WordPress's few functions stubbed (core/testing/live.ts), and compares the
  * queries, the cleaned-up programs and the HTML with JavaScript's.
@@ -39,7 +39,7 @@ import { normalizePrograms, programsQuery } from '../client.ts';
 import type { ProgramFilters } from '../types.ts';
 
 const here = path.dirname( fileURLToPath( import.meta.url ) );
-const wp = path.join( here, '../integrations/wp' );
+const wp = path.join( here, '../hosts/wp' );
 const PAGES = [ 0, 50, 100 ].map(
 	( offset ) =>
 		JSON.parse(

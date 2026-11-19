@@ -13,7 +13,7 @@
  * inside (the eyebrow, title, description and buttons P1 has as fields). A new Hero starts with
  * those (DEFAULT_PRESET in Hero.presets.ts), each with the class that styles it (Hero.parts.ts).
  * It has two areas: `content`, the copy, and `media`, the image, where WordPress's editor puts
- * its picker (integrations/wp/edit.tsx). The cost: nothing makes a Hero have a title, and nothing
+ * its picker (hosts/wp/edit.tsx). The cost: nothing makes a Hero have a title, and nothing
  * else can read it as a field.
  *
  * Changed for UCF, and why. Each is a question for the P1 decision:
@@ -40,8 +40,8 @@
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
-import { PARTS } from './Hero.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Hero.presets.ts';
+import { PARTS } from './frame/Hero.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/Hero.presets.ts';
 import { PROPS, type HeroEditableProps } from './Hero.props.ts';
 
 /** Everything the Hero takes: its props, its copy as children, and a site's HTML attributes. */

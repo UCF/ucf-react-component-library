@@ -34,12 +34,12 @@ Card
 │                     contentAlign · contentPosition · aspectRatio   panel "Layout"
 │                     imageSrc (media) · imageAlt · overlay          panel "Background image"
 │                     imageId                                        WordPress only, set by the picker
-├─ Card.parts.ts      image                                          image
+├─ frame/Card.parts.tsimage                                          image
 │                     tag · eyebrow · meta · description             text
 │                     title · display · label                        heading
 │                     link                                           link
 │                     button                                         button
-└─ Card.presets.ts    the data
+└─ frame/Card.presets.tsthe data
     └─ presets        story (DEFAULT_PRESET) · next-step · audience · pathway · media
 ```
 
@@ -53,14 +53,14 @@ Card
 
 ## Files
 
-| File                      | What it holds                                                                                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Card.tsx`                | the component: a plain React component, passed to `frame()` with what the Card is; `Card.port` is what hosts read                                              |
-| `Card.props.ts`           | the props: each one's type, values, default and field                                                                                                          |
-| `Card.parts.ts`           | the parts: each one's kind and the class that styles it                                                                                                        |
-| `Card.presets.ts`         | the data: the presets, and `DEFAULT_PRESET` (what a new Card starts with, and the inserter's preview)                                                          |
-| `style.css`               | the box, the background, and every class in PARTS                                                                                                              |
-| `integrations/wp/`        | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
-| `integrations/puck/`      | `config.tsx`: `puckConfig( Card )`, with `withTemplate()` and `withPreset()`                                                                                   |
-| `integrations/storybook/` | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
-| `tests/`                  | `Card.test.tsx` (markup); its presets are checked by `core/testing/suites/presets.test.tsx`                                                                    |
+| File                    | What it holds                                                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Card.tsx`              | the component: a plain React component, passed to `frame()` with what the Card is; `Card.port` is what hosts read                                              |
+| `Card.props.ts`         | the props: each one's type, values, default and field                                                                                                          |
+| `frame/Card.parts.ts`   | the parts: each one's kind and the class that styles it                                                                                                        |
+| `frame/Card.presets.ts` | the data: the presets, and `DEFAULT_PRESET` (what a new Card starts with, and the inserter's preview)                                                          |
+| `style.css`             | the box, the background, and every class in PARTS                                                                                                              |
+| `hosts/wp/`             | WordPress's usual files, each a one-line call: `block.json`, `index.tsx` (registers it), `edit.tsx` (`blockEdit()`), `save.tsx` (`blockSave()`: what's stored) |
+| `hosts/puck/`           | `config.tsx`: `puckConfig( Card )`, with `withTemplate()` and `withPreset()`                                                                                   |
+| `hosts/storybook/`      | `Card.stories.tsx` (props), `Card.presets.stories.tsx`, `Card.checks.stories.tsx`                                                                              |
+| `tests/`                | `Card.test.tsx` (markup); its presets are checked by `core/testing/suites/presets.test.tsx`                                                                    |

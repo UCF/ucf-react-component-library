@@ -13,8 +13,8 @@
  */
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
-import { PARTS } from './Section.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Section.presets.ts';
+import { PARTS } from './frame/Section.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/Section.presets.ts';
 import { PROPS } from './Section.props.ts';
 
 /** Everything the Section takes: its props, its children, and a site's HTML attributes. */

@@ -28,7 +28,7 @@ import { blockAttributes } from '../../hosts/wordpress/props-to-attributes.ts';
 import { kindOf } from '../../hosts/wordpress/kind.ts';
 
 import.meta.glob(
-	'../../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	'../../../components/{content,live,interactive}/*/hosts/wp/index.tsx',
 	{
 		eager: true,
 	}
@@ -43,7 +43,7 @@ type BlockJson = {
 };
 
 const blockJsons = import.meta.glob< BlockJson >(
-	'../../../components/{content,live,interactive}/*/integrations/wp/block.json',
+	'../../../components/{content,live,interactive}/*/hosts/wp/block.json',
 	{
 		eager: true,
 		import: 'default',
@@ -56,13 +56,13 @@ type AnyPuckConfig = Omit<
 > & { fields: Record< string, PuckField > };
 
 const puckConfigs = import.meta.glob< AnyPuckConfig >(
-	'../../../components/{content,live,interactive}/*/integrations/puck/config.tsx',
+	'../../../components/{content,live,interactive}/*/hosts/puck/config.tsx',
 	{
 		eager: true,
 		import: 'default',
 	}
 );
-// `../../../components/content/highlight/integrations/wp/block.json` → `highlight`.
+// `../../../components/content/highlight/hosts/wp/block.json` → `highlight`.
 const componentOf = ( file: string ) => file.split( '/' )[ 5 ] ?? file;
 
 /**
@@ -111,7 +111,7 @@ const defaultPresets: Record< string, { props: Record< string, unknown > } > =
 	Object.fromEntries(
 		Object.entries(
 			import.meta.glob< { props: Record< string, unknown > } >(
-				'../../../components/{content,live,interactive}/*/*.presets.ts',
+				'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
 				{ eager: true, import: 'DEFAULT_PRESET' }
 			)
 		).map( ( [ file, preset ] ) => [ componentOf( file ), preset ] )
@@ -162,7 +162,7 @@ const withStories = [
 	...new Set(
 		Object.keys(
 			import.meta.glob(
-				'../../../components/{content,live,interactive}/*/integrations/storybook/*.stories.tsx'
+				'../../../components/{content,live,interactive}/*/hosts/storybook/*.stories.tsx'
 			)
 		).map( componentOf )
 	),
@@ -215,21 +215,21 @@ test( 'every primitive has stories and a Puck config, and no WordPress block', (
 	expect(
 		found(
 			import.meta.glob(
-				'../../../components/primitives/*/integrations/storybook/*.stories.tsx'
+				'../../../components/primitives/*/hosts/storybook/*.stories.tsx'
 			)
 		)
 	).toEqual( primitives );
 	expect(
 		found(
 			import.meta.glob(
-				'../../../components/primitives/*/integrations/puck/config.tsx'
+				'../../../components/primitives/*/hosts/puck/config.tsx'
 			)
 		)
 	).toEqual( primitives );
 	expect(
 		found(
 			import.meta.glob(
-				'../../../components/primitives/*/integrations/wp/block.json'
+				'../../../components/primitives/*/hosts/wp/block.json'
 			)
 		)
 	).toEqual( [] );
@@ -259,7 +259,7 @@ const coreSources = import.meta.glob< string >(
 	{ eager: true, query: '?raw', import: 'default' }
 );
 const blockEntrySources = import.meta.glob< string >(
-	'../../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	'../../../components/{content,live,interactive}/*/hosts/wp/index.tsx',
 	{ eager: true, query: '?raw', import: 'default' }
 );
 
@@ -298,10 +298,34 @@ test( 'every component sits in the bucket for its kind', () => {
 	expect( misplaced ).toEqual( [] );
 } );
 
+// WHY: `frame/` is how a reader tells a frame from its folder (docs/architecture.md, "A
+// component's folder"), so it must hold exactly when the component calls frame().
+test( 'a component has a frame/ folder exactly when it is built with frame()', () => {
+	const framed = Object.entries(
+		import.meta.glob< string >( '../../../components/*/*/*.tsx', {
+			eager: true,
+			query: '?raw',
+			import: 'default',
+		} )
+	)
+		.filter( ( [ , source ] ) => /=\s*frame\(/.test( source ) )
+		.map( ( [ file ] ) => componentOf( file ) )
+		.sort();
+	const withFolder = [
+		...new Set(
+			Object.keys(
+				import.meta.glob( '../../../components/*/*/frame/*.ts' )
+			).map( componentOf )
+		),
+	].sort();
+	expect( framed.length ).toBeGreaterThan( 0 );
+	expect( withFolder ).toEqual( framed );
+} );
+
 describe.each( withBlock )( '%s', ( component ) => {
 	const json = need(
 		fileOf( blockJsons, component ),
-		`${ component }/integrations/wp/block.json`
+		`${ component }/hosts/wp/block.json`
 	);
 	const puck = fileOf( puckConfigs, component );
 	const sorted = ( object: object = {} ) => Object.keys( object ).sort();
@@ -372,10 +396,7 @@ describe.each( withBlock )( '%s', ( component ) => {
 	test.runIf( ! json.render && example !== undefined )(
 		'WordPress saves the same markup Puck renders, for every choice',
 		() => {
-			const config = need(
-				puck,
-				`${ component }/integrations/puck/config.tsx`
-			);
+			const config = need( puck, `${ component }/hosts/puck/config.tsx` );
 			// What useBlockProps.save() adds: the block's own class, wp-block-{namespace}-{name},
 			// and `alignfull` for a block that spans the page.
 			const blockClass = `wp-block-${ json.name.replace( '/', '-' ) }`;
@@ -424,7 +445,7 @@ describe.each( Object.keys( propsByComponent ).sort() )(
 		test( 'block.json declares exactly its props, with their types and defaults', () => {
 			const json = need(
 				fileOf( blockJsons, component ),
-				`${ component }/integrations/wp/block.json`
+				`${ component }/hosts/wp/block.json`
 			);
 			expect(
 				Object.fromEntries(

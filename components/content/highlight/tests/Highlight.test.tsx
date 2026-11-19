@@ -16,8 +16,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Highlight, { type HighlightProps } from '../Highlight.tsx';
-import { PARTS } from '../Highlight.parts.ts';
-import { PRESETS } from '../Highlight.presets.ts';
+import { PARTS } from '../frame/Highlight.parts.ts';
+import { PRESETS } from '../frame/Highlight.presets.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in wp/block.json.

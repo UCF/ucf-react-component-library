@@ -5,7 +5,7 @@
  *
  * Used wherever programs are fetched in JavaScript: a Next Server Component, the WordPress
  * editor's preview, Puck. On a WordPress page, PHP fetches instead, with the same rules:
- * SYNC: integrations/wp/client.php, step for step. tests/DegreeList.php.test.tsx runs both on
+ * SYNC: hosts/wp/client.php, step for step. tests/DegreeList.php.test.tsx runs both on
  * the same responses and fails when their programs or markup differ.
  *
  * UPSTREAM: the Search Service (search.cm.ucf.edu) sends `Access-Control-Allow-Origin: *`, so

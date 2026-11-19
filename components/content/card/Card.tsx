@@ -8,8 +8,8 @@
 import { frame } from '@/core/frame/frame';
 import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
-import { PARTS } from './Card.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Card.presets.ts';
+import { PARTS } from './frame/Card.parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/Card.presets.ts';
 import { PROPS } from './Card.props.ts';
 
 /** Everything the Card takes: its props (Card.props.ts), `preset`, `content`, and any HTML attribute. */

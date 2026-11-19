@@ -33,7 +33,7 @@ import { CATEGORY_OF, kindOf } from '../../hosts/wordpress/kind.ts';
 
 // Registers every block, as each plugin's editor script does.
 import.meta.glob(
-	'../../../components/{content,live,interactive}/*/integrations/wp/index.tsx',
+	'../../../components/{content,live,interactive}/*/hosts/wp/index.tsx',
 	{
 		eager: true,
 	}
@@ -48,7 +48,7 @@ type BlockJson = {
 };
 
 const blockJsons = import.meta.glob< BlockJson >(
-	'../../../components/{content,live,interactive}/*/integrations/wp/block.json',
+	'../../../components/{content,live,interactive}/*/hosts/wp/block.json',
 	{
 		eager: true,
 		import: 'default',
@@ -78,7 +78,7 @@ type Preset = { name: string; props: Record< string, unknown > };
 const presets: Record< string, Preset[] > = Object.fromEntries(
 	Object.entries(
 		import.meta.glob< Preset[] >(
-			'../../../components/{content,live,interactive}/*/*.presets.ts',
+			'../../../components/{content,live,interactive}/*/frame/*.presets.ts',
 			{
 				eager: true,
 				import: 'PRESETS',

@@ -4,9 +4,9 @@
  * Live: its data is fetched, and its HTML must be in the page (search engines read it, and it
  * works without JavaScript). So this core follows content rules: props in, markup out, no state,
  * no effects, no fetching. Whoever renders it fetches first and passes `events`: a Next Server
- * Component through client.ts; WordPress in PHP (integrations/wp/render.php).
+ * Component through client.ts; WordPress in PHP (hosts/wp/render.php).
  *
- * SYNC: integrations/wp/render.php writes this same markup in PHP, for WordPress.
+ * SYNC: hosts/wp/render.php writes this same markup in PHP, for WordPress.
  * tests/EventList.php.test.tsx fails when the two differ. Change both together. Nothing stores
  * this markup, so a change needs no block deprecation.
  * SPEC: the UCF Brand Block Theme's Events block (`ucf/events`, includes/events.php there): a
@@ -31,7 +31,7 @@ export type EventListProps = Partial<
 
 /**
  * The heading to show: the one given, or the default when it is empty or only spaces.
- * SYNC: integrations/wp/render.php trims the same four
+ * SYNC: hosts/wp/render.php trims the same four
  * characters. WHY not trim(): JavaScript's and PHP's differ in which spaces they remove.
  *
  * @param title The heading an editor set.

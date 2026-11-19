@@ -78,7 +78,7 @@ add_filter( 'http_request_host_is_external', 'ucf_events_event_list_allow_host',
  *
  * WHY: priority 20 runs after shared.php has registered the blocks on the default priority,
  * so their editor script handles exist.
- * SYNC: the window name is declared in components/live/event-list/integrations/wp/settings.ts.
+ * SYNC: the window name is declared in components/live/event-list/hosts/wp/settings.ts.
  *
  * @return void
  */
