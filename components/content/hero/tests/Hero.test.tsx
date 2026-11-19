@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { renderToString } from '@wordpress/element';
 
 import Hero, { type HeroProps } from '../Hero.tsx';
-import { PARTS } from '../Hero.parts.ts';
+import { PARTS } from '../frame/parts.ts';
 
 // What `useBlockProps.save()` adds for this block.
 // SYNC: the block name in wp/block.json.

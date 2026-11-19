@@ -4,7 +4,7 @@
  *
  * WHY on top of the markup: the links work without it (docs/architecture.md, "An accordion is
  * content").
- * WHY plain DOM: WordPress runs it as a viewScript (integrations/wp/view.ts); React calls it
+ * WHY plain DOM: WordPress runs it as a viewScript (hosts/wp/view.ts); React calls it
  * from an effect.
  */
 

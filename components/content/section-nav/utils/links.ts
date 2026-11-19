@@ -2,7 +2,7 @@
  * CONTEXT: link helpers shared by both editors. Each editor finds the page's Sections in its
  * own section-links.ts.
  */
-import type { Link } from '@/integrations/schema/props';
+import type { Link } from '@/core/hosts/prop-definitions';
 
 const ENTITIES: Record< string, string > = {
 	amp: '&',

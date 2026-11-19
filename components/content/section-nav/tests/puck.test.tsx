@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // WHY happy-dom: the links field is rendered and clicked.
-/** CONTEXT: integrations/puck/section-links.ts and links-field.tsx. */
+/** CONTEXT: hosts/puck/section-links.ts and links-field.tsx. */
 import type {
 	AutoField,
 	Button,
@@ -11,14 +11,14 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import type { PuckArrayField, PuckControls } from '@/integrations/puck/types';
-import type { Link } from '@/integrations/schema/props';
-import config, { withPageSections } from '../integrations/puck/config.tsx';
-import { LinksField } from '../integrations/puck/links-field.tsx';
+import type { PuckArrayField, PuckControls } from '@/core/hosts/puck/types';
+import type { Link } from '@/core/hosts/prop-definitions';
+import config, { withPageSections } from '../hosts/puck/config.tsx';
+import { LinksField } from '../hosts/puck/links-field.tsx';
 import {
 	puckSectionLinks,
 	type PuckPage,
-} from '../integrations/puck/section-links.ts';
+} from '../hosts/puck/section-links.ts';
 
 const KEYS = { section: 'Section', heading: 'Heading' };
 const item = ( type: string, props: Record< string, unknown > = {} ) => ( {

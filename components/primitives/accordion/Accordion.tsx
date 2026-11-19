@@ -7,15 +7,11 @@
  * WHY every answer is in the markup: search engines and visitors without JavaScript read it.
  * behavior.ts closes the items.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './Accordion.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Accordion.presets.ts';
-import { PROPS } from './Accordion.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Accordion takes: its Accordion Item children, and a site's HTML attributes. */
 export type AccordionProps = OwnProps< typeof PROPS > &

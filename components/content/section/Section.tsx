@@ -11,15 +11,11 @@
  * takes no part in the component layer (`ucf-c`), whose class prefix that is.
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './Section.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Section.presets.ts';
-import { PROPS } from './Section.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Section takes: its props, its children, and a site's HTML attributes. */
 export type SectionProps = OwnProps< typeof PROPS > &
@@ -66,7 +62,7 @@ function SectionMarkup( {
  *
  *   <Section composition="dark" width="constrained">…</Section>
  *
- * Its props: Section.props.ts.
+ * Its props: props.ts.
  */
 const Section = frame( SectionMarkup, {
 	// Who it is

@@ -3,7 +3,7 @@
  *
  * The wp-scripts default finds blocks by searching one source folder for block.json files and
  * writes them all to one build folder. Here the blocks live in
- * components/{bucket}/{name}/integrations/wp/ and
+ * components/{bucket}/{name}/hosts/wp/ and
  * are split across several plugins, so this keeps the default's loaders and plugins and
  * replaces only three things per plugin: the entries, the output folder, and what gets copied.
  *
@@ -31,8 +31,7 @@ const {
 	assertEveryBlockHasOnePlugin,
 } = require( './scripts/plugins.cjs' );
 
-const blockDir = ( name ) =>
-	path.join( componentDir( name ), 'integrations/wp' );
+const blockDir = ( name ) => path.join( componentDir( name ), 'hosts/wp' );
 
 const readBlockJson = ( name ) =>
 	JSON.parse( readFileSync( path.join( blockDir( name ), 'block.json' ) ) );

@@ -8,7 +8,7 @@ import { createElement } from 'react';
 
 import Section from '../components/content/section/Section.tsx';
 import type { SectionProps } from '../components/content/section/Section.tsx';
-import type { Composition } from '../integrations/schema/compositions.ts';
+import type { Composition } from '../core/design/compositions.ts';
 import '../components/content/section/style.css';
 import tokens from '../tokens/tokens.json';
 import { STORYBOOK_VIEWPORTS } from './viewports.mts';
@@ -33,7 +33,7 @@ const compositions = Object.entries( tokens.composition )
 // WHY every story inside the real Section: that is how a page places a component, in a band
 // that sets the composition, so a story shows the component as it will look. Every role in it
 // re-resolves from the Section, and the element styles apply inside it.
-// A story that is a Section itself (components/content/section/integrations/storybook/) sets
+// A story that is a Section itself (components/content/section/hosts/storybook/) sets
 // `parameters.section: false`.
 // A story that is a band of its own (the Hero) sets `parameters.section` to the Section props
 // it needs, e.g. `{ width: 'wide', spacing: 'compact' }`, so it isn't framed like a card.

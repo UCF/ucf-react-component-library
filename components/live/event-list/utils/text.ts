@@ -1,7 +1,7 @@
 /**
  * Plain text from the feed's HTML.
  *
- * SYNC: integrations/wp/client.php does the same in PHP, step for step, and
+ * SYNC: hosts/wp/client.php does the same in PHP, step for step, and
  * tests/EventList.php.test.tsx fails when the two disagree. WHY written out, not left to each
  * language's own helpers: PHP's and JavaScript's differ (which entities they know, what counts
  * as a space), and the two must turn the same feed into the same text.

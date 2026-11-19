@@ -5,15 +5,15 @@
  *
  * Content rules apply to this core: props in, markup out, no state, no effects, no fetching.
  * Whoever renders it fetches first and passes `programs`: a Next Server Component through
- * client.ts; WordPress in PHP (integrations/wp/render.php).
+ * client.ts; WordPress in PHP (hosts/wp/render.php).
  *
- * SYNC: integrations/wp/render.php writes this same markup in PHP. tests/DegreeList.php.test.tsx
+ * SYNC: hosts/wp/render.php writes this same markup in PHP. tests/DegreeList.php.test.tsx
  * fails when the two differ; change both together. Nothing stores it, so a change needs no
  * block deprecation.
  * SPEC: the `[degree-list]` shortcode's classic layout: a list of links, one per program.
  */
 import Heading from '@/components/primitives/heading/Heading';
-import type { DegreeListEditableProps } from './DegreeList.props.ts';
+import type { DegreeListEditableProps } from './props.ts';
 import type { Program } from './types.ts';
 
 export type DegreeListProps = Partial<

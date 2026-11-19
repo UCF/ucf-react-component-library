@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // WHY happy-dom: the block-editor store needs a `window`.
-/** CONTEXT: integrations/wp/section-links.ts and utils/links.ts. */
+/** CONTEXT: hosts/wp/section-links.ts and utils/links.ts. */
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { createBlock, registerBlockType } from '@wordpress/blocks';
 import { createRegistry } from '@wordpress/data';
@@ -11,7 +11,7 @@ import {
 	sectionLinks,
 	type BlockNode,
 	type BlockSelectors,
-} from '../integrations/wp/section-links.ts';
+} from '../hosts/wp/section-links.ts';
 import { textOf, updateLinks } from '../utils/links.ts';
 
 const block = (

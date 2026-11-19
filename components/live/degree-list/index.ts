@@ -7,7 +7,7 @@
  *     return <DegreeList programs={ programs } columns="2" />;
  */
 export { default as DegreeList, type DegreeListProps } from './DegreeList.tsx';
-export { PROPS as DEGREE_LIST_PROPS } from './DegreeList.props.ts';
+export { PROPS as DEGREE_LIST_PROPS } from './props.ts';
 export {
 	createClient,
 	normalizePrograms,

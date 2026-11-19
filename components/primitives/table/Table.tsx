@@ -13,7 +13,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { TableEditableProps } from './Table.props.ts';
+import type { TableEditableProps } from './props.ts';
 
 export type TableProps = Partial< TableEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'figure' >, 'children' >;

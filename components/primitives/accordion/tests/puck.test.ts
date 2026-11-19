@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { withItems } from '../integrations/puck/config.tsx';
+import { withItems } from '../hosts/puck/config.tsx';
 
 describe( 'withItems()', () => {
 	it( 'starts with two Accordion Items, and takes only Accordion Items', () => {

@@ -5,7 +5,7 @@
  *
  * Used wherever programs are fetched in JavaScript: a Next Server Component, the WordPress
  * editor's preview, Puck. On a WordPress page, PHP fetches instead, with the same rules:
- * SYNC: integrations/wp/client.php, step for step. tests/DegreeList.php.test.tsx runs both on
+ * SYNC: hosts/wp/client.php, step for step. tests/DegreeList.php.test.tsx runs both on
  * the same responses and fails when their programs or markup differ.
  *
  * UPSTREAM: the Search Service (search.cm.ucf.edu) sends `Access-Control-Allow-Origin: *`, so
@@ -14,7 +14,7 @@
  * parameter name is ignored there too, and returns every program, so queries are built only from
  * the names in programsQuery().
  */
-import type { Option } from '@/integrations/schema/props';
+import type { Option } from '@/core/hosts/prop-definitions';
 import type { Program, ProgramFilters } from './types.ts';
 
 /** The Search Service's API. SYNC: ucf_degrees_degree_list_settings() in ucf-degrees.php. */

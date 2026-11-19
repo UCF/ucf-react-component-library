@@ -9,7 +9,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { CodeEditableProps } from './Code.props.ts';
+import type { CodeEditableProps } from './props.ts';
 
 export type CodeProps = Partial< CodeEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'pre' >, 'children' >;

@@ -1,9 +1,9 @@
 /**
  * The Section's markup contract. Its list of compositions is checked in
- * integrations/tests/compositions.test.ts.
+ * core/testing/suites/compositions.test.ts.
  *
  * The snapshot is the markup a non-React host copies. WordPress stores the same markup in every
- * post with a Section block (see integrations/tests/__snapshots__/blocks.test.tsx.snap), so a
+ * post with a Section block (see core/testing/suites/__snapshots__/blocks.test.tsx.snap), so a
  * change here
  * needs a major version and a deprecation.
  */

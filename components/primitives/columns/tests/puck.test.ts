@@ -4,8 +4,8 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { inColumns } from '@/components/primitives/column/integrations/puck/config';
-import { withColumns } from '../integrations/puck/config.tsx';
+import { inColumns } from '@/components/primitives/column/hosts/puck/config';
+import { withColumns } from '../hosts/puck/config.tsx';
 
 const columns = withColumns( 'Column' );
 

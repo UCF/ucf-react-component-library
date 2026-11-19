@@ -1,6 +1,6 @@
 /**
  * `npm run sync:blocks`: writes each component's block.json `attributes` from its props
- * (`{Name}.props.ts`), so no one writes an attribute by hand. `--check` changes nothing and lists
+ * (`props.ts`), so no one writes an attribute by hand. `--check` changes nothing and lists
  * the files that are out of date.
  *
  * WHY block.json stays a file on disk, and only its attributes are written: PHP registers the
@@ -17,7 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import './alias.mjs';
 
 // Attributes WordPress adds for a block's `supports`, kept as they are: not props.
-// SYNC: WORDPRESS_ONLY in integrations/tests/parity.test.tsx.
+// SYNC: WORDPRESS_ONLY in core/testing/suites/parity.test.tsx.
 const WORDPRESS_OWN = new Set( [ 'align' ] );
 
 /**
@@ -67,11 +67,9 @@ function components( root ) {
 		return readdirSync( dir ).flatMap( ( name ) => {
 			const folder = path.join( dir, name );
 			const props = existsSync( folder )
-				? readdirSync( folder ).find( ( file ) =>
-						file.endsWith( '.props.ts' )
-					)
+				? readdirSync( folder ).find( ( file ) => file === 'props.ts' )
 				: undefined;
-			const blockJson = path.join( folder, 'integrations/wp/block.json' );
+			const blockJson = path.join( folder, 'hosts/wp/block.json' );
 			return props && existsSync( blockJson )
 				? [ { props: path.join( folder, props ), blockJson } ]
 				: [];
@@ -90,7 +88,9 @@ function components( root ) {
 export async function syncBlocks( root, { check = false } = {} ) {
 	const prettier = await import( 'prettier' );
 	const { blockAttributes } = await import(
-		pathToFileURL( path.join( root, 'integrations/wp/attributes.ts' ) )
+		pathToFileURL(
+			path.join( root, 'core/hosts/wordpress/props-to-attributes.ts' )
+		)
 	);
 	const changed = [];
 	for ( const { props, blockJson } of components( root ) ) {

@@ -7,15 +7,11 @@
  * WHY no `aria-expanded`, ids or `role="region"` here: the answer is open until behavior.ts
  * runs, which sets them. A11Y: an unnamed region is a landmark axe rejects in a list of them.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './AccordionItem.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './AccordionItem.presets.ts';
-import { PROPS } from './AccordionItem.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Accordion Item takes: its props, its answer, and a site's HTML attributes. */
 export type AccordionItemProps = OwnProps< typeof PROPS > &
@@ -62,7 +58,7 @@ function AccordionItemMarkup( {
  *
  *   <AccordionItem title="Do I have to send test scores?"><p>…</p></AccordionItem>
  *
- * Its props: AccordionItem.props.ts.
+ * Its props: props.ts.
  */
 const AccordionItem = frame( AccordionItemMarkup, {
 	// Who it is

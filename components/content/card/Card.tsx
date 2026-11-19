@@ -2,21 +2,17 @@
  * The Card: a box with any content inside. Why it's built this way: README.md.
  *
  * `<Card preset="pathway" content={ { eyebrow: 'Transfer' } } />`, or any children. Hosts read
- * `Card.port` (integrations/react/frame.tsx).
+ * `Card.port` (core/frame/frame.tsx).
  * SYNC: WordPress stores this markup in every post that uses the block.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
 import Image from '@/components/primitives/image/Image';
-import { PARTS } from './Card.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Card.presets.ts';
-import { PROPS } from './Card.props.ts';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
-/** Everything the Card takes: its props (Card.props.ts), `preset`, `content`, and any HTML attribute. */
+/** Everything the Card takes: its props (props.ts), `preset`, `content`, and any HTML attribute. */
 export type CardProps = OwnProps< typeof PROPS > &
 	PresetProps< typeof PARTS, typeof PRESETS >;
 
@@ -87,7 +83,7 @@ function CardMarkup( {
  *   <Card preset="pathway" content={ { eyebrow: 'Transfer', display: 'Your path to UCF' } } />
  *   <Card variant="boxed">…</Card>
  *
- * Its props, presets and parts: Card.props.ts, Card.presets.ts, Card.parts.ts.
+ * Its props, presets and parts: props.ts, presets.ts, parts.ts.
  */
 const Card = frame( CardMarkup, {
 	// Who it is

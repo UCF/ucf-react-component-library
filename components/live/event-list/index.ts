@@ -7,7 +7,7 @@
  *     return <EventList events={ events } />;
  */
 export { default as EventList, type EventListProps } from './EventList.tsx';
-export { PROPS as EVENT_LIST_PROPS } from './EventList.props.ts';
+export { PROPS as EVENT_LIST_PROPS } from './props.ts';
 export {
 	createClient,
 	normalizeEvents,

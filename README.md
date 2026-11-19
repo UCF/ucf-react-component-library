@@ -64,10 +64,11 @@ follow. `npm test` checks the contrast of every role pair whenever `tokens.json`
 ## Layout
 
 ```
-integrations/      how a component works in WordPress, Puck and Storybook, written once
-                   for every component: what props and parts may declare (schema/), how each
-                   environment reads it (wp/, puck/, storybook/), and the tests every
-                   component must pass (tests/)
+core/              how a component works in WordPress, Puck and Storybook, written once
+                   for every component: its settings (define/), the token choices a setting
+                   can offer (design/), the parts, presets and frame() that build a content
+                   component (frame/), how each environment reads it (hosts/), and the tests
+                   every component must pass (testing/)
 components/        one self-contained folder per component, in a bucket by role:
   primitives/      the pieces components are built from: Button, Image, Heading, Paragraph
                    (Puck places them; WordPress editors use core's blocks instead)
@@ -304,11 +305,11 @@ adds both).
 ```
 components/{bucket}/{name}/
   {Name}.tsx ─────────────┬─► index.ts ──────────► npm: @ucf/components/{name}
-   the core               ├─► integrations/puck/ ─────► npm: @ucf/components/{name}/puck
-                          ├─► integrations/wp/ ───────► WordPress: the plugin whose plugin.json lists it
-                          └─► integrations/storybook/ ► Storybook
+   the core               ├─► hosts/puck/ ─────► npm: @ucf/components/{name}/puck
+                          ├─► hosts/wp/ ───────► WordPress: the plugin whose plugin.json lists it
+                          └─► hosts/storybook/ ► Storybook
   style.css ──────────────┬─► npm: concatenated into ucf.css
-                          └─► WordPress: imported by integrations/wp/, built into the block's CSS
+                          └─► WordPress: imported by hosts/wp/, built into the block's CSS
 ```
 
 ### The core
@@ -316,13 +317,13 @@ components/{bucket}/{name}/
 `{Name}.tsx` is plain React: props in, markup out. Every host renders this same file, so the
 HTML is the same everywhere. What it may do depends on its kind:
 
-|                 | **Content (server)**: `highlight`             | **Live (server)**: `event-list`                              | **Interactive (client)**: `degree-finder`      |
-| --------------- | --------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
-| Its HTML        | Must exist before JavaScript runs             | Must exist before JavaScript runs, from fetched data         | Built in the browser                           |
-| The core may    | Take props and return markup, nothing else    | The same: the fetched data arrives as a prop                 | Hold state, run effects, fetch data            |
-| Runtime imports | None (`import type` only)                     | None (`import type` only)                                    | `react` and its own files                      |
-| First line      | Nothing special                               | Nothing special                                              | `'use client';`                                |
-| Extra files     | `{Name}.props.ts`, `.parts.ts`, `.presets.ts` | `{Name}.props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
+|                 | **Content (server)**: `highlight`          | **Live (server)**: `event-list`                       | **Interactive (client)**: `degree-finder`      |
+| --------------- | ------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------- |
+| Its HTML        | Must exist before JavaScript runs          | Must exist before JavaScript runs, from fetched data  | Built in the browser                           |
+| The core may    | Take props and return markup, nothing else | The same: the fetched data arrives as a prop          | Hold state, run effects, fetch data            |
+| Runtime imports | None (`import type` only)                  | None (`import type` only)                             | `react` and its own files                      |
+| First line      | Nothing special                            | Nothing special                                       | `'use client';`                                |
+| Extra files     | `props.ts`, `frame/` (parts, presets)      | `props.ts`, `client.ts`, `types.ts`, `sample-data.ts` | `defaults.ts`, `client.ts`, `sample-client.ts` |
 
 Anything that differs between hosts comes in through a **slot**: a content component's areas
 (`area( 'content', … )` in the Section, Hero, Highlight and Card) take WordPress's inner-blocks
@@ -334,10 +335,10 @@ something a host has, add a slot.
 
 A **host** is a platform that renders components: WordPress, Puck, Next. An **adapter** is the
 thin layer between a host and the core: it takes content from wherever that host keeps it and
-passes it to the core as props. A host gets an adapter folder (`integrations/wp/`,
-`integrations/puck/`) only when it needs files besides props.
+passes it to the core as props. A host gets an adapter folder (`hosts/wp/`,
+`hosts/puck/`) only when it needs files besides props.
 
-- **`integrations/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
+- **`hosts/wp/`: the WordPress block.** `block.json` names the block (`{plugin}/{name}`, in the
   **UCF Content**, **UCF Live** or **UCF Interactive** inserter category, by kind) and declares the attributes WordPress stores. `index.tsx`
   registers it, with its icon from `@wordpress/icons` (and its templates as variations, if it
   has any). `edit.tsx` renders the core in the editor, with fields in its slots. Then,
@@ -351,8 +352,8 @@ passes it to the core as props. A host gets an adapter folder (`integrations/wp/
     - **Interactive: `render.php` + `view.tsx`.** PHP writes an empty container carrying the
       props as JSON (plus a plain link for visitors without JavaScript), and `view.tsx` mounts
       the core into it in the browser. `settings.ts` reads that JSON.
-- **`integrations/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
-  ([integrations/puck/types.ts](integrations/puck/types.ts)): `fields` for the editor,
+- **`hosts/puck/config.tsx`: the Puck config.** A plain object in Puck's shape
+  ([core/hosts/puck/types.ts](core/hosts/puck/types.ts)): `fields` for the editor,
   `defaultProps`, and `render`, which renders the core. Typed against that local copy so the
   library needs no Puck dependency. `render` passes the core only its own props: Puck also
   sends `id`, `puck` and `editMode`, which would otherwise end up in the markup.

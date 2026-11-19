@@ -2,7 +2,7 @@
  * The Degree List's markup, the record of it (docs/architecture.md, "The three layers").
  *
  * Nothing stores a live block's markup, so a change here breaks no saved post. It still changes
- * what every site shows, and integrations/wp/render.php must change with it
+ * what every site shows, and hosts/wp/render.php must change with it
  * (tests/DegreeList.php.test.tsx).
  */
 import { renderToStaticMarkup } from 'react-dom/server';

@@ -8,15 +8,11 @@
  * WHY a Columns and a Column, as core has: WordPress editors place core Columns and Column in a
  * Section, and the two shapes match, so a layout moves between Puck and WordPress.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './Columns.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Columns.presets.ts';
-import { PROPS } from './Columns.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Columns takes: its props, its Column children, and a site's HTML attributes. */
 export type ColumnsProps = OwnProps< typeof PROPS > &
@@ -63,7 +59,7 @@ function ColumnsMarkup( {
  *     <Column>…</Column>
  *   </Columns>
  *
- * Its props: Columns.props.ts.
+ * Its props: props.ts.
  */
 const Columns = frame( ColumnsMarkup, {
 	// Who it is

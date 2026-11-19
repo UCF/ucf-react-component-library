@@ -8,10 +8,10 @@ The current goal is a correct development process, not a pipeline.
 ## Next
 
 1. **A Puck playground.** The Puck configs are checked against Puck's types
-   (`integrations/tests/puck.test.tsx`), but nothing renders them in the real Puck editor.
+   (`core/testing/suites/puck.test.tsx`), but nothing renders them in the real Puck editor.
 
     - A small app in `playground/`, with Vite and `@puckeditor/core` as dev dependencies only,
-      so the library itself stays free of Puck. It loads every `integrations/puck/config.tsx`,
+      so the library itself stays free of Puck. It loads every `hosts/puck/config.tsx`,
       opens the Puck editor on a saved sample page, and loads `dist/ucf.css` and the
       compositions.
     - A test that renders each config through Puck's `<Render>` with sample data, so a config
@@ -74,7 +74,7 @@ To finish:
   fields, and check `getBlocks()` in the editor and the page's HTML. Its PHP test runs against
   stubs.
 - **Check the Puck field in a real Puck editor.** The custom checkbox field fits Puck's types
-  (`integrations/tests/puck.test.tsx`), but nothing has rendered it inside Puck. Needs the
+  (`core/testing/suites/puck.test.tsx`), but nothing has rendered it inside Puck. Needs the
   playground.
 - **Settle its names before any site uses it:** the block and its attributes (`colleges`,
   `departments`, `programTypes`, `title`, `columns`, `emptyMessage`) are permanent once saved.

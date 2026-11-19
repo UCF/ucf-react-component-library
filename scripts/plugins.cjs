@@ -19,7 +19,7 @@ const root = path.dirname( __dirname );
 /**
  * The buckets under components/, by role, in build order: the pieces first, since components
  * are built from them and a component's CSS may adjust a primitive's.
- * SYNC: docs/architecture.md, "A component's folder". integrations/tests/parity.test.tsx checks
+ * SYNC: docs/architecture.md, "A component's folder". core/testing/suites/parity.test.tsx checks
  * each bucket holds only its kind.
  */
 const BUCKETS = [ 'primitives', 'content', 'live', 'interactive' ];
@@ -105,7 +105,7 @@ function assertEveryBlockHasOnePlugin( plugins ) {
 	const dirs = componentDirs();
 	const withBlocks = [ ...dirs ]
 		.filter( ( [ , { dir } ] ) =>
-			existsSync( path.join( dir, 'integrations/wp/block.json' ) )
+			existsSync( path.join( dir, 'hosts/wp/block.json' ) )
 		)
 		.map( ( [ name ] ) => name );
 
@@ -126,7 +126,7 @@ function assertEveryBlockHasOnePlugin( plugins ) {
 		for ( const name of plugin.blocks ) {
 			if ( ! withBlocks.includes( name ) ) {
 				throw new Error(
-					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no integrations/wp/block.json in components/.`
+					`plugins/${ plugin.name }/plugin.json lists "${ name }", which has no hosts/wp/block.json in components/.`
 				);
 			}
 		}

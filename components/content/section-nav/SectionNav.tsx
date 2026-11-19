@@ -6,16 +6,12 @@
  * A11Y: a named `<nav>`, a landmark apart from the site's navigation.
  * SYNC: WordPress saves this markup in every post that uses it.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './SectionNav.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './SectionNav.presets.ts';
-import { isAnchor } from '@/integrations/schema/props';
-import { PROPS } from './SectionNav.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { isAnchor } from '@/core/hosts/prop-definitions';
+import { PROPS } from './props.ts';
 
 /** The Section Nav's props, plus HTML attributes. */
 export type SectionNavProps = OwnProps< typeof PROPS > &

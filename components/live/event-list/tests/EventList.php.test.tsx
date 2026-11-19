@@ -3,9 +3,9 @@
  * The live markup contract: WordPress's PHP and React write the same list from the same feed.
  *
  * A live block's markup exists twice: EventList.tsx (every React host) and
- * integrations/wp/render.php (WordPress, which can't run React on the server), each fed by its own
+ * hosts/wp/render.php (WordPress, which can't run React on the server), each fed by its own
  * copy of the feed rules (client.ts and client.php). This runs the real PHP under plain `php`,
- * with WordPress's few functions stubbed (integrations/tests/live.ts), and for each case
+ * with WordPress's few functions stubbed (core/testing/live.ts), and for each case
  * compares the cleaned-up events with JavaScript's, and render.php's HTML with React's, as a
  * browser reads them.
  *
@@ -32,14 +32,14 @@ import {
 	phpString,
 	sameHtml,
 	tempFile,
-} from '@/integrations/tests/live';
+} from '@/core/testing/live';
 import EventList from '../EventList.tsx';
-import type { EventListEditableProps } from '../EventList.props.ts';
+import type { EventListEditableProps } from '../props.ts';
 import { normalizeEvents } from '../client.ts';
 import { plainText } from '../utils/text.ts';
 
 const here = path.dirname( fileURLToPath( import.meta.url ) );
-const wp = path.join( here, '../integrations/wp' );
+const wp = path.join( here, '../hosts/wp' );
 const fixture = JSON.parse(
 	readFileSync( path.join( here, 'fixtures/feed.json' ), 'utf8' )
 ) as Record< string, unknown >[];

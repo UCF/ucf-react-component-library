@@ -10,7 +10,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { ListEditableProps } from './List.props.ts';
+import type { ListEditableProps } from './props.ts';
 
 export type ListProps = Partial< ListEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'ul' >, 'children' >;

@@ -8,7 +8,7 @@
  */
 import type { ComponentPropsWithoutRef } from 'react';
 
-import type { SeparatorEditableProps } from './Separator.props.ts';
+import type { SeparatorEditableProps } from './props.ts';
 
 export type SeparatorProps = Partial< SeparatorEditableProps > &
 	Omit< ComponentPropsWithoutRef< 'hr' >, 'children' >;

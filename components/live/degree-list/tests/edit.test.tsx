@@ -22,13 +22,13 @@ vi.mock( '../utils/usePrograms.ts', () => ( {
 		programs: SAMPLE_PROGRAMS.slice( 0, 2 ),
 	} ),
 } ) );
-vi.mock( '../integrations/wp/settings.ts', () => ( {
+vi.mock( '../hosts/wp/settings.ts', () => ( {
 	editorSettings: () => ( {} ),
 } ) );
 
-const { default: Edit } = await import( '../integrations/wp/edit.tsx' );
-const { PROPS } = await import( '../DegreeList.props.ts' );
-const { defaultsIn } = await import( '@/integrations/schema/props' );
+const { default: Edit } = await import( '../hosts/wp/edit.tsx' );
+const { PROPS } = await import( '../props.ts' );
+const { defaultsIn } = await import( '@/core/hosts/read-props' );
 
 describe( 'the Degree List in the editor', () => {
 	test( 'shows its preview inside an inert wrapper, links and all', () => {

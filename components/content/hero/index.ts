@@ -10,5 +10,5 @@ export {
 
 // Its pieces, for a site that builds its own
 
-export { PARTS as HERO_PARTS } from './Hero.parts.ts';
-export { PRESETS as HERO_PRESETS } from './Hero.presets.ts';
+export { PARTS as HERO_PARTS } from './frame/parts.ts';
+export { PRESETS as HERO_PRESETS } from './frame/presets.ts';

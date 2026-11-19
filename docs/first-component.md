@@ -23,16 +23,16 @@ Everything about it is in one folder:
 
 ```
 components/content/card/
-  Card.props.ts            the settings an editor can change
-  Card.parts.ts            the pieces of content that go inside
-  Card.presets.ts          its five designs
+  props.ts                 the settings an editor can change
+  frame/parts.ts           the pieces of content that go inside
+  frame/presets.ts         its five designs
   Card.tsx                 the markup
   style.css                how it looks
   index.ts                 what the npm package exports
   README.md                notes on why it's built this way
-  integrations/wp/         the WordPress block
-  integrations/puck/       the Puck config
-  integrations/storybook/  its stories
+  hosts/wp/                the WordPress block
+  hosts/puck/              the Puck config
+  hosts/storybook/         its stories
   tests/                   its markup test
 ```
 
@@ -55,7 +55,7 @@ The name is spelled the same way everywhere: folder `card`, React `Card`, CSS `u
 WordPress block `ucf-content/card`. **The block name is permanent once a site uses it,**
 because WordPress stores it in every post.
 
-### 2. Its settings: `Card.props.ts`
+### 2. Its settings: `props.ts`
 
 A **prop** is a setting an editor can change. Here is one of the Card's:
 
@@ -80,7 +80,7 @@ That one definition becomes:
 - the **Look** radio buttons in the WordPress sidebar, in a panel called "Card";
 - the same field in Puck;
 - a control in Storybook;
-- the `variant` attribute in `integrations/wp/block.json`, written for you by
+- the `variant` attribute in `hosts/wp/block.json`, written for you by
   `npm run sync:blocks`.
 
 Props are `choice`, `text` or `number`. The Card's `imageId` has `hosts: [ 'wp' ]`: it's the
@@ -88,7 +88,7 @@ media library's ID, which only WordPress has, so Puck doesn't show it.
 
 **A prop's key is saved in every post,** like the block name. Pick keys you're happy to keep.
 
-### 3. What goes inside: `Card.parts.ts`
+### 3. What goes inside: `frame/parts.ts`
 
 A **part** is one piece of content inside the Card, with the class that styles it:
 
@@ -109,7 +109,7 @@ button needs no class, because the Button styles itself.
 
 Parts are where a Card starts, not a lock. Editors can change, move or remove anything inside.
 
-### 4. Its designs: `Card.presets.ts`
+### 4. Its designs: `frame/presets.ts`
 
 A **preset** is a starting design: some props, plus some parts with sample text. This is the
 "Next step" card:
@@ -135,7 +135,7 @@ A **preset** is a starting design: some props, plus some parts with sample text.
 Each preset shows up as **Card: Next step** in the WordPress inserter and in Puck's Design
 picker. `DEFAULT_PRESET` is what a plain "Card" starts as (the Story card).
 
-`wpIcon` must be one of the icons listed in `integrations/wp/icons.ts`. The `as const` at the
+`wpIcon` must be one of the icons listed in `core/hosts/wordpress/icons.ts`. The `as const` at the
 end of the list keeps the names exact, so TypeScript can check `preset="next-step"` (below).
 
 ### 5. The markup: `Card.tsx`
@@ -218,10 +218,10 @@ The rules every component follows:
 - **Style a part with two classes** (`.ucf-c-card .ucf-c-card__eyebrow`), so the rule wins
   over the paragraph's own styles.
 
-### 7. Where it runs: `integrations/`
+### 7. Where it runs: `hosts/`
 
-Each host gets a short adapter. They're one line each, because the shared code in the top-level
-`integrations/` folder reads everything from the Card itself.
+Each host gets a short adapter. They're one line each, because the shared code in
+`core/hosts/` reads everything from the Card itself.
 
 | File                                 | What it does                                                                                   |
 | ------------------------------------ | ---------------------------------------------------------------------------------------------- |
@@ -238,9 +238,9 @@ Each host gets a short adapter. They're one line each, because the shared code i
 
 The Card's own test renders it in each preset, checks that WordPress and React produce the same
 HTML, and records that HTML as a **snapshot** in `tests/__snapshots__/`. It also checks that
-every part class in `Card.parts.ts` has a rule in `style.css`.
+every part class in `frame/parts.ts` has a rule in `style.css`.
 
-Shared tests in `integrations/tests/` cover every component without any setup. They check that:
+Shared tests in `core/testing/suites/` cover every component without any setup. They check that:
 
 - **the block saves and reads back cleanly,** the way the editor checks a saved post;
 - **WordPress and Puck have the same settings,** with the same defaults;
@@ -299,9 +299,9 @@ components/interactive/degree-finder/
   sample-client.ts          the same interface, answering from sample-data.ts, no network
   defaults.ts               its default settings, read by every host
   style.css                 how it looks
-  integrations/wp/          block.json, render.php, view.tsx, edit.tsx, settings.ts
-  integrations/puck/        the Puck config
-  integrations/storybook/   its stories
+  hosts/wp/                 block.json, render.php, view.tsx, edit.tsx, settings.ts
+  hosts/puck/               the Puck config
+  hosts/storybook/          its stories
   tests/                    the client's tests
 ```
 
@@ -395,7 +395,7 @@ function ucf_degrees_degree_finder_settings() {
 `render.php` reads it for the page, and the plugin hands the same settings to the editor as
 `window.ucfDegreeFinderSettings`, so the editor preview and the page match.
 
-### 4. The WordPress block: `integrations/wp/`
+### 4. The WordPress block: `hosts/wp/`
 
 `block.json` makes it a dynamic block. Two lines do it:
 
@@ -450,12 +450,12 @@ import { DegreeFinder } from '@ucf/components/degree-finder';
 <DegreeFinder programType="master" />;
 ```
 
-The Puck config (`integrations/puck/config.tsx`) is a plain object with one field, the degree
+The Puck config (`hosts/puck/config.tsx`) is a plain object with one field, the degree
 type. The API root and search page are site settings, not something an editor picks per page.
 
-Unlike the Card, the Degree Finder isn't built with `frame()` and has no `.props.ts` file.
+Unlike the Card, the Degree Finder isn't built with `frame()` and has no `props.ts` file.
 Its `block.json` attribute and its Puck field are written by hand, and
-`integrations/tests/parity.test.tsx` checks they name the same props.
+`core/testing/suites/parity.test.tsx` checks they name the same props.
 
 ### 6. Stories and tests
 
@@ -496,10 +496,10 @@ npm run new:component -- my-component --kind content --plugin ucf-content
 Created components/content/my-component/ (13 files).
 Added it to:
   package.json
-  integrations/tests/parity.test.tsx
+  core/testing/suites/parity.test.tsx
   plugins/ucf-content/plugin.json
-  integrations/tests/blocks.test.tsx
-  integrations/tests/puck.test.tsx
+  core/testing/suites/blocks.test.tsx
+  core/testing/suites/puck.test.tsx
 ```
 
 You now have the Card's files with placeholders in them: one setting (alignment), two parts (a
@@ -510,11 +510,11 @@ title and a sentence) and one preset. It already passes every check. Find it in 
 
 Work through the files in the order of Part 1:
 
-1. **`{Name}.props.ts`:** add its settings (step 2). Then run `npm run sync:blocks` to write
+1. **`props.ts`:** add its settings (step 2). Then run `npm run sync:blocks` to write
    them into `block.json`.
-2. **`{Name}.parts.ts`:** replace the placeholder parts (step 3).
-3. **`{Name}.presets.ts`:** write its designs (step 4). If a `wpIcon` isn't in
-   `integrations/wp/icons.ts` yet, add it to both lists there. Any name from
+2. **`frame/parts.ts`:** replace the placeholder parts (step 3).
+3. **`frame/presets.ts`:** write its designs (step 4). If a `wpIcon` isn't in
+   `core/hosts/wordpress/icons.ts` yet, add it to both lists there. Any name from
    `@wordpress/icons` works.
 4. **`{Name}.tsx`:** write the markup, with each setting as a `data-` attribute (step 5).
 5. **`style.css`:** style it with roles and tokens only (step 6).
@@ -578,8 +578,8 @@ Both must be clean. CI runs the same checks on your pull request.
 The same command starts the other kinds:
 
 - **Live** (`--kind live`, with the plugin for its data, such as `ucf-events`): you get
-  `client.ts` and its PHP copy `integrations/wp/client.php`, the markup again as a template in
-  `integrations/wp/render.php`, and `tests/{Name}.php.test.tsx`, which fails while the PHP and
+  `client.ts` and its PHP copy `hosts/wp/client.php`, the markup again as a template in
+  `hosts/wp/render.php`, and `tests/{Name}.php.test.tsx`, which fails while the PHP and
   React markup differ. Replace the placeholder feed, save a copy of the real one in
   `tests/fixtures/`, and follow `components/live/event-list`. A new plugin's PHP prefix and text
   domain go in `phpcs.xml.dist`. Like interactive, it has no parts or presets.
@@ -594,24 +594,24 @@ The same command starts the other kinds:
 
 ### Changing it later
 
-| To…                                | Edit                                                                                   | Then                     |
-| ---------------------------------- | -------------------------------------------------------------------------------------- | ------------------------ |
-| Add a setting                      | `{Name}.props.ts`, then use it in `{Name}.tsx` and `style.css`                         | `npm run sync:blocks`    |
-| Change a label, help text or panel | `{Name}.props.ts` only                                                                 |                          |
-| Change a default                   | `{Name}.props.ts`. Saved blocks that never set it take the new default                 | `npm run sync:blocks`    |
-| Add a design                       | `{Name}.presets.ts`, a story for it, and its icon in `integrations/wp/icons.ts` if new | `npm test`               |
-| Change what a new one starts with  | `DEFAULT_PRESET` in `{Name}.presets.ts`                                                |                          |
-| Add a part                         | `{Name}.parts.ts`, and its class's rule in `style.css`                                 | `npm test`               |
-| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                         | `npm test`               |
-| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md     | Review the new snapshots |
+| To…                                | Edit                                                                                       | Then                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------ |
+| Add a setting                      | `props.ts`, then use it in `{Name}.tsx` and `style.css`                                    | `npm run sync:blocks`    |
+| Change a label, help text or panel | `props.ts` only                                                                            |                          |
+| Change a default                   | `props.ts`. Saved blocks that never set it take the new default                            | `npm run sync:blocks`    |
+| Add a design                       | `frame/presets.ts`, a story for it, and its icon in `core/hosts/wordpress/icons.ts` if new | `npm test`               |
+| Change what a new one starts with  | `DEFAULT_PRESET` in `frame/presets.ts`                                                     |                          |
+| Add a part                         | `frame/parts.ts`, and its class's rule in `style.css`                                      | `npm test`               |
+| Rename it on screen                | `title` in `{Name}.tsx` and `block.json`, and the story titles                             | `npm test`               |
+| Change the markup                  | `{Name}.tsx`, following "Changing a content component's markup" in architecture.md         | Review the new snapshots |
 
 ### If a check fails
 
 | Failure                                                      | Fix                                                                        |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
 | `block.json declares exactly its props` in `parity.test.tsx` | Run `npm run sync:blocks`                                                  |
-| `styles every part class`                                    | Add a rule to `style.css` for each class in `{Name}.parts.ts`              |
-| `names an icon WordPress has` in `presets.test.tsx`          | Add the icon to `integrations/wp/icons.ts`                                 |
+| `styles every part class`                                    | Add a rule to `style.css` for each class in `frame/parts.ts`               |
+| `names an icon WordPress has` in `presets.test.tsx`          | Add the icon to `core/hosts/wordpress/icons.ts`                            |
 | `reads --ucf-…, a defined role` in `scripts/tokens.test.mjs` | Use a role from `tokens/tokens.json`, such as `--ucf-c-body`               |
 | A snapshot differs                                           | If you meant to change the markup, read the diff, then `npx vitest run -u` |
 | A story fails on one section color                           | Usually contrast: use a role, not a fixed color                            |

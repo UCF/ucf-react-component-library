@@ -2,15 +2,11 @@
  * The Column: one track of a Columns, holding anything. Why it's built this way:
  * docs/architecture.md, "Built with frame()", and Columns.tsx.
  */
-import {
-	frame,
-	type FrameProps,
-	type OwnProps,
-	type PresetProps,
-} from '@/integrations/react/frame';
-import { PARTS } from './Column.parts.ts';
-import { DEFAULT_PRESET, PRESETS } from './Column.presets.ts';
-import { PROPS } from './Column.props.ts';
+import { frame } from '@/core/frame/frame';
+import type { FrameProps, OwnProps, PresetProps } from '@/core/frame/types';
+import { PARTS } from './frame/parts.ts';
+import { DEFAULT_PRESET, PRESETS } from './frame/presets.ts';
+import { PROPS } from './props.ts';
 
 /** Everything the Column takes: its children, and a site's HTML attributes. */
 export type ColumnProps = OwnProps< typeof PROPS > &
