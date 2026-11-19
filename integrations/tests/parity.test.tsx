@@ -203,6 +203,8 @@ const primitives = Object.keys(
 
 test( 'finds every primitive', () => {
 	expect( primitives ).toEqual( [
+		'accordion',
+		'accordion-item',
 		'button',
 		'code',
 		'column',

@@ -232,7 +232,10 @@ const config = {
 ```
 
 Primitives are at `@ucf/components/primitives/{name}/puck`. Register them as `Button`, `Image`,
-`Heading` and `Paragraph`: the frames' starting templates name them by those keys.
+`Heading` and `Paragraph`: the frames' starting templates name them by those keys. Register the
+Accordion as `withItems( 'AccordionItem' )` beside the Accordion Item under that key, and run
+`enhanceAccordion()` on each published Accordion from an effect: it closes the answers, which
+stay open without it.
 
 ```tsx
 import card, { withPreset, withTemplate } from '@ucf/components/card/puck';

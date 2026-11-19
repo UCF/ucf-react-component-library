@@ -1,0 +1,99 @@
+/*
+ * CONTEXT: the Accordion Item's styles, for every host.
+ *
+ * SPEC: core Accordion as the UCF theme renders it (src/scss/_accordion.scss there, over core's
+ * own CSS): a row at least 60px tall, a hairline in `line-strong` below each item, and a square
+ * marker that shows state by shape, plus when closed and minus when open.
+ * SYNC: scripts/core-css.mjs rewrites this for core Accordion's markup, the theme's copy. Each
+ * rule starts at the item, so it maps to core's classes.
+ */
+.ucf-c-accordion-item {
+	border-bottom: var(--ucf-custom-border-hairline) solid
+		var(--ucf-c-line-strong);
+	/* WHY: the hairline separates items, not a gap. */
+	margin-block: 0;
+}
+
+/* SPEC: questions are long, so they take the H4 look (body face, sentence case) at every level. */
+.ucf-c-accordion-item .ucf-c-accordion-item__heading {
+	font-family: var(--ucf-font-family-body);
+	font-size: var(--ucf-font-size-body);
+	font-weight: 800;
+	letter-spacing: 0;
+	line-height: 1.4;
+	margin: 0;
+	text-transform: none;
+}
+
+/* SPEC: core's reset of the button, so it reads as the heading's text. */
+.ucf-c-accordion-item .ucf-c-accordion-item__toggle {
+	align-items: center;
+	background: none;
+	border: 0;
+	/* FIX: or the padding stacks on the 60px minimum. */
+	box-sizing: border-box;
+	color: inherit;
+	cursor: pointer;
+	display: flex;
+	font: inherit;
+	gap: var(--ucf-spacing-50);
+	letter-spacing: inherit;
+	min-height: 60px;
+	padding: var(--ucf-spacing-40) 0;
+	text-align: inherit;
+	text-transform: inherit;
+	width: 100%;
+}
+
+.ucf-c-accordion-item .ucf-c-accordion-item__title {
+	flex: 1;
+}
+
+.ucf-c-accordion-item
+	.ucf-c-accordion-item__toggle:hover
+	.ucf-c-accordion-item__title {
+	text-decoration: underline;
+}
+
+/* The marker: a 2px square with a plus drawn from two gradients.
+   UPSTREAM: font-size 0 hides the `+` core prints in it. */
+.ucf-c-accordion-item .ucf-c-accordion-item__icon {
+	background:
+		linear-gradient(currentcolor, currentcolor) center / 12px 2px no-repeat,
+		linear-gradient(currentcolor, currentcolor) center / 2px 12px no-repeat;
+	border: var(--ucf-custom-border-control) solid currentcolor;
+	flex: none;
+	font-size: 0;
+	height: 28px;
+	width: 28px;
+}
+
+/* Open drops the vertical bar, leaving a minus.
+   UPSTREAM: transform cancels core's 45° turn, which reads as a close button. */
+.ucf-c-accordion-item[data-open]
+	> .ucf-c-accordion-item__heading
+	.ucf-c-accordion-item__icon {
+	background: linear-gradient(currentcolor, currentcolor) center / 12px 2px
+		no-repeat;
+	transform: none;
+}
+
+.ucf-c-accordion-item .ucf-c-accordion-item__panel {
+	margin-block-start: var(--ucf-spacing-40);
+	padding-bottom: var(--ucf-spacing-50);
+	padding-right: var(--ucf-spacing-70);
+}
+
+/* FIX: a closed panel keeps its box (`hidden="until-found"`), so its space goes too, as core's. */
+.ucf-c-accordion-item .ucf-c-accordion-item__panel[hidden] {
+	margin-block-start: 0;
+	padding: 0;
+}
+
+.ucf-c-accordion-item .ucf-c-accordion-item__panel > :first-child {
+	margin-block-start: 0;
+}
+
+.ucf-c-accordion-item .ucf-c-accordion-item__panel > :last-child {
+	margin-block-end: 0;
+}
