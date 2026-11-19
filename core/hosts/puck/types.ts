@@ -95,6 +95,8 @@ export type PuckArrayField< Item > = {
 		[ Key in keyof Item ]-?: PuckFieldFor< NonNullable< Item[ Key ] > >;
 	};
 	defaultItemProps?: Item;
+	/** The most items an editor may add. */
+	max?: number;
 	/** A collapsed item's title, in place of "Item 1". */
 	getItemSummary?: ( item: Item, index?: number ) => string;
 };

@@ -1,3 +1,10 @@
 {
-	"blocks": [ "section", "highlight", "hero", "card", "section-nav" ]
+	"blocks": [
+		"section",
+		"highlight",
+		"hero",
+		"card",
+		"section-nav",
+		"quick-links"
+	]
 }

@@ -188,6 +188,7 @@ test( 'finds every component', () => {
 		'event-list',
 		'hero',
 		'highlight',
+		'quick-links',
 		'section',
 		'section-nav',
 	] );

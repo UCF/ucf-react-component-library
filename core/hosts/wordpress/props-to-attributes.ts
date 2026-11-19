@@ -48,7 +48,8 @@ export function blockAttributes( definitions: PropDefinitions ) {
 }
 
 /**
- * A prop's block attribute type: lists and links are arrays, numbers numbers, the rest strings.
+ * A prop's block attribute type: lists, links and tiles are arrays, numbers numbers, the rest
+ * strings.
  *
  * @param definition A prop.
  */
@@ -64,6 +65,19 @@ function attributeOf( definition: PropDefinition ) {
 					type: 'object',
 					properties: {
 						label: { type: 'string' },
+						href: { type: 'string' },
+					},
+				},
+				default: value,
+			};
+		case 'tiles':
+			return {
+				type: 'array',
+				items: {
+					type: 'object',
+					properties: {
+						label: { type: 'string' },
+						description: { type: 'string' },
 						href: { type: 'string' },
 					},
 				},

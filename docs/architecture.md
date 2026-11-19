@@ -274,7 +274,7 @@ A frame (see "Frames") is its props, its parts, and presets built from both:
 ```
 Component
 ├─ props.ts             PROPS: each prop's key · type · options · default · field
-│                       types: text, choice, number, list, links
+│                       types: text, choice, number, list, links, tiles
 │                       field: label · help · control · panel · hosts
 ├─ frame/parts.ts       PARTS: each part (title, eyebrow, image…): its kind and its class
 │                       kinds (image, heading, text, link, button): core/frame/types.ts
@@ -315,6 +315,11 @@ the options no longer include is shown as a problem in both editors, not dropped
 Sections per link (`core/hosts/wordpress/controls/links-control.tsx`, the Section Nav's Puck `links-field.tsx`).
 Puck fields like this draw with Puck's own `AutoField`, `FieldLabel` and `Button`, which the
 site passes in (`PuckControls`), so the library doesn't depend on Puck.
+
+**A tiles prop holds link tiles** (the Quick Links'): each a `label`, a `description` and an
+`href` to anywhere. Its `max` caps how many an editor can add. WordPress stores it as an `array`
+attribute of objects and shows three fields per tile
+(`core/hosts/wordpress/controls/tiles-control.tsx`); Puck shows its own array field.
 
 block.json stays a file on disk, because PHP reads it before any script runs and it is where
 WordPress developers look. Its `attributes` are written from the props by

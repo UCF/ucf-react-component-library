@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`QuickLinks > renders the same in WordPress and React: defaults 1`] = `"<div class="wp-block-ucf-content-quick-links ucf-c ucf-c-quick-links"><ul class="ucf-c-quick-links__list"></ul></div>"`;
+
+exports[`QuickLinks > renders the same in WordPress and React: tiles 1`] = `"<div class="wp-block-ucf-content-quick-links ucf-c ucf-c-quick-links"><ul class="ucf-c-quick-links__list"><li class="ucf-c-quick-links__item"><a class="ucf-c-quick-links__link" href="/admissions/">Can I get in?</a><p class="ucf-c-quick-links__description">About Can I get in?.</p></li><li class="ucf-c-quick-links__item"><a class="ucf-c-quick-links__link" href="/cost/">What will it cost?</a></li></ul></div>"`;

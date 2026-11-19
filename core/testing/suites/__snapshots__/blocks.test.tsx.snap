@@ -114,6 +114,12 @@ exports[`ucf-content/highlight holding other blocks > saves them inside its inne
 <!-- /wp:ucf-content/highlight -->"
 `;
 
+exports[`ucf-content/quick-links > defaults > matches the stored markup snapshot 1`] = `
+"<!-- wp:ucf-content/quick-links -->
+<div class="wp-block-ucf-content-quick-links ucf-c ucf-c-quick-links"><ul class="ucf-c-quick-links__list"></ul></div>
+<!-- /wp:ucf-content/quick-links -->"
+`;
+
 exports[`ucf-content/section > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/section -->
 <section class="wp-block-ucf-content-section alignfull ucf-section ucf-composition-light"><div class="ucf-section__inner ucf-section__inner--default"></div></section>

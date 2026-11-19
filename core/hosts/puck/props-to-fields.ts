@@ -10,6 +10,7 @@ import type {
 	Link,
 	PropDefinition,
 	PropDefinitions,
+	Tile,
 } from '../prop-definitions.ts';
 import { listField } from './list-field.tsx';
 import type {
@@ -21,7 +22,7 @@ import type {
 
 /**
  * Prop definitions as Puck fields: radio buttons or a select for a choice, checkboxes for a list,
- * Puck's own array field for links, a text field otherwise, for every prop Puck has.
+ * Puck's own array field for links and tiles, a text field otherwise, for every prop Puck has.
  *
  * @param definitions A component's prop definitions.
  */
@@ -54,7 +55,8 @@ function fieldOf(
 ):
 	| PuckScalarField
 	| PuckCustomField< readonly string[] >
-	| PuckArrayField< Link > {
+	| PuckArrayField< Link >
+	| PuckArrayField< Tile > {
 	if ( definition.type === 'list' ) {
 		return listField( definition );
 	}
@@ -67,7 +69,23 @@ function fieldOf(
 				href: { type: 'text', label: 'Anchor (#section)' },
 			},
 			defaultItemProps: { label: '', href: '' },
-			getItemSummary: ( link ) => link.label || link.href || 'New link',
+			getItemSummary: ( link: Link ) =>
+				link.label || link.href || 'New link',
+		};
+	}
+	if ( definition.type === 'tiles' ) {
+		return {
+			type: 'array',
+			label: definition.label,
+			arrayFields: {
+				label: { type: 'text', label: 'Text' },
+				description: { type: 'textarea', label: 'Description' },
+				href: { type: 'text', label: 'Address' },
+			},
+			defaultItemProps: { label: '', description: '', href: '' },
+			getItemSummary: ( tile: Tile ) =>
+				tile.label || tile.href || 'New link',
+			...( definition.max && { max: definition.max } ),
 		};
 	}
 	return definition.type === 'choice'

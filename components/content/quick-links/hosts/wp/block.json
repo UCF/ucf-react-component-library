@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "ucf-content/quick-links",
+	"title": "Quick Links",
+	"category": "ucf-content",
+	"description": "Two to four task links, each a question a visitor arrives with, linking where it is answered.",
+	"keywords": [ "quick links", "tasks", "questions", "links" ],
+	"textdomain": "ucf-content",
+	"attributes": {
+		"tiles": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"label": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"href": {
+						"type": "string"
+					}
+				}
+			},
+			"default": []
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./index.tsx",
+	"style": "file:./style-index.css"
+}
