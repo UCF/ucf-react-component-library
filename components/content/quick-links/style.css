@@ -7,6 +7,11 @@
  * UPSTREAM: wp-scripts only emits a front-end stylesheet named `style.css`.
  */
 
+/* WHY a container: the tiles stack by the component's own width, not the window's. */
+.ucf-c-quick-links {
+	container: ucf-c-quick-links / inline-size;
+}
+
 /*
  * SPEC: the line between tiles is the grid's background showing through the gap.
  * WHY auto-fit, not auto-fill: auto-fill keeps empty tracks, which would show as a gray slab.
@@ -33,11 +38,21 @@
 	flex-direction: column;
 	gap: var(--ucf-spacing-20);
 	position: relative;
-	min-height: 150px;
 	margin: 0;
 	padding: var(--ucf-spacing-50);
 	box-sizing: border-box;
 	background-color: var(--ucf-c-surface);
+}
+
+/*
+ * SPEC: side by side, tiles share a 150px floor so a row lines up; stacked, each fits its text.
+ * SYNC: two 14rem columns, the 2px gap and both borders (border-control, 2px in tokens.json).
+ * UPSTREAM: a container query can't read a custom property, so the border is written out.
+ */
+@container ucf-c-quick-links (min-width: calc(28rem + 6px)) {
+	.ucf-c-quick-links .ucf-c-quick-links__item {
+		min-height: 150px;
+	}
 }
 
 .ucf-c-quick-links .ucf-c-quick-links__item:hover {
