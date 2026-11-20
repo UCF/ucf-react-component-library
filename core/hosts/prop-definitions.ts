@@ -3,7 +3,8 @@
  *
  * This is our contract with every host; for Puck's own config shape, see puck/types.ts.
  *
- * Each setting says what kind of value it holds (a choice, text, a number or a list), its default,
+ * Each setting says what kind of value it holds (a choice, text, a number, a list, links or
+ * tiles), its default,
  * and how an editor shows it. WordPress, Puck and Storybook each build their own controls from this
  * one description, so you describe a setting once.
  * SYNC: each setting's key is a saved block attribute, permanent once a site uses it.
@@ -84,6 +85,23 @@ export type LinksProp = Field & {
 	default: readonly Link[];
 };
 
+/** A link tile: its text, a sentence on where it goes, and its address. */
+export type Tile = {
+	readonly label: string;
+	readonly description: string;
+	readonly href: string;
+};
+
+/**
+ * An ordered list of link tiles (the Quick Links').
+ * WHY `max`: editors can't add past it; the design allows four.
+ */
+export type TilesProp = Field & {
+	type: 'tiles';
+	max?: number;
+	default: readonly Tile[];
+};
+
 /**
  * Whether an address is an anchor on this page: `#` and a name.
  *
@@ -119,7 +137,7 @@ export function targetOptions(
 }
 
 export type PropDefinition =
-	ChoiceProp | TextProp | NumberProp | ListProp | LinksProp;
+	ChoiceProp | TextProp | NumberProp | ListProp | LinksProp | TilesProp;
 
 export type PropDefinitions = Record< string, PropDefinition >;
 
@@ -141,7 +159,9 @@ type ValueOf< Definition > = Definition extends {
 			: Definition extends { type: 'links' }
 				? // UPSTREAM: Puck's array field takes a mutable array only.
 					Link[]
-				: string;
+				: Definition extends { type: 'tiles' }
+					? Tile[]
+					: string;
 
 /** The props, typed. WHY a mapped type: each prop keeps the doc comment on its definition. */
 export type PropsOf< Props extends PropDefinitions > = {

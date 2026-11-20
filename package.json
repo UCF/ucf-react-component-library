@@ -190,6 +190,14 @@
 		"./primitives/accordion-item/puck": {
 			"types": "./dist/components/primitives/accordion-item/hosts/puck/config.d.ts",
 			"default": "./dist/components/primitives/accordion-item/hosts/puck/config.js"
+		},
+		"./quick-links": {
+			"types": "./dist/components/content/quick-links/index.d.ts",
+			"default": "./dist/components/content/quick-links/index.js"
+		},
+		"./quick-links/puck": {
+			"types": "./dist/components/content/quick-links/hosts/puck/config.d.ts",
+			"default": "./dist/components/content/quick-links/hosts/puck/config.js"
 		}
 	},
 	"files": [

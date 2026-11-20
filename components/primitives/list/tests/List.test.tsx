@@ -21,6 +21,10 @@ const cases: Record< string, ListProps > = {
 		variant: 'definitions',
 		items: 'Phone: 407-823-3000\nHours: 8 a.m. to 5 p.m.',
 	},
+	steps: {
+		variant: 'steps',
+		items: 'Apply: Name your major.\nMeet an advisor: Plan your year.',
+	},
 	'blank lines skipped': { items: '\nFirst item\n\n  \nSecond item\n' },
 };
 

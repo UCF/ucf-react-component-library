@@ -4,8 +4,8 @@
  * theme styles from this primitive's CSS.
  *
  * Content rules apply: plain React, no runtime imports, no state.
- * SPEC: core List's markup: a `<ul>`, or an `<ol>` when numbered, of `<li>`s. A definition is
- * "<strong>Term</strong> value", as an editor writes it in core List.
+ * SPEC: core List's markup: a `<ul>`, or an `<ol>` when numbered or steps, of `<li>`s. A
+ * definition or step is "<strong>Term</strong> value", as an editor writes it in core List.
  * SYNC: a block that uses it saves this markup inside its own; changing it needs a deprecation.
  */
 import type { ComponentPropsWithoutRef } from 'react';
@@ -45,7 +45,8 @@ export default function List( {
 	className,
 	...props
 }: ListProps ) {
-	const Tag = variant === 'numbered' ? 'ol' : 'ul';
+	const Tag = variant === 'numbered' || variant === 'steps' ? 'ol' : 'ul';
+	const titled = variant === 'definitions' || variant === 'steps';
 	return (
 		<Tag
 			{ ...props }
@@ -60,8 +61,7 @@ export default function List( {
 			}
 		>
 			{ itemsOf( items ).map( ( item, index ) => {
-				const definition =
-					variant === 'definitions' ? definitionOf( item ) : null;
+				const definition = titled ? definitionOf( item ) : null;
 				return (
 					<li key={ index }>
 						{ definition ? (

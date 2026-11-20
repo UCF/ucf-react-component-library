@@ -124,6 +124,7 @@ test( 'finds every block', () => {
 		'event-list',
 		'hero',
 		'highlight',
+		'quick-links',
 		'section',
 		'section-nav',
 	] );

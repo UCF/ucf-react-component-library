@@ -12,4 +12,6 @@ exports[`List > renders the same in WordPress and React: divided 1`] = `"<ul cla
 
 exports[`List > renders the same in WordPress and React: numbered 1`] = `"<ol class="ucf-c ucf-c-list"><li>First item</li><li>Second item</li></ol>"`;
 
+exports[`List > renders the same in WordPress and React: steps 1`] = `"<ol class="ucf-c ucf-c-list" data-variant="steps"><li><strong>Apply</strong> Name your major.</li><li><strong>Meet an advisor</strong> Plan your year.</li></ol>"`;
+
 exports[`List > renders the same in WordPress and React: tags 1`] = `"<ul class="ucf-c ucf-c-list" data-variant="tags"><li>First item</li><li>Second item</li></ul>"`;

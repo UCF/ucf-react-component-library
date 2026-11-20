@@ -1,0 +1,126 @@
+/*
+ * CONTEXT: the Quick Links' styles, for every host.
+ *
+ * SPEC: the block theme's `.ucf-quick-links` (src/scss/_components.scss): tiles with a 2px line
+ * between, the whole tile one link, an accent bar along the bottom on hover and focus.
+ * WHY roles, not tokens: the tiles take the colors of the section they sit on.
+ * UPSTREAM: wp-scripts only emits a front-end stylesheet named `style.css`.
+ */
+
+/* WHY a container: the tiles stack by the component's own width, not the window's. */
+.ucf-c-quick-links {
+	container: ucf-c-quick-links / inline-size;
+}
+
+/*
+ * SPEC: the line between tiles is the grid's background showing through the gap.
+ * WHY auto-fit, not auto-fill: auto-fill keeps empty tracks, which would show as a gray slab.
+ */
+.ucf-c-quick-links .ucf-c-quick-links__list {
+	display: grid;
+	gap: 2px;
+	grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+	margin: 0;
+	padding: 0;
+	border: var(--ucf-custom-border-control) solid var(--ucf-c-line);
+	background-color: var(--ucf-c-line);
+	color: var(--ucf-c-body);
+	list-style: none;
+}
+
+/* WHY: an empty one keeps a tile's height, so editors can select it. */
+.ucf-c-quick-links .ucf-c-quick-links__list:empty {
+	min-height: 150px;
+}
+
+.ucf-c-quick-links .ucf-c-quick-links__item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ucf-spacing-20);
+	position: relative;
+	margin: 0;
+	padding: var(--ucf-spacing-50);
+	box-sizing: border-box;
+	background-color: var(--ucf-c-surface);
+}
+
+/*
+ * SPEC: side by side, tiles share a 150px floor so a row lines up; stacked, each fits its text.
+ * SYNC: two 14rem columns, the 2px gap and both borders (border-control, 2px in tokens.json).
+ * UPSTREAM: a container query can't read a custom property, so the border is written out.
+ */
+@container ucf-c-quick-links (min-width: calc(28rem + 6px)) {
+	.ucf-c-quick-links .ucf-c-quick-links__item {
+		min-height: 150px;
+	}
+}
+
+.ucf-c-quick-links .ucf-c-quick-links__item:hover {
+	background-color: var(--ucf-c-raised);
+}
+
+/* SPEC: the accent bar grows along the bottom edge on hover and focus. */
+.ucf-c-quick-links .ucf-c-quick-links__item::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	height: var(--ucf-custom-rule-accent);
+	background-color: var(--ucf-c-accent);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.2s ease;
+}
+
+.ucf-c-quick-links .ucf-c-quick-links__item:hover::after,
+.ucf-c-quick-links .ucf-c-quick-links__item:focus-within::after {
+	transform: scaleX(1);
+}
+
+/* A11Y: inside the tile: the tiles butt together, so an outside ring would be clipped. */
+.ucf-c-quick-links .ucf-c-quick-links__item:focus-within {
+	outline: var(--ucf-custom-focus-width) solid var(--ucf-c-focus);
+	outline-offset: -5px;
+}
+
+.ucf-c-quick-links .ucf-c-quick-links__link {
+	color: var(--ucf-c-body);
+	font-family: var(--ucf-font-family-display);
+	font-size: 1.5rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.1;
+	text-decoration-color: transparent;
+	text-decoration-line: underline;
+	text-decoration-thickness: 3px;
+	text-transform: uppercase;
+	text-underline-offset: 0.25em;
+}
+
+/* WHY: the link covers the tile, so the whole tile is one click target and one tab stop. */
+.ucf-c-quick-links .ucf-c-quick-links__link::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+/* A11Y: the tile draws the ring (above), so the link's own is off. */
+.ucf-c-quick-links .ucf-c-quick-links__link:focus-visible {
+	outline: none;
+}
+
+/* A11Y: hover and focus underline the title in the accent: a shape, not a color alone. */
+.ucf-c-quick-links .ucf-c-quick-links__item:hover .ucf-c-quick-links__link,
+.ucf-c-quick-links
+	.ucf-c-quick-links__item:focus-within
+	.ucf-c-quick-links__link {
+	text-decoration-color: var(--ucf-c-accent);
+}
+
+.ucf-c-quick-links .ucf-c-quick-links__description {
+	margin: 0;
+	color: var(--ucf-c-muted);
+	font-size: var(--ucf-font-size-data-lg);
+	line-height: 1.5;
+}

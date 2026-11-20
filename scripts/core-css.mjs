@@ -78,6 +78,7 @@ const MAPS = {
 			'data-variant="divided"': '.is-style-divided',
 			'data-variant="tags"': '.is-style-tags',
 			'data-variant="definitions"': '.is-style-definitions',
+			'data-variant="steps"': '.is-style-steps',
 		},
 	},
 	table: {

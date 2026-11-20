@@ -111,3 +111,57 @@ ol.ucf-c-list > li::marker {
 		grid-template-columns: 12rem minmax(0, 1fr);
 	}
 }
+
+/*
+ * SPEC: the theme's Steps (`.ucf-steps`, src/scss/_components.scss there): the number in an
+ * accent square, a line joining the squares, each step's title bold above what to do.
+ * WHY `::before`, not `::marker`: a marker can't take a box; the counter still follows the `<ol>`.
+ */
+.ucf-c-list[data-variant="steps"] {
+	counter-reset: ucf-step;
+	list-style: none;
+	padding-left: 0;
+}
+
+.ucf-c-list[data-variant="steps"] > li {
+	counter-increment: ucf-step;
+	margin: 0;
+	min-height: 48px;
+	padding: 0 0 var(--ucf-spacing-60) calc(48px + var(--ucf-spacing-50));
+	position: relative;
+}
+
+.ucf-c-list[data-variant="steps"] > li::before {
+	align-items: center;
+	background-color: var(--ucf-c-accent);
+	color: var(--ucf-c-on-accent);
+	content: counter(ucf-step);
+	display: flex;
+	font-family: var(--ucf-font-family-display);
+	font-size: 1.5rem;
+	font-weight: 700;
+	height: 48px;
+	justify-content: center;
+	left: 0;
+	line-height: 1;
+	position: absolute;
+	top: 0;
+	width: 48px;
+}
+
+/* SYNC: left centers the 2px line under the 48px square; top leaves 8px below it. */
+.ucf-c-list[data-variant="steps"] > li:not(:last-child)::after {
+	background-color: var(--ucf-c-line-strong);
+	bottom: var(--ucf-spacing-20);
+	content: "";
+	left: 23px;
+	position: absolute;
+	top: 56px;
+	width: 2px;
+}
+
+.ucf-c-list[data-variant="steps"] > li > strong:first-child {
+	display: block;
+	font-size: var(--ucf-font-size-heading-5);
+	margin-block: 0.55rem var(--ucf-spacing-20);
+}
