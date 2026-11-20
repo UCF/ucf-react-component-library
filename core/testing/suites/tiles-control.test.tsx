@@ -68,4 +68,17 @@ describe( 'TilesControl', () => {
 			},
 		} );
 	} );
+
+	// SPEC: Puck stops adding at the same max as WordPress, a zero one included.
+	it( 'gives Puck the prop’s max, even zero', () => {
+		const maxOf = ( max?: number ) =>
+			(
+				puckFields( { tiles: { ...DEFINITION, max } } ).tiles as {
+					max?: number;
+				}
+			 ).max;
+		expect( maxOf( 2 ) ).toBe( 2 );
+		expect( maxOf( 0 ) ).toBe( 0 );
+		expect( maxOf( undefined ) ).toBeUndefined();
+	} );
 } );

@@ -90,7 +90,7 @@ function fieldOf(
 			defaultItemProps: { label: '', description: '', href: '' },
 			getItemSummary: ( tile: Tile ) =>
 				tile.label || tile.href || 'New link',
-			...( definition.max && { max: definition.max } ),
+			...( definition.max !== undefined && { max: definition.max } ),
 		};
 	}
 	return definition.type === 'choice'
