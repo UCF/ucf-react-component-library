@@ -20,11 +20,14 @@ export type QuickLinksProps = OwnProps< typeof PROPS > &
 /**
  * Whether an address is safe to link to.
  * WHY: a `javascript:` or `data:` address would run when clicked.
+ * FIX: browsers drop tabs and newlines inside a URL (`java\nscript:`), so those go before the check.
  *
  * @param href A tile's address.
  */
 const isSafe = ( href: string ) =>
-	! /^\s*(javascript|data|vbscript):/i.test( href );
+	! /^(?:javascript|data|vbscript):/i.test(
+		href.replace( /[\u0000-\u0020]/g, '' )
+	);
 
 function QuickLinksMarkup( {
 	tiles = [ ...PROPS.tiles.default ],

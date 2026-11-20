@@ -70,18 +70,25 @@ describe( 'QuickLinks', () => {
 	} );
 
 	// WHY: a `javascript:` or `data:` address would run when clicked.
-	it( 'drops an address that would run script', () => {
+	it.each( [
+		'javascript:alert(1)',
+		' DATA:text/html,x',
+		// FIX: browsers drop tabs and newlines inside a URL, and control characters at its ends.
+		'java\nscript:alert(1)',
+		'java\tscript:alert(1)',
+		'\u0001javascript:alert(1)',
+	] )( 'drops an address that would run script: %j', ( href ) => {
 		const html = renderToStaticMarkup(
 			<QuickLinks
 				tiles={ [
-					tile( 'Bad', 'javascript:alert(1)' ),
-					tile( 'Data', ' DATA:text/html,x' ),
+					tile( 'Bad', href ),
 					tile( 'Good', 'https://www.ucf.edu/' ),
 				] }
 			/>
 		);
-		expect( html ).not.toMatch( /javascript:|data:/i );
-		expect( html ).toContain( 'href="https://www.ucf.edu/"' );
+		expect( html.match( /href="[^"]*"/g ) ).toEqual( [
+			'href="https://www.ucf.edu/"',
+		] );
 	} );
 
 	// WHY: it takes no content, so stray children must not render.
