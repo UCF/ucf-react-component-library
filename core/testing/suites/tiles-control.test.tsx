@@ -1,8 +1,9 @@
-/** CONTEXT: the WordPress sidebar field for a tiles prop (core/hosts/wordpress/controls/tiles-control.tsx). */
+/** CONTEXT: a tiles prop's fields: the WordPress sidebar (wordpress/controls/tiles-control.tsx) and Puck. */
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import type { Tile, TilesProp } from '../../hosts/prop-definitions.ts';
+import { puckFields } from '../../hosts/puck/props-to-fields.ts';
 import { TilesControl } from '../../hosts/wordpress/controls/tiles-control.tsx';
 
 const DEFINITION: TilesProp = {
@@ -44,5 +45,27 @@ describe( 'TilesControl', () => {
 	it( 'stops adding tiles at the prop’s max', () => {
 		expect( addButton( render( [ TILE ] ) ) ).not.toContain( 'disabled' );
 		expect( addButton( render( [ TILE, TILE ] ) ) ).toContain( 'disabled' );
+	} );
+
+	// SPEC: a bare `www.ucf.edu` links relative to the page, so both editors say how to write each kind.
+	it( 'says how to write a path on this site and another site’s address, in WordPress and Puck', () => {
+		const html = render( [ TILE ] );
+		expect( html ).toContain(
+			'A page on this site: its path, like /admissions/.'
+		);
+		expect( html ).toContain(
+			'Another site: the full address, starting with https://'
+		);
+		expect( html ).toContain( 'placeholder="/admissions/ or https://"' );
+
+		const field = puckFields( { tiles: DEFINITION } ).tiles;
+		expect( field ).toMatchObject( {
+			arrayFields: {
+				href: {
+					label: 'Address (/path on this site, or https://…)',
+					placeholder: '/admissions/ or https://',
+				},
+			},
+		} );
 	} );
 } );

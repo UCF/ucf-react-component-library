@@ -80,7 +80,12 @@ function fieldOf(
 			arrayFields: {
 				label: { type: 'text', label: 'Text' },
 				description: { type: 'textarea', label: 'Description' },
-				href: { type: 'text', label: 'Address' },
+				// WHY: a bare `www.ucf.edu` links relative to the page, and breaks.
+				href: {
+					type: 'text',
+					label: 'Address (/path on this site, or https://…)',
+					placeholder: '/admissions/ or https://',
+				},
 			},
 			defaultItemProps: { label: '', description: '', href: '' },
 			getItemSummary: ( tile: Tile ) =>

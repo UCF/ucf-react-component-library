@@ -21,7 +21,7 @@ type Option = { label: string; value: string };
 
 /** A field for a string: free text, or one of a list. */
 export type PuckScalarField =
-	| { type: 'text' | 'textarea'; label?: string }
+	| { type: 'text' | 'textarea'; label?: string; placeholder?: string }
 	| { type: 'select' | 'radio'; label?: string; options: Option[] };
 
 /**

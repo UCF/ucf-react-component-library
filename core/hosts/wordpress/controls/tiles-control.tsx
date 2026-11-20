@@ -93,6 +93,11 @@ export function TilesControl( { definition, value, onChange }: Props ) {
 						__nextHasNoMarginBottom
 						type="url"
 						label={ __( 'Address', 'ucf-content' ) }
+						help={ __(
+							'A page on this site: its path, like /admissions/. Another site: the full address, starting with https://',
+							'ucf-content'
+						) }
+						placeholder="/admissions/ or https://"
 						value={ tile.href }
 						onChange={ ( href ) => change( index, { href } ) }
 					/>
