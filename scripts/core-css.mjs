@@ -78,8 +78,7 @@ const MAPS = {
 			'data-variant="divided"': '.is-style-divided',
 			'data-variant="tags"': '.is-style-tags',
 			'data-variant="definitions"': '.is-style-definitions',
-			// WHY a class, not a style: the theme's Steps pattern sets it.
-			'data-variant="steps"': '.ucf-steps',
+			'data-variant="steps"': '.is-style-steps',
 		},
 	},
 	table: {
