@@ -10,7 +10,8 @@ import type { PropDefinitions, PropsOf } from '@/core/hosts/prop-definitions';
 export const PROPS = {
 	/**
 	 * Gold square bullets (core's default); numbers; checks for requirements; hairline rows for
-	 * links and short facts; tags, a row of short labels; or definitions, a term and its value.
+	 * links and short facts; tags, a row of short labels; definitions, a term and its value; or
+	 * steps, numbered squares joined by a line, each with a title.
 	 */
 	variant: {
 		type: 'choice',
@@ -24,17 +25,18 @@ export const PROPS = {
 			{ value: 'divided', label: 'Divided' },
 			{ value: 'tags', label: 'Tags' },
 			{ value: 'definitions', label: 'Definitions' },
+			{ value: 'steps', label: 'Steps' },
 		],
 		default: 'default',
 	},
 	/**
-	 * One item per line. For Definitions, write each as "Term: value"; the text before the first
-	 * colon is the term.
+	 * One item per line. For Definitions and Steps, write each as "Term: value"; the text before
+	 * the first colon is the term (a step's title).
 	 */
 	items: {
 		type: 'text',
 		label: 'Items',
-		help: 'One item per line. Definitions: "Term: value".',
+		help: 'One item per line. Definitions and Steps: "Term: value".',
 		panel: 'List',
 		control: 'multiline',
 		default:

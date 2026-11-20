@@ -38,3 +38,11 @@ export const Definitions: Story = {
 		items: 'Office hours: Monday to Friday, 8 a.m. to 5 p.m.\nPhone: 407-823-3000\nLocation: Millican Hall, Room 161',
 	},
 };
+
+/** Each item is "Title: what to do"; the number sits in an accent square, a line joins them. */
+export const Steps: Story = {
+	args: {
+		variant: 'steps',
+		items: 'Apply to UCF: Name Computer Science as your intended major.\nComplete the foundation courses: Calculus and the first programming course, with the grades the catalog sets.\nMeet with an advisor: Plan your concentration and your senior design year.',
+	},
+};
