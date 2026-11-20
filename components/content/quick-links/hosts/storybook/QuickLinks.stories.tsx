@@ -65,5 +65,5 @@ export const Two: Story = { args: { tiles: TILES.slice( 0, 2 ) } };
 /** Three tiles span the row. */
 export const Three: Story = { args: { tiles: TILES.slice( 0, 3 ) } };
 
-/** A new block, before the editor adds tiles. */
+/** Every tile removed. */
 export const Empty: Story = { args: { tiles: [] } };

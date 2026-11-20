@@ -46,7 +46,7 @@ function QuickLinksMarkup( {
 		>
 			<ul className="ucf-c-quick-links__list">
 				{ tiles
-					.filter( ( tile ) => tile.label )
+					.filter( ( tile ) => tile.label.trim() )
 					.slice( 0, PROPS.tiles.max )
 					.map( ( tile, index ) => (
 						// WHY the index as key: two tiles may share an address.
@@ -61,7 +61,7 @@ function QuickLinksMarkup( {
 							>
 								{ tile.label }
 							</a>
-							{ tile.description ? (
+							{ tile.description.trim() ? (
 								<p className="ucf-c-quick-links__description">
 									{ tile.description }
 								</p>

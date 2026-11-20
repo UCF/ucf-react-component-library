@@ -24,7 +24,23 @@
 					}
 				}
 			},
-			"default": []
+			"default": [
+				{
+					"label": "Can I get in?",
+					"description": "Requirements, deadlines and the admitted class profile.",
+					"href": ""
+				},
+				{
+					"label": "What will it cost?",
+					"description": "Tuition, aid and the net price calculator.",
+					"href": ""
+				},
+				{
+					"label": "What do graduates do?",
+					"description": "Outcomes by program, from the people who track them.",
+					"href": ""
+				}
+			]
 		}
 	},
 	"supports": {

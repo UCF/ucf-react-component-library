@@ -13,7 +13,26 @@ export const PROPS = {
 		panel: 'Quick Links',
 		// SPEC: the design system's quick links: never more than four.
 		max: 4,
-		default: [],
+		// SPEC: a new block starts with the block theme pattern's first three, addresses blank.
+		default: [
+			{
+				label: 'Can I get in?',
+				description:
+					'Requirements, deadlines and the admitted class profile.',
+				href: '',
+			},
+			{
+				label: 'What will it cost?',
+				description: 'Tuition, aid and the net price calculator.',
+				href: '',
+			},
+			{
+				label: 'What do graduates do?',
+				description:
+					'Outcomes by program, from the people who track them.',
+				href: '',
+			},
+		],
 	},
 } as const satisfies PropDefinitions;
 

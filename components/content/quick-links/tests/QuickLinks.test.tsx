@@ -56,12 +56,22 @@ describe( 'QuickLinks', () => {
 	} );
 
 	// WHY: a half-filled tile in the sidebar shouldn't publish an empty link.
+	// SPEC: a new block starts with three tiles to fill in.
+	it( 'starts with three tiles', () => {
+		expect( linksIn( renderToStaticMarkup( <QuickLinks /> ) ) ).toEqual( [
+			'Can I get in?',
+			'What will it cost?',
+			'What do graduates do?',
+		] );
+	} );
+
 	it( 'leaves out a tile with no text, and a description that is empty', () => {
 		const html = renderToStaticMarkup(
 			<QuickLinks
 				tiles={ [
 					tile( '' ),
-					{ label: 'Costs', description: '', href: '/cost/' },
+					tile( ' \n ' ),
+					{ label: 'Costs', description: '  ', href: '/cost/' },
 				] }
 			/>
 		);

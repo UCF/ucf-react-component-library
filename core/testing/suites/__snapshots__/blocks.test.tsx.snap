@@ -116,7 +116,7 @@ exports[`ucf-content/highlight holding other blocks > saves them inside its inne
 
 exports[`ucf-content/quick-links > defaults > matches the stored markup snapshot 1`] = `
 "<!-- wp:ucf-content/quick-links -->
-<div class="wp-block-ucf-content-quick-links ucf-c ucf-c-quick-links"><ul class="ucf-c-quick-links__list"></ul></div>
+<div class="wp-block-ucf-content-quick-links ucf-c ucf-c-quick-links"><ul class="ucf-c-quick-links__list"><li class="ucf-c-quick-links__item"><a class="ucf-c-quick-links__link">Can I get in?</a><p class="ucf-c-quick-links__description">Requirements, deadlines and the admitted class profile.</p></li><li class="ucf-c-quick-links__item"><a class="ucf-c-quick-links__link">What will it cost?</a><p class="ucf-c-quick-links__description">Tuition, aid and the net price calculator.</p></li><li class="ucf-c-quick-links__item"><a class="ucf-c-quick-links__link">What do graduates do?</a><p class="ucf-c-quick-links__description">Outcomes by program, from the people who track them.</p></li></ul></div>
 <!-- /wp:ucf-content/quick-links -->"
 `;
 
